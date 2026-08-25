@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /proposta-mediaportal-
+
+Sitemap: https://amaralesilva.vercel.app/sitemap.xml
