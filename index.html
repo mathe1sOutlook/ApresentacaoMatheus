@@ -42,7 +42,7 @@
   --paper-deep: #EDEAE2;
   --ink:        #14171A;
   --ink-soft:   #57544C;
-  --ochre:      #B8842F;
+  --ochre:      #8A6220;
   --ochre-soft: #E8D7B8;
   --blue:       #1F3A5F;
   --blue-soft:  #D9E1EA;
@@ -347,6 +347,7 @@ button {
   border-left: 1px solid var(--line);
   padding-left: 22px;
 }
+.ledger { margin: 0; }
 .ledger dt, .ledger dd { margin: 0; }
 .ledger__row {
   display: flex;
@@ -544,7 +545,7 @@ button {
 }
 .case__block { margin-top: 20px; }
 .case__block + .case__block { margin-top: 16px; }
-.case__block p {
+.case__block p:not(.label) {
   margin-top: 4px;
   font-size: 14.5px;
   color: var(--ink-soft);
@@ -555,7 +556,7 @@ button {
   border-top: 1px dashed var(--line);
 }
 .case__value > .label { letter-spacing: 0.06em; color: var(--ink); }
-.case__value p {
+.case__value p:not(.label) {
   margin-top: 4px;
   font-size: 14.5px;
   color: var(--ink);

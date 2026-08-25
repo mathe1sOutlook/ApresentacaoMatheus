@@ -48,7 +48,11 @@ dicionários do `next-intl`.
 - **E-mail** — `contato@amaralesilva.com` veio do design como provisório e o
   domínio `amaralesilva.com` ainda não está ativo. Confirmar o endereço
   definitivo antes de divulgar o site (o WhatsApp já é um canal real).
-- **Contraste do ocre** — `#B8842F` sobre papel dá 2,94:1, abaixo do mínimo
-  WCAG AA (4,5:1) para textos pequenos. É a cor de marca definida no design;
-  se acessibilidade pesar mais que fidelidade, `#8A6220` mantém a família e
-  chega a 4,88:1.
+## Desvio do design
+
+O ocre da marca é `#8A6220`, e não o `#B8842F` do handoff. O tom original dá
+2,94:1 sobre o papel — abaixo do mínimo WCAG AA (4,5:1) para textos pequenos, e
+o ocre carrega rótulos de 10 a 12px em várias seções. `#8A6220` fica na mesma
+família e chega a 4,88:1 sobre `--paper` e 4,54:1 sobre `--paper-deep`. Se o
+handoff for atualizado, basta trocar o token `--ochre` em `index.html` e a cor
+do `&` em `favicon.svg`.
