@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+<title>Admin — Amaral &amp; Silva</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+/* Painel interno da dupla. Mesmo vocabulário do site: papel, réguas de 1px,
+   ocre para marca, azul para dados, zero arredondamento. */
+:root {
+  --paper:      #F4F2ED;
+  --paper-deep: #EDEAE2;
+  --ink:        #14171A;
+  --ink-soft:   #57544C;
+  --ochre:      #8A6220;
+  --ochre-soft: #E8D7B8;
+  --blue:       #1F3A5F;
+  --blue-soft:  #D9E1EA;
+  --line:       #DAD5C9;
+  --red:        #8A2620;
+  --red-soft:   #EAD3D0;
+
+  /* Cores de dados (gráfico): família da marca, clareadas para leitura como
+     marca de dado sobre o papel — validadas para contraste e CVD. */
+  --data-blue:  #3E6DA3;
+  --data-ochre: #C08A2E;
+
+  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans:  'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono:  'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --container: 1180px;
+  --gutter:    32px;
+  --header-h:  64px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 { font-weight: 400; margin: 0; }
+p { margin: 0; }
+
+a { color: var(--blue); text-decoration: none; }
+a:hover { color: var(--ochre); }
+
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+::selection { background: var(--ochre-soft); color: var(--ink); }
+
+.container { max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.label--ochre { color: var(--ochre); }
+.label--blue  { color: var(--blue); }
+.label--soft  { color: var(--ink-soft); }
+
+.mono { font-family: var(--mono); }
+.soft { color: var(--ink-soft); }
+.num  { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* Grade cujas divisórias são o fundo aparecendo no gap de 1px. */
+.rule-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  grid-template-columns: 1fr;
+}
+.rule-grid > * { background: var(--paper); }
+
+/* ─── Botões ─────────────────────────────────────────────────────── */
+.btn-solid {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 18px;
+  white-space: nowrap;
+}
+.btn-solid:hover { background: var(--paper); color: var(--ink); }
+
+.btn-ghost {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--ink);
+  padding: 9px 16px;
+  color: var(--ink);
+  white-space: nowrap;
+  background: none;
+}
+.btn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+.btn-mini {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  padding: 4px 9px;
+  color: var(--ink-soft);
+  background: var(--paper);
+  white-space: nowrap;
+}
+.btn-mini:hover { border-color: var(--ink); color: var(--ink); }
+.btn-mini--danger:hover { border-color: var(--red); color: var(--red); }
+
+.btn-link {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--blue);
+  border-bottom: 1px solid transparent;
+}
+.btn-link:hover { color: var(--ochre); }
+
+/* ─── Telas de entrada ───────────────────────────────────────────── */
+.screen { display: none; }
+.screen--on { display: block; }
+
+.gate {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+.gate__card {
+  width: min(100%, 420px);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 48px 40px;
+  text-align: center;
+}
+.gate__brand {
+  font-family: var(--serif);
+  font-size: 28px;
+  margin: 14px 0 4px;
+}
+.gate__brand .amp { color: var(--ochre); font-style: italic; }
+.gate__note { color: var(--ink-soft); font-size: 13.5px; margin: 14px 0 28px; }
+.gate__foot { margin-top: 26px; border-top: 1px solid var(--line); padding-top: 16px; }
+
+/* ─── Cabeçalho ──────────────────────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(244, 242, 237, 0.94);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: var(--header-h);
+}
+.brandmark {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  color: var(--ink);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.brandmark:hover { color: var(--ink); }
+.brandmark .amp { color: var(--ochre); font-style: italic; }
+.topbar__right { display: flex; align-items: center; gap: 16px; }
+.topbar__user { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+
+.nav-toggle {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  padding: 9px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.nav-toggle:hover { background: var(--ink); color: var(--paper); }
+.nav-toggle__ico { display: inline-flex; flex-direction: column; gap: 3px; }
+.nav-toggle__ico span { display: block; width: 14px; height: 1px; background: currentColor; }
+
+/* ─── Menu (gaveta) ──────────────────────────────────────────────── */
+.backdrop {
+  position: fixed; inset: 0;
+  background: rgba(20, 23, 26, 0.35);
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+.drawer {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: min(320px, 88vw);
+  background: var(--paper);
+  border-left: 1px solid var(--ink);
+  z-index: 70;
+  transform: translateX(102%);
+  transition: transform 0.22s ease;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+body.drawer-open .backdrop { opacity: 1; pointer-events: auto; }
+body.drawer-open .drawer { transform: translateX(0); }
+body.drawer-open { overflow: hidden; }
+
+.drawer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+}
+.drawer__close { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+.drawer__close:hover { color: var(--ink); }
+.drawer__sec { padding: 18px 22px; border-bottom: 1px solid var(--line); }
+.drawer__sec .eyebrow { margin-bottom: 12px; }
+.drawer__nav { display: flex; flex-direction: column; gap: 2px; }
+.drawer__nav a {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 8px 10px;
+  border-left: 2px solid transparent;
+}
+.drawer__nav a:hover { color: var(--ink); background: var(--paper-deep); }
+.drawer__nav a.on { color: var(--ink); border-left-color: var(--ochre); background: var(--paper-deep); }
+.drawer__nav a .cnt { color: var(--ochre); }
+.drawer__foot { margin-top: auto; padding: 18px 22px; display: flex; flex-direction: column; gap: 10px; }
+
+/* ─── Corpo ──────────────────────────────────────────────────────── */
+.view { padding: 40px 0 96px; }
+.view-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 32px;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+.view-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(26px, 3vw, 36px);
+  letter-spacing: -0.01em;
+  margin-top: 8px;
+}
+.view-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.card { border: 1px solid var(--line); background: var(--paper); }
+.card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.card__body { padding: 18px; }
+.card__body--flush { padding: 0; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+/* ─── Aviso do dia ───────────────────────────────────────────────── */
+.daybar {
+  border: 1px solid var(--ochre);
+  background: var(--ochre-soft);
+  padding: 12px 18px;
+  margin-bottom: 26px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  align-items: baseline;
+}
+.daybar .label { color: var(--ochre); }
+.daybar__item { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+.daybar__item b { font-weight: 500; }
+.daybar__item--late { color: var(--red); }
+
+/* ─── Estatísticas ───────────────────────────────────────────────── */
+.stat { padding: 18px; }
+.stat .label { display: block; margin-bottom: 10px; }
+.stat__value {
+  font-family: var(--serif);
+  font-size: clamp(21px, 2.4vw, 28px);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.stat__hint { display: block; font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft); margin-top: 6px; }
+.stat--late .stat__value { color: var(--red); }
+
+/* ─── Listas (dashboard, tarefas, reuniões) ──────────────────────── */
+.rowlist { list-style: none; margin: 0; padding: 0; }
+.rowlist li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.rowlist li:last-child { border-bottom: 0; }
+.rowlist__when { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); white-space: nowrap; min-width: 68px; }
+.rowlist__main { flex: 1; min-width: 0; }
+.rowlist__title { font-size: 14px; }
+.rowlist__sub { font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft); margin-top: 1px; overflow-wrap: anywhere; }
+.rowlist li.is-late .rowlist__when { color: var(--red); }
+.empty { padding: 22px 18px; color: var(--ink-soft); font-size: 13.5px; }
+
+/* ─── Chips de estado ────────────────────────────────────────────── */
+.chip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  padding: 2px 8px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.chip--pago     { border-color: var(--blue);  color: var(--blue);  background: var(--blue-soft); }
+.chip--previsto { border-color: var(--ochre); color: var(--ochre); background: var(--ochre-soft); }
+.chip--atrasado { border-color: var(--red);   color: var(--red);   background: var(--red-soft); }
+.chip--devolutiva { border-color: var(--blue);  color: var(--blue); }
+.chip--combinado  { border-color: var(--ochre); color: var(--ochre); }
+
+/* ─── Kanban ─────────────────────────────────────────────────────── */
+.kanban {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(238px, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  overflow-x: auto;
+}
+.kanban__col { background: var(--paper); min-height: 320px; display: flex; flex-direction: column; }
+.kanban__head {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+}
+.kanban__cards { padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+.kcard { border: 1px solid var(--line); background: var(--paper); padding: 12px; cursor: pointer; }
+.kcard:hover { border-color: var(--ink); }
+.kcard__name { font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.kcard__client { font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft); margin-top: 2px; overflow-wrap: anywhere; }
+.kcard__value { font-family: var(--mono); font-size: 12px; color: var(--ochre); margin-top: 8px; }
+.kcard__foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+.kcard__move { display: flex; gap: 4px; }
+.kcard__move button {
+  font-family: var(--mono);
+  font-size: 12px;
+  border: 1px solid var(--line);
+  width: 26px; height: 22px;
+  line-height: 1;
+  color: var(--ink-soft);
+}
+.kcard__move button:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+.kcard__move button:disabled { opacity: 0.3; cursor: default; }
+
+/* ─── Tabelas ────────────────────────────────────────────────────── */
+.tbl-wrap { overflow-x: auto; }
+table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.tbl th {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--ink-soft);
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ink);
+  white-space: nowrap;
+}
+.tbl td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tbl tr:last-child td { border-bottom: 0; }
+.tbl td.num, .tbl th.num { text-align: right; }
+.tbl td.actions { text-align: right; white-space: nowrap; }
+.tbl td.actions .btn-mini { margin-left: 6px; }
+.tbl tr.is-clickable { cursor: pointer; }
+.tbl tr.is-clickable:hover td { background: var(--paper-deep); }
+.tbl tfoot td { border-top: 1px solid var(--ink); border-bottom: 0; font-family: var(--mono); font-size: 12px; }
+
+/* ─── Formulários ────────────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.field input, .field select, .field textarea {
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  padding: 9px 11px;
+  width: 100%;
+}
+.field textarea { min-height: 88px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+.field__hint { font-family: var(--mono); font-size: 10px; color: var(--ink-soft); }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-grid .span2 { grid-column: 1 / -1; }
+.form-foot { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+
+/* ─── Modal ──────────────────────────────────────────────────────── */
+.modal {
+  position: fixed; inset: 0;
+  z-index: 90;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 6vh 20px 40px;
+  background: rgba(20, 23, 26, 0.4);
+  overflow-y: auto;
+}
+.modal.on { display: flex; }
+.modal__panel {
+  width: min(100%, 640px);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+}
+.modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line);
+}
+.modal__title { font-family: var(--serif); font-size: 20px; }
+.modal__body { padding: 22px; }
+
+/* ─── Agenda ─────────────────────────────────────────────────────── */
+.cal-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; }
+.cal-title { font-family: var(--serif); font-size: 22px; text-transform: capitalize; }
+.cal-nav { display: flex; gap: 6px; }
+.cal {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.cal__dow {
+  background: var(--paper-deep);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 8px 10px;
+  text-align: center;
+}
+.cal__day { background: var(--paper); min-height: 96px; padding: 8px; cursor: pointer; position: relative; }
+.cal__day:hover { background: var(--paper-deep); }
+.cal__day--off { background: var(--paper-deep); cursor: default; }
+.cal__num { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+.cal__day--today .cal__num {
+  color: var(--paper);
+  background: var(--ochre);
+  padding: 1px 6px;
+  display: inline-block;
+}
+.cal__evts { margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
+.cal__evt {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-align: left;
+  border-left: 2px solid var(--blue);
+  background: var(--blue-soft);
+  color: var(--ink);
+  padding: 3px 6px;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cal__evt:hover { border-left-color: var(--ochre); background: var(--ochre-soft); }
+
+/* ─── Linha do tempo (devolutivas) ───────────────────────────────── */
+.timeline { list-style: none; margin: 0; padding: 0; }
+.timeline li { padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.timeline li:last-child { border-bottom: 0; }
+.timeline__meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 5px; }
+.timeline__when { font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft); }
+.timeline__content { font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* ─── Tarefas ────────────────────────────────────────────────────── */
+.tasksec { margin-bottom: 26px; }
+.tasksec > .label { display: block; margin-bottom: 8px; }
+.task {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.task:last-child { border-bottom: 0; }
+.task__check {
+  appearance: none;
+  width: 16px; height: 16px;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 3px;
+  display: grid;
+  place-content: center;
+}
+.task__check:checked { background: var(--ink); }
+.task__check:checked::after { content: ''; width: 8px; height: 4px; border-left: 2px solid var(--paper); border-bottom: 2px solid var(--paper); transform: rotate(-45deg) translateY(-1px); }
+.task__main { flex: 1; min-width: 0; }
+.task__title { font-size: 14px; overflow-wrap: anywhere; }
+.task--done .task__title { text-decoration: line-through; color: var(--ink-soft); }
+.task__sub { font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft); margin-top: 2px; overflow-wrap: anywhere; }
+.task__sub .late { color: var(--red); }
+.filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
+.fchip {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  padding: 5px 11px;
+  color: var(--ink-soft);
+  background: var(--paper);
+}
+.fchip:hover { border-color: var(--ink); color: var(--ink); }
+.fchip.on { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+
+/* ─── Financeiro ─────────────────────────────────────────────────── */
+.fin-filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 24px; }
+.fin-filters .field { min-width: 150px; }
+.chart-legend { display: flex; gap: 18px; flex-wrap: wrap; padding: 14px 18px 0; }
+.chart-legend span { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); display: inline-flex; align-items: center; gap: 7px; }
+.chart-legend i { width: 10px; height: 10px; display: inline-block; }
+.chart-box { padding: 6px 12px 14px; }
+.chart-box svg { width: 100%; height: auto; display: block; }
+
+.chart-tip {
+  position: fixed;
+  z-index: 95;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 8px 11px;
+  pointer-events: none;
+  display: none;
+  white-space: nowrap;
+}
+.chart-tip b { color: var(--ochre-soft); font-weight: 400; }
+
+/* ─── Detalhe do projeto ─────────────────────────────────────────── */
+.proj-meta { display: flex; gap: 10px 18px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.proj-status select {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 7px 10px;
+}
+.doc-links { display: flex; gap: 8px; flex-wrap: wrap; }
+.danger-zone { margin-top: 28px; text-align: right; }
+
+/* ─── Toast ──────────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 12px 20px;
+  z-index: 99;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  max-width: min(90vw, 560px);
+}
+.toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ─── Responsivo ─────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  :root { --gutter: 18px; }
+  .grid-2, .grid-3, .form-grid { grid-template-columns: 1fr; }
+  .view { padding: 26px 0 80px; }
+  .topbar__user { display: none; }
+  .cal__day { min-height: 64px; padding: 5px; }
+  .cal__evt { font-size: 9px; padding: 2px 4px; }
+  .stat__value { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ Carregando ═══ -->
+<div class="screen screen--on" id="scr-loading">
+  <div class="gate"><p class="eyebrow">Carregando…</p></div>
+</div>
+
+<!-- ═══ Login ═══ -->
+<div class="screen" id="scr-login">
+  <div class="gate">
+    <div class="gate__card">
+      <p class="eyebrow">Painel interno</p>
+      <p class="gate__brand">Amaral <span class="amp">&amp;</span> Silva</p>
+      <p class="gate__note">CRM, financeiro, agenda e tarefas da dupla.<br />Acesso somente para contas autorizadas.</p>
+      <button type="button" class="btn-solid" data-action="signIn">Entrar com Google</button>
+      <div class="gate__foot"><a class="btn-link" href="/">← Voltar ao site</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Sem acesso ═══ -->
+<div class="screen" id="scr-denied">
+  <div class="gate">
+    <div class="gate__card">
+      <p class="eyebrow">Acesso restrito</p>
+      <p class="gate__brand">Amaral <span class="amp">&amp;</span> Silva</p>
+      <p class="gate__note">A conta <b class="mono" id="denied-email"></b> não está na lista de membros deste painel. Peça a um membro para cadastrar seu e-mail em <span class="mono">Equipe</span>.</p>
+      <button type="button" class="btn-ghost" data-action="signOut">Sair e trocar de conta</button>
+      <div class="gate__foot"><a class="btn-link" href="/">← Voltar ao site</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Aplicação ═══ -->
+<div class="screen" id="scr-app">
+
+  <header class="topbar">
+    <div class="container topbar__bar">
+      <a class="brandmark" href="#/dashboard">Amaral <span class="amp">&amp;</span> Silva
+        <span class="label label--ochre">Admin</span>
+      </a>
+      <div class="topbar__right">
+        <span class="topbar__user" id="topbar-user"></span>
+        <button type="button" class="nav-toggle" data-action="openDrawer" aria-expanded="false" aria-controls="drawer" aria-label="Abrir menu">
+          <span class="nav-toggle__ico" aria-hidden="true"><span></span><span></span><span></span></span>
+          Menu
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="backdrop" data-action="closeDrawer"></div>
+
+  <aside class="drawer" id="drawer" aria-label="Menu do painel">
+    <div class="drawer__head">
+      <span class="label label--ochre">Menu</span>
+      <button type="button" class="drawer__close" data-action="closeDrawer">Fechar ✕</button>
+    </div>
+    <div class="drawer__sec">
+      <p class="eyebrow">Navegar</p>
+      <nav class="drawer__nav" id="drawer-nav">
+        <a href="#/dashboard" data-route="dashboard">Dashboard</a>
+        <a href="#/crm" data-route="crm">CRM · Propostas</a>
+        <a href="#/clientes" data-route="clientes">Clientes</a>
+        <a href="#/financeiro" data-route="financeiro">Financeiro</a>
+        <a href="#/agenda" data-route="agenda">Agenda</a>
+        <a href="#/tarefas" data-route="tarefas">Tarefas</a>
+        <a href="#/equipe" data-route="equipe">Equipe</a>
+      </nav>
+    </div>
+    <div class="drawer__sec">
+      <p class="eyebrow">Cadastrar</p>
+      <nav class="drawer__nav">
+        <a href="#" data-action="newProject">+ Projeto / proposta</a>
+        <a href="#" data-action="newClient">+ Cliente</a>
+        <a href="#" data-action="newMeeting">+ Reunião</a>
+        <a href="#" data-action="newTask">+ Tarefa</a>
+        <a href="#" data-action="newPayment">+ Parcela de pagamento</a>
+      </nav>
+    </div>
+    <div class="drawer__foot">
+      <span class="label label--soft" id="drawer-user"></span>
+      <a class="btn-link" href="/" target="_blank" rel="noopener">Ver o site ↗</a>
+      <button type="button" class="btn-link" data-action="refreshData">↻ Atualizar dados</button>
+      <button type="button" class="btn-ghost" data-action="signOut">Sair</button>
+    </div>
+  </aside>
+
+  <main class="container view" id="view"></main>
+</div>
+
+<!-- ═══ Modal / toast / tooltip ═══ -->
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <div class="modal__panel">
+    <div class="modal__head">
+      <h2 class="modal__title" id="modal-title"></h2>
+      <button type="button" class="drawer__close" data-action="closeModal">Fechar ✕</button>
+    </div>
+    <div class="modal__body" id="modal-body"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<div class="chart-tip" id="chart-tip"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.js"></script>
+<script>
+'use strict';
+
+/* ═══ Config ═══════════════════════════════════════════════════════ */
+/* Chave publicável: é pública por natureza; os dados são protegidos por
+   RLS no Postgres (só e-mails em amaralesilva_members enxergam algo). */
+const SUPABASE_URL = 'https://wsgjbzsdewzplsnpfvdf.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_uUuSrKXuJXalJ79WO0PxDg_QpIEOfvA';
+const TB = (name) => 'amaralesilva_' + name;
+
+const sb = window.supabase
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: { flowType: 'pkce', persistSession: true, detectSessionInUrl: true },
+    })
+  : null;
+
+/* ═══ Estado ═══════════════════════════════════════════════════════ */
+const state = {
+  session: null,
+  members: [], me: null,
+  clients: [], projects: [], notes: [], meetings: [], payments: [], tasks: [],
+};
+const now0 = new Date();
+const ui = {
+  finPreset: 'prox3', finFrom: '', finTo: '', finStatus: 'todos',
+  chartMode: 'mensal',
+  agendaY: now0.getFullYear(), agendaM: now0.getMonth(),
+  taskFilter: 'todas', taskShowDone: false,
+};
+
+/* ═══ Utilidades ═══════════════════════════════════════════════════ */
+const $  = (sel, el) => (el || document).querySelector(sel);
+const $$ = (sel, el) => Array.from((el || document).querySelectorAll(sel));
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const N = (v) => (v == null || v === '' ? 0 : Number(v));
+const pad = (n) => String(n).padStart(2, '0');
+
+const fmtBRL = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+const fmtK = (v) => {
+  v = Number(v || 0);
+  if (Math.abs(v) >= 1000) return (v / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mil';
+  return v.toLocaleString('pt-BR', { maximumFractionDigits: 0 });
+};
+
+const toISODate = (d) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const todayISO = () => toISODate(new Date());
+const parseISO = (s) => {
+  if (!s) return null;
+  const p = String(s).slice(0, 10).split('-').map(Number);
+  return new Date(p[0], p[1] - 1, p[2]);
+};
+const fmtDate = (s) => { const d = s instanceof Date ? s : parseISO(s); return d ? pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() : '—'; };
+const fmtDateShort = (s) => { const d = s instanceof Date ? s : parseISO(s); return d ? pad(d.getDate()) + '/' + pad(d.getMonth() + 1) : '—'; };
+const fmtTime = (iso) => { const d = new Date(iso); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const fmtDT = (iso) => { if (!iso) return '—'; const d = new Date(iso); return fmtDate(toISODate(d)) + ' · ' + fmtTime(iso); };
+const toLocalInput = (iso) => { const d = iso ? new Date(iso) : null; if (!d) return ''; return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const MONTHS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+const MONTHS_S = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+const DOW = ['seg', 'ter', 'qua', 'qui', 'sex', 'sáb', 'dom'];
+
+const firstName = (s) => String(s || '').trim().split(/\s+/)[0] || '';
+
+function toast(msg) {
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove('on'), 4200);
+}
+
+/* ═══ Domínio ══════════════════════════════════════════════════════ */
+const STATUSES = ['contato', 'proposta_enviada', 'negociacao', 'fechado', 'concluido', 'perdido'];
+const STATUS_LABEL = {
+  contato: 'Contato',
+  proposta_enviada: 'Proposta enviada',
+  negociacao: 'Negociação',
+  fechado: 'Contrato fechado',
+  concluido: 'Concluído',
+  perdido: 'Perdido',
+};
+const NOTE_KINDS = { devolutiva: 'Devolutiva', combinado: 'Combinado', conversa: 'Conversa', nota: 'Nota' };
+
+const projById   = (id) => state.projects.find((p) => p.id === id) || null;
+const clientById = (id) => state.clients.find((c) => c.id === id) || null;
+const memberByEmail = (em) => state.members.find((m) => m.email.toLowerCase() === String(em || '').toLowerCase()) || null;
+const memberName = (em) => { const m = memberByEmail(em); return m ? m.name : (em || '—'); };
+const projectValue = (p) => (p.price_final != null && p.price_final !== '' ? N(p.price_final) : N(p.price_proposed));
+const notesOf    = (pid) => state.notes.filter((n) => n.project_id === pid);
+const meetingsOf = (pid) => state.meetings.filter((m) => m.project_id === pid);
+const paymentsOf = (pid) => state.payments.filter((p) => p.project_id === pid);
+const tasksOf    = (pid) => state.tasks.filter((t) => t.project_id === pid);
+
+function payState(p) {
+  if (p.status === 'pago') return 'pago';
+  return p.due_date < todayISO() ? 'atrasado' : 'previsto';
+}
+/* Data em que a parcela conta no fluxo: pagas contam pela data do pagamento. */
+function payDate(p) {
+  return p.status === 'pago' ? (p.paid_at || p.due_date) : p.due_date;
+}
+function paySplitM(p) {
+  if (p.split_matheus != null && p.split_matheus !== '') return N(p.split_matheus);
+  const proj = projById(p.project_id);
+  return proj ? N(proj.split_matheus) : 50;
+}
+function paySplitB(p) {
+  if (p.split_bruno != null && p.split_bruno !== '') return N(p.split_bruno);
+  const proj = projById(p.project_id);
+  return proj ? N(proj.split_bruno) : 50;
+}
+
+/* ═══ Dados ════════════════════════════════════════════════════════ */
+async function fetchAll() {
+  const [clients, projects, notes, meetings, payments, tasks, members] = await Promise.all([
+    sb.from(TB('clients')).select('*').order('name'),
+    sb.from(TB('projects')).select('*').order('created_at', { ascending: false }),
+    sb.from(TB('notes')).select('*').order('created_at', { ascending: false }),
+    sb.from(TB('meetings')).select('*').order('starts_at'),
+    sb.from(TB('payments')).select('*').order('due_date'),
+    sb.from(TB('tasks')).select('*').order('due_date', { ascending: true, nullsFirst: false }),
+    sb.from(TB('members')).select('*').order('name'),
+  ]);
+  const firstErr = [clients, projects, notes, meetings, payments, tasks, members].find((r) => r.error);
+  if (firstErr) throw firstErr.error;
+  state.clients = clients.data; state.projects = projects.data; state.notes = notes.data;
+  state.meetings = meetings.data; state.payments = payments.data; state.tasks = tasks.data;
+  state.members = members.data;
+}
+
+async function mutate(fn, okMsg) {
+  try {
+    await fn();
+    await fetchAll();
+    renderApp();
+    if (okMsg) toast(okMsg);
+    return true;
+  } catch (e) {
+    toast('Erro: ' + (e.message || e));
+    return false;
+  }
+}
+async function dbInsert(table, row) { const { error } = await sb.from(TB(table)).insert(row); if (error) throw error; }
+async function dbUpdate(table, id, patch) { const { error } = await sb.from(TB(table)).update(patch).eq('id', id); if (error) throw error; }
+async function dbDelete(table, id) { const { error } = await sb.from(TB(table)).delete().eq('id', id); if (error) throw error; }
+
+/* ═══ Telas / roteador ═════════════════════════════════════════════ */
+function showScreen(name) {
+  $$('.screen').forEach((el) => el.classList.remove('screen--on'));
+  $('#scr-' + name).classList.add('screen--on');
+}
+
+function parseRoute() {
+  const h = location.hash.replace(/^#\/?/, '');
+  const parts = h.split('/');
+  return { name: parts[0] || 'dashboard', id: parts[1] || null };
+}
+
+const VIEWS = {};
+
+function renderApp() {
+  if (!state.me) return;
+  const route = parseRoute();
+  const fn = VIEWS[route.name] || VIEWS.dashboard;
+  $('#view').innerHTML = fn(route);
+  $$('#drawer-nav a').forEach((a) => a.classList.toggle('on', a.dataset.route === route.name));
+  $('#topbar-user').textContent = firstName(state.me.name);
+  $('#drawer-user').textContent = state.me.email;
+  afterRender(route);
+}
+
+/* pós-render: liga comportamentos que delegação de clique não cobre */
+function afterRender(route) {
+  const chart = $('#fin-chart');
+  if (chart) bindChartTooltip(chart);
+}
+
+window.addEventListener('hashchange', () => {
+  if (state.me) { closeDrawer(); renderApp(); window.scrollTo(0, 0); }
+});
+
+/* ═══ Dashboard ════════════════════════════════════════════════════ */
+VIEWS.dashboard = function () {
+  const today = todayISO();
+  const nowMs = Date.now();
+  const in7 = toISODate(new Date(Date.now() + 7 * 864e5));
+
+  const meetToday = state.meetings.filter((m) => toISODate(new Date(m.starts_at)) === today);
+  const meetWeek = state.meetings.filter((m) => {
+    const d = toISODate(new Date(m.starts_at));
+    return d > today && d <= in7;
+  });
+  const openTasks = state.tasks.filter((t) => !t.done);
+  const tasksLate = openTasks.filter((t) => t.due_date && t.due_date < today);
+  const tasksToday = openTasks.filter((t) => t.due_date === today);
+  const tasksWeek = openTasks.filter((t) => t.due_date && t.due_date > today && t.due_date <= in7);
+
+  const ym = today.slice(0, 7);
+  const paysMonth = state.payments.filter((p) => String(payDate(p)).slice(0, 7) === ym);
+  const recMonth = paysMonth.filter((p) => p.status === 'pago').reduce((s, p) => s + N(p.amount), 0);
+  const prevMonth = paysMonth.filter((p) => p.status !== 'pago').reduce((s, p) => s + N(p.amount), 0);
+  const lateAll = state.payments.filter((p) => payState(p) === 'atrasado').reduce((s, p) => s + N(p.amount), 0);
+
+  const hour = new Date().getHours();
+  const hello = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+  const dstr = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  const daybar = (meetToday.length || tasksToday.length || tasksLate.length) ? `
+    <div class="daybar" role="status">
+      <span class="label">Hoje</span>
+      ${meetToday.length ? `<span class="daybar__item"><b>${meetToday.length}</b> reuni${meetToday.length > 1 ? 'ões' : 'ão'}</span>` : ''}
+      ${tasksToday.length ? `<span class="daybar__item"><b>${tasksToday.length}</b> tarefa${tasksToday.length > 1 ? 's' : ''} para hoje</span>` : ''}
+      ${tasksLate.length ? `<span class="daybar__item daybar__item--late"><b>${tasksLate.length}</b> tarefa${tasksLate.length > 1 ? 's' : ''} atrasada${tasksLate.length > 1 ? 's' : ''}</span>` : ''}
+    </div>` : '';
+
+  const meetRow = (m) => {
+    const proj = projById(m.project_id);
+    const cli = clientById(m.client_id) || (proj ? clientById(proj.client_id) : null);
+    return `<li>
+      <span class="rowlist__when">${fmtTime(m.starts_at)}</span>
+      <span class="rowlist__main">
+        <span class="rowlist__title"><button type="button" class="btn-link" style="text-transform:none;font-family:var(--sans);font-size:14px;letter-spacing:0" data-action="editMeeting" data-id="${m.id}">${esc(m.title)}</button></span>
+        <span class="rowlist__sub">${esc([proj && proj.name, cli && cli.name].filter(Boolean).join(' · ') || '')}${m.topics ? ' — ' + esc(m.topics) : ''}</span>
+      </span>
+    </li>`;
+  };
+  const meetRowW = (m) => `<li>
+      <span class="rowlist__when">${fmtDateShort(toISODate(new Date(m.starts_at)))} ${fmtTime(m.starts_at)}</span>
+      <span class="rowlist__main">
+        <span class="rowlist__title"><button type="button" class="btn-link" style="text-transform:none;font-family:var(--sans);font-size:14px;letter-spacing:0" data-action="editMeeting" data-id="${m.id}">${esc(m.title)}</button></span>
+        ${m.topics ? `<span class="rowlist__sub">${esc(m.topics)}</span>` : ''}
+      </span>
+    </li>`;
+  const taskRow = (t, late) => `<li class="${late ? 'is-late' : ''}">
+      <span class="rowlist__when">${t.due_date ? fmtDateShort(t.due_date) : '—'}</span>
+      <span class="rowlist__main">
+        <span class="rowlist__title"><button type="button" class="btn-link" style="text-transform:none;font-family:var(--sans);font-size:14px;letter-spacing:0" data-action="editTask" data-id="${t.id}">${esc(t.title)}</button></span>
+        <span class="rowlist__sub">${esc(memberName(t.assignee_email))}${t.project_id ? ' · ' + esc((projById(t.project_id) || {}).name || '') : ''}</span>
+      </span>
+    </li>`;
+
+  const pipeline = STATUSES.map((s) => {
+    const n = state.projects.filter((p) => p.status === s).length;
+    return `<span class="daybar__item"><b>${n}</b> ${esc(STATUS_LABEL[s].toLowerCase())}</span>`;
+  }).join('');
+
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">${esc(dstr)}</p>
+      <h1 class="view-title">${hello}, ${esc(firstName(state.me.name))}.</h1>
+    </div>
+    <div class="view-actions">
+      <button type="button" class="btn-ghost" data-action="newTask">+ Tarefa</button>
+      <button type="button" class="btn-ghost" data-action="newMeeting">+ Reunião</button>
+      <button type="button" class="btn-solid" data-action="newProject">+ Projeto</button>
+    </div>
+  </div>
+
+  ${daybar}
+
+  <div class="rule-grid" style="grid-template-columns:repeat(4,1fr)" id="dash-stats">
+    <div class="stat"><span class="label label--blue">Recebido no mês</span><span class="stat__value">${fmtBRL(recMonth)}</span></div>
+    <div class="stat"><span class="label label--ochre">A receber no mês</span><span class="stat__value">${fmtBRL(prevMonth)}</span></div>
+    <div class="stat ${lateAll ? 'stat--late' : ''}"><span class="label ${lateAll ? '' : 'label--soft'}" ${lateAll ? 'style="color:var(--red)"' : ''}>Em atraso</span><span class="stat__value">${fmtBRL(lateAll)}</span></div>
+    <div class="stat"><span class="label label--soft">Tarefas abertas</span><span class="stat__value">${openTasks.length}</span><span class="stat__hint">${tasksLate.length ? tasksLate.length + ' atrasada(s)' : 'nenhuma atrasada'}</span></div>
+  </div>
+
+  <div class="grid-2" style="margin-top:24px">
+    <div class="card">
+      <div class="card__head"><span class="label label--ochre">Hoje</span>
+        <a class="btn-link" href="#/agenda">Agenda →</a></div>
+      ${meetToday.length ? `<ul class="rowlist">${meetToday.map(meetRow).join('')}</ul>` : '<p class="empty">Nenhuma reunião hoje.</p>'}
+      ${(tasksLate.length || tasksToday.length) ? `<div class="card__head" style="border-top:1px solid var(--line)"><span class="label label--soft">Tarefas do dia</span></div>
+      <ul class="rowlist">${tasksLate.map((t) => taskRow(t, true)).join('')}${tasksToday.map((t) => taskRow(t, false)).join('')}</ul>` : ''}
+    </div>
+
+    <div class="card">
+      <div class="card__head"><span class="label label--blue">Próximos 7 dias</span>
+        <a class="btn-link" href="#/tarefas">Tarefas →</a></div>
+      ${meetWeek.length ? `<ul class="rowlist">${meetWeek.map(meetRowW).join('')}</ul>` : '<p class="empty">Sem reuniões na semana.</p>'}
+      ${tasksWeek.length ? `<div class="card__head" style="border-top:1px solid var(--line)"><span class="label label--soft">Tarefas da semana</span></div>
+      <ul class="rowlist">${tasksWeek.map((t) => taskRow(t, false)).join('')}</ul>` : ''}
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <div class="card__head"><span class="label label--ochre">Pipeline</span>
+      <a class="btn-link" href="#/crm">Abrir CRM →</a></div>
+    <div class="card__body" style="display:flex;gap:8px 24px;flex-wrap:wrap">${pipeline}</div>
+  </div>`;
+};
+
+/* ═══ CRM (kanban) ═════════════════════════════════════════════════ */
+VIEWS.crm = function () {
+  const cols = STATUSES.map((s) => {
+    const items = state.projects.filter((p) => p.status === s);
+    const idx = STATUSES.indexOf(s);
+    const cards = items.map((p) => {
+      const cli = clientById(p.client_id);
+      const val = projectValue(p);
+      return `<div class="kcard" data-action="openProject" data-id="${p.id}" role="link" tabindex="0">
+        <div class="kcard__name">${esc(p.name)}</div>
+        ${cli ? `<div class="kcard__client">${esc(cli.name)}${cli.company ? ' · ' + esc(cli.company) : ''}</div>` : ''}
+        ${val ? `<div class="kcard__value">${fmtBRL(val)}</div>` : ''}
+        <div class="kcard__foot">
+          <span class="label label--soft" style="font-size:9.5px">${fmtDateShort(String(p.created_at).slice(0, 10))}</span>
+          <span class="kcard__move">
+            <button type="button" data-action="moveStatus" data-id="${p.id}" data-dir="-1" ${idx === 0 ? 'disabled' : ''} aria-label="Voltar etapa" title="Voltar etapa">‹</button>
+            <button type="button" data-action="moveStatus" data-id="${p.id}" data-dir="1" ${idx === STATUSES.length - 1 ? 'disabled' : ''} aria-label="Avançar etapa" title="Avançar etapa">›</button>
+          </span>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="kanban__col">
+      <div class="kanban__head">
+        <span class="label ${s === 'fechado' || s === 'concluido' ? 'label--blue' : s === 'perdido' ? 'label--soft' : 'label--ochre'}">${esc(STATUS_LABEL[s])}</span>
+        <span class="mono soft" style="font-size:11px">${items.length}</span>
+      </div>
+      <div class="kanban__cards">${cards || '<p class="empty" style="padding:8px 4px">—</p>'}</div>
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">Quem entrou em contato → proposta → contrato</p>
+      <h1 class="view-title">CRM · Propostas</h1>
+    </div>
+    <div class="view-actions">
+      <button type="button" class="btn-ghost" data-action="newClient">+ Cliente</button>
+      <button type="button" class="btn-solid" data-action="newProject">+ Projeto / proposta</button>
+    </div>
+  </div>
+  <div class="kanban">${cols}</div>`;
+};
+
+/* ═══ Clientes ═════════════════════════════════════════════════════ */
+VIEWS.clientes = function () {
+  const rows = state.clients.map((c) => {
+    const projs = state.projects.filter((p) => p.client_id === c.id);
+    return `<tr class="is-clickable" data-action="editClient" data-id="${c.id}">
+      <td><b>${esc(c.name)}</b>${c.company ? `<br /><span class="mono soft" style="font-size:11px">${esc(c.company)}</span>` : ''}</td>
+      <td class="mono" style="font-size:12px">${esc(c.email || '')}${c.email && c.phone ? '<br />' : ''}${esc(c.phone || '')}</td>
+      <td>${esc(c.origin || '—')}</td>
+      <td>${projs.length ? projs.map((p) => `<button type="button" class="btn-link" style="text-transform:none;letter-spacing:0" data-action="openProject" data-id="${p.id}">${esc(p.name)}</button>`).join('<br />') : '<span class="soft">—</span>'}</td>
+      <td class="actions"><button type="button" class="btn-mini" data-action="editClient" data-id="${c.id}">Editar</button></td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">${state.clients.length} cadastrado${state.clients.length === 1 ? '' : 's'}</p>
+      <h1 class="view-title">Clientes</h1>
+    </div>
+    <div class="view-actions">
+      <button type="button" class="btn-solid" data-action="newClient">+ Cliente</button>
+    </div>
+  </div>
+  <div class="card card__body--flush">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Nome</th><th>Contato</th><th>Origem</th><th>Projetos</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="5" class="empty">Nenhum cliente ainda. Cadastre o primeiro.</td></tr>'}</tbody>
+    </table>
+    </div>
+  </div>`;
+};
+
+/* ═══ Projeto (detalhe) ════════════════════════════════════════════ */
+VIEWS.projeto = function (route) {
+  const p = projById(route.id);
+  if (!p) return '<p class="empty">Projeto não encontrado. <a href="#/crm">Voltar ao CRM</a></p>';
+  const cli = clientById(p.client_id);
+
+  const statusOpts = STATUSES.map((s) => `<option value="${s}" ${p.status === s ? 'selected' : ''}>${esc(STATUS_LABEL[s])}</option>`).join('');
+  const clientOpts = ['<option value="">— sem cliente —</option>']
+    .concat(state.clients.map((c) => `<option value="${c.id}" ${p.client_id === c.id ? 'selected' : ''}>${esc(c.name)}</option>`)).join('');
+
+  /* pagamentos */
+  const pays = paymentsOf(p.id);
+  const totalPays = pays.reduce((s, x) => s + N(x.amount), 0);
+  const totM = pays.reduce((s, x) => s + N(x.amount) * paySplitM(x) / 100, 0);
+  const totB = pays.reduce((s, x) => s + N(x.amount) * paySplitB(x) / 100, 0);
+  const payRows = pays.map((x) => {
+    const st = payState(x);
+    return `<tr>
+      <td class="mono" style="font-size:12px">${fmtDate(x.due_date)}${x.status === 'pago' && x.paid_at ? `<br /><span class="soft" style="font-size:10px">pago ${fmtDate(x.paid_at)}</span>` : ''}</td>
+      <td>${esc(x.description || 'Parcela')}${x.notes ? `<br /><span class="mono soft" style="font-size:10.5px">${esc(x.notes)}</span>` : ''}</td>
+      <td class="num">${fmtBRL(x.amount)}</td>
+      <td class="num soft" style="font-size:12px">${paySplitM(x)}% / ${paySplitB(x)}%</td>
+      <td><span class="chip chip--${st}">${st}</span></td>
+      <td class="actions">
+        ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="markPaid" data-id="${x.id}">Marcar pago</button>` : ''}
+        <button type="button" class="btn-mini" data-action="editPayment" data-id="${x.id}">Editar</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  /* reuniões */
+  const meets = meetingsOf(p.id);
+  const meetItems = meets.map((m) => `<li>
+      <span class="rowlist__when">${fmtDateShort(toISODate(new Date(m.starts_at)))} ${fmtTime(m.starts_at)}</span>
+      <span class="rowlist__main">
+        <span class="rowlist__title">${esc(m.title)}</span>
+        ${m.topics ? `<span class="rowlist__sub">Pauta: ${esc(m.topics)}</span>` : ''}
+        ${m.minutes ? `<span class="rowlist__sub" style="color:var(--ink)">Proposto: ${esc(m.minutes)}</span>` : ''}
+      </span>
+      <button type="button" class="btn-mini" data-action="editMeeting" data-id="${m.id}">Editar</button>
+    </li>`).join('');
+
+  /* devolutivas & combinados */
+  const notes = notesOf(p.id);
+  const noteItems = notes.map((n) => `<li>
+      <div class="timeline__meta">
+        <span class="chip chip--${n.kind === 'devolutiva' ? 'devolutiva' : n.kind === 'combinado' ? 'combinado' : ''}">${esc(NOTE_KINDS[n.kind] || n.kind)}</span>
+        <span class="timeline__when">${fmtDT(n.created_at)} · ${esc(firstName(memberName(n.author_email)))}</span>
+        <button type="button" class="btn-mini btn-mini--danger" data-action="deleteNote" data-id="${n.id}" style="margin-left:auto">Excluir</button>
+      </div>
+      <div class="timeline__content">${esc(n.content)}</div>
+    </li>`).join('');
+
+  /* tarefas */
+  const ptasks = tasksOf(p.id);
+  const taskItems = ptasks.map((t) => `
+    <div class="task ${t.done ? 'task--done' : ''}">
+      <input type="checkbox" class="task__check" data-action="toggleTask" data-id="${t.id}" ${t.done ? 'checked' : ''} aria-label="Concluir tarefa" />
+      <div class="task__main">
+        <div class="task__title">${esc(t.title)}</div>
+        <div class="task__sub">${esc(firstName(memberName(t.assignee_email)))}${t.due_date ? ` · <span class="${!t.done && t.due_date < todayISO() ? 'late' : ''}">${fmtDate(t.due_date)}</span>` : ''}</div>
+      </div>
+      <button type="button" class="btn-mini" data-action="editTask" data-id="${t.id}">Editar</button>
+    </div>`).join('');
+
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow"><a href="#/crm">CRM</a> / projeto</p>
+      <h1 class="view-title">${esc(p.name)}</h1>
+      <div class="proj-meta">
+        <span class="proj-status"><select data-change="projectStatus" data-id="${p.id}" aria-label="Etapa no CRM">${statusOpts}</select></span>
+        ${cli ? `<span class="mono soft" style="font-size:12px">${esc(cli.name)}${cli.company ? ' · ' + esc(cli.company) : ''}</span>` : ''}
+        ${p.site_url ? `<a class="btn-link" href="${esc(p.site_url)}" target="_blank" rel="noopener">Site ↗</a>` : ''}
+        <span class="doc-links">
+          ${p.proposal_url ? `<a class="btn-mini" href="${esc(p.proposal_url)}" target="_blank" rel="noopener">Consultar proposta ↗</a>` : ''}
+          ${p.contract_url ? `<a class="btn-mini" href="${esc(p.contract_url)}" target="_blank" rel="noopener">Consultar contrato ↗</a>` : ''}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card__head"><span class="label label--ochre">Dados &amp; valores</span></div>
+      <div class="card__body">
+        <form id="proj-form" data-submit="saveProject" data-id="${p.id}">
+          <div class="form-grid">
+            <div class="field span2"><label for="pf-name">Nome do projeto / site</label>
+              <input id="pf-name" name="name" required value="${esc(p.name)}" /></div>
+            <div class="field"><label for="pf-client">Cliente</label>
+              <select id="pf-client" name="client_id">${clientOpts}</select></div>
+            <div class="field"><label for="pf-site">URL do site</label>
+              <input id="pf-site" name="site_url" type="url" placeholder="https://…" value="${esc(p.site_url || '')}" /></div>
+            <div class="field"><label for="pf-pp">Preço proposto (R$)</label>
+              <input id="pf-pp" name="price_proposed" type="number" step="0.01" min="0" value="${p.price_proposed ?? ''}" /></div>
+            <div class="field"><label for="pf-pf">Preço final (R$)</label>
+              <input id="pf-pf" name="price_final" type="number" step="0.01" min="0" value="${p.price_final ?? ''}" /></div>
+            <div class="field span2"><label for="pf-terms">Condições de pagamento</label>
+              <textarea id="pf-terms" name="payment_terms" placeholder="Ex.: 40% na assinatura, 30% na entrega intermediária, 30% na entrega final.">${esc(p.payment_terms || '')}</textarea></div>
+            <div class="field"><label for="pf-sm">Divisão — Matheus (%)</label>
+              <input id="pf-sm" name="split_matheus" type="number" step="0.5" min="0" max="100" value="${p.split_matheus ?? 50}" data-change="splitM" /></div>
+            <div class="field"><label for="pf-sb">Divisão — Bruno (%)</label>
+              <input id="pf-sb" name="split_bruno" type="number" step="0.5" min="0" max="100" value="${p.split_bruno ?? 50}" /></div>
+            <div class="field"><label for="pf-purl">URL da proposta (HTML no site)</label>
+              <input id="pf-purl" name="proposal_url" placeholder="/proposta-…" value="${esc(p.proposal_url || '')}" /></div>
+            <div class="field"><label for="pf-curl">URL do contrato (HTML no site)</label>
+              <input id="pf-curl" name="contract_url" placeholder="/proposta-…#contrato" value="${esc(p.contract_url || '')}" /></div>
+            <div class="field span2"><label for="pf-desc">Observações relevantes</label>
+              <textarea id="pf-desc" name="description" placeholder="Escopo, contexto, qualquer informação relevante do projeto.">${esc(p.description || '')}</textarea></div>
+          </div>
+          <div class="form-foot"><button type="submit" class="btn-solid">Salvar alterações</button></div>
+        </form>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card__head"><span class="label label--blue">Devolutivas &amp; combinados</span>
+          <button type="button" class="btn-mini" data-action="newNote" data-project="${p.id}">+ Registro</button></div>
+        ${notes.length ? `<ul class="timeline">${noteItems}</ul>` : '<p class="empty">Registre devolutivas do cliente e o que foi combinado nas conversas.</p>'}
+      </div>
+
+      <div class="card" style="margin-top:24px">
+        <div class="card__head"><span class="label label--blue">Reuniões</span>
+          <button type="button" class="btn-mini" data-action="newMeeting" data-project="${p.id}">+ Reunião</button></div>
+        ${meets.length ? `<ul class="rowlist">${meetItems}</ul>` : '<p class="empty">Sem reuniões registradas para este projeto.</p>'}
+      </div>
+
+      <div class="card" style="margin-top:24px">
+        <div class="card__head"><span class="label label--ochre">Tarefas do projeto</span>
+          <button type="button" class="btn-mini" data-action="newTask" data-project="${p.id}">+ Tarefa</button></div>
+        ${ptasks.length ? taskItems : '<p class="empty">Nenhuma tarefa vinculada.</p>'}
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <div class="card__head"><span class="label label--ochre">Pagamentos · dias e divisão</span>
+      <button type="button" class="btn-mini" data-action="newPayment" data-project="${p.id}">+ Parcela</button></div>
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Vencimento</th><th>Descrição</th><th class="num">Valor</th><th class="num">M / B</th><th>Situação</th><th></th></tr></thead>
+      <tbody>${payRows || `<tr><td colspan="6" class="empty">Cadastre as parcelas com dia de pagamento e divisão entre vocês.</td></tr>`}</tbody>
+      ${pays.length ? `<tfoot><tr>
+        <td colspan="2">Total</td>
+        <td class="num">${fmtBRL(totalPays)}</td>
+        <td colspan="3" class="num">Matheus ${fmtBRL(totM)} · Bruno ${fmtBRL(totB)}</td>
+      </tr></tfoot>` : ''}
+    </table>
+    </div>
+  </div>
+
+  <div class="danger-zone">
+    <button type="button" class="btn-mini btn-mini--danger" data-action="deleteProject" data-id="${p.id}">Excluir projeto</button>
+  </div>`;
+};
+
+/* ═══ Financeiro ═══════════════════════════════════════════════════ */
+function finRange() {
+  const t = new Date();
+  const y = t.getFullYear(), m = t.getMonth();
+  switch (ui.finPreset) {
+    case 'mes':   return [new Date(y, m, 1), new Date(y, m + 1, 0)];
+    case 'prox3': return [new Date(y, m, 1), new Date(y, m + 3, 0)];
+    case 'prox6': return [new Date(y, m, 1), new Date(y, m + 6, 0)];
+    case 'ano':   return [new Date(y, 0, 1), new Date(y, 11, 31)];
+    case 'custom': {
+      const from = parseISO(ui.finFrom) || new Date(y, m, 1);
+      const to = parseISO(ui.finTo) || new Date(y, m + 3, 0);
+      return from <= to ? [from, to] : [to, from];
+    }
+    case 'tudo':
+    default: {
+      if (!state.payments.length) return [new Date(y, m, 1), new Date(y, m + 1, 0)];
+      const dates = state.payments.map((p) => payDate(p)).sort();
+      const a = parseISO(dates[0]);
+      const b = parseISO(dates[dates.length - 1]);
+      return [new Date(a.getFullYear(), a.getMonth(), 1), new Date(b.getFullYear(), b.getMonth() + 1, 0)];
+    }
+  }
+}
+
+function monthsBetween(from, to) {
+  const out = [];
+  let y = from.getFullYear(), m = from.getMonth();
+  const endKey = to.getFullYear() * 12 + to.getMonth();
+  while (y * 12 + m <= endKey) {
+    out.push({ y, m, key: y + '-' + pad(m + 1) });
+    m++; if (m > 11) { m = 0; y++; }
+  }
+  return out;
+}
+
+VIEWS.financeiro = function () {
+  const [from, to] = finRange();
+  const fromISO = toISODate(from), toISO = toISODate(to);
+  const inRange = state.payments.filter((p) => {
+    const d = payDate(p);
+    return d >= fromISO && d <= toISO;
+  });
+  const shown = inRange.filter((p) => ui.finStatus === 'todos' || payState(p) === ui.finStatus);
+
+  const rec = inRange.filter((p) => p.status === 'pago').reduce((s, p) => s + N(p.amount), 0);
+  const prev = inRange.filter((p) => p.status !== 'pago').reduce((s, p) => s + N(p.amount), 0);
+  const late = inRange.filter((p) => payState(p) === 'atrasado').reduce((s, p) => s + N(p.amount), 0);
+  const shareM = inRange.reduce((s, p) => s + N(p.amount) * paySplitM(p) / 100, 0);
+  const shareB = inRange.reduce((s, p) => s + N(p.amount) * paySplitB(p) / 100, 0);
+  const accAll = state.payments.filter((p) => p.status === 'pago').reduce((s, p) => s + N(p.amount), 0);
+
+  const presets = [['mes', 'Este mês'], ['prox3', 'Próximos 3 meses'], ['prox6', 'Próximos 6 meses'], ['ano', 'Este ano'], ['tudo', 'Tudo'], ['custom', 'Personalizado']];
+  const stats = [['todos', 'Todas'], ['previsto', 'Previstas'], ['pago', 'Pagas'], ['atrasado', 'Atrasadas']];
+
+  const rows = shown.map((x) => {
+    const proj = projById(x.project_id);
+    const st = payState(x);
+    return `<tr>
+      <td class="mono" style="font-size:12px">${fmtDate(payDate(x))}</td>
+      <td>${proj ? `<button type="button" class="btn-link" style="text-transform:none;letter-spacing:0" data-action="openProject" data-id="${proj.id}">${esc(proj.name)}</button>` : '—'}<br /><span class="mono soft" style="font-size:10.5px">${esc(x.description || 'Parcela')}</span></td>
+      <td class="num">${fmtBRL(x.amount)}</td>
+      <td class="num soft" style="font-size:12px">${fmtBRL(N(x.amount) * paySplitM(x) / 100)}</td>
+      <td class="num soft" style="font-size:12px">${fmtBRL(N(x.amount) * paySplitB(x) / 100)}</td>
+      <td><span class="chip chip--${st}">${st}</span></td>
+      <td class="actions">
+        ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="markPaid" data-id="${x.id}">Marcar pago</button>` : ''}
+        <button type="button" class="btn-mini" data-action="editPayment" data-id="${x.id}">Editar</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">${fmtDate(fromISO)} — ${fmtDate(toISO)}</p>
+      <h1 class="view-title">Financeiro</h1>
+    </div>
+    <div class="view-actions">
+      <button type="button" class="btn-solid" data-action="newPayment">+ Parcela</button>
+    </div>
+  </div>
+
+  <div class="fin-filters">
+    <div class="field"><label for="fin-preset">Período</label>
+      <select id="fin-preset" data-change="finPreset">
+        ${presets.map(([v, l]) => `<option value="${v}" ${ui.finPreset === v ? 'selected' : ''}>${l}</option>`).join('')}
+      </select></div>
+    ${ui.finPreset === 'custom' ? `
+    <div class="field"><label for="fin-from">De</label>
+      <input id="fin-from" type="date" value="${esc(ui.finFrom)}" data-change="finFrom" /></div>
+    <div class="field"><label for="fin-to">Até</label>
+      <input id="fin-to" type="date" value="${esc(ui.finTo)}" data-change="finTo" /></div>` : ''}
+    <div class="field"><label for="fin-status">Situação (tabela)</label>
+      <select id="fin-status" data-change="finStatus">
+        ${stats.map(([v, l]) => `<option value="${v}" ${ui.finStatus === v ? 'selected' : ''}>${l}</option>`).join('')}
+      </select></div>
+  </div>
+
+  <div class="rule-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat"><span class="label label--blue">Recebido no período</span><span class="stat__value">${fmtBRL(rec)}</span></div>
+    <div class="stat"><span class="label label--ochre">A receber no período</span><span class="stat__value">${fmtBRL(prev)}</span></div>
+    <div class="stat ${late ? 'stat--late' : ''}"><span class="label" style="color:${late ? 'var(--red)' : 'var(--ink-soft)'}">Em atraso no período</span><span class="stat__value">${fmtBRL(late)}</span></div>
+    <div class="stat"><span class="label label--soft">Matheus no período</span><span class="stat__value">${fmtBRL(shareM)}</span><span class="stat__hint">divisão por parcela (ou do projeto)</span></div>
+    <div class="stat"><span class="label label--soft">Bruno no período</span><span class="stat__value">${fmtBRL(shareB)}</span><span class="stat__hint">divisão por parcela (ou do projeto)</span></div>
+    <div class="stat"><span class="label label--soft">Acumulado recebido (total)</span><span class="stat__value">${fmtBRL(accAll)}</span><span class="stat__hint">desde o início, fora do filtro</span></div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <div class="card__head">
+      <span class="label label--ochre">Entradas por mês</span>
+      <span class="filter-row" style="margin:0">
+        <button type="button" class="fchip ${ui.chartMode === 'mensal' ? 'on' : ''}" data-action="chartMode" data-mode="mensal">Mensal</button>
+        <button type="button" class="fchip ${ui.chartMode === 'acumulado' ? 'on' : ''}" data-action="chartMode" data-mode="acumulado">Acumulado</button>
+      </span>
+    </div>
+    ${renderFinChart(from, to)}
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <div class="card__head"><span class="label label--blue">Parcelas no período</span>
+      <span class="mono soft" style="font-size:11px">${shown.length} parcela${shown.length === 1 ? '' : 's'}</span></div>
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Data</th><th>Projeto</th><th class="num">Valor</th><th class="num">Matheus</th><th class="num">Bruno</th><th>Situação</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="7" class="empty">Nenhuma parcela no período/filtro.</td></tr>'}</tbody>
+    </table>
+    </div>
+  </div>`;
+};
+
+/* Gráfico SVG: barras empilhadas (mensal) ou linhas de acumulado. */
+function renderFinChart(from, to) {
+  let months = monthsBetween(from, to);
+  let truncated = 0;
+  if (months.length > 24) { truncated = months.length - 24; months = months.slice(-24); }
+  if (!months.length) return '<p class="empty">Sem meses no período.</p>';
+
+  const byMonth = months.map(({ y, m, key }) => {
+    let recM = 0, prevM = 0;
+    for (const p of state.payments) {
+      const d = String(payDate(p)).slice(0, 7);
+      if (d !== key) continue;
+      if (p.status === 'pago') recM += N(p.amount); else prevM += N(p.amount);
+    }
+    return { y, m, key, rec: recM, prev: prevM };
+  });
+
+  const W = 760, H = 264, L = 64, R = 14, T = 22, B = 30;
+  const iw = W - L - R, ih = H - T - B;
+  const n = byMonth.length;
+  const slot = iw / n;
+
+  let svgBody = '', legend = '', hoverRects = '';
+
+  if (ui.chartMode === 'mensal') {
+    const maxV = Math.max(1, ...byMonth.map((d) => d.rec + d.prev));
+    const yMax = niceCeil(maxV);
+    const yFor = (v) => T + ih - (v / yMax) * ih;
+
+    let grid = '';
+    for (let i = 0; i <= 4; i++) {
+      const v = yMax * i / 4;
+      const yy = yFor(v);
+      grid += `<line x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}" stroke="var(--line)" stroke-width="1" />
+        <text x="${L - 8}" y="${yy + 3}" text-anchor="end" font-size="10" font-family="IBM Plex Mono, monospace" fill="#57544C">${fmtK(v)}</text>`;
+    }
+
+    const bw = Math.min(slot * 0.58, 58);
+    let bars = '';
+    byMonth.forEach((d, i) => {
+      const cx = L + slot * i + slot / 2;
+      const x = cx - bw / 2;
+      const hRec = (d.rec / yMax) * ih;
+      const hPrev = (d.prev / yMax) * ih;
+      const yRec = T + ih - hRec;
+      /* 2px de respiro entre os segmentos empilhados */
+      const yPrev = yRec - (hPrev > 0 && hRec > 0 ? 2 : 0) - hPrev;
+      if (d.rec > 0) bars += `<rect x="${x}" y="${yRec}" width="${bw}" height="${Math.max(1, hRec)}" fill="var(--data-blue)" />`;
+      if (d.prev > 0) bars += `<rect x="${x}" y="${yPrev}" width="${bw}" height="${Math.max(1, hPrev)}" fill="var(--data-ochre)" />`;
+      const total = d.rec + d.prev;
+      if (n <= 9 && total > 0) {
+        bars += `<text x="${cx}" y="${Math.min(yRec, yPrev) - 6}" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="#57544C">${fmtK(total)}</text>`;
+      }
+      bars += `<text x="${cx}" y="${H - 10}" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="#57544C">${MONTHS_S[d.m]}${d.m === 0 || i === 0 ? '/' + String(d.y).slice(2) : ''}</text>`;
+      hoverRects += `<rect x="${L + slot * i}" y="${T}" width="${slot}" height="${ih}" fill="transparent"
+        data-tip="${esc(`<b>${MONTHS_S[d.m]}/${d.y}</b><br />Recebido: ${fmtBRL(d.rec)}<br />A receber: ${fmtBRL(d.prev)}<br />Total: ${fmtBRL(total)}`)}" />`;
+    });
+
+    svgBody = grid + bars;
+    legend = `<span><i style="background:var(--data-blue)"></i> Recebido</span>
+              <span><i style="background:var(--data-ochre)"></i> A receber (previsto)</span>`;
+  } else {
+    /* Acumulado: linha do realizado + projeção somando previstos. */
+    const startKey = byMonth[0].key;
+    let base = 0;
+    for (const p of state.payments) {
+      if (p.status === 'pago' && String(payDate(p)).slice(0, 7) < startKey) base += N(p.amount);
+    }
+    let cum = base;
+    const ptsReal = [];
+    byMonth.forEach((d) => { cum += d.rec; ptsReal.push(cum); });
+    let cumP = base;
+    const ptsProj = [];
+    byMonth.forEach((d) => { cumP += d.rec + d.prev; ptsProj.push(cumP); });
+
+    const maxV = Math.max(1, ptsProj[ptsProj.length - 1], ptsReal[ptsReal.length - 1]);
+    const yMax = niceCeil(maxV);
+    const yFor = (v) => T + ih - (v / yMax) * ih;
+    const xFor = (i) => L + slot * i + slot / 2;
+
+    let grid = '';
+    for (let i = 0; i <= 4; i++) {
+      const v = yMax * i / 4;
+      const yy = yFor(v);
+      grid += `<line x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}" stroke="var(--line)" stroke-width="1" />
+        <text x="${L - 8}" y="${yy + 3}" text-anchor="end" font-size="10" font-family="IBM Plex Mono, monospace" fill="#57544C">${fmtK(v)}</text>`;
+    }
+
+    const lineOf = (pts) => pts.map((v, i) => `${xFor(i)},${yFor(v)}`).join(' ');
+    let lines = `<polyline points="${lineOf(ptsProj)}" fill="none" stroke="var(--data-ochre)" stroke-width="2" stroke-dasharray="5 4" />
+      <polyline points="${lineOf(ptsReal)}" fill="none" stroke="var(--data-blue)" stroke-width="2" />`;
+    byMonth.forEach((d, i) => {
+      lines += `<circle cx="${xFor(i)}" cy="${yFor(ptsReal[i])}" r="3.5" fill="var(--data-blue)" stroke="var(--paper)" stroke-width="2" />`;
+      lines += `<text x="${xFor(i)}" y="${H - 10}" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="#57544C">${MONTHS_S[d.m]}${d.m === 0 || i === 0 ? '/' + String(d.y).slice(2) : ''}</text>`;
+      hoverRects += `<rect x="${L + slot * i}" y="${T}" width="${slot}" height="${ih}" fill="transparent"
+        data-tip="${esc(`<b>${MONTHS_S[d.m]}/${d.y}</b><br />Acumulado recebido: ${fmtBRL(ptsReal[i])}<br />Com previstos: ${fmtBRL(ptsProj[i])}`)}" />`;
+    });
+
+    svgBody = grid + lines;
+    legend = `<span><i style="background:var(--data-blue)"></i> Acumulado recebido</span>
+              <span><i style="background:var(--data-ochre);"></i> Projeção com previstos</span>`;
+  }
+
+  return `
+    <div class="chart-legend">${legend}${truncated ? `<span class="soft">(${truncated} mês(es) mais antigos fora do gráfico)</span>` : ''}</div>
+    <div class="chart-box">
+      <svg id="fin-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Entradas por mês">
+        ${svgBody}
+        <line x1="${L}" x2="${W - R}" y1="${T + ih}" y2="${T + ih}" stroke="#14171A" stroke-width="1" />
+        ${hoverRects}
+      </svg>
+    </div>`;
+}
+
+function niceCeil(v) {
+  const p = Math.pow(10, Math.floor(Math.log10(v)));
+  const r = v / p;
+  const step = r <= 1 ? 1 : r <= 2 ? 2 : r <= 2.5 ? 2.5 : r <= 5 ? 5 : 10;
+  return step * p;
+}
+
+function bindChartTooltip(svg) {
+  const tip = $('#chart-tip');
+  svg.addEventListener('mousemove', (e) => {
+    const r = e.target.closest('rect[data-tip]');
+    if (!r) { tip.style.display = 'none'; return; }
+    tip.innerHTML = r.dataset.tip;
+    tip.style.display = 'block';
+    const pad = 14;
+    let x = e.clientX + pad, y = e.clientY + pad;
+    const bw = tip.offsetWidth, bh = tip.offsetHeight;
+    if (x + bw > window.innerWidth - 8) x = e.clientX - bw - pad;
+    if (y + bh > window.innerHeight - 8) y = e.clientY - bh - pad;
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  });
+  svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+}
+
+/* ═══ Agenda ═══════════════════════════════════════════════════════ */
+VIEWS.agenda = function () {
+  const { agendaY: y, agendaM: m } = ui;
+  const first = new Date(y, m, 1);
+  const offset = (first.getDay() + 6) % 7; /* semana começa na segunda */
+  const daysIn = new Date(y, m + 1, 0).getDate();
+  const today = todayISO();
+
+  const byDay = {};
+  for (const mt of state.meetings) {
+    const d = toISODate(new Date(mt.starts_at));
+    (byDay[d] = byDay[d] || []).push(mt);
+  }
+
+  let cells = DOW.map((d) => `<div class="cal__dow">${d}</div>`).join('');
+  for (let i = 0; i < offset; i++) cells += '<div class="cal__day cal__day--off"></div>';
+  for (let d = 1; d <= daysIn; d++) {
+    const iso = y + '-' + pad(m + 1) + '-' + pad(d);
+    const evts = (byDay[iso] || []).map((mt) =>
+      `<button type="button" class="cal__evt" data-action="editMeeting" data-id="${mt.id}" title="${esc(mt.title)}">${fmtTime(mt.starts_at)} ${esc(mt.title)}</button>`).join('');
+    cells += `<div class="cal__day ${iso === today ? 'cal__day--today' : ''}" data-action="newMeeting" data-date="${iso}" role="button" tabindex="0" aria-label="Nova reunião em ${fmtDate(iso)}">
+      <span class="cal__num">${d}</span>
+      <div class="cal__evts">${evts}</div>
+    </div>`;
+  }
+  const trailing = (offset + daysIn) % 7;
+  if (trailing) for (let i = trailing; i < 7; i++) cells += '<div class="cal__day cal__day--off"></div>';
+
+  const upcoming = state.meetings
+    .filter((mt) => new Date(mt.starts_at) >= new Date(Date.now() - 3600e3))
+    .slice(0, 10)
+    .map((mt) => {
+      const proj = projById(mt.project_id);
+      const cli = clientById(mt.client_id) || (proj ? clientById(proj.client_id) : null);
+      return `<li>
+        <span class="rowlist__when">${fmtDateShort(toISODate(new Date(mt.starts_at)))} ${fmtTime(mt.starts_at)}</span>
+        <span class="rowlist__main">
+          <span class="rowlist__title">${esc(mt.title)}</span>
+          <span class="rowlist__sub">${esc([proj && proj.name, cli && cli.name, mt.location].filter(Boolean).join(' · '))}${mt.topics ? ' — pauta: ' + esc(mt.topics) : ''}</span>
+        </span>
+        <button type="button" class="btn-mini" data-action="editMeeting" data-id="${mt.id}">Abrir</button>
+      </li>`;
+    }).join('');
+
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">Reuniões, pautas e atas</p>
+      <h1 class="view-title">Agenda</h1>
+    </div>
+    <div class="view-actions">
+      <button type="button" class="btn-solid" data-action="newMeeting">+ Reunião</button>
+    </div>
+  </div>
+
+  <div class="cal-head">
+    <span class="cal-title">${MONTHS[m]} ${y}</span>
+    <span class="cal-nav">
+      <button type="button" class="btn-mini" data-action="calNav" data-dir="-1" aria-label="Mês anterior">‹</button>
+      <button type="button" class="btn-mini" data-action="calNav" data-dir="0">Hoje</button>
+      <button type="button" class="btn-mini" data-action="calNav" data-dir="1" aria-label="Próximo mês">›</button>
+    </span>
+  </div>
+  <div class="cal">${cells}</div>
+  <p class="field__hint" style="margin-top:8px">Clique num dia para marcar reunião; clique numa reunião para editar pauta e ata.</p>
+
+  <div class="card" style="margin-top:28px">
+    <div class="card__head"><span class="label label--blue">Próximas reuniões</span></div>
+    ${upcoming ? `<ul class="rowlist">${upcoming}</ul>` : '<p class="empty">Nada agendado à frente.</p>'}
+  </div>`;
+};
+
+/* ═══ Tarefas ══════════════════════════════════════════════════════ */
+VIEWS.tarefas = function () {
+  const today = todayISO();
+  const in7 = toISODate(new Date(Date.now() + 7 * 864e5));
+  let tasks = state.tasks;
+  if (ui.taskFilter !== 'todas') tasks = tasks.filter((t) => String(t.assignee_email || '').toLowerCase() === ui.taskFilter);
+
+  const open = tasks.filter((t) => !t.done);
+  const done = tasks.filter((t) => t.done);
+  const secs = [
+    ['Atrasadas', open.filter((t) => t.due_date && t.due_date < today), 'var(--red)'],
+    ['Hoje', open.filter((t) => t.due_date === today), 'var(--ochre)'],
+    ['Próximos 7 dias', open.filter((t) => t.due_date && t.due_date > today && t.due_date <= in7), 'var(--blue)'],
+    ['Mais adiante', open.filter((t) => t.due_date && t.due_date > in7), 'var(--ink-soft)'],
+    ['Sem prazo', open.filter((t) => !t.due_date), 'var(--ink-soft)'],
+  ];
+
+  const taskItem = (t) => `
+    <div class="task ${t.done ? 'task--done' : ''}">
+      <input type="checkbox" class="task__check" data-action="toggleTask" data-id="${t.id}" ${t.done ? 'checked' : ''} aria-label="Concluir tarefa" />
+      <div class="task__main">
+        <div class="task__title">${esc(t.title)}</div>
+        <div class="task__sub">
+          ${esc(firstName(memberName(t.assignee_email)))}
+          ${t.due_date ? ` · <span class="${!t.done && t.due_date < today ? 'late' : ''}">${fmtDate(t.due_date)}</span>` : ''}
+          ${t.project_id ? ` · ${esc((projById(t.project_id) || {}).name || '')}` : ''}
+          ${t.details ? `<br />${esc(t.details)}` : ''}
+        </div>
+      </div>
+      <button type="button" class="btn-mini" data-action="editTask" data-id="${t.id}">Editar</button>
+    </div>`;
+
+  const filters = [['todas', 'Todas']].concat(state.members.map((mb) => [mb.email.toLowerCase(), firstName(mb.name)]));
+
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">${open.length} aberta${open.length === 1 ? '' : 's'}</p>
+      <h1 class="view-title">Tarefas</h1>
+    </div>
+    <div class="view-actions">
+      <button type="button" class="btn-solid" data-action="newTask">+ Tarefa</button>
+    </div>
+  </div>
+
+  <div class="filter-row">
+    ${filters.map(([v, l]) => `<button type="button" class="fchip ${ui.taskFilter === v ? 'on' : ''}" data-action="taskFilter" data-v="${esc(v)}">${esc(l)}</button>`).join('')}
+    <button type="button" class="fchip ${ui.taskShowDone ? 'on' : ''}" data-action="taskToggleDone" style="margin-left:auto">Concluídas (${done.length})</button>
+  </div>
+
+  ${secs.filter(([, list]) => list.length).map(([name, list, color]) => `
+    <div class="tasksec">
+      <span class="label" style="color:${color}">${name} · ${list.length}</span>
+      <div class="card">${list.map(taskItem).join('')}</div>
+    </div>`).join('') || '<p class="empty">Nenhuma tarefa aberta neste filtro. ✓</p>'}
+
+  ${ui.taskShowDone && done.length ? `
+    <div class="tasksec">
+      <span class="label label--soft">Concluídas</span>
+      <div class="card">${done.map(taskItem).join('')}</div>
+    </div>` : ''}`;
+};
+
+/* ═══ Equipe ═══════════════════════════════════════════════════════ */
+VIEWS.equipe = function () {
+  const rows = state.members.map((m) => `<tr>
+    <td><b>${esc(m.name)}</b></td>
+    <td class="mono" style="font-size:12px">${esc(m.email)}</td>
+    <td class="mono soft" style="font-size:11px">${fmtDate(String(m.created_at).slice(0, 10))}</td>
+    <td class="actions">${m.email.toLowerCase() === state.me.email.toLowerCase()
+      ? '<span class="chip">você</span>'
+      : `<button type="button" class="btn-mini btn-mini--danger" data-action="removeMember" data-id="${m.id}">Remover</button>`}</td>
+  </tr>`).join('');
+
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">Quem pode entrar neste painel</p>
+      <h1 class="view-title">Equipe</h1>
+    </div>
+    <div class="view-actions">
+      <button type="button" class="btn-solid" data-action="newMember">+ Membro</button>
+    </div>
+  </div>
+  <div class="card card__body--flush">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Nome</th><th>E-mail (conta Google)</th><th>Desde</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    </div>
+  </div>
+  <p class="field__hint" style="margin-top:10px">O acesso é pelo login Google: o e-mail cadastrado aqui precisa ser exatamente o da conta Google da pessoa. Para dar acesso ao Bruno, cadastre o Gmail dele.</p>`;
+};
+
+/* ═══ Modal & formulários ══════════════════════════════════════════ */
+function openModal(title, bodyHTML, onSubmit) {
+  $('#modal-title').textContent = title;
+  $('#modal-body').innerHTML = bodyHTML;
+  $('#modal').classList.add('on');
+  const form = $('#modal-body form');
+  if (form && onSubmit) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      if (btn) btn.disabled = true;
+      const data = {};
+      new FormData(form).forEach((v, k) => { data[k] = typeof v === 'string' ? v.trim() : v; });
+      const ok = await onSubmit(data, form);
+      if (btn) btn.disabled = false;
+      if (ok !== false) closeModal();
+    });
+    const f = form.querySelector('input:not([type="hidden"]), select, textarea');
+    if (f) f.focus();
+  }
+}
+function closeModal() { $('#modal').classList.remove('on'); $('#modal-body').innerHTML = ''; }
+
+const numOrNull = (v) => (v === '' || v == null ? null : Number(v));
+const strOrNull = (v) => (v === '' || v == null ? null : v);
+
+function fld(id, label, inner, span2, hint) {
+  return `<div class="field ${span2 ? 'span2' : ''}"><label for="${id}">${label}</label>${inner}${hint ? `<span class="field__hint">${hint}</span>` : ''}</div>`;
+}
+const inp = (id, name, type, value, extra) => `<input id="${id}" name="${name}" type="${type}" value="${esc(value ?? '')}" ${extra || ''} />`;
+const txa = (id, name, value, ph) => `<textarea id="${id}" name="${name}" placeholder="${esc(ph || '')}">${esc(value ?? '')}</textarea>`;
+const sel = (id, name, options, cur) => `<select id="${id}" name="${name}">${options.map(([v, l]) => `<option value="${esc(v)}" ${String(cur ?? '') === String(v) ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
+
+const clientOptions = (cur) => [['', '— sem cliente —']].concat(state.clients.map((c) => [c.id, c.name]));
+const projectOptions = (cur) => [['', '— sem projeto —']].concat(state.projects.map((p) => [p.id, p.name]));
+const memberOptions = () => state.members.map((m) => [m.email.toLowerCase(), m.name]);
+
+/* — Cliente — */
+function clientModal(c) {
+  openModal(c ? 'Editar cliente' : 'Novo cliente', `
+    <form>
+      <div class="form-grid">
+        ${fld('cf-name', 'Nome *', inp('cf-name', 'name', 'text', c?.name, 'required'))}
+        ${fld('cf-company', 'Empresa', inp('cf-company', 'company', 'text', c?.company))}
+        ${fld('cf-email', 'E-mail', inp('cf-email', 'email', 'email', c?.email))}
+        ${fld('cf-phone', 'Telefone / WhatsApp', inp('cf-phone', 'phone', 'text', c?.phone))}
+        ${fld('cf-origin', 'Origem', inp('cf-origin', 'origin', 'text', c?.origin, 'placeholder="indicação, Instagram, site…"'), true)}
+        ${fld('cf-notes', 'Notas', txa('cf-notes', 'notes', c?.notes), true)}
+      </div>
+      <div class="form-foot">
+        ${c ? `<button type="button" class="btn-mini btn-mini--danger" data-action="deleteClient" data-id="${c.id}" style="margin-right:auto">Excluir</button>` : ''}
+        <button type="submit" class="btn-solid">${c ? 'Salvar' : 'Cadastrar'}</button>
+      </div>
+    </form>`, async (d) => {
+    const row = { name: d.name, company: strOrNull(d.company), email: strOrNull(d.email), phone: strOrNull(d.phone), origin: strOrNull(d.origin), notes: strOrNull(d.notes) };
+    return mutate(() => (c ? dbUpdate('clients', c.id, row) : dbInsert('clients', row)), c ? 'Cliente atualizado.' : 'Cliente cadastrado.');
+  });
+}
+
+/* — Projeto (criação rápida) — */
+function projectModal() {
+  openModal('Novo projeto / proposta', `
+    <form>
+      <div class="form-grid">
+        ${fld('pj-name', 'Nome do projeto / site *', inp('pj-name', 'name', 'text', '', 'required placeholder="Ex.: Site MediaPortal"'), true)}
+        ${fld('pj-client', 'Cliente', sel('pj-client', 'client_id', clientOptions(), ''), false, 'Não achou? Cadastre antes em Clientes.')}
+        ${fld('pj-status', 'Etapa', sel('pj-status', 'status', STATUSES.map((s) => [s, STATUS_LABEL[s]]), 'contato'))}
+        ${fld('pj-price', 'Preço proposto (R$)', inp('pj-price', 'price_proposed', 'number', '', 'step="0.01" min="0"'))}
+        ${fld('pj-sm', 'Divisão Matheus (%)', inp('pj-sm', 'split_matheus', 'number', '50', 'step="0.5" min="0" max="100"'))}
+        ${fld('pj-desc', 'Observações', txa('pj-desc', 'description', '', 'Contexto do contato, escopo inicial…'), true)}
+      </div>
+      <div class="form-foot"><button type="submit" class="btn-solid">Criar projeto</button></div>
+    </form>`, async (d) => {
+    const sm = d.split_matheus === '' ? 50 : Number(d.split_matheus);
+    const row = {
+      name: d.name, client_id: strOrNull(d.client_id), status: d.status,
+      price_proposed: numOrNull(d.price_proposed),
+      split_matheus: sm, split_bruno: Math.round((100 - sm) * 100) / 100,
+      description: strOrNull(d.description),
+    };
+    let newId = null;
+    const ok = await mutate(async () => {
+      const { data, error } = await sb.from(TB('projects')).insert(row).select('id').single();
+      if (error) throw error;
+      newId = data.id;
+    }, 'Projeto criado.');
+    if (ok && newId) location.hash = '#/projeto/' + newId;
+    return ok;
+  });
+}
+
+/* — Reunião — */
+function meetingModal(m, presets) {
+  presets = presets || {};
+  const startVal = m ? toLocalInput(m.starts_at) : (presets.date ? presets.date + 'T10:00' : toLocalInput(new Date().toISOString()).slice(0, 11) + '10:00');
+  openModal(m ? 'Editar reunião' : 'Nova reunião', `
+    <form>
+      <div class="form-grid">
+        ${fld('mt-title', 'Título *', inp('mt-title', 'title', 'text', m?.title, 'required placeholder="Ex.: Alinhamento de proposta"'), true)}
+        ${fld('mt-start', 'Início *', inp('mt-start', 'starts_at', 'datetime-local', startVal, 'required'))}
+        ${fld('mt-end', 'Fim', inp('mt-end', 'ends_at', 'datetime-local', m?.ends_at ? toLocalInput(m.ends_at) : ''))}
+        ${fld('mt-project', 'Projeto', sel('mt-project', 'project_id', projectOptions(), m?.project_id || presets.project || ''))}
+        ${fld('mt-client', 'Cliente', sel('mt-client', 'client_id', clientOptions(), m?.client_id || ''))}
+        ${fld('mt-location', 'Local / link', inp('mt-location', 'location', 'text', m?.location, 'placeholder="Meet, presencial…"'), true)}
+        ${fld('mt-topics', 'Pauta — tópicos a tratar', txa('mt-topics', 'topics', m?.topics, 'Um tópico por linha.'), true)}
+        ${fld('mt-minutes', 'Ata — o que foi proposto / decidido', txa('mt-minutes', 'minutes', m?.minutes, 'Preencha depois da reunião.'), true)}
+      </div>
+      <div class="form-foot">
+        ${m ? `<button type="button" class="btn-mini btn-mini--danger" data-action="deleteMeeting" data-id="${m.id}" style="margin-right:auto">Excluir</button>` : ''}
+        <button type="submit" class="btn-solid">${m ? 'Salvar' : 'Agendar'}</button>
+      </div>
+    </form>`, async (d) => {
+    if (!d.starts_at) { toast('Informe a data de início.'); return false; }
+    const row = {
+      title: d.title,
+      starts_at: new Date(d.starts_at).toISOString(),
+      ends_at: d.ends_at ? new Date(d.ends_at).toISOString() : null,
+      project_id: strOrNull(d.project_id), client_id: strOrNull(d.client_id),
+      location: strOrNull(d.location), topics: strOrNull(d.topics), minutes: strOrNull(d.minutes),
+    };
+    return mutate(() => (m ? dbUpdate('meetings', m.id, row) : dbInsert('meetings', row)), m ? 'Reunião atualizada.' : 'Reunião agendada.');
+  });
+}
+
+/* — Parcela — */
+function paymentModal(pay, presets) {
+  presets = presets || {};
+  const projId = pay ? pay.project_id : (presets.project || '');
+  openModal(pay ? 'Editar parcela' : 'Nova parcela', `
+    <form>
+      <div class="form-grid">
+        ${fld('py-project', 'Projeto *', sel('py-project', 'project_id', state.projects.map((p) => [p.id, p.name]), projId), true, state.projects.length ? '' : 'Crie um projeto antes.')}
+        ${fld('py-desc', 'Descrição', inp('py-desc', 'description', 'text', pay?.description, 'placeholder="Entrada, parcela 2/3…"'), true)}
+        ${fld('py-amount', 'Valor (R$) *', inp('py-amount', 'amount', 'number', pay?.amount, 'required step="0.01" min="0.01"'))}
+        ${fld('py-due', 'Dia de pagamento *', inp('py-due', 'due_date', 'date', pay?.due_date, 'required'))}
+        ${fld('py-status', 'Situação', sel('py-status', 'status', [['previsto', 'Previsto'], ['pago', 'Pago']], pay?.status || 'previsto'))}
+        ${fld('py-paid', 'Data do recebimento', inp('py-paid', 'paid_at', 'date', pay?.paid_at), false, 'Só se já pago.')}
+        ${fld('py-sm', 'Divisão Matheus (%)', inp('py-sm', 'split_matheus', 'number', pay?.split_matheus ?? '', 'step="0.5" min="0" max="100" placeholder="herda do projeto"'))}
+        ${fld('py-sb', 'Divisão Bruno (%)', inp('py-sb', 'split_bruno', 'number', pay?.split_bruno ?? '', 'step="0.5" min="0" max="100" placeholder="herda do projeto"'))}
+        ${fld('py-notes', 'Notas', txa('py-notes', 'notes', pay?.notes), true)}
+      </div>
+      <div class="form-foot">
+        ${pay ? `<button type="button" class="btn-mini btn-mini--danger" data-action="deletePayment" data-id="${pay.id}" style="margin-right:auto">Excluir</button>` : ''}
+        <button type="submit" class="btn-solid">${pay ? 'Salvar' : 'Cadastrar'}</button>
+      </div>
+    </form>`, async (d) => {
+    if (!d.project_id) { toast('Escolha o projeto.'); return false; }
+    const row = {
+      project_id: d.project_id, description: strOrNull(d.description),
+      amount: Number(d.amount), due_date: d.due_date,
+      status: d.status,
+      paid_at: d.status === 'pago' ? (strOrNull(d.paid_at) || todayISO()) : null,
+      split_matheus: numOrNull(d.split_matheus), split_bruno: numOrNull(d.split_bruno),
+      notes: strOrNull(d.notes),
+    };
+    return mutate(() => (pay ? dbUpdate('payments', pay.id, row) : dbInsert('payments', row)), pay ? 'Parcela atualizada.' : 'Parcela cadastrada.');
+  });
+}
+
+/* — Tarefa — */
+function taskModal(t, presets) {
+  presets = presets || {};
+  openModal(t ? 'Editar tarefa' : 'Nova tarefa', `
+    <form>
+      <div class="form-grid">
+        ${fld('tk-title', 'Tarefa *', inp('tk-title', 'title', 'text', t?.title, 'required'), true)}
+        ${fld('tk-assignee', 'Responsável *', sel('tk-assignee', 'assignee_email', memberOptions(), t ? String(t.assignee_email || '').toLowerCase() : state.me.email.toLowerCase()))}
+        ${fld('tk-due', 'Prazo', inp('tk-due', 'due_date', 'date', t?.due_date))}
+        ${fld('tk-project', 'Projeto', sel('tk-project', 'project_id', projectOptions(), t?.project_id || presets.project || ''), true)}
+        ${fld('tk-details', 'Detalhes', txa('tk-details', 'details', t?.details), true)}
+      </div>
+      <div class="form-foot">
+        ${t ? `<button type="button" class="btn-mini btn-mini--danger" data-action="deleteTask" data-id="${t.id}" style="margin-right:auto">Excluir</button>` : ''}
+        <button type="submit" class="btn-solid">${t ? 'Salvar' : 'Criar'}</button>
+      </div>
+    </form>`, async (d) => {
+    const row = {
+      title: d.title, details: strOrNull(d.details),
+      assignee_email: d.assignee_email, due_date: strOrNull(d.due_date),
+      project_id: strOrNull(d.project_id),
+    };
+    if (!t) row.created_by = state.me.email;
+    return mutate(() => (t ? dbUpdate('tasks', t.id, row) : dbInsert('tasks', row)), t ? 'Tarefa atualizada.' : 'Tarefa criada.');
+  });
+}
+
+/* — Registro (devolutiva/combinado) — */
+function noteModal(projectId) {
+  openModal('Novo registro', `
+    <form>
+      <div class="form-grid">
+        ${fld('nt-kind', 'Tipo', sel('nt-kind', 'kind', Object.entries(NOTE_KINDS), 'devolutiva'), true)}
+        ${fld('nt-content', 'Conteúdo *', txa('nt-content', 'content', '', 'Devolutiva do cliente, o que foi combinado, resumo da conversa…'), true)}
+      </div>
+      <div class="form-foot"><button type="submit" class="btn-solid">Registrar</button></div>
+    </form>`, async (d) => {
+    if (!d.content) { toast('Escreva o conteúdo.'); return false; }
+    return mutate(() => dbInsert('notes', { project_id: projectId, kind: d.kind, content: d.content, author_email: state.me.email }), 'Registro adicionado.');
+  });
+}
+
+/* — Membro — */
+function memberModal() {
+  openModal('Novo membro', `
+    <form>
+      <div class="form-grid">
+        ${fld('mb-name', 'Nome *', inp('mb-name', 'name', 'text', '', 'required placeholder="Bruno Amaral"'), true)}
+        ${fld('mb-email', 'E-mail Google *', inp('mb-email', 'email', 'email', '', 'required placeholder="exemplo@gmail.com"'), true, 'Precisa ser o e-mail exato da conta Google que a pessoa usa para entrar.')}
+      </div>
+      <div class="form-foot"><button type="submit" class="btn-solid">Dar acesso</button></div>
+    </form>`, async (d) => {
+    return mutate(() => dbInsert('members', { name: d.name, email: d.email.toLowerCase() }), 'Acesso liberado para ' + d.email + '.');
+  });
+}
+
+/* ═══ Ações (delegação de eventos) ═════════════════════════════════ */
+function closeDrawer() {
+  document.body.classList.remove('drawer-open');
+  const t = $('.nav-toggle');
+  if (t) t.setAttribute('aria-expanded', 'false');
+}
+
+const ACTIONS = {
+  signIn: async () => {
+    const { error } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: location.origin + '/admin' },
+    });
+    if (error) toast('Erro no login: ' + error.message);
+  },
+  signOut: async () => { await sb.auth.signOut(); location.hash = ''; showScreen('login'); },
+  openDrawer: () => { document.body.classList.add('drawer-open'); $('.nav-toggle').setAttribute('aria-expanded', 'true'); },
+  closeDrawer,
+  closeModal,
+  refreshData: async () => { closeDrawer(); await fetchAll(); renderApp(); toast('Dados atualizados.'); },
+
+  newProject: () => { closeDrawer(); projectModal(); },
+  openProject: (el) => { location.hash = '#/projeto/' + el.dataset.id; },
+  deleteProject: (el) => {
+    const p = projById(el.dataset.id);
+    if (!p) return;
+    if (!confirm(`Excluir o projeto "${p.name}"? Parcelas e registros dele também serão excluídos.`)) return;
+    mutate(() => dbDelete('projects', p.id), 'Projeto excluído.').then((ok) => { if (ok) location.hash = '#/crm'; });
+  },
+  moveStatus: (el, e) => {
+    e.stopPropagation();
+    const p = projById(el.dataset.id);
+    if (!p) return;
+    const idx = STATUSES.indexOf(p.status) + Number(el.dataset.dir);
+    if (idx < 0 || idx >= STATUSES.length) return;
+    mutate(() => dbUpdate('projects', p.id, { status: STATUSES[idx] }));
+  },
+
+  newClient: () => { closeDrawer(); clientModal(); },
+  editClient: (el) => clientModal(clientById(el.dataset.id)),
+  deleteClient: (el) => {
+    const c = clientById(el.dataset.id);
+    if (!c) return;
+    if (!confirm(`Excluir o cliente "${c.name}"? Os projetos dele ficam sem cliente (não são excluídos).`)) return;
+    closeModal();
+    mutate(() => dbDelete('clients', c.id), 'Cliente excluído.');
+  },
+
+  newMeeting: (el) => {
+    closeDrawer();
+    meetingModal(null, { date: el?.dataset?.date, project: el?.dataset?.project });
+  },
+  editMeeting: (el, e) => { e.stopPropagation(); meetingModal(state.meetings.find((m) => m.id === el.dataset.id)); },
+  deleteMeeting: (el) => {
+    if (!confirm('Excluir esta reunião?')) return;
+    closeModal();
+    mutate(() => dbDelete('meetings', el.dataset.id), 'Reunião excluída.');
+  },
+
+  newPayment: (el) => { closeDrawer(); paymentModal(null, { project: el?.dataset?.project }); },
+  editPayment: (el) => paymentModal(state.payments.find((p) => p.id === el.dataset.id)),
+  deletePayment: (el) => {
+    if (!confirm('Excluir esta parcela?')) return;
+    closeModal();
+    mutate(() => dbDelete('payments', el.dataset.id), 'Parcela excluída.');
+  },
+  markPaid: (el) => mutate(() => dbUpdate('payments', el.dataset.id, { status: 'pago', paid_at: todayISO() }), 'Parcela marcada como paga.'),
+
+  newTask: (el) => { closeDrawer(); taskModal(null, { project: el?.dataset?.project }); },
+  editTask: (el) => taskModal(state.tasks.find((t) => t.id === el.dataset.id)),
+  deleteTask: (el) => {
+    if (!confirm('Excluir esta tarefa?')) return;
+    closeModal();
+    mutate(() => dbDelete('tasks', el.dataset.id), 'Tarefa excluída.');
+  },
+  toggleTask: (el) => {
+    const t = state.tasks.find((x) => x.id === el.dataset.id);
+    if (!t) return;
+    mutate(() => dbUpdate('tasks', t.id, { done: !t.done, done_at: !t.done ? new Date().toISOString() : null }));
+  },
+
+  newNote: (el) => noteModal(el.dataset.project),
+  deleteNote: (el) => {
+    if (!confirm('Excluir este registro?')) return;
+    mutate(() => dbDelete('notes', el.dataset.id), 'Registro excluído.');
+  },
+
+  newMember: () => { closeDrawer(); memberModal(); },
+  removeMember: (el) => {
+    const m = state.members.find((x) => x.id === el.dataset.id);
+    if (!m) return;
+    if (!confirm(`Remover o acesso de ${m.name} (${m.email})?`)) return;
+    mutate(() => dbDelete('members', m.id), 'Acesso removido.');
+  },
+
+  chartMode: (el) => { ui.chartMode = el.dataset.mode; renderApp(); },
+  taskFilter: (el) => { ui.taskFilter = el.dataset.v; renderApp(); },
+  taskToggleDone: () => { ui.taskShowDone = !ui.taskShowDone; renderApp(); },
+  calNav: (el) => {
+    const dir = Number(el.dataset.dir);
+    if (dir === 0) { ui.agendaY = new Date().getFullYear(); ui.agendaM = new Date().getMonth(); }
+    else {
+      ui.agendaM += dir;
+      if (ui.agendaM < 0) { ui.agendaM = 11; ui.agendaY--; }
+      if (ui.agendaM > 11) { ui.agendaM = 0; ui.agendaY++; }
+    }
+    renderApp();
+  },
+};
+
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  /* reunião dentro de célula de dia: o clique mais interno vence */
+  if (el.dataset.action === 'newMeeting' && e.target.closest('.cal__evt')) return;
+  if (el.tagName === 'A' && el.getAttribute('href') === '#') e.preventDefault();
+  const fn = ACTIONS[el.dataset.action];
+  if (fn) fn(el, e);
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if ($('#modal').classList.contains('on')) closeModal();
+    else closeDrawer();
+  }
+});
+
+/* mudanças de filtros e selects */
+document.addEventListener('change', (e) => {
+  const el = e.target.closest('[data-change]');
+  if (!el) return;
+  switch (el.dataset.change) {
+    case 'finPreset': ui.finPreset = el.value; renderApp(); break;
+    case 'finFrom': ui.finFrom = el.value; renderApp(); break;
+    case 'finTo': ui.finTo = el.value; renderApp(); break;
+    case 'finStatus': ui.finStatus = el.value; renderApp(); break;
+    case 'projectStatus': mutate(() => dbUpdate('projects', el.dataset.id, { status: el.value })); break;
+    case 'splitM': {
+      /* completa automaticamente a fatia do Bruno */
+      const sb2 = $('#pf-sb');
+      if (sb2 && el.value !== '') sb2.value = Math.round((100 - Number(el.value)) * 100) / 100;
+      break;
+    }
+  }
+});
+
+/* submits fora de modal (formulário do projeto) */
+document.addEventListener('submit', async (e) => {
+  const form = e.target.closest('form[data-submit]');
+  if (!form) return;
+  e.preventDefault();
+  if (form.dataset.submit === 'saveProject') {
+    const d = {};
+    new FormData(form).forEach((v, k) => { d[k] = typeof v === 'string' ? v.trim() : v; });
+    const row = {
+      name: d.name, client_id: strOrNull(d.client_id), site_url: strOrNull(d.site_url),
+      price_proposed: numOrNull(d.price_proposed), price_final: numOrNull(d.price_final),
+      payment_terms: strOrNull(d.payment_terms),
+      split_matheus: d.split_matheus === '' ? 50 : Number(d.split_matheus),
+      split_bruno: d.split_bruno === '' ? 50 : Number(d.split_bruno),
+      proposal_url: strOrNull(d.proposal_url), contract_url: strOrNull(d.contract_url),
+      description: strOrNull(d.description),
+    };
+    if (Math.abs(N(row.split_matheus) + N(row.split_bruno) - 100) > 0.01) {
+      toast('A divisão Matheus + Bruno precisa somar 100%.');
+      return;
+    }
+    mutate(() => dbUpdate('projects', form.dataset.id, row), 'Projeto salvo.');
+  }
+});
+
+/* ═══ Inicialização ════════════════════════════════════════════════ */
+async function enter(session) {
+  state.session = session;
+  showScreen('loading');
+  const { data: members, error } = await sb.from(TB('members')).select('*').order('name');
+  const email = (session.user.email || '').toLowerCase();
+  if (error || !members || !members.length || !members.some((m) => m.email.toLowerCase() === email)) {
+    $('#denied-email').textContent = session.user.email || '(sem e-mail)';
+    showScreen('denied');
+    return;
+  }
+  state.members = members;
+  state.me = members.find((m) => m.email.toLowerCase() === email);
+  try {
+    await fetchAll();
+  } catch (e) {
+    toast('Erro ao carregar dados: ' + (e.message || e));
+  }
+  if (!location.hash || !location.hash.startsWith('#/')) location.hash = '#/dashboard';
+  showScreen('app');
+  renderApp();
+}
+
+if (sb) sb.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT') { state.session = null; state.me = null; showScreen('login'); }
+});
+
+(async function init() {
+  if (!sb) {
+    $('#scr-loading .gate').innerHTML = '<div class="gate__card"><p class="eyebrow">Sem conexão</p>'
+      + '<p class="gate__note">Não foi possível carregar a biblioteca de acesso (CDN). Verifique a internet e recarregue a página.</p>'
+      + '<button type="button" class="btn-ghost" onclick="location.reload()">Recarregar</button></div>';
+    return;
+  }
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { showScreen('login'); return; }
+    await enter(session);
+  } catch (e) {
+    toast('Erro ao iniciar: ' + (e.message || e));
+    showScreen('login');
+  }
+})();
+</script>
+</body>
+</html>
