@@ -1327,9 +1327,9 @@ VIEWS.projeto = function (route) {
             <div class="field span2"><label for="pf-terms">Condições de pagamento</label>
               <textarea id="pf-terms" name="payment_terms" placeholder="Ex.: 40% na assinatura, 30% na entrega intermediária, 30% na entrega final.">${esc(p.payment_terms || '')}</textarea></div>
             <div class="field"><label for="pf-sm">Divisão — Matheus (%)</label>
-              <input id="pf-sm" name="split_matheus" type="number" step="0.5" min="0" max="100" value="${p.split_matheus ?? 50}" data-change="splitM" /></div>
+              <input id="pf-sm" name="split_matheus" type="number" step="0.01" min="0" max="100" value="${p.split_matheus ?? 50}" data-change="splitM" /></div>
             <div class="field"><label for="pf-sb">Divisão — Bruno (%)</label>
-              <input id="pf-sb" name="split_bruno" type="number" step="0.5" min="0" max="100" value="${p.split_bruno ?? 50}" /></div>
+              <input id="pf-sb" name="split_bruno" type="number" step="0.01" min="0" max="100" value="${p.split_bruno ?? 50}" /></div>
             <div class="field"><label for="pf-purl">URL da proposta (HTML no site)</label>
               <input id="pf-purl" name="proposal_url" placeholder="/proposta-…" value="${esc(p.proposal_url || '')}" /></div>
             <div class="field"><label for="pf-curl">URL do contrato (HTML no site)</label>
@@ -1889,7 +1889,7 @@ function projectModal() {
         ${fld('pj-client', 'Cliente', sel('pj-client', 'client_id', clientOptions(), ''), false, 'Não achou? Cadastre antes em Clientes.')}
         ${fld('pj-status', 'Etapa', sel('pj-status', 'status', STATUSES.map((s) => [s, STATUS_LABEL[s]]), 'contato'))}
         ${fld('pj-price', 'Preço proposto (R$)', inp('pj-price', 'price_proposed', 'number', '', 'step="0.01" min="0"'))}
-        ${fld('pj-sm', 'Divisão Matheus (%)', inp('pj-sm', 'split_matheus', 'number', '50', 'step="0.5" min="0" max="100"'))}
+        ${fld('pj-sm', 'Divisão Matheus (%)', inp('pj-sm', 'split_matheus', 'number', '50', 'step="0.01" min="0" max="100"'))}
         ${fld('pj-desc', 'Observações', txa('pj-desc', 'description', '', 'Contexto do contato, escopo inicial…'), true)}
       </div>
       <div class="form-foot"><button type="submit" class="btn-solid">Criar projeto</button></div>
@@ -1955,14 +1955,14 @@ function paymentModal(pay, presets) {
         ${fld('py-project', 'Projeto *', sel('py-project', 'project_id',
           (projId ? [] : [['', '— escolha o projeto —']]).concat(state.projects.map((p) => [p.id, p.name])), projId), true, state.projects.length ? '' : 'Crie um projeto antes.')}
         ${fld('py-desc', 'Descrição', inp('py-desc', 'description', 'text', pay?.description, 'placeholder="Entrada, parcela 2/3…"'), true)}
-        ${fld('py-amount', 'Valor (R$) *', inp('py-amount', 'amount', 'number', pay?.amount, 'required step="0.01" min="0.01"'))}
+        ${fld('py-amount', 'Valor (R$) *', inp('py-amount', 'amount', 'number', pay?.amount, 'required step="0.01" min="0.01" data-sync="pay"'))}
         ${fld('py-due', 'Dia de pagamento *', inp('py-due', 'due_date', 'date', pay?.due_date, 'required'))}
         ${fld('py-status', 'Situação', sel('py-status', 'status', [['previsto', 'Previsto'], ['pago', 'Pago']], pay?.status || 'previsto'))}
         ${fld('py-paid', 'Data do recebimento', inp('py-paid', 'paid_at', 'date', pay?.paid_at), false, 'Só se já pago.')}
-        ${fld('py-sm', 'Divisão Matheus (%)', inp('py-sm', 'split_matheus', 'number', pay?.split_matheus ?? '', 'step="0.5" min="0" max="100" placeholder="herda do projeto"'))}
-        ${fld('py-sb', 'Divisão Bruno (%)', inp('py-sb', 'split_bruno', 'number', pay?.split_bruno ?? '', 'step="0.5" min="0" max="100" placeholder="herda do projeto"'))}
-        ${fld('py-am', 'Parte Matheus (R$)', inp('py-am', 'amount_matheus', 'number', pay?.amount_matheus ?? '', 'step="0.01" min="0" placeholder="fixo, opcional"'), false, 'Valor fixo: vale no lugar do %; o outro lado recebe o restante.')}
-        ${fld('py-ab', 'Parte Bruno (R$)', inp('py-ab', 'amount_bruno', 'number', pay?.amount_bruno ?? '', 'step="0.01" min="0" placeholder="fixo, opcional"'), false, 'Ex.: repasse fixo de R$ 1.000 por parcela.')}
+        ${fld('py-sm', 'Divisão Matheus (%)', inp('py-sm', 'split_matheus', 'number', pay?.split_matheus ?? '', 'step="0.01" min="0" max="100" placeholder="herda do projeto"'))}
+        ${fld('py-sb', 'Divisão Bruno (%)', inp('py-sb', 'split_bruno', 'number', pay?.split_bruno ?? '', 'step="0.01" min="0" max="100" placeholder="herda do projeto"'))}
+        ${fld('py-am', 'Parte Matheus (R$)', inp('py-am', 'amount_matheus', 'number', pay?.amount_matheus ?? '', 'step="0.01" min="0" placeholder="fixo, opcional" data-sync="pay"'), false, 'Valor fixo: manda no lugar do %; o outro lado recebe o restante e as porcentagens se ajustam sozinhas.')}
+        ${fld('py-ab', 'Parte Bruno (R$)', inp('py-ab', 'amount_bruno', 'number', pay?.amount_bruno ?? '', 'step="0.01" min="0" placeholder="fixo, opcional" data-sync="pay"'), false, 'Ex.: repasse fixo de R$ 1.000 por parcela.')}
         ${fld('py-notes', 'Notas', txa('py-notes', 'notes', pay?.notes), true)}
       </div>
       <div class="form-foot">
@@ -2001,6 +2001,7 @@ function paymentModal(pay, presets) {
     };
     return mutate(() => (pay ? dbUpdate('payments', pay.id, row) : dbInsert('payments', row)), pay ? 'Parcela atualizada.' : 'Parcela cadastrada.');
   });
+  syncPaymentSplits(); /* parcela já salva com parte fixa abre com os % coerentes */
 }
 
 /* — Tarefa — */
@@ -2215,6 +2216,32 @@ document.addEventListener('keydown', (e) => {
       if (fn) fn(el, e);
     }
   }
+});
+
+/* Parcela: com uma parte fixa em R$, as porcentagens passam a ser derivadas
+   dela — recalculadas a cada digitação no valor da parcela ou nas partes. */
+function syncPaymentSplits() {
+  const amtEl = document.getElementById('py-amount');
+  const amEl = document.getElementById('py-am');
+  const abEl = document.getElementById('py-ab');
+  const smEl = document.getElementById('py-sm');
+  const sbEl = document.getElementById('py-sb');
+  if (!amtEl || !amEl || !abEl || !smEl || !sbEl) return;
+  const amt = Number(amtEl.value);
+  if (!amt || !isFinite(amt) || amt <= 0) return;
+  const am = amEl.value === '' ? null : Number(amEl.value);
+  const ab = abEl.value === '' ? null : Number(abEl.value);
+  if (am == null && ab == null) return; /* sem parte fixa: quem manda é o % */
+  const valM = am != null ? am : amt - ab;
+  if (!isFinite(valM) || valM < 0 || valM > amt) return; /* incoerente: avisa no submit */
+  const pctM = Math.round((valM / amt) * 10000) / 100;
+  smEl.value = pctM;
+  sbEl.value = Math.round((100 - pctM) * 100) / 100;
+}
+
+document.addEventListener('input', (e) => {
+  const el = e.target.closest('[data-sync="pay"]');
+  if (el) syncPaymentSplits();
 });
 
 /* mudanças de filtros e selects */
