@@ -86,20 +86,24 @@ create table public.amaralesilva_meetings (
 );
 
 -- Parcelas: dias de pagamento e divisão entre Matheus e Bruno.
--- split_* nulos herdam a divisão configurada no projeto.
+-- split_* nulos herdam a divisão configurada no projeto. amount_* (migração
+-- amaralesilva_payments_fixed_shares) fixa a parte de alguém em R$ — tem
+-- prioridade sobre os percentuais e o lado não preenchido recebe o restante.
 create table public.amaralesilva_payments (
-  id            uuid primary key default gen_random_uuid(),
-  project_id    uuid not null references public.amaralesilva_projects(id) on delete cascade,
-  description   text,
-  amount        numeric(12,2) not null,
-  due_date      date not null,
-  status        text not null default 'previsto' check (status in ('previsto','pago')),
-  paid_at       date,
-  split_matheus numeric(5,2),
-  split_bruno   numeric(5,2),
-  notes         text,
-  created_at    timestamptz not null default now(),
-  updated_at    timestamptz not null default now()
+  id             uuid primary key default gen_random_uuid(),
+  project_id     uuid not null references public.amaralesilva_projects(id) on delete cascade,
+  description    text,
+  amount         numeric(12,2) not null,
+  due_date       date not null,
+  status         text not null default 'previsto' check (status in ('previsto','pago')),
+  paid_at        date,
+  split_matheus  numeric(5,2),
+  split_bruno    numeric(5,2),
+  amount_matheus numeric(12,2) check (amount_matheus is null or amount_matheus >= 0),
+  amount_bruno   numeric(12,2) check (amount_bruno   is null or amount_bruno   >= 0),
+  notes          text,
+  created_at     timestamptz not null default now(),
+  updated_at     timestamptz not null default now()
 );
 
 create table public.amaralesilva_tasks (

@@ -914,6 +914,19 @@ function paySplitB(p) {
   const proj = projById(p.project_id);
   return proj ? N(proj.split_bruno) : 50;
 }
+/* Valor de cada um na parcela, em R$. Um valor fixo (amount_*) tem prioridade
+   sobre os percentuais — ex.: repasse fixo de R$ 1.000 por parcela; o lado
+   não preenchido recebe o restante. Sem valor fixo, vale o percentual. */
+function payShareM(p) {
+  if (p.amount_matheus != null && p.amount_matheus !== '') return N(p.amount_matheus);
+  if (p.amount_bruno != null && p.amount_bruno !== '') return N(p.amount) - N(p.amount_bruno);
+  return N(p.amount) * paySplitM(p) / 100;
+}
+function payShareB(p) {
+  if (p.amount_bruno != null && p.amount_bruno !== '') return N(p.amount_bruno);
+  if (p.amount_matheus != null && p.amount_matheus !== '') return N(p.amount) - N(p.amount_matheus);
+  return N(p.amount) * paySplitB(p) / 100;
+}
 
 /* ═══ Dados ════════════════════════════════════════════════════════ */
 async function fetchAll() {
@@ -1225,15 +1238,15 @@ VIEWS.projeto = function (route) {
   /* pagamentos */
   const pays = paymentsOf(p.id);
   const totalPays = pays.reduce((s, x) => s + N(x.amount), 0);
-  const totM = pays.reduce((s, x) => s + N(x.amount) * paySplitM(x) / 100, 0);
-  const totB = pays.reduce((s, x) => s + N(x.amount) * paySplitB(x) / 100, 0);
+  const totM = pays.reduce((s, x) => s + payShareM(x), 0);
+  const totB = pays.reduce((s, x) => s + payShareB(x), 0);
   const payRows = pays.map((x) => {
     const st = payState(x);
     return `<tr>
       <td class="mono" style="font-size:12px">${fmtDate(x.due_date)}${x.status === 'pago' && x.paid_at ? `<br /><span class="soft" style="font-size:10px">pago ${fmtDate(x.paid_at)}</span>` : ''}</td>
       <td>${esc(x.description || 'Parcela')}${x.notes ? `<br /><span class="mono soft" style="font-size:10.5px">${esc(x.notes)}</span>` : ''}</td>
       <td class="num">${fmtBRL(x.amount)}</td>
-      <td class="num soft" style="font-size:12px">${paySplitM(x)}% / ${paySplitB(x)}%</td>
+      <td class="num soft" style="font-size:12px">${fmtBRL(payShareM(x))} / ${fmtBRL(payShareB(x))}</td>
       <td><span class="chip chip--${st}">${st}</span></td>
       <td class="actions">
         ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="markPaid" data-id="${x.id}">Marcar pago</button>` : ''}
@@ -1419,8 +1432,8 @@ VIEWS.financeiro = function () {
   const rec = inRange.filter((p) => p.status === 'pago').reduce((s, p) => s + N(p.amount), 0);
   const prev = inRange.filter((p) => p.status !== 'pago').reduce((s, p) => s + N(p.amount), 0);
   const late = inRange.filter((p) => payState(p) === 'atrasado').reduce((s, p) => s + N(p.amount), 0);
-  const shareM = inRange.reduce((s, p) => s + N(p.amount) * paySplitM(p) / 100, 0);
-  const shareB = inRange.reduce((s, p) => s + N(p.amount) * paySplitB(p) / 100, 0);
+  const shareM = inRange.reduce((s, p) => s + payShareM(p), 0);
+  const shareB = inRange.reduce((s, p) => s + payShareB(p), 0);
   const accAll = state.payments.filter((p) => p.status === 'pago').reduce((s, p) => s + N(p.amount), 0);
 
   const presets = [['mes', 'Este mês'], ['prox3', 'Próximos 3 meses'], ['prox6', 'Próximos 6 meses'], ['ano', 'Este ano'], ['tudo', 'Tudo'], ['custom', 'Personalizado']];
@@ -1433,8 +1446,8 @@ VIEWS.financeiro = function () {
       <td class="mono" style="font-size:12px">${fmtDate(payDate(x))}</td>
       <td>${proj ? `<button type="button" class="btn-link" style="text-transform:none;letter-spacing:0" data-action="openProject" data-id="${proj.id}">${esc(proj.name)}</button>` : '—'}<br /><span class="mono soft" style="font-size:10.5px">${esc(x.description || 'Parcela')}</span></td>
       <td class="num">${fmtBRL(x.amount)}</td>
-      <td class="num soft" style="font-size:12px">${fmtBRL(N(x.amount) * paySplitM(x) / 100)}</td>
-      <td class="num soft" style="font-size:12px">${fmtBRL(N(x.amount) * paySplitB(x) / 100)}</td>
+      <td class="num soft" style="font-size:12px">${fmtBRL(payShareM(x))}</td>
+      <td class="num soft" style="font-size:12px">${fmtBRL(payShareB(x))}</td>
       <td><span class="chip chip--${st}">${st}</span></td>
       <td class="actions">
         ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="markPaid" data-id="${x.id}">Marcar pago</button>` : ''}
@@ -1948,6 +1961,8 @@ function paymentModal(pay, presets) {
         ${fld('py-paid', 'Data do recebimento', inp('py-paid', 'paid_at', 'date', pay?.paid_at), false, 'Só se já pago.')}
         ${fld('py-sm', 'Divisão Matheus (%)', inp('py-sm', 'split_matheus', 'number', pay?.split_matheus ?? '', 'step="0.5" min="0" max="100" placeholder="herda do projeto"'))}
         ${fld('py-sb', 'Divisão Bruno (%)', inp('py-sb', 'split_bruno', 'number', pay?.split_bruno ?? '', 'step="0.5" min="0" max="100" placeholder="herda do projeto"'))}
+        ${fld('py-am', 'Parte Matheus (R$)', inp('py-am', 'amount_matheus', 'number', pay?.amount_matheus ?? '', 'step="0.01" min="0" placeholder="fixo, opcional"'), false, 'Valor fixo: vale no lugar do %; o outro lado recebe o restante.')}
+        ${fld('py-ab', 'Parte Bruno (R$)', inp('py-ab', 'amount_bruno', 'number', pay?.amount_bruno ?? '', 'step="0.01" min="0" placeholder="fixo, opcional"'), false, 'Ex.: repasse fixo de R$ 1.000 por parcela.')}
         ${fld('py-notes', 'Notas', txa('py-notes', 'notes', pay?.notes), true)}
       </div>
       <div class="form-foot">
@@ -1963,12 +1978,23 @@ function paymentModal(pay, presets) {
       toast('A divisão Matheus + Bruno precisa somar 100%.');
       return false;
     }
+    const amt = Number(d.amount);
+    const am = numOrNull(d.amount_matheus), ab = numOrNull(d.amount_bruno);
+    if (am != null && ab != null && Math.abs(am + ab - amt) > 0.01) {
+      toast('As partes em R$ precisam somar o valor da parcela.');
+      return false;
+    }
+    if ((am != null && am > amt + 0.001) || (ab != null && ab > amt + 0.001)) {
+      toast('A parte fixa em R$ não pode passar do valor da parcela.');
+      return false;
+    }
     const row = {
       project_id: d.project_id, description: strOrNull(d.description),
-      amount: Number(d.amount), due_date: d.due_date,
+      amount: amt, due_date: d.due_date,
       status: d.status,
       paid_at: d.status === 'pago' ? (strOrNull(d.paid_at) || todayISO()) : null,
       split_matheus: sm, split_bruno: sbn,
+      amount_matheus: am, amount_bruno: ab,
       notes: strOrNull(d.notes),
     };
     return mutate(() => (pay ? dbUpdate('payments', pay.id, row) : dbInsert('payments', row)), pay ? 'Parcela atualizada.' : 'Parcela cadastrada.');
