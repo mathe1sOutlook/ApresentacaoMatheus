@@ -20,6 +20,7 @@
   --ink:        #14171A;
   --ink-soft:   #57544C;
   --ochre:      #8A6220;
+  --ochre-deep: #6E4E19;
   --ochre-soft: #E8D7B8;
   --blue:       #1F3A5F;
   --blue-soft:  #D9E1EA;
@@ -108,6 +109,8 @@ button {
   grid-template-columns: 1fr;
 }
 .rule-grid > * { background: var(--paper); }
+.rule-grid--3 { grid-template-columns: repeat(3, 1fr); }
+.rule-grid--4 { grid-template-columns: repeat(4, 1fr); }
 
 /* ─── Botões ─────────────────────────────────────────────────────── */
 .btn-solid {
@@ -142,7 +145,7 @@ button {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   border: 1px solid var(--line);
-  padding: 4px 9px;
+  padding: 6px 10px;
   color: var(--ink-soft);
   background: var(--paper);
   white-space: nowrap;
@@ -333,7 +336,7 @@ body.drawer-open { overflow: hidden; }
   gap: 6px 22px;
   align-items: baseline;
 }
-.daybar .label { color: var(--ochre); }
+.daybar .label { color: var(--ochre-deep); }
 .daybar__item { font-family: var(--mono); font-size: 12px; color: var(--ink); }
 .daybar__item b { font-weight: 500; }
 .daybar__item--late { color: var(--red); }
@@ -381,7 +384,7 @@ body.drawer-open { overflow: hidden; }
   white-space: nowrap;
 }
 .chip--pago     { border-color: var(--blue);  color: var(--blue);  background: var(--blue-soft); }
-.chip--previsto { border-color: var(--ochre); color: var(--ochre); background: var(--ochre-soft); }
+.chip--previsto { border-color: var(--ochre); color: var(--ochre-deep); background: var(--ochre-soft); }
 .chip--atrasado { border-color: var(--red);   color: var(--red);   background: var(--red-soft); }
 .chip--devolutiva { border-color: var(--blue);  color: var(--blue); }
 .chip--combinado  { border-color: var(--ochre); color: var(--ochre); }
@@ -420,7 +423,7 @@ body.drawer-open { overflow: hidden; }
   font-family: var(--mono);
   font-size: 12px;
   border: 1px solid var(--line);
-  width: 26px; height: 22px;
+  width: 28px; height: 24px;
   line-height: 1;
   color: var(--ink-soft);
 }
@@ -514,7 +517,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .cal-nav { display: flex; gap: 6px; }
 .cal {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 1px;
   background: var(--line);
   border: 1px solid var(--line);
@@ -529,7 +532,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   padding: 8px 10px;
   text-align: center;
 }
-.cal__day { background: var(--paper); min-height: 96px; padding: 8px; cursor: pointer; position: relative; }
+.cal__day { background: var(--paper); min-height: 96px; padding: 8px; cursor: pointer; position: relative; min-width: 0; }
 .cal__day:hover { background: var(--paper-deep); }
 .cal__day--off { background: var(--paper-deep); cursor: default; }
 .cal__num { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
@@ -665,10 +668,16 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 }
 .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
 /* ─── Responsivo ─────────────────────────────────────────────────── */
 @media (max-width: 860px) {
   :root { --gutter: 18px; }
   .grid-2, .grid-3, .form-grid { grid-template-columns: 1fr; }
+  .rule-grid--3, .rule-grid--4 { grid-template-columns: 1fr 1fr; }
+  .stat__value { white-space: normal; }
   .view { padding: 26px 0 80px; }
   .topbar__user { display: none; }
   .cal__day { min-height: 64px; padding: 5px; }
@@ -817,6 +826,14 @@ const $  = (sel, el) => (el || document).querySelector(sel);
 const $$ = (sel, el) => Array.from((el || document).querySelectorAll(sel));
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+/* Para href: aceita http(s), mailto e URLs relativas; bloqueia javascript: etc. */
+const safeUrl = (u) => {
+  const s = String(u == null ? '' : u).trim();
+  if (!s) return '#';
+  if (/^(https?:|mailto:)/i.test(s)) return esc(s);
+  if (!/^[a-z][a-z0-9+.-]*:/i.test(s)) return esc(s); /* sem esquema → relativa */
+  return '#';
+};
 const N = (v) => (v == null || v === '' ? 0 : Number(v));
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -883,13 +900,17 @@ function payState(p) {
 function payDate(p) {
   return p.status === 'pago' ? (p.paid_at || p.due_date) : p.due_date;
 }
+/* A divisão da parcela é um PAR: se só um lado foi informado, o outro é o
+   complemento de 100 — nunca misturar um lado da parcela com um do projeto. */
 function paySplitM(p) {
   if (p.split_matheus != null && p.split_matheus !== '') return N(p.split_matheus);
+  if (p.split_bruno != null && p.split_bruno !== '') return 100 - N(p.split_bruno);
   const proj = projById(p.project_id);
   return proj ? N(proj.split_matheus) : 50;
 }
 function paySplitB(p) {
   if (p.split_bruno != null && p.split_bruno !== '') return N(p.split_bruno);
+  if (p.split_matheus != null && p.split_matheus !== '') return 100 - N(p.split_matheus);
   const proj = projById(p.project_id);
   return proj ? N(proj.split_bruno) : 50;
 }
@@ -912,21 +933,60 @@ async function fetchAll() {
   state.members = members.data;
 }
 
-async function mutate(fn, okMsg) {
-  try {
-    await fn();
-    await fetchAll();
-    renderApp();
-    if (okMsg) toast(okMsg);
-    return true;
-  } catch (e) {
-    toast('Erro: ' + (e.message || e));
-    return false;
+/* Mutações em fila: cliques rápidos rodam em série, cada um lendo o estado
+   já atualizado pelo anterior; o re-render preserva texto digitado no
+   formulário do projeto (que é montado a partir do banco). */
+let mutateChain = Promise.resolve();
+function mutate(fn, okMsg) {
+  const run = async () => {
+    try {
+      await fn();
+      await fetchAll();
+      renderPreservingForm();
+      if (okMsg) toast(okMsg);
+      return true;
+    } catch (e) {
+      renderPreservingForm();
+      toast('Erro: ' + (e.message || e));
+      return false;
+    }
+  };
+  const p = mutateChain.then(run, run);
+  mutateChain = p.catch(() => {});
+  return p;
+}
+
+function renderPreservingForm() {
+  const f = document.getElementById('proj-form');
+  let snap = null;
+  if (f) {
+    snap = { id: f.dataset.id, values: {} };
+    new FormData(f).forEach((v, k) => { if (typeof v === 'string') snap.values[k] = v; });
+  }
+  renderApp();
+  if (snap) {
+    const nf = document.getElementById('proj-form');
+    if (nf && nf.dataset.id === snap.id) {
+      for (const k of Object.keys(snap.values)) {
+        const field = nf.elements[k];
+        if (field) field.value = snap.values[k];
+      }
+    }
   }
 }
+
+const GONE_MSG = 'Registro não encontrado — pode ter sido alterado pelo outro membro. Os dados foram atualizados.';
 async function dbInsert(table, row) { const { error } = await sb.from(TB(table)).insert(row); if (error) throw error; }
-async function dbUpdate(table, id, patch) { const { error } = await sb.from(TB(table)).update(patch).eq('id', id); if (error) throw error; }
-async function dbDelete(table, id) { const { error } = await sb.from(TB(table)).delete().eq('id', id); if (error) throw error; }
+async function dbUpdate(table, id, patch) {
+  const { data, error } = await sb.from(TB(table)).update(patch).eq('id', id).select('id');
+  if (error) throw error;
+  if (!data || !data.length) throw new Error(GONE_MSG);
+}
+async function dbDelete(table, id) {
+  const { data, error } = await sb.from(TB(table)).delete().eq('id', id).select('id');
+  if (error) throw error;
+  if (!data || !data.length) throw new Error(GONE_MSG);
+}
 
 /* ═══ Telas / roteador ═════════════════════════════════════════════ */
 function showScreen(name) {
@@ -960,7 +1020,7 @@ function afterRender(route) {
 }
 
 window.addEventListener('hashchange', () => {
-  if (state.me) { closeDrawer(); renderApp(); window.scrollTo(0, 0); }
+  if (state.me) { closeDrawer(); closeModal(); renderApp(); window.scrollTo(0, 0); }
 });
 
 /* ═══ Dashboard ════════════════════════════════════════════════════ */
@@ -1043,7 +1103,7 @@ VIEWS.dashboard = function () {
 
   ${daybar}
 
-  <div class="rule-grid" style="grid-template-columns:repeat(4,1fr)" id="dash-stats">
+  <div class="rule-grid rule-grid--4" id="dash-stats">
     <div class="stat"><span class="label label--blue">Recebido no mês</span><span class="stat__value">${fmtBRL(recMonth)}</span></div>
     <div class="stat"><span class="label label--ochre">A receber no mês</span><span class="stat__value">${fmtBRL(prevMonth)}</span></div>
     <div class="stat ${lateAll ? 'stat--late' : ''}"><span class="label ${lateAll ? '' : 'label--soft'}" ${lateAll ? 'style="color:var(--red)"' : ''}>Em atraso</span><span class="stat__value">${fmtBRL(lateAll)}</span></div>
@@ -1088,7 +1148,7 @@ VIEWS.crm = function () {
         ${cli ? `<div class="kcard__client">${esc(cli.name)}${cli.company ? ' · ' + esc(cli.company) : ''}</div>` : ''}
         ${val ? `<div class="kcard__value">${fmtBRL(val)}</div>` : ''}
         <div class="kcard__foot">
-          <span class="label label--soft" style="font-size:9.5px">${fmtDateShort(String(p.created_at).slice(0, 10))}</span>
+          <span class="label label--soft" style="font-size:9.5px">${fmtDateShort(toISODate(new Date(p.created_at)))}</span>
           <span class="kcard__move">
             <button type="button" data-action="moveStatus" data-id="${p.id}" data-dir="-1" ${idx === 0 ? 'disabled' : ''} aria-label="Voltar etapa" title="Voltar etapa">‹</button>
             <button type="button" data-action="moveStatus" data-id="${p.id}" data-dir="1" ${idx === STATUSES.length - 1 ? 'disabled' : ''} aria-label="Avançar etapa" title="Avançar etapa">›</button>
@@ -1200,7 +1260,8 @@ VIEWS.projeto = function (route) {
       <div class="timeline__meta">
         <span class="chip chip--${n.kind === 'devolutiva' ? 'devolutiva' : n.kind === 'combinado' ? 'combinado' : ''}">${esc(NOTE_KINDS[n.kind] || n.kind)}</span>
         <span class="timeline__when">${fmtDT(n.created_at)} · ${esc(firstName(memberName(n.author_email)))}</span>
-        <button type="button" class="btn-mini btn-mini--danger" data-action="deleteNote" data-id="${n.id}" style="margin-left:auto">Excluir</button>
+        <button type="button" class="btn-mini" data-action="editNote" data-id="${n.id}" style="margin-left:auto">Editar</button>
+        <button type="button" class="btn-mini btn-mini--danger" data-action="deleteNote" data-id="${n.id}">Excluir</button>
       </div>
       <div class="timeline__content">${esc(n.content)}</div>
     </li>`).join('');
@@ -1209,7 +1270,7 @@ VIEWS.projeto = function (route) {
   const ptasks = tasksOf(p.id);
   const taskItems = ptasks.map((t) => `
     <div class="task ${t.done ? 'task--done' : ''}">
-      <input type="checkbox" class="task__check" data-action="toggleTask" data-id="${t.id}" ${t.done ? 'checked' : ''} aria-label="Concluir tarefa" />
+      <input type="checkbox" class="task__check" data-action="toggleTask" data-id="${t.id}" ${t.done ? 'checked' : ''} aria-label="Concluir: ${esc(t.title)}" />
       <div class="task__main">
         <div class="task__title">${esc(t.title)}</div>
         <div class="task__sub">${esc(firstName(memberName(t.assignee_email)))}${t.due_date ? ` · <span class="${!t.done && t.due_date < todayISO() ? 'late' : ''}">${fmtDate(t.due_date)}</span>` : ''}</div>
@@ -1225,10 +1286,10 @@ VIEWS.projeto = function (route) {
       <div class="proj-meta">
         <span class="proj-status"><select data-change="projectStatus" data-id="${p.id}" aria-label="Etapa no CRM">${statusOpts}</select></span>
         ${cli ? `<span class="mono soft" style="font-size:12px">${esc(cli.name)}${cli.company ? ' · ' + esc(cli.company) : ''}</span>` : ''}
-        ${p.site_url ? `<a class="btn-link" href="${esc(p.site_url)}" target="_blank" rel="noopener">Site ↗</a>` : ''}
+        ${p.site_url ? `<a class="btn-link" href="${safeUrl(p.site_url)}" target="_blank" rel="noopener">Site ↗</a>` : ''}
         <span class="doc-links">
-          ${p.proposal_url ? `<a class="btn-mini" href="${esc(p.proposal_url)}" target="_blank" rel="noopener">Consultar proposta ↗</a>` : ''}
-          ${p.contract_url ? `<a class="btn-mini" href="${esc(p.contract_url)}" target="_blank" rel="noopener">Consultar contrato ↗</a>` : ''}
+          ${p.proposal_url ? `<a class="btn-mini" href="${safeUrl(p.proposal_url)}" target="_blank" rel="noopener">Consultar proposta ↗</a>` : ''}
+          ${p.contract_url ? `<a class="btn-mini" href="${safeUrl(p.contract_url)}" target="_blank" rel="noopener">Consultar contrato ↗</a>` : ''}
         </span>
       </div>
     </div>
@@ -1409,7 +1470,7 @@ VIEWS.financeiro = function () {
       </select></div>
   </div>
 
-  <div class="rule-grid" style="grid-template-columns:repeat(3,1fr)">
+  <div class="rule-grid rule-grid--3">
     <div class="stat"><span class="label label--blue">Recebido no período</span><span class="stat__value">${fmtBRL(rec)}</span></div>
     <div class="stat"><span class="label label--ochre">A receber no período</span><span class="stat__value">${fmtBRL(prev)}</span></div>
     <div class="stat ${late ? 'stat--late' : ''}"><span class="label" style="color:${late ? 'var(--red)' : 'var(--ink-soft)'}">Em atraso no período</span><span class="stat__value">${fmtBRL(late)}</span></div>
@@ -1671,7 +1732,7 @@ VIEWS.tarefas = function () {
 
   const taskItem = (t) => `
     <div class="task ${t.done ? 'task--done' : ''}">
-      <input type="checkbox" class="task__check" data-action="toggleTask" data-id="${t.id}" ${t.done ? 'checked' : ''} aria-label="Concluir tarefa" />
+      <input type="checkbox" class="task__check" data-action="toggleTask" data-id="${t.id}" ${t.done ? 'checked' : ''} aria-label="Concluir: ${esc(t.title)}" />
       <div class="task__main">
         <div class="task__title">${esc(t.title)}</div>
         <div class="task__sub">
@@ -1720,7 +1781,7 @@ VIEWS.equipe = function () {
   const rows = state.members.map((m) => `<tr>
     <td><b>${esc(m.name)}</b></td>
     <td class="mono" style="font-size:12px">${esc(m.email)}</td>
-    <td class="mono soft" style="font-size:11px">${fmtDate(String(m.created_at).slice(0, 10))}</td>
+    <td class="mono soft" style="font-size:11px">${fmtDate(toISODate(new Date(m.created_at)))}</td>
     <td class="actions">${m.email.toLowerCase() === state.me.email.toLowerCase()
       ? '<span class="chip">você</span>'
       : `<button type="button" class="btn-mini btn-mini--danger" data-action="removeMember" data-id="${m.id}">Remover</button>`}</td>
@@ -1878,7 +1939,8 @@ function paymentModal(pay, presets) {
   openModal(pay ? 'Editar parcela' : 'Nova parcela', `
     <form>
       <div class="form-grid">
-        ${fld('py-project', 'Projeto *', sel('py-project', 'project_id', state.projects.map((p) => [p.id, p.name]), projId), true, state.projects.length ? '' : 'Crie um projeto antes.')}
+        ${fld('py-project', 'Projeto *', sel('py-project', 'project_id',
+          (projId ? [] : [['', '— escolha o projeto —']]).concat(state.projects.map((p) => [p.id, p.name])), projId), true, state.projects.length ? '' : 'Crie um projeto antes.')}
         ${fld('py-desc', 'Descrição', inp('py-desc', 'description', 'text', pay?.description, 'placeholder="Entrada, parcela 2/3…"'), true)}
         ${fld('py-amount', 'Valor (R$) *', inp('py-amount', 'amount', 'number', pay?.amount, 'required step="0.01" min="0.01"'))}
         ${fld('py-due', 'Dia de pagamento *', inp('py-due', 'due_date', 'date', pay?.due_date, 'required'))}
@@ -1894,12 +1956,19 @@ function paymentModal(pay, presets) {
       </div>
     </form>`, async (d) => {
     if (!d.project_id) { toast('Escolha o projeto.'); return false; }
+    let sm = numOrNull(d.split_matheus), sbn = numOrNull(d.split_bruno);
+    if (sm != null && sbn == null) sbn = Math.round((100 - sm) * 100) / 100;
+    if (sbn != null && sm == null) sm = Math.round((100 - sbn) * 100) / 100;
+    if (sm != null && sbn != null && Math.abs(sm + sbn - 100) > 0.01) {
+      toast('A divisão Matheus + Bruno precisa somar 100%.');
+      return false;
+    }
     const row = {
       project_id: d.project_id, description: strOrNull(d.description),
       amount: Number(d.amount), due_date: d.due_date,
       status: d.status,
       paid_at: d.status === 'pago' ? (strOrNull(d.paid_at) || todayISO()) : null,
-      split_matheus: numOrNull(d.split_matheus), split_bruno: numOrNull(d.split_bruno),
+      split_matheus: sm, split_bruno: sbn,
       notes: strOrNull(d.notes),
     };
     return mutate(() => (pay ? dbUpdate('payments', pay.id, row) : dbInsert('payments', row)), pay ? 'Parcela atualizada.' : 'Parcela cadastrada.');
@@ -1909,11 +1978,16 @@ function paymentModal(pay, presets) {
 /* — Tarefa — */
 function taskModal(t, presets) {
   presets = presets || {};
+  const assigneeOpts = memberOptions();
+  const curAssignee = t ? String(t.assignee_email || '').toLowerCase() : state.me.email.toLowerCase();
+  if (t && curAssignee && !assigneeOpts.some(([v]) => v === curAssignee)) {
+    assigneeOpts.push([curAssignee, curAssignee + ' (fora da equipe)']);
+  }
   openModal(t ? 'Editar tarefa' : 'Nova tarefa', `
     <form>
       <div class="form-grid">
         ${fld('tk-title', 'Tarefa *', inp('tk-title', 'title', 'text', t?.title, 'required'), true)}
-        ${fld('tk-assignee', 'Responsável *', sel('tk-assignee', 'assignee_email', memberOptions(), t ? String(t.assignee_email || '').toLowerCase() : state.me.email.toLowerCase()))}
+        ${fld('tk-assignee', 'Responsável *', sel('tk-assignee', 'assignee_email', assigneeOpts, curAssignee))}
         ${fld('tk-due', 'Prazo', inp('tk-due', 'due_date', 'date', t?.due_date))}
         ${fld('tk-project', 'Projeto', sel('tk-project', 'project_id', projectOptions(), t?.project_id || presets.project || ''), true)}
         ${fld('tk-details', 'Detalhes', txa('tk-details', 'details', t?.details), true)}
@@ -1934,17 +2008,20 @@ function taskModal(t, presets) {
 }
 
 /* — Registro (devolutiva/combinado) — */
-function noteModal(projectId) {
-  openModal('Novo registro', `
+function noteModal(projectId, note) {
+  openModal(note ? 'Editar registro' : 'Novo registro', `
     <form>
       <div class="form-grid">
-        ${fld('nt-kind', 'Tipo', sel('nt-kind', 'kind', Object.entries(NOTE_KINDS), 'devolutiva'), true)}
-        ${fld('nt-content', 'Conteúdo *', txa('nt-content', 'content', '', 'Devolutiva do cliente, o que foi combinado, resumo da conversa…'), true)}
+        ${fld('nt-kind', 'Tipo', sel('nt-kind', 'kind', Object.entries(NOTE_KINDS), note ? note.kind : 'devolutiva'), true)}
+        ${fld('nt-content', 'Conteúdo *', txa('nt-content', 'content', note ? note.content : '', 'Devolutiva do cliente, o que foi combinado, resumo da conversa…'), true)}
       </div>
-      <div class="form-foot"><button type="submit" class="btn-solid">Registrar</button></div>
+      <div class="form-foot"><button type="submit" class="btn-solid">${note ? 'Salvar' : 'Registrar'}</button></div>
     </form>`, async (d) => {
     if (!d.content) { toast('Escreva o conteúdo.'); return false; }
-    return mutate(() => dbInsert('notes', { project_id: projectId, kind: d.kind, content: d.content, author_email: state.me.email }), 'Registro adicionado.');
+    return mutate(() => (note
+      ? dbUpdate('notes', note.id, { kind: d.kind, content: d.content })
+      : dbInsert('notes', { project_id: projectId, kind: d.kind, content: d.content, author_email: state.me.email })),
+      note ? 'Registro atualizado.' : 'Registro adicionado.');
   });
 }
 
@@ -1971,6 +2048,8 @@ function closeDrawer() {
 
 const ACTIONS = {
   signIn: async () => {
+    /* preserva deep link (#/projeto/…): o retorno do OAuth volta sem hash */
+    try { sessionStorage.setItem('as_admin_hash', location.hash || ''); } catch (e) { /* modo privado */ }
     const { error } = await sb.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: location.origin + '/admin' },
@@ -1993,11 +2072,16 @@ const ACTIONS = {
   },
   moveStatus: (el, e) => {
     e.stopPropagation();
-    const p = projById(el.dataset.id);
-    if (!p) return;
-    const idx = STATUSES.indexOf(p.status) + Number(el.dataset.dir);
-    if (idx < 0 || idx >= STATUSES.length) return;
-    mutate(() => dbUpdate('projects', p.id, { status: STATUSES[idx] }));
+    const id = el.dataset.id;
+    const dir = Number(el.dataset.dir);
+    /* a etapa é lida DENTRO da fila: dois cliques rápidos avançam duas etapas */
+    mutate(async () => {
+      const p = projById(id);
+      if (!p) return;
+      const idx = STATUSES.indexOf(p.status) + dir;
+      if (idx < 0 || idx >= STATUSES.length) return;
+      await dbUpdate('projects', p.id, { status: STATUSES[idx] });
+    });
   },
 
   newClient: () => { closeDrawer(); clientModal(); },
@@ -2038,12 +2122,17 @@ const ACTIONS = {
     mutate(() => dbDelete('tasks', el.dataset.id), 'Tarefa excluída.');
   },
   toggleTask: (el) => {
-    const t = state.tasks.find((x) => x.id === el.dataset.id);
-    if (!t) return;
-    mutate(() => dbUpdate('tasks', t.id, { done: !t.done, done_at: !t.done ? new Date().toISOString() : null }));
+    /* o estado desejado é o do próprio checkbox no momento do clique */
+    const id = el.dataset.id;
+    const want = el.checked;
+    mutate(() => dbUpdate('tasks', id, { done: want, done_at: want ? new Date().toISOString() : null }));
   },
 
   newNote: (el) => noteModal(el.dataset.project),
+  editNote: (el) => {
+    const n = state.notes.find((x) => x.id === el.dataset.id);
+    if (n) noteModal(n.project_id, n);
+  },
   deleteNote: (el) => {
     if (!confirm('Excluir este registro?')) return;
     mutate(() => dbDelete('notes', el.dataset.id), 'Registro excluído.');
@@ -2086,6 +2175,17 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if ($('#modal').classList.contains('on')) closeModal();
     else closeDrawer();
+    return;
+  }
+  /* divs com role de botão/link (cartão do kanban, dia do calendário)
+     respondem a Enter/Espaço como os controles nativos */
+  if (e.key === 'Enter' || e.key === ' ') {
+    const el = document.activeElement;
+    if (el && el.matches && el.matches('[data-action][role="button"], [data-action][role="link"]')) {
+      e.preventDefault();
+      const fn = ACTIONS[el.dataset.action];
+      if (fn) fn(el, e);
+    }
   }
 });
 
@@ -2093,11 +2193,16 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('change', (e) => {
   const el = e.target.closest('[data-change]');
   if (!el) return;
+  const rerenderKeepFocus = (id) => {
+    renderApp();
+    const el2 = document.getElementById(id);
+    if (el2) el2.focus();
+  };
   switch (el.dataset.change) {
-    case 'finPreset': ui.finPreset = el.value; renderApp(); break;
-    case 'finFrom': ui.finFrom = el.value; renderApp(); break;
-    case 'finTo': ui.finTo = el.value; renderApp(); break;
-    case 'finStatus': ui.finStatus = el.value; renderApp(); break;
+    case 'finPreset': ui.finPreset = el.value; rerenderKeepFocus(el.id); break;
+    case 'finFrom': ui.finFrom = el.value; rerenderKeepFocus(el.id); break;
+    case 'finTo': ui.finTo = el.value; rerenderKeepFocus(el.id); break;
+    case 'finStatus': ui.finStatus = el.value; rerenderKeepFocus(el.id); break;
     case 'projectStatus': mutate(() => dbUpdate('projects', el.dataset.id, { status: el.value })); break;
     case 'splitM': {
       /* completa automaticamente a fatia do Bruno */
@@ -2134,12 +2239,24 @@ document.addEventListener('submit', async (e) => {
 });
 
 /* ═══ Inicialização ════════════════════════════════════════════════ */
+function showErrorGate(msg) {
+  $('#scr-loading .gate').innerHTML = '<div class="gate__card"><p class="eyebrow">Erro</p>'
+    + '<p class="gate__note">' + esc(msg) + '</p>'
+    + '<button type="button" class="btn-ghost" onclick="location.reload()">Tentar de novo</button></div>';
+  showScreen('loading');
+}
+
 async function enter(session) {
   state.session = session;
   showScreen('loading');
   const { data: members, error } = await sb.from(TB('members')).select('*').order('name');
   const email = (session.user.email || '').toLowerCase();
-  if (error || !members || !members.length || !members.some((m) => m.email.toLowerCase() === email)) {
+  if (error) {
+    /* falha de rede/servidor NÃO é acesso negado */
+    showErrorGate('Não foi possível verificar seu acesso agora (' + (error.message || 'erro de conexão') + '). Verifique a internet e tente de novo.');
+    return;
+  }
+  if (!members || !members.length || !members.some((m) => m.email.toLowerCase() === email)) {
     $('#denied-email').textContent = session.user.email || '(sem e-mail)';
     showScreen('denied');
     return;
@@ -2149,9 +2266,13 @@ async function enter(session) {
   try {
     await fetchAll();
   } catch (e) {
-    toast('Erro ao carregar dados: ' + (e.message || e));
+    showErrorGate('Não foi possível carregar os dados (' + (e.message || e) + ').');
+    return;
   }
-  if (!location.hash || !location.hash.startsWith('#/')) location.hash = '#/dashboard';
+  let backHash = '';
+  try { backHash = sessionStorage.getItem('as_admin_hash') || ''; sessionStorage.removeItem('as_admin_hash'); } catch (e) { /* modo privado */ }
+  if (backHash && backHash.startsWith('#/')) location.hash = backHash;
+  else if (!location.hash || !location.hash.startsWith('#/')) location.hash = '#/dashboard';
   showScreen('app');
   renderApp();
 }
