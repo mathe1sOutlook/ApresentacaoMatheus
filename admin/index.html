@@ -1980,11 +1980,13 @@ function paymentModal(pay, presets) {
     }
     const amt = Number(d.amount);
     const am = numOrNull(d.amount_matheus), ab = numOrNull(d.amount_bruno);
-    if (am != null && ab != null && Math.abs(am + ab - amt) > 0.01) {
+    /* dinheiro compara em centavos inteiros: qualquer diferença de 1 centavo é erro real */
+    const cents = (v) => Math.round(v * 100);
+    if (am != null && ab != null && cents(am) + cents(ab) !== cents(amt)) {
       toast('As partes em R$ precisam somar o valor da parcela.');
       return false;
     }
-    if ((am != null && am > amt + 0.001) || (ab != null && ab > amt + 0.001)) {
+    if ((am != null && cents(am) > cents(amt)) || (ab != null && cents(ab) > cents(amt))) {
       toast('A parte fixa em R$ não pode passar do valor da parcela.');
       return false;
     }
