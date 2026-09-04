@@ -909,82 +909,187 @@ button {
 .step {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
-  padding: 24px 0;
-  border-top: 1px solid var(--line);
+  gap: 10px;
+  padding: 30px 0;
+  border-top: 1px solid var(--line-strong);
   align-items: baseline;
 }
-.step:last-child { border-bottom: 1px solid var(--line); }
-.step__number { font-family: var(--mono); font-size: 13px; color: var(--ink-soft); }
-.step__title { font-family: var(--serif); font-size: 19px; font-weight: 500; }
-.step__text { font-size: 14.5px; color: var(--ink-soft); }
-
-/* ─── Dossiê 06 · Tecnologia ─────────────────────────────────────── */
-.stack-card { padding: 26px 24px; }
-.stack-card__label {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--ochre);
-}
-.stack-card__list {
-  margin: 14px 0 0;
-  padding: 0;
-  list-style: none;
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--ink-soft);
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
+.step:last-child { border-bottom: 1px solid var(--line-strong); }
+.step__number { font-family: var(--mono); font-size: 16px; color: var(--ink-soft); }
+.step__title { font-family: var(--serif); font-size: 26px; font-weight: 600; }
+.step__text { font-size: 17px; color: var(--ink-soft); }
 
 /* ─── Contato + footer ───────────────────────────────────────────── */
 .contact {
-  padding: 80px 0;
+  padding: 96px 0;
+  border-top: 1px solid var(--line);
   scroll-margin-top: var(--header-h);
 }
 .contact__inner {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 40px;
-  align-items: flex-end;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: start;
 }
-.contact__main { flex: 1 1 520px; }
 .contact__title {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(28px, 3.6vw, 44px);
+  font-size: clamp(38px, 3.8vw, 52px);
   line-height: 1.1;
   letter-spacing: -0.01em;
-  margin-top: 12px;
-  max-width: 24ch;
+  margin-top: 14px;
+  max-width: 20ch;
 }
 .contact__text {
-  margin-top: 16px;
+  margin-top: 22px;
   color: var(--ink-soft);
-  max-width: 48ch;
+  font-size: 18px;
+  max-width: 44ch;
 }
 .contact__links {
-  flex: 0 1 340px;
+  margin-top: 30px;
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: 18px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 14px;
 }
 .contact__links a {
   color: var(--ink);
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 6px;
 }
 .contact__links a:hover { border-bottom-color: var(--ink); color: var(--ochre); }
 .contact__note {
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--ink-soft);
-  margin-top: 6px;
+  margin-top: 4px;
+}
+
+/* QR para materiais físicos — moldura até o arquivo chegar. */
+.qr {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 24px;
+  align-items: center;
+  margin-top: 40px;
+}
+.qr__box {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+}
+.qr__box img { width: 100%; height: 100%; display: block; }
+.qr__box figcaption {
+  display: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.qr__box.is-empty { border-style: dashed; }
+.qr__box.is-empty img { display: none; }
+.qr__box.is-empty figcaption { display: block; }
+.qr__label {
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.qr__text { margin-top: 8px; font-size: 17px; color: var(--ink-soft); }
+
+/* Formulário — abre o WhatsApp com a mensagem montada. */
+.lead {
+  border: 1px solid var(--line-strong);
+  background: var(--bg-card);
+  padding: 36px 32px 32px;
+}
+.lead__title {
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+}
+.field { display: block; margin-top: 22px; }
+.field__label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+.field__input {
+  display: block;
+  width: 100%;
+  font: inherit;
+  font-size: 18px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line-strong);
+  border-radius: 0;
+  padding: 12px 0 14px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.field__input:focus { border-bottom-color: var(--ink); }
+.field__input::placeholder { color: transparent; }
+textarea.field__input { min-height: 120px; resize: vertical; }
+.field--select { position: relative; }
+.field--select::after {
+  content: "";
+  position: absolute;
+  right: 6px;
+  bottom: 22px;
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid var(--ink-soft);
+  border-bottom: 1px solid var(--ink-soft);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+select.field__input { padding-right: 28px; cursor: pointer; }
+select.field__input option { background: var(--bg-card); color: var(--ink); }
+.lead__submit {
+  display: block;
+  width: 100%;
+  margin-top: 32px;
+  font-family: var(--mono);
+  font-size: 18px;
+  padding: 22px;
+  background: var(--ink);
+  color: var(--bg);
+  border: 1px solid var(--ink);
+  text-align: center;
+}
+.lead__submit:hover { background: var(--ochre); border-color: var(--ochre); }
+.lead__hint {
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+@media (min-width: 900px) {
+  .contact__inner { grid-template-columns: 1.1fr 1fr; gap: 64px; }
 }
 
 .site-footer {
@@ -1008,8 +1113,8 @@ button {
 @media (min-width: 640px) {
   .rule-grid--3 { grid-template-columns: repeat(2, 1fr); }
   .step {
-    grid-template-columns: 80px 1fr;
-    gap: 8px 24px;
+    grid-template-columns: 96px 1fr;
+    gap: 14px 24px;
   }
   .step__number { grid-row: span 2; }
 }
@@ -1032,7 +1137,7 @@ button {
 
 @media (min-width: 1024px) {
   .rule-grid--3 { grid-template-columns: repeat(3, 1fr); }
-  .step { grid-template-columns: 80px 1fr 2fr; }
+  .step { grid-template-columns: 96px 1fr 2fr; }
   .step__number { grid-row: auto; }
 }
 
@@ -1083,7 +1188,9 @@ button {
   .case__title { font-size: 26px; }
   .case__details { padding: 26px 24px 30px; }
   .proof { margin-top: 56px; }
-  .contact { padding: 56px 0; }
+  .contact { padding: 72px 0; }
+  .lead { padding: 30px 24px 26px; }
+  .qr { gap: 18px; }
 }
 </style>
 </head>
@@ -1109,7 +1216,6 @@ button {
       <a href="#servicos" data-en="Services">Serviços</a>
       <a href="#cases" data-en="Cases">Casos</a>
       <a href="#processo" data-en="Process">Processo</a>
-      <a href="#stack" data-en="Stack">Tecnologia</a>
     </nav>
 
     <a href="#contato" class="btn-ghost" data-en="Start a conversation">Iniciar conversa</a>
@@ -1750,7 +1856,7 @@ button {
           <div class="more-card__body">
             <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
             <h3 class="more-card__title" data-en="VisionOne — Credit risk">VisionOne — Risco de crédito</h3>
-            <p class="more-card__text" data-en="Scoring, PDF extraction and AI-written reports.">Scoring, extração de PDFs e relatórios com IA.</p>
+            <p class="more-card__text" data-en="AI scoring and PDF extraction.">Scoring com IA e extração de PDFs.</p>
           </div>
         </article>
 
@@ -1766,7 +1872,7 @@ button {
           <div class="more-card__body">
             <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
             <h3 class="more-card__title" data-en="Gipsyy — Friday do Futuro">Gipsyy — Friday do Futuro</h3>
-            <p class="more-card__text" data-en="Black Friday with up to 70% off on tickets.">Black Friday com até 70% off em passagens.</p>
+            <p class="more-card__text" data-en="Black Friday campaign with up to 70% off.">Campanha de Black Friday com até 70% off.</p>
           </div>
         </article>
 
@@ -1809,76 +1915,35 @@ button {
 <!-- ═══════════════════════════════════════════════ DOSSIÊ 05 · MÉTODO -->
 <section class="section" id="processo">
   <div class="container">
-    <div class="section-head section-head--tight">
+    <div class="section-head">
       <div>
         <p class="eyebrow" data-en="Dossier 05 — Method">Dossiê 05 — Método</p>
         <h2 class="section-title" data-en="How we work.">Como trabalhamos.</h2>
       </div>
-      <p class="section-intro" data-en="One flow — brand and system diagnosed, designed and built together.">Um único fluxo — marca e sistema diagnosticados, desenhados e construídos juntos.</p>
     </div>
 
     <ol class="steps">
       <li class="step">
         <span class="step__number">01</span>
         <h3 class="step__title" data-en="Diagnosis">Diagnóstico</h3>
-        <p class="step__text" data-en="We map the business, the current brand, the processes and the rules — from positioning to system.">Entendemos o negócio, a marca atual, os processos e as regras — de posicionamento a sistema.</p>
+        <p class="step__text" data-en="Business, current brand, processes.">Negócio, marca atual, processos.</p>
       </li>
       <li class="step">
         <span class="step__number">02</span>
         <h3 class="step__title" data-en="Scope &amp; schedule">Escopo &amp; cronograma</h3>
-        <p class="step__text" data-en="Two weeks to formalise positioning, narrative, screens, modules and a clear order of execution for both fronts — the reference for everything that follows.">Duas semanas para formalizar posicionamento, narrativa, telas, módulos e uma ordem clara de execução para as duas frentes — a referência de tudo que vem depois.</p>
+        <p class="step__text" data-en="Positioning, screens, order of execution.">Posicionamento, telas, ordem de execução.</p>
       </li>
       <li class="step">
         <span class="step__number">03</span>
         <h3 class="step__title" data-en="Incremental build">Construção incremental</h3>
-        <p class="step__text" data-en="Brand and system evolve in parallel, with frequent validations to avoid rework and keep both aligned.">Marca e sistema evoluem em paralelo, com validações frequentes para evitar retrabalho e manter tudo alinhado.</p>
+        <p class="step__text" data-en="Brand and system evolve in parallel.">Marca e sistema evoluem em paralelo.</p>
       </li>
       <li class="step">
         <span class="step__number">04</span>
         <h3 class="step__title" data-en="Launch &amp; evolution">Entrega &amp; evolução</h3>
-        <p class="step__text" data-en="We publish, watch real usage and adjust — with a warranty window and continuous 30-day evolution cycles on demand.">Publicamos, acompanhamos o uso real e ajustamos — com janela de garantia e ciclos de evolução contínua de 30 dias sob demanda.</p>
+        <p class="step__text" data-en="We publish, follow up, adjust.">Publicamos, acompanhamos, ajustamos.</p>
       </li>
     </ol>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════ DOSSIÊ 06 · TECNOLOGIA -->
-<section class="section section--deep" id="stack">
-  <div class="container">
-    <div class="section-head section-head--tight">
-      <div>
-        <p class="eyebrow" data-en="Dossier 06 — Technology">Dossiê 06 — Tecnologia</p>
-        <h2 class="section-title section-title--wide" data-en="Chosen per project, never by fashion.">Escolhida por projeto, nunca por moda.</h2>
-      </div>
-      <p class="section-intro" data-en="What matters is delivering fast, secure, maintainable systems ready to grow — with authentication, role-based permissions, automatic backup and LGPD compliance.">O que importa é entregar sistemas rápidos, seguros, fáceis de manter e preparados para crescer — com autenticação, permissões por perfil, backup automático e conformidade com a LGPD.</p>
-    </div>
-
-    <div class="rule-grid rule-grid--3">
-      <article class="stack-card">
-        <p class="stack-card__label">Front-end</p>
-        <ul class="stack-card__list"><li>React</li><li>Next.js</li><li>TypeScript</li><li>Tailwind</li></ul>
-      </article>
-      <article class="stack-card">
-        <p class="stack-card__label" data-en="Data &amp; back-end">Dados &amp; back-end</p>
-        <ul class="stack-card__list"><li>Supabase</li><li>PostgreSQL</li><li>Firebase</li><li>Realtime / APIs</li></ul>
-      </article>
-      <article class="stack-card">
-        <p class="stack-card__label" data-en="Infrastructure">Infraestrutura</p>
-        <ul class="stack-card__list"><li>Vercel</li><li>Cloudflare</li><li>GitHub</li><li data-en="Staging + production">Homologação + produção</li></ul>
-      </article>
-      <article class="stack-card">
-        <p class="stack-card__label" data-en="Analysis, AI &amp; calculation">Análise, IA &amp; cálculo</p>
-        <ul class="stack-card__list"><li>Python · Jupyter</li><li>NumPy · SciPy</li><li>ECharts</li><li>LLM / IA</li><li>Three.js · .NET MAUI</li></ul>
-      </article>
-      <article class="stack-card">
-        <p class="stack-card__label" data-en="Security">Segurança</p>
-        <ul class="stack-card__list"><li data-en="Authentication">Autenticação</li><li data-en="Role-based permissions">Permissões por perfil</li><li data-en="Automatic backup">Backup automático</li><li data-en="LGPD compliance">Conformidade LGPD</li></ul>
-      </article>
-      <article class="stack-card">
-        <p class="stack-card__label" data-en="Multiplatform">Multiplataforma</p>
-        <ul class="stack-card__list"><li data-en="Web">Web</li><li>Mobile</li><li>Desktop</li><li data-en="Chosen per user routine">Escolhida pela rotina do usuário</li></ul>
-      </article>
-    </div>
   </div>
 </section>
 
@@ -1886,17 +1951,58 @@ button {
 <section class="contact" id="contato">
   <div class="container contact__inner">
     <div class="contact__main">
-      <p class="eyebrow" data-en="Contact">Contato</p>
+      <p class="eyebrow" data-en="Dossier 06 — Contact">Dossiê 06 — Contato</p>
       <h2 class="contact__title" data-en="Shall we build your brand and the system behind it?">Vamos construir sua marca e o sistema por trás dela?</h2>
-      <p class="contact__text" data-en="Tell us where your business stands today. We reply within one business day with the next steps.">Conte um pouco sobre o momento do seu negócio. Respondemos em até 1 dia útil com os próximos passos.</p>
+      <p class="contact__text" data-en="Tell us a bit about where your business stands. We reply within one business day.">Conte um pouco sobre o momento do seu negócio. Respondemos em até 1 dia útil.</p>
+
+      <div class="contact__links">
+        <a href="https://wa.me/5511969041800?text=Ol%C3%A1%2C%20vi%20o%20portf%C3%B3lio%20e%20quero%20conversar%20sobre%20um%20projeto." target="_blank" rel="noopener" data-en="WhatsApp — talk now">WhatsApp — falar agora</a>
+        <!-- TODO: confirmar o endereço definitivo antes de divulgar (o domínio amaralesilva.com ainda não está ativo). -->
+        <a href="mailto:contato@amaralesilva.com">contato@amaralesilva.com</a>
+        <span class="contact__note" data-en="São Paulo · projects run remotely across Brazil and abroad">São Paulo · projetos conduzidos remotamente no Brasil e fora</span>
+      </div>
+
+      <div class="qr">
+        <!-- QR: salvar em /img/qr.svg (ou .png) apontando para o site ou o WhatsApp. -->
+        <figure class="qr__box">
+          <img src="/img/qr.svg" alt="QR code" onerror="this.parentNode.classList.add('is-empty')" />
+          <figcaption data-en="QR code<br>physical<br>materials">QR code<br>materiais<br>físicos</figcaption>
+        </figure>
+        <div>
+          <p class="qr__label" data-en="Physical use">Uso físico</p>
+          <p class="qr__text" data-en="Cards, badges, proposals — points to the site or WhatsApp.">Cartão, crachás, propostas — aponta pro site ou WhatsApp.</p>
+        </div>
+      </div>
     </div>
 
-    <div class="contact__links">
-      <a href="https://wa.me/5511969041800?text=Ol%C3%A1%2C%20vi%20o%20portf%C3%B3lio%20e%20quero%20conversar%20sobre%20um%20projeto." target="_blank" rel="noopener">WhatsApp — (11) 96904-1800</a>
-      <!-- TODO: confirmar o endereço definitivo antes de divulgar (o domínio amaralesilva.com ainda não está ativo). -->
-      <a href="mailto:contato@amaralesilva.com">contato@amaralesilva.com</a>
-      <span class="contact__note" data-en="São Paulo · projects run remotely across Brazil and abroad">São Paulo · projetos conduzidos remotamente no Brasil e fora</span>
-    </div>
+    <form class="lead" id="lead-form" novalidate>
+      <p class="lead__title" data-en="Start a conversation">Iniciar conversa</p>
+
+      <label class="field">
+        <span class="field__label" data-en="Name">Nome</span>
+        <input class="field__input" type="text" name="nome" autocomplete="name" required />
+      </label>
+      <label class="field">
+        <span class="field__label" data-en="Company">Empresa</span>
+        <input class="field__input" type="text" name="empresa" autocomplete="organization" />
+      </label>
+      <label class="field field--select">
+        <span class="field__label" data-en="What you need">O que você precisa</span>
+        <select class="field__input" name="precisa">
+          <option value="marca" data-en="Brand &amp; branding">Marca &amp; branding</option>
+          <option value="sistema" data-en="System &amp; technology">Sistema &amp; tecnologia</option>
+          <option value="ambos" data-en="Both">As duas coisas</option>
+          <option value="nao-sei" data-en="Not sure yet">Ainda não sei</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="field__label" data-en="Message">Mensagem</span>
+        <textarea class="field__input" name="mensagem" rows="4"></textarea>
+      </label>
+
+      <button type="submit" class="lead__submit" data-en="Send">Enviar</button>
+      <p class="lead__hint" data-en="Opens WhatsApp with your message ready to send.">Abre o WhatsApp com a mensagem pronta pra enviar.</p>
+    </form>
   </div>
 </section>
 
@@ -2081,6 +2187,26 @@ button {
   }
 
   drawNet();
+
+  /* ─── Formulário de contato → WhatsApp com a mensagem montada ── */
+  var form = document.getElementById('lead-form');
+  if (form) {
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var en = current === 'en';
+      var nome = form.nome.value.trim();
+      var empresa = form.empresa.value.trim();
+      var precisa = form.precisa.options[form.precisa.selectedIndex].textContent.trim();
+      var mensagem = form.mensagem.value.trim();
+      if (!nome) { form.nome.focus(); return; }
+
+      var linhas = en
+        ? ['Hi, I came from the Amaral & Silva site.', 'Name: ' + nome, empresa ? 'Company: ' + empresa : '', 'Need: ' + precisa, mensagem]
+        : ['Olá, vim pelo site da Amaral & Silva.', 'Nome: ' + nome, empresa ? 'Empresa: ' + empresa : '', 'Preciso de: ' + precisa, mensagem];
+      var texto = linhas.filter(Boolean).join('\n');
+      window.open('https://wa.me/5511969041800?text=' + encodeURIComponent(texto), '_blank', 'noopener');
+    });
+  }
 
   /* ─── Casos: abrir / fechar detalhes ──────────────────────────── */
   document.querySelectorAll('.case__toggle').forEach(function (btn) {

@@ -40,7 +40,7 @@ dicionários do `next-intl`.
 ## Seções
 
 `#topo` (hero) · `#dupla` · `#diagnostico` · `#servicos` · `#cases` ·
-`#processo` · `#stack` · `#contato`.
+`#processo` · `#contato`.
 
 ## Admin (`/admin`)
 
