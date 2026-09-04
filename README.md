@@ -7,14 +7,17 @@ One-pager bilíngue (PT-BR / EN) da dupla **Bruno Amaral** (marca e estratégia)
 Implementa o handoff *Reestruturação de branding* na versão escura — fundo
 quase preto, tinta creme, ocre para marca, azul para tecnologia, Fraunces +
 Inter + IBM Plex Mono, zero arredondamento e réguas de 1px como estrutura. O
-hero traz uma constelação (ocre à esquerda, azul à direita) desenhada pelo
-script com semente fixa, e a prova social roda em marquee.
+hero traz uma constelação em canvas (ocre à esquerda, azul à direita) com
+semente fixa, que flutua devagar e reage ao cursor; as seções entram com um
+fade curto ao rolar. Os dois efeitos desligam com `prefers-reduced-motion`.
+A prova social roda em marquee.
 
 ## Estrutura
 
 ```
 index.html      site completo (marcação + <style> + <script>, sem build)
 favicon.svg     "&" em ocre sobre fundo escuro
+og.png, og-en.png  imagem de compartilhamento (1200×630) em PT e EN
 robots.txt      libera o site, bloqueia as propostas e o /admin
 sitemap.xml     / e /en com hreflang
 vercel.json     rewrites (inclui /en e /admin) e noindex das propostas e do admin
@@ -36,6 +39,16 @@ lang>`, `<title>`, a meta description, o canonical e as tags Open Graph, e usa
 Para editar uma frase, mude os dois lados: o texto no HTML (PT) e o `data-en`
 (EN). Se um dia o site virar Next.js, esses pares alimentam direto os
 dicionários do `next-intl`.
+
+## Formulário de contato (leads)
+
+O "Iniciar conversa" em `#contato` faz duas coisas ao enviar: abre o WhatsApp
+com a mensagem montada e grava o lead na tabela `amaralesilva_leads` do
+Supabase (projeto `mApps`), via REST com a chave publicável. A política RLS
+permite ao papel anônimo apenas INSERT com `source = 'site'` e
+`status = 'novo'`; leitura e edição só para membros, pela tela **Leads do
+site** do painel `/admin`, que também converte o lead em cliente com um
+clique. Um campo-isca (`website`) barra robôs simples.
 
 ## Seções
 
@@ -59,6 +72,8 @@ Reúne:
 - **Agenda** — calendário de reuniões com pauta e ata do que foi proposto.
 - **Tarefas** — atribuíveis a qualquer um dos dois; o dashboard avisa o que é
   de hoje, da semana e o que atrasou.
+- **Leads do site** — o que chegou pelo formulário público, com situação
+  (novo, em contato, convertido, descartado) e conversão em cliente.
 
 ### Backend
 

@@ -194,3 +194,43 @@ create policy "amaralesilva members full access" on public.amaralesilva_tasks
 insert into public.amaralesilva_members (email, name)
 values ('mathe1s.castro@gmail.com', 'Matheus Silva')
 on conflict (email) do nothing;
+
+-- ═══ Migração amaralesilva_leads ═══
+-- Leads do formulário público do site (#contato). O site insere como anon
+-- (política só de INSERT, com source='site' e status='novo'); só membros
+-- leem e editam. Convertido em cliente pelo painel, guarda o client_id.
+create table public.amaralesilva_leads (
+  id         uuid primary key default gen_random_uuid(),
+  name       text not null check (char_length(name) between 1 and 120),
+  company    text check (company is null or char_length(company) <= 120),
+  contact    text check (contact is null or char_length(contact) <= 160),
+  need       text not null default 'nao-sei' check (need in ('marca','sistema','ambos','nao-sei')),
+  message    text check (message is null or char_length(message) <= 2000),
+  lang       text not null default 'pt' check (lang in ('pt','en')),
+  source     text not null default 'site' check (char_length(source) <= 40),
+  status     text not null default 'novo' check (status in ('novo','em_contato','convertido','descartado')),
+  client_id  uuid references public.amaralesilva_clients(id) on delete set null,
+  user_agent text check (user_agent is null or char_length(user_agent) <= 300),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index amaralesilva_leads_created_idx on public.amaralesilva_leads (created_at desc);
+create index amaralesilva_leads_status_idx  on public.amaralesilva_leads (status);
+
+create trigger amaralesilva_leads_touch before update on public.amaralesilva_leads
+  for each row execute function public.amaralesilva_set_updated_at();
+
+alter table public.amaralesilva_leads enable row level security;
+
+revoke all on public.amaralesilva_leads from anon;
+grant insert on public.amaralesilva_leads to anon;
+
+create policy "amaralesilva members full access" on public.amaralesilva_leads
+  for all to authenticated
+  using (public.amaralesilva_is_member())
+  with check (public.amaralesilva_is_member());
+
+create policy "amaralesilva site inserts leads" on public.amaralesilva_leads
+  for insert to anon
+  with check (source = 'site' and status = 'novo' and client_id is null);

@@ -370,6 +370,8 @@ body.drawer-open { overflow: hidden; }
 .rowlist__sub { font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft); margin-top: 1px; overflow-wrap: anywhere; }
 .rowlist li.is-late .rowlist__when { color: var(--red); }
 .empty { padding: 22px 18px; color: var(--ink-soft); font-size: 13.5px; }
+.tbl tr.is-new td:first-child { box-shadow: inset 3px 0 0 var(--blue); }
+.lead-status { font: inherit; font-size: 12.5px; padding: 4px 6px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); }
 
 /* ─── Chips de estado ────────────────────────────────────────────── */
 .chip {
@@ -749,6 +751,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
       <nav class="drawer__nav" id="drawer-nav">
         <a href="#/dashboard" data-route="dashboard">Dashboard</a>
         <a href="#/crm" data-route="crm">CRM · Propostas</a>
+        <a href="#/leads" data-route="leads">Leads do site</a>
         <a href="#/clientes" data-route="clientes">Clientes</a>
         <a href="#/financeiro" data-route="financeiro">Financeiro</a>
         <a href="#/agenda" data-route="agenda">Agenda</a>
@@ -811,7 +814,7 @@ const sb = window.supabase
 const state = {
   session: null,
   members: [], me: null,
-  clients: [], projects: [], notes: [], meetings: [], payments: [], tasks: [],
+  clients: [], projects: [], notes: [], meetings: [], payments: [], tasks: [], leads: [],
 };
 const now0 = new Date();
 const ui = {
@@ -881,6 +884,19 @@ const STATUS_LABEL = {
   perdido: 'Perdido',
 };
 const NOTE_KINDS = { devolutiva: 'Devolutiva', combinado: 'Combinado', conversa: 'Conversa', nota: 'Nota' };
+const LEAD_STATUSES = ['novo', 'em_contato', 'convertido', 'descartado'];
+const LEAD_STATUS_LABEL = { novo: 'Novo', em_contato: 'Em contato', convertido: 'Convertido', descartado: 'Descartado' };
+const LEAD_NEED_LABEL = { marca: 'Marca & branding', sistema: 'Sistema & tecnologia', ambos: 'As duas coisas', 'nao-sei': 'Ainda não sabe' };
+const leadById = (id) => state.leads.find((l) => l.id === id) || null;
+/* contato do lead vira link: e-mail → mailto, número → wa.me */
+const leadContactLink = (c) => {
+  const v = String(c || '').trim();
+  if (!v) return '';
+  if (/@/.test(v)) return `<a href="mailto:${esc(v)}">${esc(v)}</a>`;
+  const digits = v.replace(/\D/g, '');
+  if (digits.length >= 10) return `<a href="https://wa.me/${digits.length <= 11 ? '55' + digits : digits}" target="_blank" rel="noopener">${esc(v)}</a>`;
+  return esc(v);
+};
 
 const projById   = (id) => state.projects.find((p) => p.id === id) || null;
 const clientById = (id) => state.clients.find((c) => c.id === id) || null;
@@ -930,7 +946,7 @@ function payShareB(p) {
 
 /* ═══ Dados ════════════════════════════════════════════════════════ */
 async function fetchAll() {
-  const [clients, projects, notes, meetings, payments, tasks, members] = await Promise.all([
+  const [clients, projects, notes, meetings, payments, tasks, members, leads] = await Promise.all([
     sb.from(TB('clients')).select('*').order('name'),
     sb.from(TB('projects')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('notes')).select('*').order('created_at', { ascending: false }),
@@ -938,12 +954,13 @@ async function fetchAll() {
     sb.from(TB('payments')).select('*').order('due_date'),
     sb.from(TB('tasks')).select('*').order('due_date', { ascending: true, nullsFirst: false }),
     sb.from(TB('members')).select('*').order('name'),
+    sb.from(TB('leads')).select('*').order('created_at', { ascending: false }),
   ]);
-  const firstErr = [clients, projects, notes, meetings, payments, tasks, members].find((r) => r.error);
+  const firstErr = [clients, projects, notes, meetings, payments, tasks, members, leads].find((r) => r.error);
   if (firstErr) throw firstErr.error;
   state.clients = clients.data; state.projects = projects.data; state.notes = notes.data;
   state.meetings = meetings.data; state.payments = payments.data; state.tasks = tasks.data;
-  state.members = members.data;
+  state.members = members.data; state.leads = leads.data;
 }
 
 /* Mutações em fila: cliques rápidos rodam em série, cada um lendo o estado
@@ -1032,6 +1049,11 @@ function afterRender(route) {
   if (chart) bindChartTooltip(chart);
 }
 
+document.addEventListener('change', (e) => {
+  const el = e.target.closest('[data-action="leadStatus"]');
+  if (el) ACTIONS.leadStatus(el, e);
+});
+
 window.addEventListener('hashchange', () => {
   if (state.me) { closeDrawer(); closeModal(); renderApp(); window.scrollTo(0, 0); }
 });
@@ -1057,6 +1079,7 @@ VIEWS.dashboard = function () {
   const recMonth = paysMonth.filter((p) => p.status === 'pago').reduce((s, p) => s + N(p.amount), 0);
   const prevMonth = paysMonth.filter((p) => p.status !== 'pago').reduce((s, p) => s + N(p.amount), 0);
   const lateAll = state.payments.filter((p) => payState(p) === 'atrasado').reduce((s, p) => s + N(p.amount), 0);
+  const newLeads = state.leads.filter((l) => l.status === 'novo');
 
   const hour = new Date().getHours();
   const hello = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
@@ -1145,7 +1168,19 @@ VIEWS.dashboard = function () {
     <div class="card__head"><span class="label label--ochre">Pipeline</span>
       <a class="btn-link" href="#/crm">Abrir CRM →</a></div>
     <div class="card__body" style="display:flex;gap:8px 24px;flex-wrap:wrap">${pipeline}</div>
-  </div>`;
+  </div>
+
+  ${newLeads.length ? `<div class="card" style="margin-top:24px">
+    <div class="card__head"><span class="label label--blue">Leads novos do site · ${newLeads.length}</span>
+      <a class="btn-link" href="#/leads">Ver todos →</a></div>
+    <ul class="rowlist">${newLeads.slice(0, 5).map((l) => `<li>
+      <span class="rowlist__when">${fmtDateShort(toISODate(new Date(l.created_at)))}</span>
+      <div class="rowlist__main">
+        <div class="rowlist__title"><button type="button" class="btn-link" style="text-transform:none;font-family:var(--sans);font-size:14px;letter-spacing:0" data-action="openLead" data-id="${l.id}">${esc(l.name)}${l.company ? ' · ' + esc(l.company) : ''}</button></div>
+        <div class="rowlist__sub">${esc(LEAD_NEED_LABEL[l.need] || l.need)}${l.contact ? ' · ' + esc(l.contact) : ''}</div>
+      </div>
+    </li>`).join('')}</ul>
+  </div>` : ''}`;
 };
 
 /* ═══ CRM (kanban) ═════════════════════════════════════════════════ */
@@ -1190,6 +1225,55 @@ VIEWS.crm = function () {
     </div>
   </div>
   <div class="kanban">${cols}</div>`;
+};
+
+/* ═══ Leads do site ════════════════════════════════════════════════
+   Vêm do formulário público (#contato) via INSERT anônimo no Supabase.
+   Aqui a dupla marca o andamento e converte em cliente com um clique. */
+VIEWS.leads = function () {
+  const filter = ui.leadFilter || 'abertos';
+  const list = state.leads.filter((l) => filter === 'todos' ? true : filter === 'abertos' ? (l.status === 'novo' || l.status === 'em_contato') : l.status === filter);
+  const rows = list.map((l) => {
+    const cli = l.client_id ? clientById(l.client_id) : null;
+    return `<tr class="${l.status === 'novo' ? 'is-new' : ''}">
+      <td class="mono" style="font-size:11.5px;white-space:nowrap">${fmtDate(toISODate(new Date(l.created_at)))}<br /><span class="soft">${fmtTime(l.created_at)} · ${esc(l.lang.toUpperCase())}</span></td>
+      <td><b>${esc(l.name)}</b>${l.company ? `<br /><span class="mono soft" style="font-size:11px">${esc(l.company)}</span>` : ''}</td>
+      <td class="mono" style="font-size:12px">${leadContactLink(l.contact) || '<span class="soft">—</span>'}</td>
+      <td>${esc(LEAD_NEED_LABEL[l.need] || l.need)}${l.message ? `<br /><span class="soft" style="font-size:12.5px;white-space:pre-line">${esc(l.message)}</span>` : ''}</td>
+      <td>
+        <select class="lead-status" data-action="leadStatus" data-id="${l.id}" aria-label="Situação do lead">
+          ${LEAD_STATUSES.map((st) => `<option value="${st}" ${st === l.status ? 'selected' : ''}>${LEAD_STATUS_LABEL[st]}</option>`).join('')}
+        </select>
+        ${cli ? `<br /><button type="button" class="btn-link" style="text-transform:none;letter-spacing:0;margin-top:6px" data-action="editClient" data-id="${cli.id}">${esc(cli.name)} →</button>` : ''}
+      </td>
+      <td class="actions">
+        ${!cli ? `<button type="button" class="btn-mini" data-action="convertLead" data-id="${l.id}">Virar cliente</button>` : ''}
+        <button type="button" class="btn-mini btn-mini--danger" data-action="deleteLead" data-id="${l.id}">Excluir</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const chip = (v, label) => `<button type="button" class="fchip ${filter === v ? 'on' : ''}" data-action="leadFilter" data-filter="${v}">${label}</button>`;
+  const novos = state.leads.filter((l) => l.status === 'novo').length;
+
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">${novos ? novos + ' novo' + (novos === 1 ? '' : 's') + ' · ' : ''}${state.leads.length} no total</p>
+      <h1 class="view-title">Leads do site</h1>
+    </div>
+    <div class="view-actions" style="display:flex;gap:6px;flex-wrap:wrap">
+      ${chip('abertos', 'Abertos')}${chip('novo', 'Novos')}${chip('convertido', 'Convertidos')}${chip('descartado', 'Descartados')}${chip('todos', 'Todos')}
+    </div>
+  </div>
+  <div class="card card__body--flush">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Quando</th><th>Quem</th><th>Contato</th><th>Precisa de / mensagem</th><th>Situação</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="6" class="empty">Nenhum lead aqui. Eles chegam pelo formulário "Iniciar conversa" do site.</td></tr>'}</tbody>
+    </table>
+    </div>
+  </div>`;
 };
 
 /* ═══ Clientes ═════════════════════════════════════════════════════ */
@@ -1859,8 +1943,10 @@ const projectOptions = (cur) => [['', '— sem projeto —']].concat(state.proje
 const memberOptions = () => state.members.map((m) => [m.email.toLowerCase(), m.name]);
 
 /* — Cliente — */
-function clientModal(c) {
-  openModal(c ? 'Editar cliente' : 'Novo cliente', `
+function clientModal(c, prefill, fromLeadId) {
+  c = c || (prefill ? Object.assign({ id: null }, prefill) : null);
+  const editing = !!(c && c.id);
+  openModal(editing ? 'Editar cliente' : (fromLeadId ? 'Converter lead em cliente' : 'Novo cliente'), `
     <form>
       <div class="form-grid">
         ${fld('cf-name', 'Nome *', inp('cf-name', 'name', 'text', c?.name, 'required'))}
@@ -1871,12 +1957,17 @@ function clientModal(c) {
         ${fld('cf-notes', 'Notas', txa('cf-notes', 'notes', c?.notes), true)}
       </div>
       <div class="form-foot">
-        ${c ? `<button type="button" class="btn-mini btn-mini--danger" data-action="deleteClient" data-id="${c.id}" style="margin-right:auto">Excluir</button>` : ''}
-        <button type="submit" class="btn-solid">${c ? 'Salvar' : 'Cadastrar'}</button>
+        ${editing ? `<button type="button" class="btn-mini btn-mini--danger" data-action="deleteClient" data-id="${c.id}" style="margin-right:auto">Excluir</button>` : ''}
+        <button type="submit" class="btn-solid">${editing ? 'Salvar' : 'Cadastrar'}</button>
       </div>
     </form>`, async (d) => {
     const row = { name: d.name, company: strOrNull(d.company), email: strOrNull(d.email), phone: strOrNull(d.phone), origin: strOrNull(d.origin), notes: strOrNull(d.notes) };
-    return mutate(() => (c ? dbUpdate('clients', c.id, row) : dbInsert('clients', row)), c ? 'Cliente atualizado.' : 'Cliente cadastrado.');
+    if (editing) return mutate(() => dbUpdate('clients', c.id, row), 'Cliente atualizado.');
+    return mutate(async () => {
+      const { data, error } = await sb.from(TB('clients')).insert(row).select('id').single();
+      if (error) throw error;
+      if (fromLeadId) await dbUpdate('leads', fromLeadId, { status: 'convertido', client_id: data.id });
+    }, fromLeadId ? 'Lead convertido em cliente.' : 'Cliente cadastrado.');
   });
 }
 
@@ -2114,6 +2205,26 @@ const ACTIONS = {
   },
 
   newClient: () => { closeDrawer(); clientModal(); },
+  leadFilter: (el) => { ui.leadFilter = el.dataset.filter; renderApp(); },
+  openLead: () => { location.hash = '#/leads'; },
+  leadStatus: (el) => {
+    const id = el.dataset.id, status = el.value;
+    mutate(() => dbUpdate('leads', id, { status }), 'Lead atualizado.');
+  },
+  convertLead: (el) => {
+    const l = leadById(el.dataset.id);
+    if (!l) return;
+    const isEmail = /@/.test(l.contact || '');
+    clientModal(null, {
+      name: l.name, company: l.company, email: isEmail ? l.contact : null, phone: isEmail ? null : l.contact,
+      origin: 'site (formulário)', notes: [LEAD_NEED_LABEL[l.need] || l.need, l.message].filter(Boolean).join('\n'),
+    }, l.id);
+  },
+  deleteLead: (el) => {
+    const l = leadById(el.dataset.id);
+    if (!l || !confirm(`Excluir o lead "${l.name}"?`)) return;
+    mutate(() => dbDelete('leads', l.id), 'Lead excluído.');
+  },
   editClient: (el) => clientModal(clientById(el.dataset.id)),
   deleteClient: (el) => {
     const c = clientById(el.dataset.id);
