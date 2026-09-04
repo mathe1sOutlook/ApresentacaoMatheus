@@ -86,10 +86,12 @@ Google já está ativo no projeto.)
 - **Fotos da dupla** — os avatares em `#dupla` apontam para `/img/bruno.jpg` e
   `/img/matheus.jpg` (quadradas, 400×400 ou mais). Enquanto o arquivo não
   existe, a moldura tracejada "foto aqui" aparece no lugar.
-- **Imagens** — os 12 apoios visuais ainda são molduras tracejadas
-  (`<figure class="media" data-slot="...">`). Para preencher, troque o
-  `<figcaption class="media__hint">` por um `<img src="..." alt="...">`; o
-  `.media` já recorta com `object-fit: cover`.
+- **Imagens dos casos e projetos** — cada card já aponta para um arquivo em
+  `/img/casos/` (mediaportal, mindminers, ame-x, corning, genma) e em
+  `/img/projetos/` (amwc, ame-tom-de-voz, istoe, nog, visionone, gipsyy,
+  fundacalc, flora), todos `.jpg` em paisagem. Basta salvar o arquivo com esse
+  nome; enquanto ele não existe, o `onerror` do `<img>` mostra a moldura
+  tracejada "aguardando".
 - **E-mail** — `contato@amaralesilva.com` veio do design como provisório e o
   domínio `amaralesilva.com` ainda não está ativo. Confirmar o endereço
   definitivo antes de divulgar o site (o WhatsApp já é um canal real).

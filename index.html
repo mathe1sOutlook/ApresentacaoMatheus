@@ -692,7 +692,10 @@ button {
   height: 100%;
 }
 .case__cover--photo .case__media img { width: 100%; height: 100%; object-fit: cover; }
-.case__cover--photo .case__media .media__hint { display: none; }
+.case__cover--photo .case__media .media__hint,
+.case__cover--photo .case__media .media__client { display: none; }
+.case__media .media img { display: none; }
+.case__cover--photo .case__media .media img { display: block; }
 .case__cover--photo::after {
   content: "";
   position: absolute;
@@ -719,6 +722,7 @@ button {
   font-size: 15px;
   color: var(--ochre);
 }
+.case__metric--blue { color: var(--blue); }
 .case__toggle {
   margin-top: 22px;
   font-family: var(--mono);
@@ -839,35 +843,64 @@ button {
 }
 .media img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Outros projetos */
-.more { margin-top: 56px; }
+/* Outros projetos — imagem no topo, texto embaixo. */
+.more { margin-top: 72px; padding-top: 40px; border-top: 1px solid var(--line-strong); }
 .more__label {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 14px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   color: var(--ink-soft);
-  margin-bottom: 20px;
+  margin-bottom: 28px;
 }
-.more-card { padding: 24px; }
+.more-card { padding: 0; display: flex; flex-direction: column; }
+.more-card__media {
+  position: relative;
+  aspect-ratio: 16 / 8;
+  background: var(--bg-deep);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.more-card__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.more-card__media .media { display: none; }
+.more-card__media.is-empty img { display: none; }
+.more-card__media.is-empty .media {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: min(80%, 320px);
+  min-height: 0;
+  height: auto;
+  padding: 28px 20px;
+  background: transparent;
+}
+.more-card__media .media__hint { letter-spacing: 0.12em; text-transform: uppercase; }
+.more-card__body { padding: 26px 28px 32px; }
 .more-card__tag {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-top: 14px;
+  letter-spacing: 0.1em;
 }
 .more-card__tag--ochre { color: var(--ochre); }
 .more-card__tag--blue  { color: var(--blue); }
 .more-card__title {
   font-family: var(--serif);
-  font-size: 17px;
-  font-weight: 500;
-  margin-top: 8px;
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 12px;
 }
 .more-card__text {
-  margin-top: 6px;
-  font-size: 13px;
+  margin-top: 10px;
+  font-size: 16px;
   color: var(--ink-soft);
 }
 
@@ -1168,7 +1201,7 @@ button {
         <div class="person__head">
           <!-- Foto: salvar em /img/bruno.jpg (quadrada, 400×400 ou mais). Sem o arquivo, a moldura "foto aqui" aparece. -->
           <figure class="avatar">
-            <img src="/img/bruno.jpg" alt="Bruno Amaral" width="96" height="96" loading="lazy" onerror="this.parentNode.classList.add('avatar--empty')" />
+            <img src="/img/bruno.jpg" alt="Bruno Amaral" width="96" height="96" onerror="this.parentNode.classList.add('avatar--empty')" />
             <figcaption data-en="Photo here">Foto aqui</figcaption>
           </figure>
           <div>
@@ -1190,7 +1223,7 @@ button {
         <div class="person__head">
           <!-- Foto: salvar em /img/matheus.jpg (quadrada, 400×400 ou mais). -->
           <figure class="avatar">
-            <img src="/img/matheus.jpg" alt="Matheus Silva" width="96" height="96" loading="lazy" onerror="this.parentNode.classList.add('avatar--empty')" />
+            <img src="/img/matheus.jpg" alt="Matheus Silva" width="96" height="96" onerror="this.parentNode.classList.add('avatar--empty')" />
             <figcaption data-en="Photo here">Foto aqui</figcaption>
           </figure>
           <div>
@@ -1336,16 +1369,17 @@ button {
     <div class="cases">
 <!-- Caso 01 ─────────────────────────────────────────────────── -->
     <article class="case">
-  <!-- Com foto: troque o .media__hint por <img src="..." alt="..."> e adicione a classe case__cover--photo ao .case__cover. -->
-  <div class="case__cover">
+  <!-- Foto de capa: /img/casos/mediaportal.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--photo">
     <div class="case__chips">
       <span class="case__chip"><span data-en="Case">Caso</span> 01</span>
       <span class="case__chip" data-en="Joint">Conjunto</span>
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-mediaportal">
+        <img src="/img/casos/mediaportal.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
         <span class="media__client">Media Portal Soluções</span>
-        <figcaption class="media__hint" data-en="Site screenshots — before / after">Prints do site — antes / depois</figcaption>
+        <figcaption class="media__hint" data-en="Awaiting the real site screenshot">Aguardando print real do site</figcaption>
       </figure>
     </div>
     <div class="case__caption">
@@ -1396,21 +1430,22 @@ button {
 
     <!-- Caso 02 ─────────────────────────────────────────────────── -->
     <article class="case">
-  <!-- Com foto: troque o .media__hint por <img src="..." alt="..."> e adicione a classe case__cover--photo ao .case__cover. -->
-  <div class="case__cover">
+  <!-- Foto de capa: /img/casos/mindminers.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--photo">
     <div class="case__chips">
       <span class="case__chip"><span data-en="Case">Caso</span> 02</span>
       <span class="case__chip" data-en="Research">Pesquisa</span>
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-mindminers">
+        <img src="/img/casos/mindminers.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
         <span class="media__client">Ame Digital × MindMiners</span>
-        <figcaption class="media__hint" data-en="Screenshot of the official case — mindminers.com">Print do case oficial — mindminers.com</figcaption>
+        <figcaption class="media__hint" data-en="Awaiting the case screenshot">Aguardando print do case</figcaption>
       </figure>
     </div>
     <div class="case__caption">
-      <h3 class="case__title" data-en="Ame × MindMiners — Research &amp; Insights">Ame × MindMiners — Pesquisa e Insights</h3>
-      <p class="case__metric" data-en="360º brand view · official case">Visão 360º da marca · case oficial</p>
+      <h3 class="case__title" data-en="Ame × MindMiners">Ame × MindMiners</h3>
+      <p class="case__metric" data-en="360º brand view">360º de visão de marca</p>
       <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-02-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
     </div>
   </div>
@@ -1456,21 +1491,22 @@ button {
 
     <!-- Caso 03 ─────────────────────────────────────────────────── -->
     <article class="case">
-  <!-- Com foto: troque o .media__hint por <img src="..." alt="..."> e adicione a classe case__cover--photo ao .case__cover. -->
-  <div class="case__cover">
+  <!-- Foto de capa: /img/casos/ame-x.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--photo">
     <div class="case__chips">
       <span class="case__chip"><span data-en="Case">Caso</span> 03</span>
-      <span class="case__chip" data-en="Media">Mídia</span>
+      <span class="case__chip" data-en="Validated case · X">Case validado · X</span>
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-x">
+        <img src="/img/casos/ame-x.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
         <span class="media__client">Ame Digital × X (Twitter)</span>
-        <figcaption class="media__hint" data-en="Screenshot of the official page — marketing.x.com">Print da página oficial — marketing.x.com</figcaption>
+        <figcaption class="media__hint" data-en="Awaiting the case screenshot">Aguardando print do case</figcaption>
       </figure>
     </div>
     <div class="case__caption">
-      <h3 class="case__title" data-en="Ame × X — The platform’s official case">Ame × X — Case oficial da plataforma</h3>
-      <p class="case__metric" data-en="+28.3M impressions · +600K engagements">+28,3M impressões · +600K engajamentos</p>
+      <h3 class="case__title" data-en="AME × X (Twitter)">AME × X (Twitter)</h3>
+      <p class="case__metric" data-en="28.3M impressions">28,3M impressões</p>
       <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-03-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
     </div>
   </div>
@@ -1516,21 +1552,22 @@ button {
 
     <!-- Caso 04 ─────────────────────────────────────────────────── -->
     <article class="case">
-  <!-- Com foto: troque o .media__hint por <img src="..." alt="..."> e adicione a classe case__cover--photo ao .case__cover. -->
-  <div class="case__cover">
+  <!-- Foto de capa: /img/casos/corning.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--photo">
     <div class="case__chips">
       <span class="case__chip"><span data-en="Case">Caso</span> 04</span>
-      <span class="case__chip" data-en="Events">Eventos</span>
+      <span class="case__chip" data-en="Fortune 500">Fortune 500</span>
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-corning">
+        <img src="/img/casos/corning.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
         <span class="media__client">Corning CALA Summit</span>
-        <figcaption class="media__hint" data-en="Event photos / badge / printed material">Fotos do evento / crachá / material impresso</figcaption>
+        <figcaption class="media__hint" data-en="Awaiting event photos">Aguardando fotos do evento</figcaption>
       </figure>
     </div>
     <div class="case__caption">
-      <h3 class="case__title" data-en="Corning — CALA Summit">Corning — CALA Summit</h3>
-      <p class="case__metric" data-en="4 editions · 1st C-Level event in the region">4 edições · 1º evento C-Level da região</p>
+      <h3 class="case__title" data-en="Corning CALA Summit">Corning CALA Summit</h3>
+      <p class="case__metric" data-en="4 editions — Panama, Cartagena, Lima, Santiago">4 edições — Panamá, Cartagena, Lima, Santiago</p>
       <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-04-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
     </div>
   </div>
@@ -1576,21 +1613,22 @@ button {
 
     <!-- Caso 05 ─────────────────────────────────────────────────── -->
     <article class="case">
-  <!-- Com foto: troque o .media__hint por <img src="..." alt="..."> e adicione a classe case__cover--photo ao .case__cover. -->
-  <div class="case__cover">
+  <!-- Foto de capa: /img/casos/genma.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--photo">
     <div class="case__chips">
       <span class="case__chip"><span data-en="Case">Caso</span> 05</span>
-      <span class="case__chip" data-en="System">Sistema</span>
+      <span class="case__chip" data-en="Tech · Matheus">Tech · Matheus</span>
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-genma">
-        <span class="media__client">Genma</span>
-        <figcaption class="media__hint" data-en="Product screenshot — order pad / dashboard">Screenshot do produto — comanda / dashboard</figcaption>
+        <img src="/img/casos/genma.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        <span class="media__client">Genma — SaaS de gestão</span>
+        <figcaption class="media__hint" data-en="Awaiting the product screenshot">Aguardando screenshot do produto</figcaption>
       </figure>
     </div>
     <div class="case__caption">
-      <h3 class="case__title" data-en="Genma — SaaS for restaurants">Genma — SaaS para restaurantes</h3>
-      <p class="case__metric" data-en="Multi-user · real-time orders">Multiusuário · pedidos em tempo real</p>
+      <h3 class="case__title" data-en="Genma — Multi-user SaaS for restaurants">Genma — SaaS multiusuário para restaurantes</h3>
+      <p class="case__metric case__metric--blue" data-en="5 modules integrated in real time">5 módulos integrados em tempo real</p>
       <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-05-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
     </div>
   </div>
@@ -1630,61 +1668,6 @@ button {
   </div>
 </article>
 
-    <!-- Caso 06 ─────────────────────────────────────────────────── -->
-    <article class="case">
-  <!-- Com foto: troque o .media__hint por <img src="..." alt="..."> e adicione a classe case__cover--photo ao .case__cover. -->
-  <div class="case__cover">
-    <div class="case__chips">
-      <span class="case__chip"><span data-en="Case">Caso</span> 06</span>
-      <span class="case__chip" data-en="AI">IA</span>
-    </div>
-    <div class="case__media">
-      <figure class="media" data-slot="case-visionone">
-        <span class="media__client">VisionOne</span>
-        <figcaption class="media__hint" data-en="Product dashboard — score / indicators">Dashboard do produto — score / indicadores</figcaption>
-      </figure>
-    </div>
-    <div class="case__caption">
-      <h3 class="case__title" data-en="VisionOne — Credit risk with AI">VisionOne — Risco de crédito com IA</h3>
-      <p class="case__metric" data-en="Weighted scoring · AI-written reports">Scoring ponderado · relatórios com IA</p>
-      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-06-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
-    </div>
-  </div>
-
-  <div class="case__details" id="case-06-details" hidden>
-    <p class="case__client">VisionOne</p>
-    <span class="case__sector" data-en="Fintech &amp; AI · Matheus">Fintech &amp; IA · Matheus</span>
-    <div>
-      <div class="case__block">
-        <p class="label label--ochre" data-en="Problem">Problema</p>
-        <p data-en="Credit analysis requires crossing many data sources, documents, indicators and subjective criteria — slow and hard to standardise.">Análises de crédito exigem cruzar muitos dados, documentos, indicadores e critérios subjetivos — processo lento e difícil de padronizar.</p>
-      </div>
-      <div class="case__block">
-        <p class="label label--blue" data-en="Solution">Solução</p>
-        <p data-en="A risk platform with scoring, external data integration, PDF extraction, behavioural classification and AI-assisted report generation.">Plataforma de análise de risco com scoring, integração com dados externos, extração de PDFs, classificação comportamental e geração de relatórios com apoio de IA.</p>
-      </div>
-      <div class="case__value">
-        <p class="label" data-en="Value delivered">Valor entregue</p>
-        <p data-en="Faster decisions, standardised criteria and complete reports for risk assessment and compliance.">Decisões mais rápidas, critérios padronizados e relatórios completos para avaliação de risco e compliance.</p>
-      </div>
-    </div>
-
-    <div class="ficha">
-      <div class="ficha__cell">
-        <p class="ficha__label">Stack</p>
-        <ul class="ficha__tags"><li>React</li><li>TypeScript</li><li>Supabase</li><li>ECharts</li><li>IA / LLM</li><li data-en="External APIs">APIs externas</li></ul>
-      </div>
-      <div class="ficha__cell">
-        <p class="ficha__label" data-en="Score criteria">Critérios do score</p>
-        <ul class="ficha__list" data-en="<li>Revenue</li><li>Protests</li><li>Lawsuits</li><li>Payment punctuality</li><li>Behavioural profile</li>"><li>Faturamento</li><li>Protestos</li><li>Ações judiciais</li><li>Pontualidade de pagamento</li><li>Perfil comportamental</li></ul>
-      </div>
-      <div class="ficha__cell">
-        <p class="ficha__label" data-en="Architecture">Arquitetura</p>
-        <ul class="ficha__list" data-en="<li>PDF extraction pipeline into structured fields</li><li>Weighted scoring engine with audit trail</li><li>External data APIs enriching the record</li><li>LLM writing the analyst's report draft</li>"><li>Pipeline de extração de PDFs para campos estruturados</li><li>Motor de scoring ponderado com trilha de auditoria</li><li>APIs de dados externos enriquecendo o cadastro</li><li>LLM redigindo o rascunho do parecer</li></ul>
-      </div>
-    </div>
-  </div>
-</article>
 </div>
 
     <!-- Outros projetos ─────────────────────────────────────────── -->
@@ -1692,57 +1675,131 @@ button {
       <p class="more__label" data-en="Other selected projects">Outros projetos selecionados</p>
       <div class="rule-grid rule-grid--3">
         <article class="more-card">
-          <figure class="media media--short" data-slot="more-nog">
-            <figcaption class="media__hint" data-en="NOG report">Relatório NOG</figcaption>
-          </figure>
-          <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
-          <h3 class="more-card__title" data-en="NOG — Auditing medical payouts">NOG — Auditoria de repasses médicos</h3>
-          <p class="more-card__text" data-en="Crosses medical production, payout rules, procedures and insurer statements, flagging divergences automatically. Next.js · Supabase · PDF Parse · Excel · jsPDF.">Cruza produção médica, regras de repasse, procedimentos e demonstrativos de convênio, apontando divergências automaticamente. Next.js · Supabase · PDF Parse · Excel · jsPDF.</p>
+          <!-- Imagem: /img/projetos/amwc.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-amwc">
+            <img src="/img/projetos/amwc.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">AMWC Brazil 2024</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
+            <h3 class="more-card__title" data-en="AMWC Brazil 2024">AMWC Brazil 2024</h3>
+            <p class="more-card__text" data-en="Visual communication for the largest aesthetics congress in Brazil.">Comunicação visual do maior congresso de aesthetics do Brasil.</p>
+          </div>
         </article>
 
         <article class="more-card">
-          <figure class="media media--short" data-slot="more-fundacalc">
-            <figcaption class="media__hint" data-en="FundaCalc 3D model">Modelo 3D FundaCalc</figcaption>
-          </figure>
-          <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
-          <h3 class="more-card__title">FundaCalc &amp; FCO</h3>
-          <p class="more-card__text" data-en="Systems and notebooks for structural calculation, 3D visualisation and non-linear analysis. Python · Jupyter · NumPy · SciPy · Three.js · .NET MAUI.">Sistemas e notebooks para cálculo estrutural, visualização 3D e análise não-linear. Python · Jupyter · NumPy · SciPy · Three.js · .NET MAUI.</p>
+          <!-- Imagem: /img/projetos/ame-tom-de-voz.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-ame-tom-de-voz">
+            <img src="/img/projetos/ame-tom-de-voz.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">Ame Digital</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
+            <h3 class="more-card__title" data-en="Ame Digital — Tone of voice">Ame Digital — Tom de voz</h3>
+            <p class="more-card__text" data-en="The fintech’s complete brand manual.">Manual de marca completo da fintech.</p>
+          </div>
         </article>
 
         <article class="more-card">
-          <figure class="media media--short" data-slot="more-flora">
-            <figcaption class="media__hint" data-en="FloraServiços dashboard">Dashboard FloraServiços</figcaption>
-          </figure>
-          <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
-          <h3 class="more-card__title" data-en="FloraServiços — Finance">FloraServiços — Financeiro</h3>
-          <p class="more-card__text" data-en="Platform for service providers with sales, commissions, payables/receivables and cash flow on interactive dashboards.">Plataforma para prestadores de serviço com vendas, comissões, contas a pagar/receber e fluxo de caixa em dashboards interativos.</p>
+          <!-- Imagem: /img/projetos/istoe.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-istoe">
+            <img src="/img/projetos/istoe.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">IstoÉ Dinheiro</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
+            <h3 class="more-card__title" data-en="IstoÉ Dinheiro">IstoÉ Dinheiro</h3>
+            <p class="more-card__text" data-en="Communication case with a prestigious business outlet.">Case de comunicação com veículo de negócios de prestígio.</p>
+          </div>
         </article>
 
         <article class="more-card">
-          <figure class="media media--short" data-slot="more-gipsyy">
-            <figcaption class="media__hint" data-en="Screenshot — futuro.gipsyy.com.br">Print — futuro.gipsyy.com.br</figcaption>
-          </figure>
-          <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
-          <h3 class="more-card__title">Gipsyy — Friday do Futuro</h3>
-          <p class="more-card__text" data-en="Black Friday campaign with up to 70% off on tickets, leading the brand's creative expansion in the period.">Campanha de Black Friday com até 70% off em passagens, liderança criativa da expansão de marca no período.</p>
+          <!-- Imagem: /img/projetos/nog.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-nog">
+            <img src="/img/projetos/nog.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">NOG</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
+            <h3 class="more-card__title" data-en="NOG — Medical audit">NOG — Auditoria médica</h3>
+            <p class="more-card__text" data-en="Crosses production and payouts, flags divergences.">Cruza produção e repasses, aponta divergências.</p>
+          </div>
         </article>
 
         <article class="more-card">
-          <figure class="media media--short" data-slot="more-ame">
-            <figcaption class="media__hint" data-en="Brand manual — Ame Digital">Manual de marca — Ame Digital</figcaption>
-          </figure>
-          <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
-          <h3 class="more-card__title" data-en="Ame Digital — Tone of voice">Ame Digital — Tom de voz</h3>
-          <p class="more-card__text" data-en="Ideation and go-to-market of the tone of voice and brand manual for the Americanas S/A group fintech.">Ideação e go-to-market do tom de voz e manual de marca da fintech do grupo Americanas S/A.</p>
+          <!-- Imagem: /img/projetos/visionone.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-visionone">
+            <img src="/img/projetos/visionone.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">VisionOne</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
+            <h3 class="more-card__title" data-en="VisionOne — Credit risk">VisionOne — Risco de crédito</h3>
+            <p class="more-card__text" data-en="Scoring, PDF extraction and AI-written reports.">Scoring, extração de PDFs e relatórios com IA.</p>
+          </div>
         </article>
 
         <article class="more-card">
-          <figure class="media media--short" data-slot="more-amwc">
-            <figcaption class="media__hint" data-en="Visual communication — AMWC Brazil">Comunicação visual — AMWC Brazil</figcaption>
-          </figure>
-          <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
-          <h3 class="more-card__title">AMWC Brazil 2024</h3>
-          <p class="more-card__text" data-en="Visual communication and social media for the largest aesthetics medical congress in Brazil.">Comunicação visual e social media do maior congresso médico de aesthetics do Brasil.</p>
+          <!-- Imagem: /img/projetos/gipsyy.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-gipsyy">
+            <img src="/img/projetos/gipsyy.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">Gipsyy</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
+            <h3 class="more-card__title" data-en="Gipsyy — Friday do Futuro">Gipsyy — Friday do Futuro</h3>
+            <p class="more-card__text" data-en="Black Friday with up to 70% off on tickets.">Black Friday com até 70% off em passagens.</p>
+          </div>
+        </article>
+
+        <article class="more-card">
+          <!-- Imagem: /img/projetos/fundacalc.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-fundacalc">
+            <img src="/img/projetos/fundacalc.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">FundaCalc & FCO</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
+            <h3 class="more-card__title" data-en="FundaCalc &amp; FCO">FundaCalc &amp; FCO</h3>
+            <p class="more-card__text" data-en="Structural calculation, 3D and non-linear analysis.">Cálculo estrutural, 3D e análise não-linear.</p>
+          </div>
+        </article>
+
+        <article class="more-card">
+          <!-- Imagem: /img/projetos/flora.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-flora">
+            <img src="/img/projetos/flora.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">FloraServiços</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
+            <h3 class="more-card__title" data-en="FloraServiços — Finance">FloraServiços — Financeiro</h3>
+            <p class="more-card__text" data-en="Sales, commissions and cash flow on dashboards.">Vendas, comissões e fluxo de caixa em dashboards.</p>
+          </div>
         </article>
       </div>
     </div>
