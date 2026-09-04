@@ -6,7 +6,7 @@
 
 <title>Amaral &amp; Silva — Estratégia de marca &amp; engenharia de sistemas</title>
 <meta name="description" content="Uma dupla que constrói, do zero, a marca e a tecnologia por trás dela: estratégia, pesquisa e go-to-market ao lado de sistemas sob medida, dashboards, automações e IA aplicada." />
-<meta name="theme-color" content="#F4F2ED" />
+<meta name="theme-color" content="#0B0D12" />
 <meta name="author" content="Bruno Amaral, Matheus Silva" />
 
 <link rel="canonical" href="https://amaralesilva.vercel.app/" />
@@ -34,19 +34,21 @@
 <style>
 /* ═══════════════════════════════════════════════════════════════════
    AMARAL & SILVA — tokens
-   Papel bege, tinta quase preta, ocre para marca, azul para tecnologia.
+   Fundo quase preto, tinta creme, ocre para marca, azul para tecnologia.
    Zero arredondamento, zero sombra: a hierarquia vem das réguas de 1px.
    ═══════════════════════════════════════════════════════════════════ */
 :root {
-  --paper:      #F4F2ED;
-  --paper-deep: #EDEAE2;
-  --ink:        #14171A;
-  --ink-soft:   #57544C;
-  --ochre:      #8A6220;
-  --ochre-soft: #E8D7B8;
-  --blue:       #1F3A5F;
-  --blue-soft:  #D9E1EA;
-  --line:       #DAD5C9;
+  --bg:          #0B0D12;
+  --bg-deep:     #0F1218;
+  --bg-card:     #141821;
+  --ink:         #F1EEE6;
+  --ink-soft:    #A6A39B;
+  --ochre:       #C9A24E;
+  --ochre-soft:  rgba(201, 162, 78, 0.25);
+  --blue:        #7A93E6;
+  --blue-soft:   rgba(122, 147, 230, 0.25);
+  --line:        #242933;
+  --line-strong: #3A4150;
 
   --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
   --sans:  'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -66,11 +68,11 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--sans);
   font-size: 16px;
-  line-height: 1.55;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-wrap: pretty;
@@ -114,14 +116,14 @@ button {
   top: 0;
   z-index: 100;
   background: var(--ink);
-  color: var(--paper);
+  color: var(--bg);
   font-family: var(--mono);
   font-size: 12px;
   padding: 12px 18px;
 }
 .skip-link:focus {
   left: 0;
-  color: var(--paper);
+  color: var(--bg);
 }
 
 .eyebrow {
@@ -151,16 +153,15 @@ button {
   border: 1px solid var(--line);
   grid-template-columns: 1fr;
 }
-.rule-grid > * { background: var(--paper); }
-.section--deep .rule-grid > * { background: var(--paper-deep); }
+.rule-grid > * { background: var(--bg-card); }
 
 /* ─── Seções ─────────────────────────────────────────────────────── */
 .section {
-  padding: 88px 0;
+  padding: 104px 0;
   border-bottom: 1px solid var(--line);
   scroll-margin-top: var(--header-h);
 }
-.section--deep { background: var(--paper-deep); }
+.section--deep { background: var(--bg-deep); }
 
 .section-head {
   display: flex;
@@ -176,9 +177,10 @@ button {
 .section-title {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(28px, 3.4vw, 42px);
+  font-size: clamp(34px, 3.6vw, 46px);
+  line-height: 1.15;
   letter-spacing: -0.01em;
-  margin-top: 10px;
+  margin-top: 14px;
   max-width: 22ch;
 }
 .section-title--wide { max-width: 24ch; }
@@ -186,7 +188,7 @@ button {
 .section-intro {
   max-width: 40ch;
   color: var(--ink-soft);
-  font-size: 15px;
+  font-size: 17px;
 }
 
 /* ─── Header ─────────────────────────────────────────────────────── */
@@ -194,9 +196,9 @@ button {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(244, 242, 237, 0.92);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  background: rgba(11, 13, 18, 0.86);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
 
@@ -208,16 +210,38 @@ button {
   min-height: var(--header-h);
 }
 
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Os dois pontos da marca: ocre (marca) e azul (tecnologia). */
+.brand-dots {
+  display: inline-flex;
+  gap: 5px;
+  flex: none;
+}
+.brand-dots i {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.brand-dots i:first-child { background: var(--ochre); }
+.brand-dots i:last-child  { background: var(--blue); }
+
 .brandmark {
   font-family: var(--serif);
-  font-size: 19px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
   white-space: nowrap;
   color: var(--ink);
 }
 .brandmark:hover { color: var(--ink); }
-.brandmark__amp { color: var(--ochre); font-style: italic; }
 
 .site-nav {
   display: flex;
@@ -229,28 +253,22 @@ button {
 }
 .site-nav a { color: var(--ink-soft); }
 .site-nav a:hover { color: var(--ink); }
-.site-nav .btn-ghost { display: none; }
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
 
 .lang-toggle {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  flex: none;
 }
-.lang-toggle__sep { color: var(--line); }
+.lang-toggle__sep { color: var(--line-strong); }
 .lang-toggle button {
-  padding: 2px 4px;
+  padding: 3px 4px;
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  letter-spacing: 0.08em;
   color: var(--ink-soft);
   border-bottom: 1px solid transparent;
 }
@@ -261,34 +279,41 @@ button {
 }
 
 .btn-ghost {
+  flex: none;
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12.5px;
   letter-spacing: 0.04em;
   border: 1px solid var(--ink);
-  padding: 9px 16px;
+  padding: 11px 18px;
   color: var(--ink);
   white-space: nowrap;
 }
-.btn-ghost:hover { background: var(--ink); color: var(--paper); }
-
-.nav-toggle {
-  display: none;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink);
-  border: 1px solid var(--ink);
-  padding: 9px 14px;
-}
-.nav-toggle:hover { background: var(--ink); color: var(--paper); }
+.btn-ghost:hover { background: var(--ink); color: var(--bg); }
 
 /* ─── Hero ───────────────────────────────────────────────────────── */
 .hero {
-  padding: 88px 0 0;
+  position: relative;
+  overflow: hidden;
+  padding: 128px 0 0;
   border-bottom: 1px solid var(--line);
   scroll-margin-top: var(--header-h);
 }
+.hero > * { position: relative; }
+
+/* Constelação desenhada pelo script: ocre à esquerda, azul à direita. */
+.hero__net {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.6;
+}
+.net__edge { stroke-width: 1; fill: none; }
+.net__edge--ochre { stroke: var(--ochre); }
+.net__edge--blue, .net__edge--mix { stroke: var(--blue); }
+.net__node--ochre { fill: var(--ochre); }
+.net__node--blue  { fill: var(--blue); }
 
 .hero__body {
   display: flex;
@@ -302,167 +327,240 @@ button {
 .hero__title {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(40px, 5.2vw, 66px);
-  line-height: 1.05;
+  font-size: clamp(44px, 5.6vw, 74px);
+  line-height: 1.04;
   letter-spacing: -0.015em;
 }
-.hero__title em { font-style: italic; color: var(--ochre); }
-.hero__slash {
-  font-family: var(--mono);
-  font-size: 0.5em;
-  color: var(--blue);
+.hero__title em {
+  font-style: italic;
+  padding-right: 0.06em;
+  background: linear-gradient(90deg, var(--ochre) 0%, #B4A283 50%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .hero__lede {
-  margin-top: 26px;
-  max-width: 50ch;
-  font-size: 18px;
+  margin-top: 28px;
+  max-width: 46ch;
+  font-size: 19px;
   color: var(--ink-soft);
 }
 
 .hero__actions {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   flex-wrap: wrap;
-  margin-top: 36px;
+  margin-top: 40px;
 }
 
 .btn {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 14px;
   letter-spacing: 0.03em;
-  padding: 14px 24px;
+  padding: 18px 40px;
   border: 1px solid var(--ink);
   color: var(--ink);
+  text-align: center;
 }
-.btn--primary { background: var(--ink); color: var(--paper); }
-.btn--primary:hover { background: var(--blue); border-color: var(--blue); color: var(--paper); }
-.btn--outline:hover { background: var(--ink); color: var(--paper); }
+.btn--primary { background: var(--ink); color: var(--bg); }
+.btn--primary:hover { background: var(--ochre); border-color: var(--ochre); color: var(--bg); }
+.btn--outline:hover { background: var(--ink); color: var(--bg); }
 
 .ledger {
-  flex: 0 1 320px;
+  flex: 0 1 340px;
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 14px;
   color: var(--ink-soft);
-  border-left: 1px solid var(--line);
-  padding-left: 22px;
+  border-left: 1px solid var(--line-strong);
+  padding-left: 24px;
+  margin: 0;
 }
-.ledger { margin: 0; }
 .ledger dt, .ledger dd { margin: 0; }
 .ledger__row {
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  padding: 9px 0;
+  padding: 12px 0;
   border-bottom: 1px dashed var(--line);
 }
 .ledger__row:last-child { border-bottom: 0; }
-.ledger__row b { color: var(--ink); font-weight: 500; }
+.ledger__row b { color: var(--ink); font-weight: 600; }
 
+/* Prova social — faixa em marquee, sangrando as bordas do container. */
 .proof {
-  margin-top: 64px;
+  margin-top: 80px;
   border-top: 1px solid var(--line);
-  padding: 22px 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 40px;
-  align-items: baseline;
-  justify-content: space-between;
+  background: var(--bg-deep);
+  padding: 24px 0 26px;
 }
 .proof__label {
+  display: block;
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-soft);
+  margin-bottom: 18px;
 }
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+.marquee:hover .marquee__track { animation-play-state: paused; }
 .proof__list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 26px;
-  font-family: var(--serif);
-  font-size: 16px;
-  color: var(--ink-soft);
-  list-style: none;
+  gap: 88px;
+  padding: 0 44px;
   margin: 0;
-  padding: 0;
+  list-style: none;
+  font-family: var(--serif);
+  font-size: 26px;
+  color: var(--ink-soft);
+  white-space: nowrap;
 }
+@keyframes marquee { to { transform: translateX(-50%); } }
 
 .hero__note {
-  border-top: 1px dashed var(--line);
-  padding: 14px 0 18px;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  padding: 18px 0 20px;
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.05em;
+  font-size: 12.5px;
+  line-height: 1.6;
   color: var(--ink-soft);
+}
+.hero__note .container {
+  display: block;
+  border-left: 2px solid var(--ochre);
 }
 
 /* ─── Dossiê 01 · A dupla ────────────────────────────────────────── */
-.person { padding: 40px; }
-.person__tag {
+.person { padding: 44px 40px; }
+.person__head {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+/* Avatar circular; sem imagem vira uma moldura tracejada "foto aqui". */
+.avatar {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  margin: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-deep);
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar figcaption { display: none; }
+.avatar--empty { border-style: dashed; background: transparent; }
+.avatar--empty img { display: none; }
+.avatar--empty figcaption {
+  display: flex;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px;
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.1em;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.person__tag {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 .person__tag--ochre { color: var(--ochre); }
 .person__tag--blue  { color: var(--blue); }
 .person__name {
   font-family: var(--serif);
-  font-size: 28px;
-  font-weight: 500;
-  margin-top: 10px;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.1;
+  margin-top: 8px;
 }
 .person__role {
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 14px;
   color: var(--ink-soft);
-  margin-top: 6px;
+  margin-top: 18px;
 }
 .person__bio {
-  margin-top: 20px;
-  font-size: 15px;
+  margin-top: 22px;
+  font-size: 17px;
   color: var(--ink-soft);
   max-width: 44ch;
 }
 
 .chips {
-  margin-top: 24px;
+  margin-top: 28px;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 13px;
   color: var(--ink-soft);
   list-style: none;
   padding: 0;
 }
-.chips li { border: 1px solid var(--line); padding: 5px 10px; }
+.chips li { border: 1px solid var(--line-strong); padding: 10px 16px; }
 
 .pull-quote {
   grid-column: 1 / -1;
-  padding: 30px 40px;
-  border-top: 1px solid var(--line);
+  position: relative;
+  padding: 44px 40px 44px 96px;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 20px;
+  font-size: 26px;
+  line-height: 1.4;
   margin: 0;
+}
+.pull-quote::before {
+  content: "\201C";
+  position: absolute;
+  left: 40px;
+  top: 34px;
+  font-family: var(--serif);
+  font-style: normal;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--ochre);
 }
 
 /* ─── Dossiê 02 · Diagnóstico ────────────────────────────────────── */
-.symptom { padding: 30px 28px; }
-.symptom__index { font-family: var(--mono); font-size: 12px; }
-.symptom__index--ochre { color: var(--ochre); }
-.symptom__index--blue  { color: var(--blue); }
+.symptom { padding: 44px 40px 48px; }
+.symptom__index {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--ink-soft);
+}
 .symptom__title {
   font-family: var(--serif);
-  font-size: 19px;
-  font-weight: 500;
-  margin-top: 12px;
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 20px;
 }
 .symptom__text {
-  margin-top: 10px;
-  font-size: 14px;
+  margin-top: 12px;
+  font-size: 16px;
   color: var(--ink-soft);
 }
 
@@ -498,7 +596,7 @@ button {
   padding: 18px 0;
   border-bottom: 1px dashed var(--line);
 }
-.front__item h4 { font-size: 15.5px; font-weight: 600; }
+.front__item h4 { font-size: 16px; font-weight: 600; color: var(--ink); }
 .front__item p {
   margin-top: 6px;
   font-size: 14px;
@@ -529,7 +627,7 @@ button {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  background: var(--paper);
+  background: var(--bg);
   padding: 5px 9px;
 }
 .case__sector {
@@ -566,7 +664,7 @@ button {
 .ficha {
   margin-top: 28px;
   border: 1px solid var(--line);
-  background: var(--paper);
+  background: var(--bg-card);
   display: grid;
   grid-template-columns: 1fr;
 }
@@ -605,14 +703,14 @@ button {
   font-size: 11px;
   color: var(--ink-soft);
 }
-.ficha__tags li { border: 1px solid var(--line); padding: 4px 8px; }
+.ficha__tags li { border: 1px solid var(--line-strong); padding: 4px 8px; }
 
 /* Moldura de imagem — estado vazio enquanto os apoios visuais não chegam. */
 .media {
   position: relative;
   margin: 0;
-  border: 1px dashed var(--line);
-  background: var(--paper);
+  border: 1px dashed var(--line-strong);
+  background: var(--bg-deep);
   min-height: 300px;
   display: flex;
   align-items: center;
@@ -793,59 +891,52 @@ button {
   .step__number { grid-row: auto; }
 }
 
-/* Navegação em menu abaixo de 860px. */
-@media (max-width: 859px) {
-  .nav-toggle { display: block; }
-  .site-header__bar { flex-wrap: wrap; }
-  .site-nav {
-    display: none;
-    order: 3;
-    flex-basis: 100%;
-    flex-direction: column;
-    gap: 0;
-    border-top: 1px solid var(--line);
-    margin: 0 calc(var(--gutter) * -1);
-    padding: 0 var(--gutter);
-  }
-  .site-nav[data-open="true"] { display: flex; }
-  .site-nav a {
-    padding: 14px 0;
-    border-bottom: 1px dashed var(--line);
-  }
-  .site-nav a:last-child { border-bottom: 0; }
-  .header-actions__cta { display: none; }
-  /* No menu, o CTA vira mais um item da lista — sem a moldura do botão. */
-  .site-nav .btn-ghost {
-    display: block;
-    border: 0;
-    padding: 14px 0;
-    text-align: left;
-    color: var(--ink);
-  }
-  .site-nav .btn-ghost:hover { background: none; color: var(--ochre); }
+/* Abaixo de 1024px o header fica só com marca + idioma + CTA, como no mobile. */
+@media (max-width: 1023px) {
+  .site-nav { display: none; }
+}
+@media (max-width: 599px) {
+  .site-header__bar { gap: 12px; }
+  .brand-group { gap: 10px; }
+  .brandmark { font-size: 19px; }
+  .lang-toggle { gap: 3px; }
+  .lang-toggle button { font-size: 11px; letter-spacing: 0.06em; padding: 3px 3px; }
+  .btn-ghost { padding: 9px 12px; font-size: 11.5px; }
+}
+@media (max-width: 399px) {
+  .site-header__bar { gap: 8px; }
+  .brand-group { gap: 8px; }
+  .brandmark { font-size: 17px; }
+  .lang-toggle__sep { display: none; }
+  .btn-ghost { padding: 8px 9px; font-size: 11px; }
 }
 
 @media (max-width: 899px) {
   .hero__body { gap: 40px; }
   .ledger {
     flex: 1 1 100%;
-    border-left: 0;
-    border-top: 1px solid var(--line);
-    padding-left: 0;
-    padding-top: 10px;
+    border-left: 1px solid var(--line-strong);
+    padding: 4px 0 4px 20px;
   }
 }
 
 @media (max-width: 599px) {
   :root { --gutter: 20px; }
-  .section { padding: 64px 0; }
-  .hero { padding: 56px 0 0; }
-  .person { padding: 28px 24px; }
-  .pull-quote { padding: 24px; font-size: 18px; }
+  .section { padding: 72px 0; }
+  .hero { padding: 88px 0 0; }
+  .hero__body { gap: 44px; }
+  .person { padding: 36px 28px; }
+  .person__head { grid-template-columns: 80px 1fr; gap: 20px; }
+  .avatar { width: 80px; height: 80px; }
+  .person__name { font-size: 30px; }
+  .pull-quote { padding: 36px 28px 36px 76px; font-size: 22px; }
+  .pull-quote::before { left: 28px; top: 28px; font-size: 44px; }
+  .symptom { padding: 36px 28px; }
+  .proof__list { font-size: 22px; gap: 64px; }
   .case { padding: 36px 0; }
   .case__number { font-size: 28px; }
   .case__title { font-size: 22px; }
-  .proof { margin-top: 44px; }
+  .proof { margin-top: 56px; }
   .contact { padding: 56px 0; }
 }
 </style>
@@ -857,7 +948,15 @@ button {
 <!-- ═══════════════════════════════════════════════ HEADER -->
 <header class="site-header">
   <div class="container site-header__bar">
-    <a class="brandmark" href="#topo">Amaral <span class="brandmark__amp">&amp;</span> Silva</a>
+    <div class="brand-group">
+      <span class="brand-dots" aria-hidden="true"><i></i><i></i></span>
+      <a class="brandmark" href="#topo">Amaral &amp; Silva</a>
+      <div class="lang-toggle" role="group" aria-label="Idioma / Language">
+        <button type="button" data-lang="pt" aria-pressed="true" lang="pt-BR">PT</button>
+        <span class="lang-toggle__sep" aria-hidden="true">/</span>
+        <button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button>
+      </div>
+    </div>
 
     <nav class="site-nav" id="site-nav" aria-label="Navegação principal">
       <a href="#dupla" data-en="The pair">A dupla</a>
@@ -865,18 +964,9 @@ button {
       <a href="#cases" data-en="Cases">Casos</a>
       <a href="#processo" data-en="Process">Processo</a>
       <a href="#stack" data-en="Stack">Tecnologia</a>
-      <a href="#contato" class="btn-ghost" data-en="Start a conversation">Iniciar conversa</a>
     </nav>
 
-    <div class="header-actions">
-      <div class="lang-toggle" role="group" aria-label="Idioma / Language">
-        <button type="button" data-lang="pt" aria-pressed="true" lang="pt-BR">PT</button>
-        <span class="lang-toggle__sep" aria-hidden="true">/</span>
-        <button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button>
-      </div>
-      <a href="#contato" class="btn-ghost header-actions__cta" data-en="Start a conversation">Iniciar conversa</a>
-      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav" data-en="Menu">Menu</button>
-    </div>
+    <a href="#contato" class="btn-ghost" data-en="Start a conversation">Iniciar conversa</a>
   </div>
 </header>
 
@@ -884,14 +974,16 @@ button {
 
 <!-- ═══════════════════════════════════════════════ HERO -->
 <section class="hero" id="topo">
+  <svg class="hero__net" id="hero-net" aria-hidden="true" focusable="false" preserveAspectRatio="none"></svg>
+
   <div class="container">
     <p class="eyebrow" data-en="Brand strategy &nbsp;×&nbsp; Systems engineering">Estratégia de marca &nbsp;×&nbsp; Engenharia de sistemas</p>
 
     <div class="hero__body">
       <div class="hero__main">
-        <h1 class="hero__title" data-en="Brands that stand out. <em>Systems</em> <span class=&quot;hero__slash&quot;>/</span> that hold them up.">Marcas que se destacam. <em>Sistemas</em> <span class="hero__slash">/</span> que sustentam.</h1>
+        <h1 class="hero__title" data-en="Brands that stand out. <em>Systems</em> that hold them up.">Marcas que se destacam. <em>Sistemas</em> que sustentam.</h1>
 
-        <p class="hero__lede" data-en="A pair — a marketing and branding strategist, a data and software engineer — building the brand and the technology behind it from zero. No middlemen, no rework between vendors.">Somos uma dupla — um estrategista de marketing e branding, um engenheiro de dados e software — que constrói, do zero, a marca e a tecnologia por trás dela. Sem intermediários, sem retrabalho entre fornecedores.</p>
+        <p class="hero__lede" data-en="A pair — brand strategy and software engineering — building, from zero, the brand and the technology behind it.">Uma dupla — estratégia de marca e engenharia de software — construindo, do zero, a marca e a tecnologia por trás dela.</p>
 
         <div class="hero__actions">
           <a href="#contato" class="btn btn--primary" data-en="Talk to us">Falar com a gente</a>
@@ -901,20 +993,12 @@ button {
 
       <dl class="ledger">
         <div class="ledger__row">
-          <dt data-en="Combined track record">Trajetória combinada</dt>
+          <dt data-en="Track record">Trajetória</dt>
           <dd><b>15+ <span data-en="years">anos</span></b></dd>
         </div>
         <div class="ledger__row">
-          <dt data-en="Sectors served">Setores atendidos</dt>
+          <dt data-en="Sectors">Setores</dt>
           <dd><b>B2B · B2C · <span data-en="Media">Mídia</span></b></dd>
-        </div>
-        <div class="ledger__row">
-          <dt data-en="Disciplines">Disciplinas</dt>
-          <dd><b data-en="Brand + Product">Marca + Produto</b></dd>
-        </div>
-        <div class="ledger__row">
-          <dt data-en="Model">Modelo</dt>
-          <dd><b data-en="Lean squad">Squad enxuto</b></dd>
         </div>
         <div class="ledger__row">
           <dt data-en="Languages">Idiomas</dt>
@@ -922,22 +1006,37 @@ button {
         </div>
       </dl>
     </div>
-
-    <div class="proof">
-      <span class="proof__label" data-en="Passed through these hands">Já passaram por essas mãos</span>
-      <ul class="proof__list">
-        <li>Corning</li>
-        <li>Americanas S/A</li>
-        <li>QuintoAndar</li>
-        <li>Media Portal</li>
-        <li>TV Cultura</li>
-        <li>Informa Markets</li>
-        <li>Gipsyy</li>
-      </ul>
-    </div>
-
-    <p class="hero__note" data-en="Projects run in Portuguese and English — fluency and prior experience in international markets (Latin America, USA).">Projetos conduzidos em português e inglês — fluência e experiência prévia em mercados internacionais (América Latina, EUA).</p>
   </div>
+
+  <div class="proof">
+    <div class="container">
+      <span class="proof__label" data-en="Passed through these hands">Já passaram por essas mãos</span>
+    </div>
+    <div class="marquee">
+      <div class="marquee__track">
+        <ul class="proof__list">
+          <li>Corning</li>
+          <li>Americanas S/A</li>
+          <li>QuintoAndar</li>
+          <li>Media Portal</li>
+          <li>TV Cultura</li>
+          <li>Informa Markets</li>
+          <li>Gipsyy</li>
+        </ul>
+        <ul class="proof__list" aria-hidden="true">
+          <li>Corning</li>
+          <li>Americanas S/A</li>
+          <li>QuintoAndar</li>
+          <li>Media Portal</li>
+          <li>TV Cultura</li>
+          <li>Informa Markets</li>
+          <li>Gipsyy</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <p class="hero__note"><span class="container" data-en="PT-BR / EN — experience in international markets (Latin America, USA).">PT-BR / EN — experiência em mercados internacionais (América Latina, EUA).</span></p>
 </section>
 
 <!-- ═══════════════════════════════════════════════ DOSSIÊ 01 · A DUPLA -->
@@ -948,39 +1047,55 @@ button {
         <p class="eyebrow" data-en="Dossier 01 — The pair">Dossiê 01 — A dupla</p>
         <h2 class="section-title" data-en="One brand, two crafts.">Uma marca, dois ofícios.</h2>
       </div>
-      <p class="section-intro" data-en="The thesis is simple: most companies hire the strategy and the system separately. Here they are born together — faster, more coherent, cheaper.">A tese é simples: a maioria das marcas contrata separadamente quem pensa a estratégia e quem constrói o sistema. Aqui, isso nasce junto — e chega mais rápido, mais coerente, mais barato.</p>
+      <p class="section-intro" data-en="Most hire the strategy and the system separately. Here they are born together.">A maioria contrata separado quem pensa a estratégia e quem constrói o sistema. Aqui nasce junto.</p>
     </div>
 
     <div class="rule-grid rule-grid--2">
       <article class="person">
-        <p class="person__tag person__tag--ochre" data-en="Brand &amp; Strategy">Marca &amp; Estratégia</p>
-        <h3 class="person__name">Bruno Amaral</h3>
+        <div class="person__head">
+          <!-- Foto: salvar em /img/bruno.jpg (quadrada, 400×400 ou mais). Sem o arquivo, a moldura "foto aqui" aparece. -->
+          <figure class="avatar">
+            <img src="/img/bruno.jpg" alt="Bruno Amaral" width="96" height="96" loading="lazy" onerror="this.parentNode.classList.add('avatar--empty')" />
+            <figcaption data-en="Photo here">Foto aqui</figcaption>
+          </figure>
+          <div>
+            <p class="person__tag person__tag--ochre" data-en="Brand &amp; Strategy">Marca &amp; Estratégia</p>
+            <h3 class="person__name">Bruno Amaral</h3>
+          </div>
+        </div>
         <p class="person__role" data-en="Marketing Strategist &amp; Branding Consultant">Estrategista de Marketing &amp; Consultor de Branding</p>
-        <p class="person__bio" data-en="A track record built inside Fortune 500 companies and reference fintechs — Corning, Informa Markets, Ame Digital (Americanas S/A group), Gipsyy, QuintoAndar. Today a consultant, combining strategic vision, market research and creative execution.">Trajetória construída em empresas Fortune 500 e fintechs de referência — Corning, Informa Markets, Ame Digital (grupo Americanas S/A), Gipsyy, QuintoAndar. Hoje atua como consultor, combinando visão estratégica, pesquisa de mercado e execução criativa.</p>
+        <p class="person__bio" data-en="Corning, Informa Markets, Ame Digital (Americanas S/A), Gipsyy, QuintoAndar — strategic vision, research and creative execution.">Corning, Informa Markets, Ame Digital (Americanas S/A), Gipsyy, QuintoAndar — visão estratégica, pesquisa e execução criativa.</p>
         <ul class="chips">
           <li>Branding</li>
           <li data-en="Market Research">Pesquisa de Mercado</li>
           <li data-en="Creative Planning">Planejamento Criativo</li>
           <li>Go-to-Market</li>
-          <li data-en="Brand Health">Saúde de Marca</li>
         </ul>
       </article>
 
       <article class="person">
-        <p class="person__tag person__tag--blue" data-en="Technology &amp; Data">Tecnologia &amp; Dados</p>
-        <h3 class="person__name">Matheus Silva</h3>
-        <p class="person__role" data-en="Civil Engineer, MSc in Structures &amp; Full-Stack Developer">Engenheiro Civil, Mestre em Estruturas &amp; Desenvolvedor Full-Stack</p>
-        <p class="person__bio" data-en="Six years building custom systems — from management SaaS to AI-assisted risk analysis platforms. Turns complex business processes into clear, secure, scalable software.">Seis anos desenvolvendo sistemas sob medida — de SaaS de gestão a plataformas de análise de risco com IA. Traduz processos de negócio complexos em software claro, seguro e escalável.</p>
+        <div class="person__head">
+          <!-- Foto: salvar em /img/matheus.jpg (quadrada, 400×400 ou mais). -->
+          <figure class="avatar">
+            <img src="/img/matheus.jpg" alt="Matheus Silva" width="96" height="96" loading="lazy" onerror="this.parentNode.classList.add('avatar--empty')" />
+            <figcaption data-en="Photo here">Foto aqui</figcaption>
+          </figure>
+          <div>
+            <p class="person__tag person__tag--blue" data-en="Technology &amp; Data">Tecnologia &amp; Dados</p>
+            <h3 class="person__name">Matheus Silva</h3>
+          </div>
+        </div>
+        <p class="person__role" data-en="Civil Eng., MSc in Structures &amp; Full-Stack Dev">Eng. Civil, Mestre em Estruturas &amp; Dev Full-Stack</p>
+        <p class="person__bio" data-en="Six years building custom systems — from management SaaS to AI-assisted risk platforms.">Seis anos criando sistemas sob medida — de SaaS de gestão a plataformas de risco com IA.</p>
         <ul class="chips">
           <li data-en="Custom systems">Sistemas sob medida</li>
           <li data-en="Dashboards &amp; Data">Dashboards &amp; Dados</li>
           <li data-en="Automation">Automação</li>
           <li data-en="Applied AI">IA aplicada</li>
-          <li data-en="Scientific computing">Computação científica</li>
         </ul>
       </article>
 
-      <blockquote class="pull-quote" data-en="“A brand without a system doesn't scale. A system without a brand doesn't convince. We deliver both at the same table.”">“Uma marca sem sistema não escala. Um sistema sem marca não convence. A gente entrega as duas coisas na mesma mesa.”</blockquote>
+      <blockquote class="pull-quote" data-en="“A brand without a system doesn't scale. A system without a brand doesn't convince.”">“Uma marca sem sistema não escala. Um sistema sem marca não convence.”</blockquote>
     </div>
   </div>
 </section>
@@ -990,42 +1105,41 @@ button {
   <div class="container">
     <div class="section-head">
       <div>
-        <p class="eyebrow" data-en="Dossier 02 — Diagnosis">Dossiê 02 — Diagnóstico</p>
+        <p class="eyebrow" data-en="Dossier 02">Dossiê 02</p>
         <h2 class="section-title" data-en="Does your operation recognise itself here?">Sua operação se reconhece aqui?</h2>
       </div>
-      <p class="section-intro" data-en="Most projects we take on start at one of these points — brand side or system side.">A maioria dos projetos que tocamos começa em um destes pontos — de marca ou de sistema.</p>
     </div>
 
     <div class="rule-grid rule-grid--3">
       <article class="symptom">
-        <p class="symptom__index symptom__index--ochre">01 · <span data-en="brand">marca</span></p>
+        <p class="symptom__index">01</p>
         <h3 class="symptom__title" data-en="Brand with no narrative">Marca sem narrativa</h3>
-        <p class="symptom__text" data-en="Visual identity in place, but no story that connects and differentiates in the market.">Identidade visual pronta, mas sem uma história que conecte e diferencie no mercado.</p>
+        <p class="symptom__text" data-en="Identity in place, no story that differentiates.">Identidade pronta, sem história que diferencie.</p>
       </article>
       <article class="symptom">
-        <p class="symptom__index symptom__index--blue">02 · <span data-en="system">sistema</span></p>
-        <h3 class="symptom__title" data-en="Manual controls that don't scale">Controles manuais que não escalam</h3>
-        <p class="symptom__text" data-en="Processes, spreadsheets and information scattered with no central system, no rules, no history.">Processos, planilhas e informações espalhadas sem sistema central, sem regras, sem histórico.</p>
+        <p class="symptom__index">02</p>
+        <h3 class="symptom__title" data-en="Controls that don't scale">Controles que não escalam</h3>
+        <p class="symptom__text" data-en="Scattered processes, no central system.">Processos espalhados, sem sistema central.</p>
       </article>
       <article class="symptom">
-        <p class="symptom__index symptom__index--ochre">03 · <span data-en="brand">marca</span></p>
+        <p class="symptom__index">03</p>
         <h3 class="symptom__title" data-en="Inconsistent communication">Comunicação inconsistente</h3>
-        <p class="symptom__text" data-en="Tone of voice and positioning that change from channel to channel.">Tom de voz e posicionamento que mudam de canal pra canal.</p>
+        <p class="symptom__text" data-en="Tone of voice that changes from channel to channel.">Tom de voz que muda de canal pra canal.</p>
       </article>
       <article class="symptom">
-        <p class="symptom__index symptom__index--blue">04 · <span data-en="data">dados</span></p>
+        <p class="symptom__index">04</p>
         <h3 class="symptom__title" data-en="Data with no reading">Dados sem leitura</h3>
-        <p class="symptom__text" data-en="Spreadsheets, PDFs, databases and APIs exist — nobody turns them into a decision.">Planilhas, PDFs, bancos e APIs existem — mas ninguém transforma isso em decisão.</p>
+        <p class="symptom__text" data-en="Data exists — nobody turns it into a decision.">Dados existem — ninguém transforma em decisão.</p>
       </article>
       <article class="symptom">
-        <p class="symptom__index symptom__index--blue">05 · <span data-en="system">sistema</span></p>
+        <p class="symptom__index">05</p>
         <h3 class="symptom__title" data-en="Off-the-shelf software that doesn't fit">Software pronto que não encaixa</h3>
-        <p class="symptom__text" data-en="Ready-made tools forcing the company to adapt to them — instead of the opposite.">Ferramentas prontas forçando a empresa a se adaptar a elas — não o contrário.</p>
+        <p class="symptom__text" data-en="Tools forcing the company to adapt to them.">Ferramentas forçando a empresa a se adaptar a elas.</p>
       </article>
       <article class="symptom">
-        <p class="symptom__index symptom__index--ochre">06 · <span data-en="brand">marca</span></p>
+        <p class="symptom__index">06</p>
         <h3 class="symptom__title" data-en="Launches with no strategy">Lançamentos sem estratégia</h3>
-        <p class="symptom__text" data-en="Product or brand live with no go-to-market or acquisition plan.">Produto ou marca no ar sem plano de go-to-market ou de aquisição.</p>
+        <p class="symptom__text" data-en="Product live with no go-to-market plan.">Produto no ar sem plano de go-to-market.</p>
       </article>
     </div>
   </div>
@@ -1688,38 +1802,61 @@ button {
 
   window.addEventListener('popstate', function () { applyLang(langFromLocation()); });
 
-  /* ─── Menu de navegação (abaixo de 860px) ─────────────────────── */
-  var toggle = document.getElementById('nav-toggle');
-  var nav = document.getElementById('site-nav');
+  /* ─── Constelação do hero ─────────────────────────────────────────
+     Nós e arestas gerados com semente fixa (mesmo desenho a cada
+     visita): ocre à esquerda, azul à direita. Redesenha ao
+     redimensionar, pois o SVG cobre a seção inteira em pixels.
+     ───────────────────────────────────────────────────────────────── */
+  var net = document.getElementById('hero-net');
 
-  function closeNav() {
-    if (!toggle || !nav) return;
-    nav.removeAttribute('data-open');
-    toggle.setAttribute('aria-expanded', 'false');
+  function seeded(seed) {
+    return function () {
+      seed = (seed * 1664525 + 1013904223) % 4294967296;
+      return seed / 4294967296;
+    };
   }
 
-  if (toggle && nav) {
-    toggle.addEventListener('click', function () {
-      var open = nav.getAttribute('data-open') === 'true';
-      if (open) closeNav();
-      else {
-        nav.setAttribute('data-open', 'true');
-        toggle.setAttribute('aria-expanded', 'true');
+  function drawNet() {
+    if (!net) return;
+    var w = net.clientWidth, h = net.clientHeight;
+    if (!w || !h) return;
+
+    var rnd = seeded(20260904);
+    var count = Math.max(18, Math.min(42, Math.round(w / 36)));
+    var reach = Math.min(w, h) * 0.32;
+    var pts = [], parts = [], i, j;
+
+    for (i = 0; i < count; i++) {
+      var x = rnd() * w, y = rnd() * h;
+      pts.push({ x: x, y: y, tone: x < w * 0.45 ? 'ochre' : 'blue', r: rnd() < 0.35 ? 4 : 2.5 });
+    }
+
+    for (i = 0; i < count; i++) {
+      for (j = i + 1; j < count; j++) {
+        var dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d >= reach) continue;
+        var tone = pts[i].tone === pts[j].tone ? pts[i].tone : 'mix';
+        parts.push('<line class="net__edge net__edge--' + tone + '" x1="' + pts[i].x.toFixed(1) + '" y1="' + pts[i].y.toFixed(1) +
+          '" x2="' + pts[j].x.toFixed(1) + '" y2="' + pts[j].y.toFixed(1) +
+          '" style="opacity:' + (0.1 + 0.45 * (1 - d / reach)).toFixed(2) + '"/>');
       }
+    }
+    pts.forEach(function (p) {
+      parts.push('<circle class="net__node net__node--' + p.tone + '" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + p.r + '"/>');
     });
 
-    nav.addEventListener('click', function (event) {
-      if (event.target.closest('a')) closeNav();
-    });
-
-    document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') closeNav();
-    });
-
-    window.addEventListener('resize', function () {
-      if (window.innerWidth >= 860) closeNav();
-    });
+    net.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    net.innerHTML = parts.join('');
   }
+
+  drawNet();
+
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(drawNet, 150);
+  });
 })();
 </script>
 

@@ -4,15 +4,17 @@ One-pager bilíngue (PT-BR / EN) da dupla **Bruno Amaral** (marca e estratégia)
 **Matheus Silva** (tecnologia e dados). Publicado em
 <https://amaralesilva.vercel.app>.
 
-Implementa o handoff *Reestruturação de branding* — papel bege, tinta quase
-preta, ocre para marca, azul para tecnologia, Fraunces + Inter + IBM Plex Mono,
-zero arredondamento e réguas de 1px como estrutura.
+Implementa o handoff *Reestruturação de branding* na versão escura — fundo
+quase preto, tinta creme, ocre para marca, azul para tecnologia, Fraunces +
+Inter + IBM Plex Mono, zero arredondamento e réguas de 1px como estrutura. O
+hero traz uma constelação (ocre à esquerda, azul à direita) desenhada pelo
+script com semente fixa, e a prova social roda em marquee.
 
 ## Estrutura
 
 ```
 index.html      site completo (marcação + <style> + <script>, sem build)
-favicon.svg     "&" em ocre sobre papel
+favicon.svg     "&" em ocre sobre fundo escuro
 robots.txt      libera o site, bloqueia as propostas e o /admin
 sitemap.xml     / e /en com hreflang
 vercel.json     rewrites (inclui /en e /admin) e noindex das propostas e do admin
@@ -81,6 +83,9 @@ Google já está ativo no projeto.)
 
 ## Pendências
 
+- **Fotos da dupla** — os avatares em `#dupla` apontam para `/img/bruno.jpg` e
+  `/img/matheus.jpg` (quadradas, 400×400 ou mais). Enquanto o arquivo não
+  existe, a moldura tracejada "foto aqui" aparece no lugar.
 - **Imagens** — os 12 apoios visuais ainda são molduras tracejadas
   (`<figure class="media" data-slot="...">`). Para preencher, troque o
   `<figcaption class="media__hint">` por um `<img src="..." alt="...">`; o
@@ -90,9 +95,7 @@ Google já está ativo no projeto.)
   definitivo antes de divulgar o site (o WhatsApp já é um canal real).
 ## Desvio do design
 
-O ocre da marca é `#8A6220`, e não o `#B8842F` do handoff. O tom original dá
-2,94:1 sobre o papel — abaixo do mínimo WCAG AA (4,5:1) para textos pequenos, e
-o ocre carrega rótulos de 10 a 12px em várias seções. `#8A6220` fica na mesma
-família e chega a 4,88:1 sobre `--paper` e 4,54:1 sobre `--paper-deep`. Se o
-handoff for atualizado, basta trocar o token `--ochre` em `index.html` e a cor
-do `&` em `favicon.svg`.
+O ocre e o azul foram clareados para o fundo escuro: `#C9A24E` e `#7A93E6`
+(ambos acima de 6:1 sobre `--bg`, o mínimo WCAG AA para texto pequeno é 4,5:1).
+Os tokens vivem no `:root` de `index.html`; a cor do `&` em `favicon.svg`
+acompanha o ocre.
