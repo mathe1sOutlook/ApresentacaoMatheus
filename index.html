@@ -143,8 +143,6 @@ button {
 .label--ochre { color: var(--ochre); }
 .label--blue  { color: var(--blue); }
 
-.mono { font-family: var(--mono); }
-
 /* Grade cujas divisórias são o próprio fundo aparecendo no gap de 1px. */
 .rule-grid {
   display: grid;
@@ -171,8 +169,6 @@ button {
   justify-content: space-between;
   margin-bottom: 48px;
 }
-.section-head--tight { margin-bottom: 44px; }
-.section-head--flush { margin-bottom: 16px; }
 
 .section-title {
   font-family: var(--serif);
@@ -183,7 +179,6 @@ button {
   margin-top: 14px;
   max-width: 22ch;
 }
-.section-title--wide { max-width: 24ch; }
 
 .section-intro {
   max-width: 40ch;
@@ -832,7 +827,6 @@ button {
   justify-content: center;
   padding: 20px;
 }
-.media--short { min-height: 120px; height: 120px; padding: 12px; }
 .media__hint {
   font-family: var(--mono);
   font-size: 11px;
@@ -1124,19 +1118,20 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .fronts { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* A ficha só abre em três colunas fora dos cards (dentro deles fica empilhada). */
-@media (min-width: 860px) {
-  .ficha--wide { grid-template-columns: repeat(3, 1fr); }
-  .ficha--wide .ficha__cell { border-top: 0; border-left: 1px solid var(--line); }
-  .ficha--wide .ficha__cell:first-child { border-left: 0; }
-}
-
 @media (min-width: 900px) {
   .cases { grid-template-columns: repeat(2, 1fr); }
+  /* O caso conjunto abre a grade em largura total. */
+  .case--featured { grid-column: 1 / -1; }
+  .case--featured .case__cover { min-height: 480px; }
+  .case--featured .case__caption { max-width: 640px; }
 }
 
 @media (min-width: 1024px) {
   .rule-grid--3 { grid-template-columns: repeat(3, 1fr); }
+  .more .rule-grid--3 { grid-template-columns: repeat(4, 1fr); }
+  .more-card__body { padding: 22px 22px 28px; }
+  .more-card__title { font-size: 21px; }
+  .more-card__text { font-size: 15px; }
   .step { grid-template-columns: 96px 1fr 2fr; }
   .step__number { grid-row: auto; }
 }
@@ -1474,7 +1469,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
     <div class="cases">
 <!-- Caso 01 ─────────────────────────────────────────────────── -->
-    <article class="case">
+    <article class="case case--featured">
   <!-- Foto de capa: /img/casos/mediaportal.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
   <div class="case__cover case__cover--photo">
     <div class="case__chips">
@@ -1728,7 +1723,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     <div class="case__media">
       <figure class="media" data-slot="case-genma">
         <img src="/img/casos/genma.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
-        <span class="media__client">Genma — SaaS de gestão</span>
+        <span class="media__client" data-en="Genma — Management SaaS">Genma — SaaS de gestão</span>
         <figcaption class="media__hint" data-en="Awaiting the product screenshot">Aguardando screenshot do produto</figcaption>
       </figure>
     </div>
