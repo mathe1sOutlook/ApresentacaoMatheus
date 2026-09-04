@@ -568,95 +568,206 @@ button {
 .fronts {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 48px;
+  gap: 56px;
 }
 .front__head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding-bottom: 14px;
+  gap: 16px;
+  padding-bottom: 18px;
 }
 .front--brand .front__head { border-bottom: 2px solid var(--ochre); }
 .front--tech  .front__head { border-bottom: 2px solid var(--blue); }
 .front__dot {
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex: none;
 }
-.front--brand .front__dot { background: var(--ochre); }
-.front--tech  .front__dot { background: var(--blue); }
+.front--brand .front__dot { background: var(--ochre); box-shadow: 0 0 14px 3px var(--ochre-soft); }
+.front--tech  .front__dot { background: var(--blue);  box-shadow: 0 0 14px 3px var(--blue-soft); }
 .front__title {
   font-family: var(--serif);
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 28px;
+  font-weight: 600;
 }
 .front__list { list-style: none; margin: 0; padding: 0; }
 .front__item {
-  padding: 18px 0;
-  border-bottom: 1px dashed var(--line);
+  padding: 24px 0;
+  border-bottom: 1px dashed var(--line-strong);
 }
-.front__item h4 { font-size: 16px; font-weight: 600; color: var(--ink); }
+.front__item h4 { font-size: 20px; font-weight: 600; color: var(--ink); }
 .front__item p {
-  margin-top: 6px;
-  font-size: 14px;
+  margin-top: 8px;
+  font-size: 17px;
   color: var(--ink-soft);
 }
 
 /* ─── Dossiê 04 · Casos ──────────────────────────────────────────── */
-.case {
-  border-top: 1px solid var(--line);
-  padding: 44px 0;
-}
-.case:last-of-type { border-bottom: 1px solid var(--line); }
-
-.case__grid {
+.cases {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 40px;
+  gap: 24px;
+  align-items: start;
 }
-.case__head {
+
+/* Card: capa (foto ou moldura tracejada) com chips, título, métrica e
+   botão; os detalhes ficam recolhidos abaixo. */
+.case {
+  border: 1px solid var(--line-strong);
+  background: var(--bg-card);
+}
+.case__cover {
+  position: relative;
   display: flex;
-  align-items: baseline;
-  gap: 14px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  min-height: 560px;
+  padding: 28px 32px 32px;
+  overflow: hidden;
 }
-.case__number { font-family: var(--serif); font-size: 34px; }
+.case__chips {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.case__chip {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border: 1px solid var(--ink-soft);
+  background: rgba(11, 13, 18, 0.72);
+  padding: 8px 14px;
+}
+
+/* Sem foto: a moldura fica centralizada na capa. */
+.case__media {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  margin: 32px 0;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.case__media .media {
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  height: auto;
+  width: min(100%, 520px);
+  padding: 40px 24px;
+  background: transparent;
+}
+.case__media .media__hint {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.6;
+}
+.media__client {
+  display: block;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* Com foto: a imagem cobre a capa inteira, com degradê para a legenda. */
+.case__cover--photo .case__media {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  z-index: 0;
+}
+.case__cover--photo .case__media .media {
+  border: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+.case__cover--photo .case__media img { width: 100%; height: 100%; object-fit: cover; }
+.case__cover--photo .case__media .media__hint { display: none; }
+.case__cover--photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(11, 13, 18, 0.25) 0%, rgba(11, 13, 18, 0.05) 35%, rgba(11, 13, 18, 0.92) 78%, var(--bg-card) 100%);
+  pointer-events: none;
+}
+
+.case__caption {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+}
+.case__title {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+.case__metric {
+  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--ochre);
+}
+.case__toggle {
+  margin-top: 22px;
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--ink);
+  border: 1px solid var(--ink-soft);
+  background: rgba(11, 13, 18, 0.72);
+  padding: 14px 20px;
+}
+.case__toggle:hover { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+.case__toggle .is-close { display: none; }
+.case__toggle[aria-expanded="true"] .is-open { display: none; }
+.case__toggle[aria-expanded="true"] .is-close { display: inline; }
+
+.case__details {
+  border-top: 1px solid var(--line-strong);
+  padding: 32px 32px 36px;
+}
+.case__details[hidden] { display: none; }
 .case__client {
   font-family: var(--mono);
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  background: var(--bg);
-  padding: 5px 9px;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
 }
 .case__sector {
   font-family: var(--mono);
   font-size: 11px;
   color: var(--ink-soft);
+  margin-top: 4px;
 }
-.case__title {
-  font-family: var(--serif);
-  font-size: 26px;
-  font-weight: 500;
-  margin-top: 16px;
-}
-.case__block { margin-top: 20px; }
+.case__block { margin-top: 20px; max-width: 64ch; }
 .case__block + .case__block { margin-top: 16px; }
 .case__block p:not(.label) {
   margin-top: 4px;
-  font-size: 14.5px;
+  font-size: 15px;
   color: var(--ink-soft);
 }
 .case__value {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px dashed var(--line);
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line-strong);
+  max-width: 64ch;
 }
 .case__value > .label { letter-spacing: 0.06em; color: var(--ink); }
 .case__value p:not(.label) {
   margin-top: 4px;
-  font-size: 14.5px;
+  font-size: 15px;
   color: var(--ink);
 }
 
@@ -664,7 +775,7 @@ button {
 .ficha {
   margin-top: 28px;
   border: 1px solid var(--line);
-  background: var(--bg-card);
+  background: var(--bg-deep);
   display: grid;
   grid-template-columns: 1fr;
 }
@@ -875,14 +986,15 @@ button {
   .fronts { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* A ficha só abre em três colunas fora dos cards (dentro deles fica empilhada). */
 @media (min-width: 860px) {
-  .ficha { grid-template-columns: repeat(3, 1fr); }
-  .ficha__cell { border-top: 0; border-left: 1px solid var(--line); }
-  .ficha__cell:first-child { border-left: 0; }
+  .ficha--wide { grid-template-columns: repeat(3, 1fr); }
+  .ficha--wide .ficha__cell { border-top: 0; border-left: 1px solid var(--line); }
+  .ficha--wide .ficha__cell:first-child { border-left: 0; }
 }
 
 @media (min-width: 900px) {
-  .case__grid { grid-template-columns: repeat(2, 1fr); }
+  .cases { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (min-width: 1024px) {
@@ -933,9 +1045,10 @@ button {
   .pull-quote::before { left: 28px; top: 28px; font-size: 44px; }
   .symptom { padding: 36px 28px; }
   .proof__list { font-size: 22px; gap: 64px; }
-  .case { padding: 36px 0; }
-  .case__number { font-size: 28px; }
-  .case__title { font-size: 22px; }
+  .case__cover { min-height: 520px; padding: 22px 24px 26px; }
+  .case__chip { font-size: 12px; padding: 7px 12px; }
+  .case__title { font-size: 26px; }
+  .case__details { padding: 26px 24px 30px; }
   .proof { margin-top: 56px; }
   .contact { padding: 56px 0; }
 }
@@ -1129,16 +1242,16 @@ button {
       <article class="symptom">
         <p class="symptom__index">04</p>
         <h3 class="symptom__title" data-en="Data with no reading">Dados sem leitura</h3>
-        <p class="symptom__text" data-en="Data exists — nobody turns it into a decision.">Dados existem — ninguém transforma em decisão.</p>
+        <p class="symptom__text" data-en="Information exists, but nobody decides with it.">Informação existe, mas ninguém decide com ela.</p>
       </article>
       <article class="symptom">
         <p class="symptom__index">05</p>
-        <h3 class="symptom__title" data-en="Off-the-shelf software that doesn't fit">Software pronto que não encaixa</h3>
-        <p class="symptom__text" data-en="Tools forcing the company to adapt to them.">Ferramentas forçando a empresa a se adaptar a elas.</p>
+        <h3 class="symptom__title" data-en="Software that doesn't fit">Software que não encaixa</h3>
+        <p class="symptom__text" data-en="Off-the-shelf tool forcing the company to adapt.">Ferramenta pronta forçando a empresa a se adaptar.</p>
       </article>
       <article class="symptom">
         <p class="symptom__index">06</p>
-        <h3 class="symptom__title" data-en="Launches with no strategy">Lançamentos sem estratégia</h3>
+        <h3 class="symptom__title" data-en="Launch with no strategy">Lançamento sem estratégia</h3>
         <p class="symptom__text" data-en="Product live with no go-to-market plan.">Produto no ar sem plano de go-to-market.</p>
       </article>
     </div>
@@ -1150,10 +1263,9 @@ button {
   <div class="container">
     <div class="section-head">
       <div>
-        <p class="eyebrow" data-en="Dossier 03 — Fronts">Dossiê 03 — Frentes</p>
+        <p class="eyebrow" data-en="Dossier 03">Dossiê 03</p>
         <h2 class="section-title" data-en="What we deliver.">O que entregamos.</h2>
       </div>
-      <p class="section-intro" data-en="Two fronts, always working together — never one without the other when the project needs both.">Duas frentes, sempre operando junto — nunca uma sem a outra quando o projeto pede as duas.</p>
     </div>
 
     <div class="fronts">
@@ -1165,19 +1277,19 @@ button {
         <ul class="front__list">
           <li class="front__item">
             <h4 data-en="Brand strategy">Estratégia de marca</h4>
-            <p data-en="Diagnosis, positioning, brand architecture and roadmap.">Diagnóstico, posicionamento, arquitetura de marca e roadmap.</p>
+            <p data-en="Diagnosis, positioning, roadmap.">Diagnóstico, posicionamento, roadmap.</p>
           </li>
           <li class="front__item">
             <h4 data-en="Market research">Pesquisa de mercado</h4>
-            <p data-en="Qualitative and quantitative studies, brand health tracking and competitive intelligence.">Estudos qualitativos e quantitativos, saúde de marca e inteligência competitiva.</p>
+            <p data-en="Qualitative, quantitative, competitive.">Qualitativa, quantitativa, competitiva.</p>
           </li>
           <li class="front__item">
             <h4 data-en="Creative &amp; content">Criação &amp; conteúdo</h4>
-            <p data-en="Key visual, copy, verbal identity and tone of voice.">Key visual, copy, identidade verbal e tom de voz.</p>
+            <p data-en="Key visual, copy, tone of voice.">Key visual, copy, tom de voz.</p>
           </li>
           <li class="front__item">
             <h4>Go-to-market</h4>
-            <p data-en="Launch planning and execution, activation and measurement.">Planejamento e execução de lançamentos, ativação e mensuração.</p>
+            <p data-en="Launch, activation, measurement.">Lançamento, ativação, mensuração.</p>
           </li>
         </ul>
       </div>
@@ -1190,19 +1302,19 @@ button {
         <ul class="front__list">
           <li class="front__item">
             <h4 data-en="Custom systems">Sistemas sob medida</h4>
-            <p data-en="Internal platforms for operations, finance, inventory, production, commissions and business-specific flows — with roles, permissions and history.">Plataformas internas para operação, financeiro, estoque, produção, comissões e fluxos específicos — com perfis, permissões e histórico.</p>
+            <p data-en="End-to-end internal platforms.">Plataformas internas ponta a ponta.</p>
           </li>
           <li class="front__item">
             <h4 data-en="Dashboards &amp; intelligence">Dashboards &amp; inteligência</h4>
-            <p data-en="Panels with indicators, filters, period comparisons, exports and automatic reports.">Painéis com indicadores, filtros, comparações por período, exportações e relatórios automáticos.</p>
+            <p data-en="Panels and automatic reports.">Painéis e relatórios automáticos.</p>
           </li>
           <li class="front__item">
             <h4 data-en="Automation &amp; integrations">Automações &amp; integrações</h4>
-            <p data-en="APIs, spreadsheets, PDFs, ERPs, CRMs, payment gateways and legacy systems connected.">APIs, planilhas, PDFs, ERPs, CRMs, gateways de pagamento e sistemas legados conectados.</p>
+            <p data-en="APIs, ERPs, CRMs connected.">APIs, ERPs, CRMs conectados.</p>
           </li>
           <li class="front__item">
             <h4 data-en="AI applied to the business">IA aplicada ao negócio</h4>
-            <p data-en="Document analysis, information classification, report generation, pattern detection and decision support.">Análise documental, classificação de informações, geração de relatórios, detecção de padrões e apoio à decisão.</p>
+            <p data-en="Classification and decision support.">Classificação e apoio à decisão.</p>
           </li>
         </ul>
       </div>
@@ -1213,306 +1325,367 @@ button {
 <!-- ═══════════════════════════════════════════════ DOSSIÊ 04 · CASOS -->
 <section class="section section--deep" id="cases">
   <div class="container">
-    <div class="section-head section-head--flush">
+    <div class="section-head">
       <div>
         <p class="eyebrow" data-en="Dossier 04 — Selected cases">Dossiê 04 — Casos selecionados</p>
         <h2 class="section-title" data-en="Proof, not promise.">Prova, não promessa.</h2>
       </div>
-      <p class="section-intro" data-en="Each case with the problem, what was built, the technical sheet and the value delivered. Some run jointly, others by a single discipline.">Cada caso com o problema, o que foi construído, a ficha técnica e o valor entregue. Alguns conduzidos em conjunto, outros por uma disciplina só.</p>
+      <p class="section-intro" data-en="Tap “see details” to open the problem, the solution and the value delivered.">Toque em "ver detalhes" pra abrir problema, solução e valor entregue.</p>
     </div>
 
-    <!-- Caso 01 ─────────────────────────────────────────────────── -->
+    <div class="cases">
+<!-- Caso 01 ─────────────────────────────────────────────────── -->
     <article class="case">
-      <div class="case__grid">
-        <div>
-          <div class="case__head">
-            <span class="case__number">01</span>
-            <span class="case__client">Media Portal Soluções</span>
-            <span class="case__sector" data-en="Media &amp; Broadcast · joint">Mídia &amp; Broadcast · conjunto</span>
-          </div>
-          <h3 class="case__title" data-en="Digital repositioning of an 18-year-old company">Reposicionamento digital de uma empresa de 18+ anos</h3>
+  <!-- Com foto: troque o .media__hint por <img src="..." alt="..."> e adicione a classe case__cover--photo ao .case__cover. -->
+  <div class="case__cover">
+    <div class="case__chips">
+      <span class="case__chip"><span data-en="Case">Caso</span> 01</span>
+      <span class="case__chip" data-en="Joint">Conjunto</span>
+    </div>
+    <div class="case__media">
+      <figure class="media" data-slot="case-mediaportal">
+        <span class="media__client">Media Portal Soluções</span>
+        <figcaption class="media__hint" data-en="Site screenshots — before / after">Prints do site — antes / depois</figcaption>
+      </figure>
+    </div>
+    <div class="case__caption">
+      <h3 class="case__title" data-en="Media Portal — Digital repositioning">Media Portal — Reposicionamento digital</h3>
+      <p class="case__metric" data-en="18+ years of operation · full redesign">18+ anos de operação · redesign completo</p>
+      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-01-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+    </div>
+  </div>
 
-          <div class="case__block">
-            <p class="label label--ochre" data-en="Problem">Problema</p>
-            <p data-en="A consolidated company — 18+ years, hundreds of clients, names like TV Cultura, MTV and CazéTV — with a digital presence far behind the maturity of the business.">Empresa consolidada — 18+ anos, centenas de clientes, nomes como TV Cultura, MTV e CazéTV — com presença digital muito atrás da maturidade do negócio.</p>
-          </div>
-          <div class="case__block">
-            <p class="label label--blue" data-en="Solution">Solução</p>
-            <p data-en="Bruno structured the narrative, the institutional timeline and the product communication system; Matheus took the redesign into production — home, timeline, modules and the partner-ecosystem page — on a scope and schedule formalised in the first two weeks.">Bruno estruturou a narrativa, a timeline institucional e o sistema de comunicação de produto; Matheus implementou o redesign — home, linha do tempo, módulos e página de ecossistema de parceiros — sobre escopo e cronograma formalizados nas duas primeiras semanas.</p>
-          </div>
-          <div class="case__value">
-            <p class="label" data-en="Value delivered">Valor entregue</p>
-            <p data-en="A digital presence that matches the brand's maturity, ready to attract and convert new corporate contracts.">Presença digital condizente com a maturidade da marca, pronta para captar e converter novos contratos corporativos.</p>
-          </div>
-        </div>
-
-        <!-- Apoio visual pendente: substituir o .media__hint por <img src="..." alt="..."> -->
-        <figure class="media" data-slot="case-mediaportal">
-          <figcaption class="media__hint" data-en="Site screenshots — before / after">Prints do site — antes / depois</figcaption>
-        </figure>
+  <div class="case__details" id="case-01-details" hidden>
+    <p class="case__client">Media Portal Soluções</p>
+    <span class="case__sector" data-en="Media &amp; Broadcast · joint">Mídia &amp; Broadcast · conjunto</span>
+    <div>
+      <div class="case__block">
+        <p class="label label--ochre" data-en="Problem">Problema</p>
+        <p data-en="A consolidated company — 18+ years, hundreds of clients, names like TV Cultura, MTV and CazéTV — with a digital presence far behind the maturity of the business.">Empresa consolidada — 18+ anos, centenas de clientes, nomes como TV Cultura, MTV e CazéTV — com presença digital muito atrás da maturidade do negócio.</p>
       </div>
-
-      <div class="ficha">
-        <div class="ficha__cell">
-          <p class="ficha__label">Stack</p>
-          <ul class="ficha__tags"><li>Next.js</li><li>TypeScript</li><li>Supabase</li><li>Vercel</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Numbers">Números</p>
-          <ul class="ficha__list">
-            <li><b>18+</b> <span data-en="years of operation">anos de operação</span></li>
-            <li><b>3</b> <span data-en="months of initial cycle">meses de ciclo inicial</span></li>
-            <li><b>2</b> <span data-en="weeks of scope definition">semanas de definição de escopo</span></li>
-          </ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Architecture">Arquitetura</p>
-          <ul class="ficha__list" data-en="<li>Relational database, auth and storage on Supabase</li><li>Institutional timeline driven by data</li><li>Product modules + partner ecosystem</li><li>Staging and production, assisted deploy</li>"><li>Banco relacional, auth e storage em Supabase</li><li>Linha do tempo institucional orientada a dados</li><li>Módulos de produto + ecossistema de parceiros</li><li>Homologação e produção, implantação assistida</li></ul>
-        </div>
+      <div class="case__block">
+        <p class="label label--blue" data-en="Solution">Solução</p>
+        <p data-en="Bruno structured the narrative, the institutional timeline and the product communication system; Matheus took the redesign into production — home, timeline, modules and the partner-ecosystem page — on a scope and schedule formalised in the first two weeks.">Bruno estruturou a narrativa, a timeline institucional e o sistema de comunicação de produto; Matheus implementou o redesign — home, linha do tempo, módulos e página de ecossistema de parceiros — sobre escopo e cronograma formalizados nas duas primeiras semanas.</p>
       </div>
-    </article>
+      <div class="case__value">
+        <p class="label" data-en="Value delivered">Valor entregue</p>
+        <p data-en="A digital presence that matches the brand's maturity, ready to attract and convert new corporate contracts.">Presença digital condizente com a maturidade da marca, pronta para captar e converter novos contratos corporativos.</p>
+      </div>
+    </div>
+
+    <div class="ficha">
+      <div class="ficha__cell">
+        <p class="ficha__label">Stack</p>
+        <ul class="ficha__tags"><li>Next.js</li><li>TypeScript</li><li>Supabase</li><li>Vercel</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Numbers">Números</p>
+        <ul class="ficha__list">
+          <li><b>18+</b> <span data-en="years of operation">anos de operação</span></li>
+          <li><b>3</b> <span data-en="months of initial cycle">meses de ciclo inicial</span></li>
+          <li><b>2</b> <span data-en="weeks of scope definition">semanas de definição de escopo</span></li>
+        </ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Architecture">Arquitetura</p>
+        <ul class="ficha__list" data-en="<li>Relational database, auth and storage on Supabase</li><li>Institutional timeline driven by data</li><li>Product modules + partner ecosystem</li><li>Staging and production, assisted deploy</li>"><li>Banco relacional, auth e storage em Supabase</li><li>Linha do tempo institucional orientada a dados</li><li>Módulos de produto + ecossistema de parceiros</li><li>Homologação e produção, implantação assistida</li></ul>
+      </div>
+    </div>
+  </div>
+</article>
 
     <!-- Caso 02 ─────────────────────────────────────────────────── -->
     <article class="case">
-      <div class="case__grid">
-        <div>
-          <div class="case__head">
-            <span class="case__number">02</span>
-            <span class="case__client">Ame Digital × MindMiners</span>
-            <span class="case__sector" data-en="Fintech · case validated by MindMiners · Bruno">Fintech · case validado pela MindMiners · Bruno</span>
-          </div>
-          <h3 class="case__title" data-en="Building the Research &amp; Insights function on data">Estruturando a área de Pesquisa e Insights com dados</h3>
+  <!-- Com foto: troque o .media__hint por <img src="..." alt="..."> e adicione a classe case__cover--photo ao .case__cover. -->
+  <div class="case__cover">
+    <div class="case__chips">
+      <span class="case__chip"><span data-en="Case">Caso</span> 02</span>
+      <span class="case__chip" data-en="Research">Pesquisa</span>
+    </div>
+    <div class="case__media">
+      <figure class="media" data-slot="case-mindminers">
+        <span class="media__client">Ame Digital × MindMiners</span>
+        <figcaption class="media__hint" data-en="Screenshot of the official case — mindminers.com">Print do case oficial — mindminers.com</figcaption>
+      </figure>
+    </div>
+    <div class="case__caption">
+      <h3 class="case__title" data-en="Ame × MindMiners — Research &amp; Insights">Ame × MindMiners — Pesquisa e Insights</h3>
+      <p class="case__metric" data-en="360º brand view · official case">Visão 360º da marca · case oficial</p>
+      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-02-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+    </div>
+  </div>
 
-          <div class="case__block">
-            <p class="label label--ochre" data-en="Problem">Problema</p>
-            <p data-en="With the new Marketing Analytics function, the fintech lacked a partner to structure market trends, competitive analysis and a more strategic reading of its data.">Com a criação da área de Marketing Analytics, faltava um parceiro para estruturar tendências de mercado, análise de concorrência e leitura mais estratégica dos dados.</p>
-          </div>
-          <div class="case__block">
-            <p class="label label--blue" data-en="Solution">Solução</p>
-            <p data-en="Joint definition of strategic KPIs and recurring rollout of the Brand Health methodology, widening the research pillars the fintech tracked.">Definição conjunta de KPIs estratégicos e implantação recorrente da Metodologia de Saúde de Marca, ampliando os pilares de pesquisa analisados pela fintech.</p>
-          </div>
-          <div class="case__value">
-            <p class="label" data-en="Value delivered">Valor entregue</p>
-            <p data-en="A 360º view of the brand — brand health, funnel, journeys, competitive positioning — with decisions from product launch to regional expansion guided by data. Official case published by MindMiners, quoting Bruno Amaral as Senior Marketing Research Analyst.">Visão 360º da marca — saúde de marca, funil, jornadas, posicionamento competitivo — e decisões, de lançamento de produto a expansão regional, passaram a ser guiadas por dado. Case oficial publicado pela MindMiners, com citação direta de Bruno Amaral como Senior Marketing Research Analyst.</p>
-          </div>
-        </div>
-
-        <figure class="media" data-slot="case-mindminers">
-          <figcaption class="media__hint" data-en="Screenshot of the official case — mindminers.com">Print do case oficial — mindminers.com</figcaption>
-        </figure>
+  <div class="case__details" id="case-02-details" hidden>
+    <p class="case__client">Ame Digital × MindMiners</p>
+    <span class="case__sector" data-en="Fintech · case validated by MindMiners · Bruno">Fintech · case validado pela MindMiners · Bruno</span>
+    <div>
+      <div class="case__block">
+        <p class="label label--ochre" data-en="Problem">Problema</p>
+        <p data-en="With the new Marketing Analytics function, the fintech lacked a partner to structure market trends, competitive analysis and a more strategic reading of its data.">Com a criação da área de Marketing Analytics, faltava um parceiro para estruturar tendências de mercado, análise de concorrência e leitura mais estratégica dos dados.</p>
       </div>
-
-      <div class="ficha">
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Deliverables">Entregáveis</p>
-          <ul class="ficha__tags"><li>KPIs</li><li data-en="Brand Health">Saúde de Marca</li><li data-en="Competition">Concorrência</li><li data-en="Trends">Tendências</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Numbers">Números</p>
-          <ul class="ficha__list">
-            <li><b>360º</b> <span data-en="brand view">de visão de marca</span></li>
-            <li><b>4</b> <span data-en="research pillars tracked">pilares de pesquisa acompanhados</span></li>
-            <li><b>1</b> <span data-en="official published case">case oficial publicado</span></li>
-          </ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Method">Método</p>
-          <ul class="ficha__list" data-en="<li>Recurring quantitative waves</li><li>Funnel and journey reading</li><li>Competitive positioning</li><li>Insight routine feeding launches</li>"><li>Ondas quantitativas recorrentes</li><li>Leitura de funil e jornadas</li><li>Posicionamento competitivo</li><li>Rotina de insights alimentando lançamentos</li></ul>
-        </div>
+      <div class="case__block">
+        <p class="label label--blue" data-en="Solution">Solução</p>
+        <p data-en="Joint definition of strategic KPIs and recurring rollout of the Brand Health methodology, widening the research pillars the fintech tracked.">Definição conjunta de KPIs estratégicos e implantação recorrente da Metodologia de Saúde de Marca, ampliando os pilares de pesquisa analisados pela fintech.</p>
       </div>
-    </article>
+      <div class="case__value">
+        <p class="label" data-en="Value delivered">Valor entregue</p>
+        <p data-en="A 360º view of the brand — brand health, funnel, journeys, competitive positioning — with decisions from product launch to regional expansion guided by data. Official case published by MindMiners, quoting Bruno Amaral as Senior Marketing Research Analyst.">Visão 360º da marca — saúde de marca, funil, jornadas, posicionamento competitivo — e decisões, de lançamento de produto a expansão regional, passaram a ser guiadas por dado. Case oficial publicado pela MindMiners, com citação direta de Bruno Amaral como Senior Marketing Research Analyst.</p>
+      </div>
+    </div>
+
+    <div class="ficha">
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Deliverables">Entregáveis</p>
+        <ul class="ficha__tags"><li>KPIs</li><li data-en="Brand Health">Saúde de Marca</li><li data-en="Competition">Concorrência</li><li data-en="Trends">Tendências</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Numbers">Números</p>
+        <ul class="ficha__list">
+          <li><b>360º</b> <span data-en="brand view">de visão de marca</span></li>
+          <li><b>4</b> <span data-en="research pillars tracked">pilares de pesquisa acompanhados</span></li>
+          <li><b>1</b> <span data-en="official published case">case oficial publicado</span></li>
+        </ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Method">Método</p>
+        <ul class="ficha__list" data-en="<li>Recurring quantitative waves</li><li>Funnel and journey reading</li><li>Competitive positioning</li><li>Insight routine feeding launches</li>"><li>Ondas quantitativas recorrentes</li><li>Leitura de funil e jornadas</li><li>Posicionamento competitivo</li><li>Rotina de insights alimentando lançamentos</li></ul>
+      </div>
+    </div>
+  </div>
+</article>
 
     <!-- Caso 03 ─────────────────────────────────────────────────── -->
     <article class="case">
-      <div class="case__grid">
-        <div>
-          <div class="case__head">
-            <span class="case__number">03</span>
-            <span class="case__client">Ame Digital × X (Twitter)</span>
-            <span class="case__sector" data-en="Fintech · case validated by X · Bruno">Fintech · case validado pela X · Bruno</span>
-          </div>
-          <h3 class="case__title" data-en="An official case published by the platform itself">Case oficial publicado pela própria plataforma</h3>
+  <!-- Com foto: troque o .media__hint por <img src="..." alt="..."> e adicione a classe case__cover--photo ao .case__cover. -->
+  <div class="case__cover">
+    <div class="case__chips">
+      <span class="case__chip"><span data-en="Case">Caso</span> 03</span>
+      <span class="case__chip" data-en="Media">Mídia</span>
+    </div>
+    <div class="case__media">
+      <figure class="media" data-slot="case-x">
+        <span class="media__client">Ame Digital × X (Twitter)</span>
+        <figcaption class="media__hint" data-en="Screenshot of the official page — marketing.x.com">Print da página oficial — marketing.x.com</figcaption>
+      </figure>
+    </div>
+    <div class="case__caption">
+      <h3 class="case__title" data-en="Ame × X — The platform’s official case">Ame × X — Case oficial da plataforma</h3>
+      <p class="case__metric" data-en="+28.3M impressions · +600K engagements">+28,3M impressões · +600K engajamentos</p>
+      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-03-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+    </div>
+  </div>
 
-          <div class="case__block">
-            <p class="label label--ochre" data-en="Problem">Problema</p>
-            <p data-en="The fintech needed to plug into culturally relevant conversations — a reality show, Pride Month — and earn brand relevance on the platform.">A fintech precisava se conectar com conversas culturais relevantes — reality show, Mês do Orgulho — e ganhar relevância de marca na plataforma.</p>
-          </div>
-          <div class="case__block">
-            <p class="label label--blue" data-en="Solution">Solução</p>
-            <p data-en="Media and content strategy across the #AMEnoDFCEX and #AmeSemModeração campaigns, with Promoted Trends and First View.">Estratégia de mídia e conteúdo nas campanhas #AMEnoDFCEX e #AmeSemModeração, com Trends Promovidas e First View.</p>
-          </div>
-          <div class="case__value">
-            <p class="label" data-en="Value delivered">Valor entregue</p>
-            <p data-en="+28.3M impressions, +600K engagements (8% rate), mentions 900% and 520% above benchmark across the two campaigns — results published as an official X success case.">+28,3M de impressões, +600K engajamentos (8% de taxa), menções 900% e 520% acima do benchmark nas duas campanhas — resultados publicados como case de sucesso oficial da X.</p>
-          </div>
-        </div>
-
-        <figure class="media" data-slot="case-x">
-          <figcaption class="media__hint" data-en="Screenshot of the official page — marketing.x.com">Print da página oficial — marketing.x.com</figcaption>
-        </figure>
+  <div class="case__details" id="case-03-details" hidden>
+    <p class="case__client">Ame Digital × X (Twitter)</p>
+    <span class="case__sector" data-en="Fintech · case validated by X · Bruno">Fintech · case validado pela X · Bruno</span>
+    <div>
+      <div class="case__block">
+        <p class="label label--ochre" data-en="Problem">Problema</p>
+        <p data-en="The fintech needed to plug into culturally relevant conversations — a reality show, Pride Month — and earn brand relevance on the platform.">A fintech precisava se conectar com conversas culturais relevantes — reality show, Mês do Orgulho — e ganhar relevância de marca na plataforma.</p>
       </div>
-
-      <div class="ficha">
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Formats">Formatos</p>
-          <ul class="ficha__tags"><li data-en="Promoted Trend">Trend Promovida</li><li>First View</li><li data-en="Always-on content">Conteúdo always-on</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Numbers">Números</p>
-          <ul class="ficha__list">
-            <li><b>28,3M</b> <span data-en="impressions">impressões</span></li>
-            <li><b>600K</b> <span data-en="engagements · 8% rate">engajamentos · taxa 8%</span></li>
-            <li><b>900% / 520%</b> <span data-en="mentions above benchmark">menções acima do benchmark</span></li>
-          </ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Method">Método</p>
-          <ul class="ficha__list" data-en="<li>Cultural calendar as media anchor</li><li>Two campaigns, one voice</li><li>Real-time engagement management</li><li>Post-campaign measurement vs. benchmark</li>"><li>Calendário cultural como âncora de mídia</li><li>Duas campanhas, uma só voz</li><li>Gestão de engajamento em tempo real</li><li>Mensuração pós-campanha vs. benchmark</li></ul>
-        </div>
+      <div class="case__block">
+        <p class="label label--blue" data-en="Solution">Solução</p>
+        <p data-en="Media and content strategy across the #AMEnoDFCEX and #AmeSemModeração campaigns, with Promoted Trends and First View.">Estratégia de mídia e conteúdo nas campanhas #AMEnoDFCEX e #AmeSemModeração, com Trends Promovidas e First View.</p>
       </div>
-    </article>
+      <div class="case__value">
+        <p class="label" data-en="Value delivered">Valor entregue</p>
+        <p data-en="+28.3M impressions, +600K engagements (8% rate), mentions 900% and 520% above benchmark across the two campaigns — results published as an official X success case.">+28,3M de impressões, +600K engajamentos (8% de taxa), menções 900% e 520% acima do benchmark nas duas campanhas — resultados publicados como case de sucesso oficial da X.</p>
+      </div>
+    </div>
+
+    <div class="ficha">
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Formats">Formatos</p>
+        <ul class="ficha__tags"><li data-en="Promoted Trend">Trend Promovida</li><li>First View</li><li data-en="Always-on content">Conteúdo always-on</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Numbers">Números</p>
+        <ul class="ficha__list">
+          <li><b>28,3M</b> <span data-en="impressions">impressões</span></li>
+          <li><b>600K</b> <span data-en="engagements · 8% rate">engajamentos · taxa 8%</span></li>
+          <li><b>900% / 520%</b> <span data-en="mentions above benchmark">menções acima do benchmark</span></li>
+        </ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Method">Método</p>
+        <ul class="ficha__list" data-en="<li>Cultural calendar as media anchor</li><li>Two campaigns, one voice</li><li>Real-time engagement management</li><li>Post-campaign measurement vs. benchmark</li>"><li>Calendário cultural como âncora de mídia</li><li>Duas campanhas, uma só voz</li><li>Gestão de engajamento em tempo real</li><li>Mensuração pós-campanha vs. benchmark</li></ul>
+      </div>
+    </div>
+  </div>
+</article>
 
     <!-- Caso 04 ─────────────────────────────────────────────────── -->
     <article class="case">
-      <div class="case__grid">
-        <div>
-          <div class="case__head">
-            <span class="case__number">04</span>
-            <span class="case__client">Corning CALA Summit</span>
-            <span class="case__sector" data-en="Fortune 500 · B2B events · Bruno">Fortune 500 · Eventos B2B · Bruno</span>
-          </div>
-          <h3 class="case__title" data-en="Corning's first C-Level event in Latin America">Primeiro evento C-Level da Corning na América Latina</h3>
+  <!-- Com foto: troque o .media__hint por <img src="..." alt="..."> e adicione a classe case__cover--photo ao .case__cover. -->
+  <div class="case__cover">
+    <div class="case__chips">
+      <span class="case__chip"><span data-en="Case">Caso</span> 04</span>
+      <span class="case__chip" data-en="Events">Eventos</span>
+    </div>
+    <div class="case__media">
+      <figure class="media" data-slot="case-corning">
+        <span class="media__client">Corning CALA Summit</span>
+        <figcaption class="media__hint" data-en="Event photos / badge / printed material">Fotos do evento / crachá / material impresso</figcaption>
+      </figure>
+    </div>
+    <div class="case__caption">
+      <h3 class="case__title" data-en="Corning — CALA Summit">Corning — CALA Summit</h3>
+      <p class="case__metric" data-en="4 editions · 1st C-Level event in the region">4 edições · 1º evento C-Level da região</p>
+      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-04-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+    </div>
+  </div>
 
-          <div class="case__block">
-            <p class="label label--ochre" data-en="Problem">Problema</p>
-            <p data-en="No direct relationship channel with C-Level channel partners in the region.">Ausência de um canal de relacionamento direto com parceiros de canal C-Level na região.</p>
-          </div>
-          <div class="case__block">
-            <p class="label label--blue" data-en="Solution">Solução</p>
-            <p data-en="The event created from zero — strategic planning, content curation and experience management, with editions in Panama, Cartagena, Lima and Santiago.">Criação do evento do zero — planejamento estratégico, curadoria de conteúdo e gestão de experiência, com edições no Panamá, Cartagena, Lima e Santiago.</p>
-          </div>
-          <div class="case__value">
-            <p class="label" data-en="Value delivered">Valor entregue</p>
-            <p data-en="A recurring institutional channel for relationships with regional partners.">Novo canal institucional recorrente de relacionamento com parceiros regionais.</p>
-          </div>
-        </div>
-
-        <figure class="media" data-slot="case-corning">
-          <figcaption class="media__hint" data-en="Event photos / badge / printed material">Fotos do evento / crachá / material impresso</figcaption>
-        </figure>
+  <div class="case__details" id="case-04-details" hidden>
+    <p class="case__client">Corning CALA Summit</p>
+    <span class="case__sector" data-en="Fortune 500 · B2B events · Bruno">Fortune 500 · Eventos B2B · Bruno</span>
+    <div>
+      <div class="case__block">
+        <p class="label label--ochre" data-en="Problem">Problema</p>
+        <p data-en="No direct relationship channel with C-Level channel partners in the region.">Ausência de um canal de relacionamento direto com parceiros de canal C-Level na região.</p>
       </div>
-
-      <div class="ficha">
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Deliverables">Entregáveis</p>
-          <ul class="ficha__tags"><li data-en="Event concept">Conceito do evento</li><li data-en="Content curation">Curadoria</li><li data-en="Experience">Experiência</li><li data-en="Printed material">Material impresso</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Numbers">Números</p>
-          <ul class="ficha__list">
-            <li><b>4</b> <span data-en="editions: Panama, Cartagena, Lima, Santiago">edições: Panamá, Cartagena, Lima, Santiago</span></li>
-            <li><b>1º</b> <span data-en="C-Level event in the region">evento C-Level da região</span></li>
-            <li><b>C-Level</b> <span data-en="channel partners as audience">parceiros de canal como público</span></li>
-          </ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Method">Método</p>
-          <ul class="ficha__list" data-en="<li>Regional partner mapping</li><li>Agenda built with local business teams</li><li>Repeatable format across four countries</li><li>Post-event follow-up with sales</li>"><li>Mapeamento de parceiros regionais</li><li>Agenda construída com times de negócio locais</li><li>Formato replicável em quatro países</li><li>Follow-up pós-evento com vendas</li></ul>
-        </div>
+      <div class="case__block">
+        <p class="label label--blue" data-en="Solution">Solução</p>
+        <p data-en="The event created from zero — strategic planning, content curation and experience management, with editions in Panama, Cartagena, Lima and Santiago.">Criação do evento do zero — planejamento estratégico, curadoria de conteúdo e gestão de experiência, com edições no Panamá, Cartagena, Lima e Santiago.</p>
       </div>
-    </article>
+      <div class="case__value">
+        <p class="label" data-en="Value delivered">Valor entregue</p>
+        <p data-en="A recurring institutional channel for relationships with regional partners.">Novo canal institucional recorrente de relacionamento com parceiros regionais.</p>
+      </div>
+    </div>
+
+    <div class="ficha">
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Deliverables">Entregáveis</p>
+        <ul class="ficha__tags"><li data-en="Event concept">Conceito do evento</li><li data-en="Content curation">Curadoria</li><li data-en="Experience">Experiência</li><li data-en="Printed material">Material impresso</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Numbers">Números</p>
+        <ul class="ficha__list">
+          <li><b>4</b> <span data-en="editions: Panama, Cartagena, Lima, Santiago">edições: Panamá, Cartagena, Lima, Santiago</span></li>
+          <li><b>1º</b> <span data-en="C-Level event in the region">evento C-Level da região</span></li>
+          <li><b>C-Level</b> <span data-en="channel partners as audience">parceiros de canal como público</span></li>
+        </ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Method">Método</p>
+        <ul class="ficha__list" data-en="<li>Regional partner mapping</li><li>Agenda built with local business teams</li><li>Repeatable format across four countries</li><li>Post-event follow-up with sales</li>"><li>Mapeamento de parceiros regionais</li><li>Agenda construída com times de negócio locais</li><li>Formato replicável em quatro países</li><li>Follow-up pós-evento com vendas</li></ul>
+      </div>
+    </div>
+  </div>
+</article>
 
     <!-- Caso 05 ─────────────────────────────────────────────────── -->
     <article class="case">
-      <div class="case__grid">
-        <div>
-          <div class="case__head">
-            <span class="case__number">05</span>
-            <span class="case__client">Genma</span>
-            <span class="case__sector" data-en="Hospitality · SaaS · Matheus">Gastronomia · SaaS · Matheus</span>
-          </div>
-          <h3 class="case__title" data-en="Multi-user management SaaS for restaurants">SaaS de gestão para restaurantes multiusuário</h3>
+  <!-- Com foto: troque o .media__hint por <img src="..." alt="..."> e adicione a classe case__cover--photo ao .case__cover. -->
+  <div class="case__cover">
+    <div class="case__chips">
+      <span class="case__chip"><span data-en="Case">Caso</span> 05</span>
+      <span class="case__chip" data-en="System">Sistema</span>
+    </div>
+    <div class="case__media">
+      <figure class="media" data-slot="case-genma">
+        <span class="media__client">Genma</span>
+        <figcaption class="media__hint" data-en="Product screenshot — order pad / dashboard">Screenshot do produto — comanda / dashboard</figcaption>
+      </figure>
+    </div>
+    <div class="case__caption">
+      <h3 class="case__title" data-en="Genma — SaaS for restaurants">Genma — SaaS para restaurantes</h3>
+      <p class="case__metric" data-en="Multi-user · real-time orders">Multiusuário · pedidos em tempo real</p>
+      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-05-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+    </div>
+  </div>
 
-          <div class="case__block">
-            <p class="label label--ochre" data-en="Problem">Problema</p>
-            <p data-en="Restaurants controlling orders, tables, kitchen, cash and reports through manual processes and disconnected tools.">Restaurantes controlando pedidos, mesas, cozinha, caixa e relatórios com processos manuais e ferramentas desconectadas.</p>
-          </div>
-          <div class="case__block">
-            <p class="label label--blue" data-en="Solution">Solução</p>
-            <p data-en="A multi-user SaaS with digital menu, electronic order pad, real-time order flow, kitchen control, cash closing and management reports.">SaaS multiusuário com cardápio digital, comanda eletrônica, fluxo de pedidos em tempo real, controle de cozinha, fechamento de caixa e relatórios gerenciais.</p>
-          </div>
-          <div class="case__value">
-            <p class="label" data-en="Value delivered">Valor entregue</p>
-            <p data-en="A centralised operation, orders in one place, less rework and a full management view of the restaurant.">Operação centralizada, pedidos num só lugar, menos retrabalho e visão gerencial completa do restaurante.</p>
-          </div>
-        </div>
-
-        <figure class="media" data-slot="case-genma">
-          <figcaption class="media__hint" data-en="Product screenshot — order pad / dashboard">Screenshot do produto — comanda / dashboard</figcaption>
-        </figure>
+  <div class="case__details" id="case-05-details" hidden>
+    <p class="case__client">Genma</p>
+    <span class="case__sector" data-en="Hospitality · SaaS · Matheus">Gastronomia · SaaS · Matheus</span>
+    <div>
+      <div class="case__block">
+        <p class="label label--ochre" data-en="Problem">Problema</p>
+        <p data-en="Restaurants controlling orders, tables, kitchen, cash and reports through manual processes and disconnected tools.">Restaurantes controlando pedidos, mesas, cozinha, caixa e relatórios com processos manuais e ferramentas desconectadas.</p>
       </div>
-
-      <div class="ficha">
-        <div class="ficha__cell">
-          <p class="ficha__label">Stack</p>
-          <ul class="ficha__tags"><li>Next.js</li><li>TypeScript</li><li>Supabase</li><li>Tailwind</li><li>Realtime</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Modules">Módulos</p>
-          <ul class="ficha__list" data-en="<li>Digital menu</li><li>Electronic order pad</li><li>Kitchen display</li><li>Cash closing</li><li>Management reports</li>"><li>Cardápio digital</li><li>Comanda eletrônica</li><li>Painel de cozinha</li><li>Fechamento de caixa</li><li>Relatórios gerenciais</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Architecture">Arquitetura</p>
-          <ul class="ficha__list" data-en="<li>Multi-tenant with roles per venue</li><li>Realtime order flow (subscriptions)</li><li>Row-level permissions</li><li>Web-first, tablet in the kitchen</li>"><li>Multiempresa com perfis por unidade</li><li>Fluxo de pedidos em tempo real (subscriptions)</li><li>Permissões por linha de dado</li><li>Web-first, tablet na cozinha</li></ul>
-        </div>
+      <div class="case__block">
+        <p class="label label--blue" data-en="Solution">Solução</p>
+        <p data-en="A multi-user SaaS with digital menu, electronic order pad, real-time order flow, kitchen control, cash closing and management reports.">SaaS multiusuário com cardápio digital, comanda eletrônica, fluxo de pedidos em tempo real, controle de cozinha, fechamento de caixa e relatórios gerenciais.</p>
       </div>
-    </article>
+      <div class="case__value">
+        <p class="label" data-en="Value delivered">Valor entregue</p>
+        <p data-en="A centralised operation, orders in one place, less rework and a full management view of the restaurant.">Operação centralizada, pedidos num só lugar, menos retrabalho e visão gerencial completa do restaurante.</p>
+      </div>
+    </div>
+
+    <div class="ficha">
+      <div class="ficha__cell">
+        <p class="ficha__label">Stack</p>
+        <ul class="ficha__tags"><li>Next.js</li><li>TypeScript</li><li>Supabase</li><li>Tailwind</li><li>Realtime</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Modules">Módulos</p>
+        <ul class="ficha__list" data-en="<li>Digital menu</li><li>Electronic order pad</li><li>Kitchen display</li><li>Cash closing</li><li>Management reports</li>"><li>Cardápio digital</li><li>Comanda eletrônica</li><li>Painel de cozinha</li><li>Fechamento de caixa</li><li>Relatórios gerenciais</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Architecture">Arquitetura</p>
+        <ul class="ficha__list" data-en="<li>Multi-tenant with roles per venue</li><li>Realtime order flow (subscriptions)</li><li>Row-level permissions</li><li>Web-first, tablet in the kitchen</li>"><li>Multiempresa com perfis por unidade</li><li>Fluxo de pedidos em tempo real (subscriptions)</li><li>Permissões por linha de dado</li><li>Web-first, tablet na cozinha</li></ul>
+      </div>
+    </div>
+  </div>
+</article>
 
     <!-- Caso 06 ─────────────────────────────────────────────────── -->
     <article class="case">
-      <div class="case__grid">
-        <div>
-          <div class="case__head">
-            <span class="case__number">06</span>
-            <span class="case__client">VisionOne</span>
-            <span class="case__sector" data-en="Fintech &amp; AI · Matheus">Fintech &amp; IA · Matheus</span>
-          </div>
-          <h3 class="case__title" data-en="Credit risk analysis with AI support">Análise de risco de crédito com apoio de IA</h3>
+  <!-- Com foto: troque o .media__hint por <img src="..." alt="..."> e adicione a classe case__cover--photo ao .case__cover. -->
+  <div class="case__cover">
+    <div class="case__chips">
+      <span class="case__chip"><span data-en="Case">Caso</span> 06</span>
+      <span class="case__chip" data-en="AI">IA</span>
+    </div>
+    <div class="case__media">
+      <figure class="media" data-slot="case-visionone">
+        <span class="media__client">VisionOne</span>
+        <figcaption class="media__hint" data-en="Product dashboard — score / indicators">Dashboard do produto — score / indicadores</figcaption>
+      </figure>
+    </div>
+    <div class="case__caption">
+      <h3 class="case__title" data-en="VisionOne — Credit risk with AI">VisionOne — Risco de crédito com IA</h3>
+      <p class="case__metric" data-en="Weighted scoring · AI-written reports">Scoring ponderado · relatórios com IA</p>
+      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-06-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+    </div>
+  </div>
 
-          <div class="case__block">
-            <p class="label label--ochre" data-en="Problem">Problema</p>
-            <p data-en="Credit analysis requires crossing many data sources, documents, indicators and subjective criteria — slow and hard to standardise.">Análises de crédito exigem cruzar muitos dados, documentos, indicadores e critérios subjetivos — processo lento e difícil de padronizar.</p>
-          </div>
-          <div class="case__block">
-            <p class="label label--blue" data-en="Solution">Solução</p>
-            <p data-en="A risk platform with scoring, external data integration, PDF extraction, behavioural classification and AI-assisted report generation.">Plataforma de análise de risco com scoring, integração com dados externos, extração de PDFs, classificação comportamental e geração de relatórios com apoio de IA.</p>
-          </div>
-          <div class="case__value">
-            <p class="label" data-en="Value delivered">Valor entregue</p>
-            <p data-en="Faster decisions, standardised criteria and complete reports for risk assessment and compliance.">Decisões mais rápidas, critérios padronizados e relatórios completos para avaliação de risco e compliance.</p>
-          </div>
-        </div>
-
-        <figure class="media" data-slot="case-visionone">
-          <figcaption class="media__hint" data-en="Product dashboard — score / indicators">Dashboard do produto — score / indicadores</figcaption>
-        </figure>
+  <div class="case__details" id="case-06-details" hidden>
+    <p class="case__client">VisionOne</p>
+    <span class="case__sector" data-en="Fintech &amp; AI · Matheus">Fintech &amp; IA · Matheus</span>
+    <div>
+      <div class="case__block">
+        <p class="label label--ochre" data-en="Problem">Problema</p>
+        <p data-en="Credit analysis requires crossing many data sources, documents, indicators and subjective criteria — slow and hard to standardise.">Análises de crédito exigem cruzar muitos dados, documentos, indicadores e critérios subjetivos — processo lento e difícil de padronizar.</p>
       </div>
-
-      <div class="ficha">
-        <div class="ficha__cell">
-          <p class="ficha__label">Stack</p>
-          <ul class="ficha__tags"><li>React</li><li>TypeScript</li><li>Supabase</li><li>ECharts</li><li>IA / LLM</li><li data-en="External APIs">APIs externas</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Score criteria">Critérios do score</p>
-          <ul class="ficha__list" data-en="<li>Revenue</li><li>Protests</li><li>Lawsuits</li><li>Payment punctuality</li><li>Behavioural profile</li>"><li>Faturamento</li><li>Protestos</li><li>Ações judiciais</li><li>Pontualidade de pagamento</li><li>Perfil comportamental</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Architecture">Arquitetura</p>
-          <ul class="ficha__list" data-en="<li>PDF extraction pipeline into structured fields</li><li>Weighted scoring engine with audit trail</li><li>External data APIs enriching the record</li><li>LLM writing the analyst's report draft</li>"><li>Pipeline de extração de PDFs para campos estruturados</li><li>Motor de scoring ponderado com trilha de auditoria</li><li>APIs de dados externos enriquecendo o cadastro</li><li>LLM redigindo o rascunho do parecer</li></ul>
-        </div>
+      <div class="case__block">
+        <p class="label label--blue" data-en="Solution">Solução</p>
+        <p data-en="A risk platform with scoring, external data integration, PDF extraction, behavioural classification and AI-assisted report generation.">Plataforma de análise de risco com scoring, integração com dados externos, extração de PDFs, classificação comportamental e geração de relatórios com apoio de IA.</p>
       </div>
-    </article>
+      <div class="case__value">
+        <p class="label" data-en="Value delivered">Valor entregue</p>
+        <p data-en="Faster decisions, standardised criteria and complete reports for risk assessment and compliance.">Decisões mais rápidas, critérios padronizados e relatórios completos para avaliação de risco e compliance.</p>
+      </div>
+    </div>
+
+    <div class="ficha">
+      <div class="ficha__cell">
+        <p class="ficha__label">Stack</p>
+        <ul class="ficha__tags"><li>React</li><li>TypeScript</li><li>Supabase</li><li>ECharts</li><li>IA / LLM</li><li data-en="External APIs">APIs externas</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Score criteria">Critérios do score</p>
+        <ul class="ficha__list" data-en="<li>Revenue</li><li>Protests</li><li>Lawsuits</li><li>Payment punctuality</li><li>Behavioural profile</li>"><li>Faturamento</li><li>Protestos</li><li>Ações judiciais</li><li>Pontualidade de pagamento</li><li>Perfil comportamental</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Architecture">Arquitetura</p>
+        <ul class="ficha__list" data-en="<li>PDF extraction pipeline into structured fields</li><li>Weighted scoring engine with audit trail</li><li>External data APIs enriching the record</li><li>LLM writing the analyst's report draft</li>"><li>Pipeline de extração de PDFs para campos estruturados</li><li>Motor de scoring ponderado com trilha de auditoria</li><li>APIs de dados externos enriquecendo o cadastro</li><li>LLM redigindo o rascunho do parecer</li></ul>
+      </div>
+    </div>
+  </div>
+</article>
+</div>
 
     <!-- Outros projetos ─────────────────────────────────────────── -->
     <div class="more">
@@ -1851,6 +2024,17 @@ button {
   }
 
   drawNet();
+
+  /* ─── Casos: abrir / fechar detalhes ──────────────────────────── */
+  document.querySelectorAll('.case__toggle').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var panel = document.getElementById(btn.getAttribute('aria-controls'));
+      if (!panel) return;
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      panel.hidden = open;
+    });
+  });
 
   var resizeTimer = null;
   window.addEventListener('resize', function () {
