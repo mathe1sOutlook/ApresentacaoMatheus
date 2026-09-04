@@ -21,7 +21,12 @@
 <meta property="og:url" content="https://amaralesilva.vercel.app/" />
 <meta property="og:title" content="Amaral &amp; Silva — Estratégia de marca &amp; engenharia de sistemas" />
 <meta property="og:description" content="Marcas que se destacam. Sistemas que sustentam. Estratégia de marca e engenharia de sistemas na mesma mesa." />
-<meta name="twitter:card" content="summary" />
+<meta property="og:image" content="https://amaralesilva.vercel.app/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Amaral &amp; Silva — Marcas que se destacam. Sistemas que sustentam." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://amaralesilva.vercel.app/og.png" />
 <meta name="twitter:title" content="Amaral &amp; Silva — Estratégia de marca &amp; engenharia de sistemas" />
 <meta name="twitter:description" content="Marcas que se destacam. Sistemas que sustentam. Estratégia de marca e engenharia de sistemas na mesma mesa." />
 
@@ -102,6 +107,16 @@ button {
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* Entrada ao rolar: só quando o script confirma que há IntersectionObserver
+   e que o visitante não pediu menos movimento (html.js-reveal). */
+.js-reveal .reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.js-reveal .reveal.is-in { opacity: 1; transform: none; }
 
 /* ─── Utilitários ────────────────────────────────────────────────── */
 .container {
@@ -295,7 +310,9 @@ button {
 }
 .hero > * { position: relative; }
 
-/* Constelação desenhada pelo script: ocre à esquerda, azul à direita. */
+/* Constelação desenhada pelo script em canvas: ocre à esquerda, azul à
+   direita. Flutua devagar e reage ao cursor; fica parada com
+   prefers-reduced-motion. */
 .hero__net {
   position: absolute;
   inset: 0;
@@ -304,11 +321,6 @@ button {
   pointer-events: none;
   opacity: 0.6;
 }
-.net__edge { stroke-width: 1; fill: none; }
-.net__edge--ochre { stroke: var(--ochre); }
-.net__edge--blue, .net__edge--mix { stroke: var(--blue); }
-.net__node--ochre { fill: var(--ochre); }
-.net__node--blue  { fill: var(--blue); }
 
 .hero__body {
   display: flex;
@@ -1074,6 +1086,15 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   text-align: center;
 }
 .lead__submit:hover { background: var(--ochre); border-color: var(--ochre); }
+.field--trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.lead { position: relative; }
+.lead__submit[disabled] { opacity: 0.6; cursor: default; }
 .lead__hint {
   margin-top: 14px;
   font-family: var(--mono);
@@ -1221,12 +1242,12 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
 <!-- ═══════════════════════════════════════════════ HERO -->
 <section class="hero" id="topo">
-  <svg class="hero__net" id="hero-net" aria-hidden="true" focusable="false" preserveAspectRatio="none"></svg>
+  <canvas class="hero__net" id="hero-net" aria-hidden="true"></canvas>
 
   <div class="container">
     <p class="eyebrow" data-en="Brand strategy &nbsp;×&nbsp; Systems engineering">Estratégia de marca &nbsp;×&nbsp; Engenharia de sistemas</p>
 
-    <div class="hero__body">
+    <div class="hero__body reveal">
       <div class="hero__main">
         <h1 class="hero__title" data-en="Brands that stand out. <em>Systems</em> that hold them up.">Marcas que se destacam. <em>Sistemas</em> que sustentam.</h1>
 
@@ -1289,7 +1310,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 <!-- ═══════════════════════════════════════════════ DOSSIÊ 01 · A DUPLA -->
 <section class="section" id="dupla">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div>
         <p class="eyebrow" data-en="Dossier 01 — The pair">Dossiê 01 — A dupla</p>
         <h2 class="section-title" data-en="One brand, two crafts.">Uma marca, dois ofícios.</h2>
@@ -1298,7 +1319,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
 
     <div class="rule-grid rule-grid--2">
-      <article class="person">
+      <article class="person reveal">
         <div class="person__head">
           <!-- Foto: salvar em /img/bruno.jpg (quadrada, 400×400 ou mais). Sem o arquivo, a moldura "foto aqui" aparece. -->
           <figure class="avatar">
@@ -1320,7 +1341,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
         </ul>
       </article>
 
-      <article class="person">
+      <article class="person reveal">
         <div class="person__head">
           <!-- Foto: salvar em /img/matheus.jpg (quadrada, 400×400 ou mais). -->
           <figure class="avatar">
@@ -1342,7 +1363,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
         </ul>
       </article>
 
-      <blockquote class="pull-quote" data-en="“A brand without a system doesn't scale. A system without a brand doesn't convince.”">“Uma marca sem sistema não escala. Um sistema sem marca não convence.”</blockquote>
+      <blockquote class="pull-quote reveal" data-en="“A brand without a system doesn't scale. A system without a brand doesn't convince.”">“Uma marca sem sistema não escala. Um sistema sem marca não convence.”</blockquote>
     </div>
   </div>
 </section>
@@ -1350,7 +1371,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 <!-- ═══════════════════════════════════════════════ DOSSIÊ 02 · DIAGNÓSTICO -->
 <section class="section section--deep" id="diagnostico">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div>
         <p class="eyebrow" data-en="Dossier 02">Dossiê 02</p>
         <h2 class="section-title" data-en="Does your operation recognise itself here?">Sua operação se reconhece aqui?</h2>
@@ -1358,32 +1379,32 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
 
     <div class="rule-grid rule-grid--3">
-      <article class="symptom">
+      <article class="symptom reveal">
         <p class="symptom__index">01</p>
         <h3 class="symptom__title" data-en="Brand with no narrative">Marca sem narrativa</h3>
         <p class="symptom__text" data-en="Identity in place, no story that differentiates.">Identidade pronta, sem história que diferencie.</p>
       </article>
-      <article class="symptom">
+      <article class="symptom reveal">
         <p class="symptom__index">02</p>
         <h3 class="symptom__title" data-en="Controls that don't scale">Controles que não escalam</h3>
         <p class="symptom__text" data-en="Scattered processes, no central system.">Processos espalhados, sem sistema central.</p>
       </article>
-      <article class="symptom">
+      <article class="symptom reveal">
         <p class="symptom__index">03</p>
         <h3 class="symptom__title" data-en="Inconsistent communication">Comunicação inconsistente</h3>
         <p class="symptom__text" data-en="Tone of voice that changes from channel to channel.">Tom de voz que muda de canal pra canal.</p>
       </article>
-      <article class="symptom">
+      <article class="symptom reveal">
         <p class="symptom__index">04</p>
         <h3 class="symptom__title" data-en="Data with no reading">Dados sem leitura</h3>
         <p class="symptom__text" data-en="Information exists, but nobody decides with it.">Informação existe, mas ninguém decide com ela.</p>
       </article>
-      <article class="symptom">
+      <article class="symptom reveal">
         <p class="symptom__index">05</p>
         <h3 class="symptom__title" data-en="Software that doesn't fit">Software que não encaixa</h3>
         <p class="symptom__text" data-en="Off-the-shelf tool forcing the company to adapt.">Ferramenta pronta forçando a empresa a se adaptar.</p>
       </article>
-      <article class="symptom">
+      <article class="symptom reveal">
         <p class="symptom__index">06</p>
         <h3 class="symptom__title" data-en="Launch with no strategy">Lançamento sem estratégia</h3>
         <p class="symptom__text" data-en="Product live with no go-to-market plan.">Produto no ar sem plano de go-to-market.</p>
@@ -1395,7 +1416,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 <!-- ═══════════════════════════════════════════════ DOSSIÊ 03 · FRENTES -->
 <section class="section" id="servicos">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div>
         <p class="eyebrow" data-en="Dossier 03">Dossiê 03</p>
         <h2 class="section-title" data-en="What we deliver.">O que entregamos.</h2>
@@ -1403,7 +1424,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
 
     <div class="fronts">
-      <div class="front front--brand">
+      <div class="front front--brand reveal">
         <div class="front__head">
           <span class="front__dot" aria-hidden="true"></span>
           <h3 class="front__title" data-en="Brand &amp; Strategy">Marca &amp; Estratégia</h3>
@@ -1428,7 +1449,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
         </ul>
       </div>
 
-      <div class="front front--tech">
+      <div class="front front--tech reveal">
         <div class="front__head">
           <span class="front__dot" aria-hidden="true"></span>
           <h3 class="front__title" data-en="Technology &amp; Data">Tecnologia &amp; Dados</h3>
@@ -1459,7 +1480,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 <!-- ═══════════════════════════════════════════════ DOSSIÊ 04 · CASOS -->
 <section class="section section--deep" id="cases">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div>
         <p class="eyebrow" data-en="Dossier 04 — Selected cases">Dossiê 04 — Casos selecionados</p>
         <h2 class="section-title" data-en="Proof, not promise.">Prova, não promessa.</h2>
@@ -1469,7 +1490,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
     <div class="cases">
 <!-- Caso 01 ─────────────────────────────────────────────────── -->
-    <article class="case case--featured">
+    <article class="case case--featured reveal">
   <!-- Foto de capa: /img/casos/mediaportal.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
   <div class="case__cover case__cover--photo">
     <div class="case__chips">
@@ -1530,7 +1551,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 </article>
 
     <!-- Caso 02 ─────────────────────────────────────────────────── -->
-    <article class="case">
+    <article class="case reveal">
   <!-- Foto de capa: /img/casos/mindminers.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
   <div class="case__cover case__cover--photo">
     <div class="case__chips">
@@ -1591,7 +1612,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 </article>
 
     <!-- Caso 03 ─────────────────────────────────────────────────── -->
-    <article class="case">
+    <article class="case reveal">
   <!-- Foto de capa: /img/casos/ame-x.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
   <div class="case__cover case__cover--photo">
     <div class="case__chips">
@@ -1652,7 +1673,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 </article>
 
     <!-- Caso 04 ─────────────────────────────────────────────────── -->
-    <article class="case">
+    <article class="case reveal">
   <!-- Foto de capa: /img/casos/corning.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
   <div class="case__cover case__cover--photo">
     <div class="case__chips">
@@ -1713,7 +1734,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 </article>
 
     <!-- Caso 05 ─────────────────────────────────────────────────── -->
-    <article class="case">
+    <article class="case reveal">
   <!-- Foto de capa: /img/casos/genma.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
   <div class="case__cover case__cover--photo">
     <div class="case__chips">
@@ -1775,7 +1796,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     <div class="more">
       <p class="more__label" data-en="Other selected projects">Outros projetos selecionados</p>
       <div class="rule-grid rule-grid--3">
-        <article class="more-card">
+        <article class="more-card reveal">
           <!-- Imagem: /img/projetos/amwc.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-amwc">
             <img src="/img/projetos/amwc.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
@@ -1791,7 +1812,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
           </div>
         </article>
 
-        <article class="more-card">
+        <article class="more-card reveal">
           <!-- Imagem: /img/projetos/ame-tom-de-voz.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-ame-tom-de-voz">
             <img src="/img/projetos/ame-tom-de-voz.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
@@ -1807,7 +1828,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
           </div>
         </article>
 
-        <article class="more-card">
+        <article class="more-card reveal">
           <!-- Imagem: /img/projetos/istoe.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-istoe">
             <img src="/img/projetos/istoe.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
@@ -1823,7 +1844,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
           </div>
         </article>
 
-        <article class="more-card">
+        <article class="more-card reveal">
           <!-- Imagem: /img/projetos/nog.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-nog">
             <img src="/img/projetos/nog.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
@@ -1839,7 +1860,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
           </div>
         </article>
 
-        <article class="more-card">
+        <article class="more-card reveal">
           <!-- Imagem: /img/projetos/visionone.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-visionone">
             <img src="/img/projetos/visionone.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
@@ -1855,7 +1876,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
           </div>
         </article>
 
-        <article class="more-card">
+        <article class="more-card reveal">
           <!-- Imagem: /img/projetos/gipsyy.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-gipsyy">
             <img src="/img/projetos/gipsyy.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
@@ -1871,7 +1892,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
           </div>
         </article>
 
-        <article class="more-card">
+        <article class="more-card reveal">
           <!-- Imagem: /img/projetos/fundacalc.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-fundacalc">
             <img src="/img/projetos/fundacalc.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
@@ -1887,7 +1908,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
           </div>
         </article>
 
-        <article class="more-card">
+        <article class="more-card reveal">
           <!-- Imagem: /img/projetos/flora.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-flora">
             <img src="/img/projetos/flora.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
@@ -1910,7 +1931,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 <!-- ═══════════════════════════════════════════════ DOSSIÊ 05 · MÉTODO -->
 <section class="section" id="processo">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <div>
         <p class="eyebrow" data-en="Dossier 05 — Method">Dossiê 05 — Método</p>
         <h2 class="section-title" data-en="How we work.">Como trabalhamos.</h2>
@@ -1918,22 +1939,22 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
 
     <ol class="steps">
-      <li class="step">
+      <li class="step reveal">
         <span class="step__number">01</span>
         <h3 class="step__title" data-en="Diagnosis">Diagnóstico</h3>
         <p class="step__text" data-en="Business, current brand, processes.">Negócio, marca atual, processos.</p>
       </li>
-      <li class="step">
+      <li class="step reveal">
         <span class="step__number">02</span>
         <h3 class="step__title" data-en="Scope &amp; schedule">Escopo &amp; cronograma</h3>
         <p class="step__text" data-en="Positioning, screens, order of execution.">Posicionamento, telas, ordem de execução.</p>
       </li>
-      <li class="step">
+      <li class="step reveal">
         <span class="step__number">03</span>
         <h3 class="step__title" data-en="Incremental build">Construção incremental</h3>
         <p class="step__text" data-en="Brand and system evolve in parallel.">Marca e sistema evoluem em paralelo.</p>
       </li>
-      <li class="step">
+      <li class="step reveal">
         <span class="step__number">04</span>
         <h3 class="step__title" data-en="Launch &amp; evolution">Entrega &amp; evolução</h3>
         <p class="step__text" data-en="We publish, follow up, adjust.">Publicamos, acompanhamos, ajustamos.</p>
@@ -1945,7 +1966,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 <!-- ═══════════════════════════════════════════════ CONTATO -->
 <section class="contact" id="contato">
   <div class="container contact__inner">
-    <div class="contact__main">
+    <div class="contact__main reveal">
       <p class="eyebrow" data-en="Dossier 06 — Contact">Dossiê 06 — Contato</p>
       <h2 class="contact__title" data-en="Shall we build your brand and the system behind it?">Vamos construir sua marca e o sistema por trás dela?</h2>
       <p class="contact__text" data-en="Tell us a bit about where your business stands. We reply within one business day.">Conte um pouco sobre o momento do seu negócio. Respondemos em até 1 dia útil.</p>
@@ -1970,7 +1991,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       </div>
     </div>
 
-    <form class="lead" id="lead-form" novalidate>
+    <form class="lead reveal" id="lead-form" novalidate>
       <p class="lead__title" data-en="Start a conversation">Iniciar conversa</p>
 
       <label class="field">
@@ -1980,6 +2001,15 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       <label class="field">
         <span class="field__label" data-en="Company">Empresa</span>
         <input class="field__input" type="text" name="empresa" autocomplete="organization" />
+      </label>
+      <label class="field">
+        <span class="field__label" data-en="E-mail or WhatsApp">E-mail ou WhatsApp</span>
+        <input class="field__input" type="text" name="contato" autocomplete="email" inputmode="email" required />
+      </label>
+      <!-- Isca para robôs: fica fora da tela; se vier preenchida, o lead não é gravado. -->
+      <label class="field field--trap" aria-hidden="true">
+        <span class="field__label">Website</span>
+        <input class="field__input" type="text" name="website" tabindex="-1" autocomplete="off" />
       </label>
       <label class="field field--select">
         <span class="field__label" data-en="What you need">O que você precisa</span>
@@ -1996,7 +2026,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       </label>
 
       <button type="submit" class="lead__submit" data-en="Send">Enviar</button>
-      <p class="lead__hint" data-en="Opens WhatsApp with your message ready to send.">Abre o WhatsApp com a mensagem pronta pra enviar.</p>
+      <p class="lead__hint" data-en="We save your message and open WhatsApp with it ready to send.">Guardamos sua mensagem e abrimos o WhatsApp com ela pronta pra enviar.</p>
     </form>
   </div>
 </section>
@@ -2048,6 +2078,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       title: 'Amaral & Silva — Estratégia de marca & engenharia de sistemas',
       description: 'Uma dupla que constrói, do zero, a marca e a tecnologia por trás dela: estratégia, pesquisa e go-to-market ao lado de sistemas sob medida, dashboards, automações e IA aplicada.',
       canonical: 'https://amaralesilva.vercel.app/',
+      ogImage: 'https://amaralesilva.vercel.app/og.png',
       navLabel: 'Navegação principal',
       langLabel: 'Idioma / Language'
     },
@@ -2057,6 +2088,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       title: 'Amaral & Silva — Brand strategy & systems engineering',
       description: 'A pair building the brand and the technology behind it from zero: strategy, research and go-to-market alongside custom systems, dashboards, automation and applied AI.',
       canonical: 'https://amaralesilva.vercel.app/en',
+      ogImage: 'https://amaralesilva.vercel.app/og-en.png',
       navLabel: 'Main navigation',
       langLabel: 'Language / Idioma'
     }
@@ -2092,6 +2124,8 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     setMeta('og:locale:alternate', en ? 'pt_BR' : 'en_US', 'property');
     setMeta('twitter:title', meta.title);
     setMeta('twitter:description', meta.description);
+    setMeta('og:image', meta.ogImage, 'property');
+    setMeta('twitter:image', meta.ogImage);
 
     var canonical = document.head.querySelector('link[rel="canonical"]');
     if (canonical) canonical.setAttribute('href', meta.canonical);
@@ -2134,11 +2168,13 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   window.addEventListener('popstate', function () { applyLang(langFromLocation()); });
 
   /* ─── Constelação do hero ─────────────────────────────────────────
-     Nós e arestas gerados com semente fixa (mesmo desenho a cada
-     visita): ocre à esquerda, azul à direita. Redesenha ao
-     redimensionar, pois o SVG cobre a seção inteira em pixels.
+     Canvas com semente fixa (mesmo desenho a cada visita): ocre à
+     esquerda, azul à direita. Os nós flutuam devagar, voltam para a
+     posição de origem por uma mola fraca e afastam-se do cursor. Sem
+     movimento com prefers-reduced-motion ou fora da tela.
      ───────────────────────────────────────────────────────────────── */
   var net = document.getElementById('hero-net');
+  var motionOK = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function seeded(seed) {
     return function () {
@@ -2147,59 +2183,211 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     };
   }
 
-  function drawNet() {
+  var netState = { w: 0, h: 0, dpr: 1, pts: [], reach: 0, mouse: null, raf: null, visible: true, last: 0 };
+
+  function netColors() {
+    var cs = getComputedStyle(document.documentElement);
+    return { ochre: cs.getPropertyValue('--ochre').trim() || '#C9A24E', blue: cs.getPropertyValue('--blue').trim() || '#7A93E6' };
+  }
+
+  function buildNet() {
     if (!net) return;
     var w = net.clientWidth, h = net.clientHeight;
     if (!w || !h) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    net.width = Math.round(w * dpr);
+    net.height = Math.round(h * dpr);
+    netState.w = w; netState.h = h; netState.dpr = dpr;
+    netState.reach = Math.min(w, h) * 0.32;
 
     var rnd = seeded(20260904);
     var count = Math.max(18, Math.min(42, Math.round(w / 36)));
-    var reach = Math.min(w, h) * 0.32;
-    var pts = [], parts = [], i, j;
-
-    for (i = 0; i < count; i++) {
+    var pts = [];
+    for (var i = 0; i < count; i++) {
       var x = rnd() * w, y = rnd() * h;
-      pts.push({ x: x, y: y, tone: x < w * 0.45 ? 'ochre' : 'blue', r: rnd() < 0.35 ? 4 : 2.5 });
+      pts.push({
+        x: x, y: y, ox: x, oy: y,
+        vx: (rnd() - 0.5) * 0.12, vy: (rnd() - 0.5) * 0.12,
+        tone: x < w * 0.45 ? 'ochre' : 'blue',
+        r: rnd() < 0.35 ? 4 : 2.5
+      });
     }
+    netState.pts = pts;
+    drawNet();
+  }
 
-    for (i = 0; i < count; i++) {
-      for (j = i + 1; j < count; j++) {
+  function drawNet() {
+    var ctx = net.getContext('2d');
+    var st = netState, pts = st.pts, reach = st.reach, colors = netColors();
+    ctx.setTransform(st.dpr, 0, 0, st.dpr, 0, 0);
+    ctx.clearRect(0, 0, st.w, st.h);
+    ctx.lineWidth = 1;
+    for (var i = 0; i < pts.length; i++) {
+      for (var j = i + 1; j < pts.length; j++) {
         var dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
         var d = Math.sqrt(dx * dx + dy * dy);
         if (d >= reach) continue;
-        var tone = pts[i].tone === pts[j].tone ? pts[i].tone : 'mix';
-        parts.push('<line class="net__edge net__edge--' + tone + '" x1="' + pts[i].x.toFixed(1) + '" y1="' + pts[i].y.toFixed(1) +
-          '" x2="' + pts[j].x.toFixed(1) + '" y2="' + pts[j].y.toFixed(1) +
-          '" style="opacity:' + (0.1 + 0.45 * (1 - d / reach)).toFixed(2) + '"/>');
+        ctx.globalAlpha = 0.1 + 0.45 * (1 - d / reach);
+        ctx.strokeStyle = pts[i].tone === pts[j].tone ? colors[pts[i].tone] : colors.blue;
+        ctx.beginPath();
+        ctx.moveTo(pts[i].x, pts[i].y);
+        ctx.lineTo(pts[j].x, pts[j].y);
+        ctx.stroke();
       }
     }
-    pts.forEach(function (p) {
-      parts.push('<circle class="net__node net__node--' + p.tone + '" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + p.r + '"/>');
-    });
-
-    net.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-    net.innerHTML = parts.join('');
+    ctx.globalAlpha = 1;
+    for (var k = 0; k < pts.length; k++) {
+      ctx.fillStyle = colors[pts[k].tone];
+      ctx.beginPath();
+      ctx.arc(pts[k].x, pts[k].y, pts[k].r, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
 
-  drawNet();
+  function stepNet(now) {
+    netState.raf = null;
+    var st = netState;
+    var dt = Math.min(48, now - (st.last || now)) / 16.67; /* em frames de 60fps */
+    st.last = now;
+    var pts = st.pts, m = st.mouse;
+    for (var i = 0; i < pts.length; i++) {
+      var p = pts[i];
+      /* mola fraca de volta à origem + deriva própria */
+      p.vx += (p.ox - p.x) * 0.0006 * dt;
+      p.vy += (p.oy - p.y) * 0.0006 * dt;
+      if (m) {
+        var dx = p.x - m.x, dy = p.y - m.y, d2 = dx * dx + dy * dy, R = 160;
+        if (d2 < R * R && d2 > 1) {
+          var d = Math.sqrt(d2), f = (1 - d / R) * 0.06 * dt;
+          p.vx += dx / d * f;
+          p.vy += dy / d * f;
+        }
+      }
+      p.vx *= 0.985; p.vy *= 0.985;
+      var sp = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      if (sp < 0.04) { p.vx += (Math.random() - 0.5) * 0.02; p.vy += (Math.random() - 0.5) * 0.02; }
+      if (sp > 0.9) { p.vx *= 0.9 / sp; p.vy *= 0.9 / sp; }
+      p.x += p.vx * dt; p.y += p.vy * dt;
+    }
+    drawNet();
+    if (st.visible && motionOK) st.raf = window.requestAnimationFrame(stepNet);
+  }
 
-  /* ─── Formulário de contato → WhatsApp com a mensagem montada ── */
+  function startNet() {
+    if (!net || !motionOK || netState.raf || !netState.visible || document.hidden) return;
+    netState.last = 0;
+    netState.raf = window.requestAnimationFrame(stepNet);
+  }
+  function stopNet() {
+    if (netState.raf) { window.cancelAnimationFrame(netState.raf); netState.raf = null; }
+  }
+
+  buildNet();
+  startNet();
+
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(buildNet, 150);
+  });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) stopNet(); else startNet(); });
+
+  var hero = document.getElementById('topo');
+  if (hero && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      netState.visible = entries[0].isIntersecting;
+      if (netState.visible) startNet(); else stopNet();
+    }).observe(hero);
+  }
+  if (hero && window.matchMedia('(hover: hover)').matches) {
+    hero.addEventListener('pointermove', function (e) {
+      var r = net.getBoundingClientRect();
+      netState.mouse = { x: e.clientX - r.left, y: e.clientY - r.top };
+    });
+    hero.addEventListener('pointerleave', function () { netState.mouse = null; });
+  }
+
+  /* ─── Entrada ao rolar ─────────────────────────────────────────── */
+  if (motionOK && 'IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-reveal');
+    var revealEls = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+    /* escalona irmãos dentro da mesma grade */
+    revealEls.forEach(function (el) {
+      var parent = el.parentElement;
+      var sibs = Array.prototype.filter.call(parent.children, function (c) { return c.classList.contains('reveal'); });
+      if (sibs.length > 1) el.style.setProperty('--reveal-delay', Math.min(sibs.indexOf(el), 5) * 70 + 'ms');
+    });
+    var revealObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-in');
+        revealObs.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    revealEls.forEach(function (el) { revealObs.observe(el); });
+  }
+
+  /* ─── Formulário de contato ───────────────────────────────────────
+     1) abre o WhatsApp na hora (precisa ser síncrono ao clique, senão
+        o navegador bloqueia a janela); 2) grava o lead no Supabase
+        (tabela amaralesilva_leads, política só de INSERT para anon) e
+        ele aparece no painel /admin. A chave publicável é pública por
+        natureza; quem protege os dados é o RLS.
+     ───────────────────────────────────────────────────────────────── */
+  var SB_URL = 'https://wsgjbzsdewzplsnpfvdf.supabase.co';
+  var SB_KEY = 'sb_publishable_uUuSrKXuJXalJ79WO0PxDg_QpIEOfvA';
   var form = document.getElementById('lead-form');
+
+  function saveLead(lead) {
+    if (!window.fetch) return Promise.resolve();
+    return fetch(SB_URL + '/rest/v1/amaralesilva_leads', {
+      method: 'POST',
+      keepalive: true,
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(lead)
+    });
+  }
+
   if (form) {
     form.addEventListener('submit', function (event) {
       event.preventDefault();
       var en = current === 'en';
       var nome = form.nome.value.trim();
       var empresa = form.empresa.value.trim();
+      var contato = form.contato.value.trim();
       var precisa = form.precisa.options[form.precisa.selectedIndex].textContent.trim();
       var mensagem = form.mensagem.value.trim();
       if (!nome) { form.nome.focus(); return; }
+      if (!contato) { form.contato.focus(); return; }
 
       var linhas = en
-        ? ['Hi, I came from the Amaral & Silva site.', 'Name: ' + nome, empresa ? 'Company: ' + empresa : '', 'Need: ' + precisa, mensagem]
-        : ['Olá, vim pelo site da Amaral & Silva.', 'Nome: ' + nome, empresa ? 'Empresa: ' + empresa : '', 'Preciso de: ' + precisa, mensagem];
+        ? ['Hi, I came from the Amaral & Silva site.', 'Name: ' + nome, empresa ? 'Company: ' + empresa : '', 'Contact: ' + contato, 'Need: ' + precisa, mensagem]
+        : ['Olá, vim pelo site da Amaral & Silva.', 'Nome: ' + nome, empresa ? 'Empresa: ' + empresa : '', 'Contato: ' + contato, 'Preciso de: ' + precisa, mensagem];
       var texto = linhas.filter(Boolean).join('\n');
       window.open('https://wa.me/5511969041800?text=' + encodeURIComponent(texto), '_blank', 'noopener');
+
+      if (form.website.value) return; /* robô caiu na isca */
+      var btn = form.querySelector('.lead__submit');
+      btn.disabled = true;
+      saveLead({
+        name: nome.slice(0, 120),
+        company: empresa ? empresa.slice(0, 120) : null,
+        contact: contato.slice(0, 160),
+        need: form.precisa.value,
+        message: mensagem ? mensagem.slice(0, 2000) : null,
+        lang: en ? 'en' : 'pt',
+        source: 'site',
+        user_agent: (navigator.userAgent || '').slice(0, 300)
+      }).catch(function () { /* o WhatsApp já abriu; o lead só não ficou registrado */ })
+        .then(function () {
+          btn.disabled = false;
+          form.reset();
+        });
     });
   }
 
