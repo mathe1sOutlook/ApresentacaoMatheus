@@ -6,7 +6,7 @@
 
 <title>Amaral &amp; Silva — Estratégia de marca &amp; engenharia de sistemas</title>
 <meta name="description" content="Uma dupla que constrói, do zero, a marca e a tecnologia por trás dela: estratégia, pesquisa e go-to-market ao lado de sistemas sob medida, dashboards, automações e IA aplicada." />
-<meta name="theme-color" content="#F4F2ED" />
+<meta name="theme-color" content="#0B0D12" />
 <meta name="author" content="Bruno Amaral, Matheus Silva" />
 
 <link rel="canonical" href="https://amaralesilva.vercel.app/" />
@@ -34,19 +34,21 @@
 <style>
 /* ═══════════════════════════════════════════════════════════════════
    AMARAL & SILVA — tokens
-   Papel bege, tinta quase preta, ocre para marca, azul para tecnologia.
+   Fundo quase preto, tinta creme, ocre para marca, azul para tecnologia.
    Zero arredondamento, zero sombra: a hierarquia vem das réguas de 1px.
    ═══════════════════════════════════════════════════════════════════ */
 :root {
-  --paper:      #F4F2ED;
-  --paper-deep: #EDEAE2;
-  --ink:        #14171A;
-  --ink-soft:   #57544C;
-  --ochre:      #8A6220;
-  --ochre-soft: #E8D7B8;
-  --blue:       #1F3A5F;
-  --blue-soft:  #D9E1EA;
-  --line:       #DAD5C9;
+  --bg:          #0B0D12;
+  --bg-deep:     #0F1218;
+  --bg-card:     #141821;
+  --ink:         #F1EEE6;
+  --ink-soft:    #A6A39B;
+  --ochre:       #C9A24E;
+  --ochre-soft:  rgba(201, 162, 78, 0.25);
+  --blue:        #7A93E6;
+  --blue-soft:   rgba(122, 147, 230, 0.25);
+  --line:        #242933;
+  --line-strong: #3A4150;
 
   --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
   --sans:  'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -66,11 +68,11 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--sans);
   font-size: 16px;
-  line-height: 1.55;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-wrap: pretty;
@@ -114,14 +116,14 @@ button {
   top: 0;
   z-index: 100;
   background: var(--ink);
-  color: var(--paper);
+  color: var(--bg);
   font-family: var(--mono);
   font-size: 12px;
   padding: 12px 18px;
 }
 .skip-link:focus {
   left: 0;
-  color: var(--paper);
+  color: var(--bg);
 }
 
 .eyebrow {
@@ -141,8 +143,6 @@ button {
 .label--ochre { color: var(--ochre); }
 .label--blue  { color: var(--blue); }
 
-.mono { font-family: var(--mono); }
-
 /* Grade cujas divisórias são o próprio fundo aparecendo no gap de 1px. */
 .rule-grid {
   display: grid;
@@ -151,16 +151,15 @@ button {
   border: 1px solid var(--line);
   grid-template-columns: 1fr;
 }
-.rule-grid > * { background: var(--paper); }
-.section--deep .rule-grid > * { background: var(--paper-deep); }
+.rule-grid > * { background: var(--bg-card); }
 
 /* ─── Seções ─────────────────────────────────────────────────────── */
 .section {
-  padding: 88px 0;
+  padding: 104px 0;
   border-bottom: 1px solid var(--line);
   scroll-margin-top: var(--header-h);
 }
-.section--deep { background: var(--paper-deep); }
+.section--deep { background: var(--bg-deep); }
 
 .section-head {
   display: flex;
@@ -170,23 +169,21 @@ button {
   justify-content: space-between;
   margin-bottom: 48px;
 }
-.section-head--tight { margin-bottom: 44px; }
-.section-head--flush { margin-bottom: 16px; }
 
 .section-title {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(28px, 3.4vw, 42px);
+  font-size: clamp(34px, 3.6vw, 46px);
+  line-height: 1.15;
   letter-spacing: -0.01em;
-  margin-top: 10px;
+  margin-top: 14px;
   max-width: 22ch;
 }
-.section-title--wide { max-width: 24ch; }
 
 .section-intro {
   max-width: 40ch;
   color: var(--ink-soft);
-  font-size: 15px;
+  font-size: 17px;
 }
 
 /* ─── Header ─────────────────────────────────────────────────────── */
@@ -194,9 +191,9 @@ button {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(244, 242, 237, 0.92);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  background: rgba(11, 13, 18, 0.86);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
 
@@ -208,16 +205,38 @@ button {
   min-height: var(--header-h);
 }
 
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Os dois pontos da marca: ocre (marca) e azul (tecnologia). */
+.brand-dots {
+  display: inline-flex;
+  gap: 5px;
+  flex: none;
+}
+.brand-dots i {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.brand-dots i:first-child { background: var(--ochre); }
+.brand-dots i:last-child  { background: var(--blue); }
+
 .brandmark {
   font-family: var(--serif);
-  font-size: 19px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
   white-space: nowrap;
   color: var(--ink);
 }
 .brandmark:hover { color: var(--ink); }
-.brandmark__amp { color: var(--ochre); font-style: italic; }
 
 .site-nav {
   display: flex;
@@ -229,28 +248,22 @@ button {
 }
 .site-nav a { color: var(--ink-soft); }
 .site-nav a:hover { color: var(--ink); }
-.site-nav .btn-ghost { display: none; }
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
 
 .lang-toggle {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  flex: none;
 }
-.lang-toggle__sep { color: var(--line); }
+.lang-toggle__sep { color: var(--line-strong); }
 .lang-toggle button {
-  padding: 2px 4px;
+  padding: 3px 4px;
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  letter-spacing: 0.08em;
   color: var(--ink-soft);
   border-bottom: 1px solid transparent;
 }
@@ -261,34 +274,41 @@ button {
 }
 
 .btn-ghost {
+  flex: none;
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12.5px;
   letter-spacing: 0.04em;
   border: 1px solid var(--ink);
-  padding: 9px 16px;
+  padding: 11px 18px;
   color: var(--ink);
   white-space: nowrap;
 }
-.btn-ghost:hover { background: var(--ink); color: var(--paper); }
-
-.nav-toggle {
-  display: none;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink);
-  border: 1px solid var(--ink);
-  padding: 9px 14px;
-}
-.nav-toggle:hover { background: var(--ink); color: var(--paper); }
+.btn-ghost:hover { background: var(--ink); color: var(--bg); }
 
 /* ─── Hero ───────────────────────────────────────────────────────── */
 .hero {
-  padding: 88px 0 0;
+  position: relative;
+  overflow: hidden;
+  padding: 128px 0 0;
   border-bottom: 1px solid var(--line);
   scroll-margin-top: var(--header-h);
 }
+.hero > * { position: relative; }
+
+/* Constelação desenhada pelo script: ocre à esquerda, azul à direita. */
+.hero__net {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.6;
+}
+.net__edge { stroke-width: 1; fill: none; }
+.net__edge--ochre { stroke: var(--ochre); }
+.net__edge--blue, .net__edge--mix { stroke: var(--blue); }
+.net__node--ochre { fill: var(--ochre); }
+.net__node--blue  { fill: var(--blue); }
 
 .hero__body {
   display: flex;
@@ -302,167 +322,240 @@ button {
 .hero__title {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(40px, 5.2vw, 66px);
-  line-height: 1.05;
+  font-size: clamp(44px, 5.6vw, 74px);
+  line-height: 1.04;
   letter-spacing: -0.015em;
 }
-.hero__title em { font-style: italic; color: var(--ochre); }
-.hero__slash {
-  font-family: var(--mono);
-  font-size: 0.5em;
-  color: var(--blue);
+.hero__title em {
+  font-style: italic;
+  padding-right: 0.06em;
+  background: linear-gradient(90deg, var(--ochre) 0%, #B4A283 50%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .hero__lede {
-  margin-top: 26px;
-  max-width: 50ch;
-  font-size: 18px;
+  margin-top: 28px;
+  max-width: 46ch;
+  font-size: 19px;
   color: var(--ink-soft);
 }
 
 .hero__actions {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   flex-wrap: wrap;
-  margin-top: 36px;
+  margin-top: 40px;
 }
 
 .btn {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 14px;
   letter-spacing: 0.03em;
-  padding: 14px 24px;
+  padding: 18px 40px;
   border: 1px solid var(--ink);
   color: var(--ink);
+  text-align: center;
 }
-.btn--primary { background: var(--ink); color: var(--paper); }
-.btn--primary:hover { background: var(--blue); border-color: var(--blue); color: var(--paper); }
-.btn--outline:hover { background: var(--ink); color: var(--paper); }
+.btn--primary { background: var(--ink); color: var(--bg); }
+.btn--primary:hover { background: var(--ochre); border-color: var(--ochre); color: var(--bg); }
+.btn--outline:hover { background: var(--ink); color: var(--bg); }
 
 .ledger {
-  flex: 0 1 320px;
+  flex: 0 1 340px;
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 14px;
   color: var(--ink-soft);
-  border-left: 1px solid var(--line);
-  padding-left: 22px;
+  border-left: 1px solid var(--line-strong);
+  padding-left: 24px;
+  margin: 0;
 }
-.ledger { margin: 0; }
 .ledger dt, .ledger dd { margin: 0; }
 .ledger__row {
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  padding: 9px 0;
+  padding: 12px 0;
   border-bottom: 1px dashed var(--line);
 }
 .ledger__row:last-child { border-bottom: 0; }
-.ledger__row b { color: var(--ink); font-weight: 500; }
+.ledger__row b { color: var(--ink); font-weight: 600; }
 
+/* Prova social — faixa em marquee, sangrando as bordas do container. */
 .proof {
-  margin-top: 64px;
+  margin-top: 80px;
   border-top: 1px solid var(--line);
-  padding: 22px 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 40px;
-  align-items: baseline;
-  justify-content: space-between;
+  background: var(--bg-deep);
+  padding: 24px 0 26px;
 }
 .proof__label {
+  display: block;
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-soft);
+  margin-bottom: 18px;
 }
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+.marquee:hover .marquee__track { animation-play-state: paused; }
 .proof__list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 26px;
-  font-family: var(--serif);
-  font-size: 16px;
-  color: var(--ink-soft);
-  list-style: none;
+  gap: 88px;
+  padding: 0 44px;
   margin: 0;
-  padding: 0;
+  list-style: none;
+  font-family: var(--serif);
+  font-size: 26px;
+  color: var(--ink-soft);
+  white-space: nowrap;
 }
+@keyframes marquee { to { transform: translateX(-50%); } }
 
 .hero__note {
-  border-top: 1px dashed var(--line);
-  padding: 14px 0 18px;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  padding: 18px 0 20px;
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.05em;
+  font-size: 12.5px;
+  line-height: 1.6;
   color: var(--ink-soft);
+}
+.hero__note .container {
+  display: block;
+  border-left: 2px solid var(--ochre);
 }
 
 /* ─── Dossiê 01 · A dupla ────────────────────────────────────────── */
-.person { padding: 40px; }
-.person__tag {
+.person { padding: 44px 40px; }
+.person__head {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+/* Avatar circular; sem imagem vira uma moldura tracejada "foto aqui". */
+.avatar {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  margin: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-deep);
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar figcaption { display: none; }
+.avatar--empty { border-style: dashed; background: transparent; }
+.avatar--empty img { display: none; }
+.avatar--empty figcaption {
+  display: flex;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px;
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.1em;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.person__tag {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 .person__tag--ochre { color: var(--ochre); }
 .person__tag--blue  { color: var(--blue); }
 .person__name {
   font-family: var(--serif);
-  font-size: 28px;
-  font-weight: 500;
-  margin-top: 10px;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.1;
+  margin-top: 8px;
 }
 .person__role {
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 14px;
   color: var(--ink-soft);
-  margin-top: 6px;
+  margin-top: 18px;
 }
 .person__bio {
-  margin-top: 20px;
-  font-size: 15px;
+  margin-top: 22px;
+  font-size: 17px;
   color: var(--ink-soft);
   max-width: 44ch;
 }
 
 .chips {
-  margin-top: 24px;
+  margin-top: 28px;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 13px;
   color: var(--ink-soft);
   list-style: none;
   padding: 0;
 }
-.chips li { border: 1px solid var(--line); padding: 5px 10px; }
+.chips li { border: 1px solid var(--line-strong); padding: 10px 16px; }
 
 .pull-quote {
   grid-column: 1 / -1;
-  padding: 30px 40px;
-  border-top: 1px solid var(--line);
+  position: relative;
+  padding: 44px 40px 44px 96px;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 20px;
+  font-size: 26px;
+  line-height: 1.4;
   margin: 0;
+}
+.pull-quote::before {
+  content: "\201C";
+  position: absolute;
+  left: 40px;
+  top: 34px;
+  font-family: var(--serif);
+  font-style: normal;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--ochre);
 }
 
 /* ─── Dossiê 02 · Diagnóstico ────────────────────────────────────── */
-.symptom { padding: 30px 28px; }
-.symptom__index { font-family: var(--mono); font-size: 12px; }
-.symptom__index--ochre { color: var(--ochre); }
-.symptom__index--blue  { color: var(--blue); }
+.symptom { padding: 44px 40px 48px; }
+.symptom__index {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--ink-soft);
+}
 .symptom__title {
   font-family: var(--serif);
-  font-size: 19px;
-  font-weight: 500;
-  margin-top: 12px;
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 20px;
 }
 .symptom__text {
-  margin-top: 10px;
-  font-size: 14px;
+  margin-top: 12px;
+  font-size: 16px;
   color: var(--ink-soft);
 }
 
@@ -470,95 +563,210 @@ button {
 .fronts {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 48px;
+  gap: 56px;
 }
 .front__head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding-bottom: 14px;
+  gap: 16px;
+  padding-bottom: 18px;
 }
 .front--brand .front__head { border-bottom: 2px solid var(--ochre); }
 .front--tech  .front__head { border-bottom: 2px solid var(--blue); }
 .front__dot {
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex: none;
 }
-.front--brand .front__dot { background: var(--ochre); }
-.front--tech  .front__dot { background: var(--blue); }
+.front--brand .front__dot { background: var(--ochre); box-shadow: 0 0 14px 3px var(--ochre-soft); }
+.front--tech  .front__dot { background: var(--blue);  box-shadow: 0 0 14px 3px var(--blue-soft); }
 .front__title {
   font-family: var(--serif);
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 28px;
+  font-weight: 600;
 }
 .front__list { list-style: none; margin: 0; padding: 0; }
 .front__item {
-  padding: 18px 0;
-  border-bottom: 1px dashed var(--line);
+  padding: 24px 0;
+  border-bottom: 1px dashed var(--line-strong);
 }
-.front__item h4 { font-size: 15.5px; font-weight: 600; }
+.front__item h4 { font-size: 20px; font-weight: 600; color: var(--ink); }
 .front__item p {
-  margin-top: 6px;
-  font-size: 14px;
+  margin-top: 8px;
+  font-size: 17px;
   color: var(--ink-soft);
 }
 
 /* ─── Dossiê 04 · Casos ──────────────────────────────────────────── */
-.case {
-  border-top: 1px solid var(--line);
-  padding: 44px 0;
-}
-.case:last-of-type { border-bottom: 1px solid var(--line); }
-
-.case__grid {
+.cases {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 40px;
+  gap: 24px;
+  align-items: start;
 }
-.case__head {
+
+/* Card: capa (foto ou moldura tracejada) com chips, título, métrica e
+   botão; os detalhes ficam recolhidos abaixo. */
+.case {
+  border: 1px solid var(--line-strong);
+  background: var(--bg-card);
+}
+.case__cover {
+  position: relative;
   display: flex;
-  align-items: baseline;
-  gap: 14px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  min-height: 560px;
+  padding: 28px 32px 32px;
+  overflow: hidden;
 }
-.case__number { font-family: var(--serif); font-size: 34px; }
+.case__chips {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.case__chip {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border: 1px solid var(--ink-soft);
+  background: rgba(11, 13, 18, 0.72);
+  padding: 8px 14px;
+}
+
+/* Sem foto: a moldura fica centralizada na capa. */
+.case__media {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  margin: 32px 0;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.case__media .media {
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  height: auto;
+  width: min(100%, 520px);
+  padding: 40px 24px;
+  background: transparent;
+}
+.case__media .media__hint {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.6;
+}
+.media__client {
+  display: block;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* Com foto: a imagem cobre a capa inteira, com degradê para a legenda. */
+.case__cover--photo .case__media {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  z-index: 0;
+}
+.case__cover--photo .case__media .media {
+  border: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+.case__cover--photo .case__media img { width: 100%; height: 100%; object-fit: cover; }
+.case__cover--photo .case__media .media__hint,
+.case__cover--photo .case__media .media__client { display: none; }
+.case__media .media img { display: none; }
+.case__cover--photo .case__media .media img { display: block; }
+.case__cover--photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(11, 13, 18, 0.25) 0%, rgba(11, 13, 18, 0.05) 35%, rgba(11, 13, 18, 0.92) 78%, var(--bg-card) 100%);
+  pointer-events: none;
+}
+
+.case__caption {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+}
+.case__title {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.15;
+}
+.case__metric {
+  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--ochre);
+}
+.case__metric--blue { color: var(--blue); }
+.case__toggle {
+  margin-top: 22px;
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--ink);
+  border: 1px solid var(--ink-soft);
+  background: rgba(11, 13, 18, 0.72);
+  padding: 14px 20px;
+}
+.case__toggle:hover { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+.case__toggle .is-close { display: none; }
+.case__toggle[aria-expanded="true"] .is-open { display: none; }
+.case__toggle[aria-expanded="true"] .is-close { display: inline; }
+
+.case__details {
+  border-top: 1px solid var(--line-strong);
+  padding: 32px 32px 36px;
+}
+.case__details[hidden] { display: none; }
 .case__client {
   font-family: var(--mono);
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  background: var(--paper);
-  padding: 5px 9px;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
 }
 .case__sector {
   font-family: var(--mono);
   font-size: 11px;
   color: var(--ink-soft);
+  margin-top: 4px;
 }
-.case__title {
-  font-family: var(--serif);
-  font-size: 26px;
-  font-weight: 500;
-  margin-top: 16px;
-}
-.case__block { margin-top: 20px; }
+.case__block { margin-top: 20px; max-width: 64ch; }
 .case__block + .case__block { margin-top: 16px; }
 .case__block p:not(.label) {
   margin-top: 4px;
-  font-size: 14.5px;
+  font-size: 15px;
   color: var(--ink-soft);
 }
 .case__value {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px dashed var(--line);
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line-strong);
+  max-width: 64ch;
 }
 .case__value > .label { letter-spacing: 0.06em; color: var(--ink); }
 .case__value p:not(.label) {
   margin-top: 4px;
-  font-size: 14.5px;
+  font-size: 15px;
   color: var(--ink);
 }
 
@@ -566,7 +774,7 @@ button {
 .ficha {
   margin-top: 28px;
   border: 1px solid var(--line);
-  background: var(--paper);
+  background: var(--bg-deep);
   display: grid;
   grid-template-columns: 1fr;
 }
@@ -605,21 +813,20 @@ button {
   font-size: 11px;
   color: var(--ink-soft);
 }
-.ficha__tags li { border: 1px solid var(--line); padding: 4px 8px; }
+.ficha__tags li { border: 1px solid var(--line-strong); padding: 4px 8px; }
 
 /* Moldura de imagem — estado vazio enquanto os apoios visuais não chegam. */
 .media {
   position: relative;
   margin: 0;
-  border: 1px dashed var(--line);
-  background: var(--paper);
+  border: 1px dashed var(--line-strong);
+  background: var(--bg-deep);
   min-height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
 }
-.media--short { min-height: 120px; height: 120px; padding: 12px; }
 .media__hint {
   font-family: var(--mono);
   font-size: 11px;
@@ -630,35 +837,64 @@ button {
 }
 .media img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Outros projetos */
-.more { margin-top: 56px; }
+/* Outros projetos — imagem no topo, texto embaixo. */
+.more { margin-top: 72px; padding-top: 40px; border-top: 1px solid var(--line-strong); }
 .more__label {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 14px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   color: var(--ink-soft);
-  margin-bottom: 20px;
+  margin-bottom: 28px;
 }
-.more-card { padding: 24px; }
+.more-card { padding: 0; display: flex; flex-direction: column; }
+.more-card__media {
+  position: relative;
+  aspect-ratio: 16 / 8;
+  background: var(--bg-deep);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.more-card__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.more-card__media .media { display: none; }
+.more-card__media.is-empty img { display: none; }
+.more-card__media.is-empty .media {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: min(80%, 320px);
+  min-height: 0;
+  height: auto;
+  padding: 28px 20px;
+  background: transparent;
+}
+.more-card__media .media__hint { letter-spacing: 0.12em; text-transform: uppercase; }
+.more-card__body { padding: 26px 28px 32px; }
 .more-card__tag {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-top: 14px;
+  letter-spacing: 0.1em;
 }
 .more-card__tag--ochre { color: var(--ochre); }
 .more-card__tag--blue  { color: var(--blue); }
 .more-card__title {
   font-family: var(--serif);
-  font-size: 17px;
-  font-weight: 500;
-  margin-top: 8px;
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 12px;
 }
 .more-card__text {
-  margin-top: 6px;
-  font-size: 13px;
+  margin-top: 10px;
+  font-size: 16px;
   color: var(--ink-soft);
 }
 
@@ -667,82 +903,187 @@ button {
 .step {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
-  padding: 24px 0;
-  border-top: 1px solid var(--line);
+  gap: 10px;
+  padding: 30px 0;
+  border-top: 1px solid var(--line-strong);
   align-items: baseline;
 }
-.step:last-child { border-bottom: 1px solid var(--line); }
-.step__number { font-family: var(--mono); font-size: 13px; color: var(--ink-soft); }
-.step__title { font-family: var(--serif); font-size: 19px; font-weight: 500; }
-.step__text { font-size: 14.5px; color: var(--ink-soft); }
-
-/* ─── Dossiê 06 · Tecnologia ─────────────────────────────────────── */
-.stack-card { padding: 26px 24px; }
-.stack-card__label {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--ochre);
-}
-.stack-card__list {
-  margin: 14px 0 0;
-  padding: 0;
-  list-style: none;
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--ink-soft);
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
+.step:last-child { border-bottom: 1px solid var(--line-strong); }
+.step__number { font-family: var(--mono); font-size: 16px; color: var(--ink-soft); }
+.step__title { font-family: var(--serif); font-size: 26px; font-weight: 600; }
+.step__text { font-size: 17px; color: var(--ink-soft); }
 
 /* ─── Contato + footer ───────────────────────────────────────────── */
 .contact {
-  padding: 80px 0;
+  padding: 96px 0;
+  border-top: 1px solid var(--line);
   scroll-margin-top: var(--header-h);
 }
 .contact__inner {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 40px;
-  align-items: flex-end;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: start;
 }
-.contact__main { flex: 1 1 520px; }
 .contact__title {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(28px, 3.6vw, 44px);
+  font-size: clamp(38px, 3.8vw, 52px);
   line-height: 1.1;
   letter-spacing: -0.01em;
-  margin-top: 12px;
-  max-width: 24ch;
+  margin-top: 14px;
+  max-width: 20ch;
 }
 .contact__text {
-  margin-top: 16px;
+  margin-top: 22px;
   color: var(--ink-soft);
-  max-width: 48ch;
+  font-size: 18px;
+  max-width: 44ch;
 }
 .contact__links {
-  flex: 0 1 340px;
+  margin-top: 30px;
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: 18px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 14px;
 }
 .contact__links a {
   color: var(--ink);
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 6px;
 }
 .contact__links a:hover { border-bottom-color: var(--ink); color: var(--ochre); }
 .contact__note {
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--ink-soft);
-  margin-top: 6px;
+  margin-top: 4px;
+}
+
+/* QR para materiais físicos — moldura até o arquivo chegar. */
+.qr {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 24px;
+  align-items: center;
+  margin-top: 40px;
+}
+.qr__box {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+}
+.qr__box img { width: 100%; height: 100%; display: block; }
+.qr__box figcaption {
+  display: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.qr__box.is-empty { border-style: dashed; }
+.qr__box.is-empty img { display: none; }
+.qr__box.is-empty figcaption { display: block; }
+.qr__label {
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.qr__text { margin-top: 8px; font-size: 17px; color: var(--ink-soft); }
+
+/* Formulário — abre o WhatsApp com a mensagem montada. */
+.lead {
+  border: 1px solid var(--line-strong);
+  background: var(--bg-card);
+  padding: 36px 32px 32px;
+}
+.lead__title {
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+}
+.field { display: block; margin-top: 22px; }
+.field__label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+.field__input {
+  display: block;
+  width: 100%;
+  font: inherit;
+  font-size: 18px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line-strong);
+  border-radius: 0;
+  padding: 12px 0 14px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.field__input:focus { border-bottom-color: var(--ink); }
+.field__input::placeholder { color: transparent; }
+textarea.field__input { min-height: 120px; resize: vertical; }
+.field--select { position: relative; }
+.field--select::after {
+  content: "";
+  position: absolute;
+  right: 6px;
+  bottom: 22px;
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid var(--ink-soft);
+  border-bottom: 1px solid var(--ink-soft);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+select.field__input { padding-right: 28px; cursor: pointer; }
+select.field__input option { background: var(--bg-card); color: var(--ink); }
+.lead__submit {
+  display: block;
+  width: 100%;
+  margin-top: 32px;
+  font-family: var(--mono);
+  font-size: 18px;
+  padding: 22px;
+  background: var(--ink);
+  color: var(--bg);
+  border: 1px solid var(--ink);
+  text-align: center;
+}
+.lead__submit:hover { background: var(--ochre); border-color: var(--ochre); }
+.lead__hint {
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+@media (min-width: 900px) {
+  .contact__inner { grid-template-columns: 1.1fr 1fr; gap: 64px; }
 }
 
 .site-footer {
@@ -766,8 +1107,8 @@ button {
 @media (min-width: 640px) {
   .rule-grid--3 { grid-template-columns: repeat(2, 1fr); }
   .step {
-    grid-template-columns: 80px 1fr;
-    gap: 8px 24px;
+    grid-template-columns: 96px 1fr;
+    gap: 14px 24px;
   }
   .step__number { grid-row: span 2; }
 }
@@ -777,76 +1118,74 @@ button {
   .fronts { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (min-width: 860px) {
-  .ficha { grid-template-columns: repeat(3, 1fr); }
-  .ficha__cell { border-top: 0; border-left: 1px solid var(--line); }
-  .ficha__cell:first-child { border-left: 0; }
-}
-
 @media (min-width: 900px) {
-  .case__grid { grid-template-columns: repeat(2, 1fr); }
+  .cases { grid-template-columns: repeat(2, 1fr); }
+  /* O caso conjunto abre a grade em largura total. */
+  .case--featured { grid-column: 1 / -1; }
+  .case--featured .case__cover { min-height: 480px; }
+  .case--featured .case__caption { max-width: 640px; }
 }
 
 @media (min-width: 1024px) {
   .rule-grid--3 { grid-template-columns: repeat(3, 1fr); }
-  .step { grid-template-columns: 80px 1fr 2fr; }
+  .more .rule-grid--3 { grid-template-columns: repeat(4, 1fr); }
+  .more-card__body { padding: 22px 22px 28px; }
+  .more-card__title { font-size: 21px; }
+  .more-card__text { font-size: 15px; }
+  .step { grid-template-columns: 96px 1fr 2fr; }
   .step__number { grid-row: auto; }
 }
 
-/* Navegação em menu abaixo de 860px. */
-@media (max-width: 859px) {
-  .nav-toggle { display: block; }
-  .site-header__bar { flex-wrap: wrap; }
-  .site-nav {
-    display: none;
-    order: 3;
-    flex-basis: 100%;
-    flex-direction: column;
-    gap: 0;
-    border-top: 1px solid var(--line);
-    margin: 0 calc(var(--gutter) * -1);
-    padding: 0 var(--gutter);
-  }
-  .site-nav[data-open="true"] { display: flex; }
-  .site-nav a {
-    padding: 14px 0;
-    border-bottom: 1px dashed var(--line);
-  }
-  .site-nav a:last-child { border-bottom: 0; }
-  .header-actions__cta { display: none; }
-  /* No menu, o CTA vira mais um item da lista — sem a moldura do botão. */
-  .site-nav .btn-ghost {
-    display: block;
-    border: 0;
-    padding: 14px 0;
-    text-align: left;
-    color: var(--ink);
-  }
-  .site-nav .btn-ghost:hover { background: none; color: var(--ochre); }
+/* Abaixo de 1024px o header fica só com marca + idioma + CTA, como no mobile. */
+@media (max-width: 1023px) {
+  .site-nav { display: none; }
+}
+@media (max-width: 599px) {
+  .site-header__bar { gap: 12px; }
+  .brand-group { gap: 10px; }
+  .brandmark { font-size: 19px; }
+  .lang-toggle { gap: 3px; }
+  .lang-toggle button { font-size: 11px; letter-spacing: 0.06em; padding: 3px 3px; }
+  .btn-ghost { padding: 9px 12px; font-size: 11.5px; }
+}
+@media (max-width: 399px) {
+  .site-header__bar { gap: 8px; }
+  .brand-group { gap: 8px; }
+  .brandmark { font-size: 17px; }
+  .lang-toggle__sep { display: none; }
+  .btn-ghost { padding: 8px 9px; font-size: 11px; }
 }
 
 @media (max-width: 899px) {
   .hero__body { gap: 40px; }
   .ledger {
     flex: 1 1 100%;
-    border-left: 0;
-    border-top: 1px solid var(--line);
-    padding-left: 0;
-    padding-top: 10px;
+    border-left: 1px solid var(--line-strong);
+    padding: 4px 0 4px 20px;
   }
 }
 
 @media (max-width: 599px) {
   :root { --gutter: 20px; }
-  .section { padding: 64px 0; }
-  .hero { padding: 56px 0 0; }
-  .person { padding: 28px 24px; }
-  .pull-quote { padding: 24px; font-size: 18px; }
-  .case { padding: 36px 0; }
-  .case__number { font-size: 28px; }
-  .case__title { font-size: 22px; }
-  .proof { margin-top: 44px; }
-  .contact { padding: 56px 0; }
+  .section { padding: 72px 0; }
+  .hero { padding: 88px 0 0; }
+  .hero__body { gap: 44px; }
+  .person { padding: 36px 28px; }
+  .person__head { grid-template-columns: 80px 1fr; gap: 20px; }
+  .avatar { width: 80px; height: 80px; }
+  .person__name { font-size: 30px; }
+  .pull-quote { padding: 36px 28px 36px 76px; font-size: 22px; }
+  .pull-quote::before { left: 28px; top: 28px; font-size: 44px; }
+  .symptom { padding: 36px 28px; }
+  .proof__list { font-size: 22px; gap: 64px; }
+  .case__cover { min-height: 520px; padding: 22px 24px 26px; }
+  .case__chip { font-size: 12px; padding: 7px 12px; }
+  .case__title { font-size: 26px; }
+  .case__details { padding: 26px 24px 30px; }
+  .proof { margin-top: 56px; }
+  .contact { padding: 72px 0; }
+  .lead { padding: 30px 24px 26px; }
+  .qr { gap: 18px; }
 }
 </style>
 </head>
@@ -857,26 +1196,24 @@ button {
 <!-- ═══════════════════════════════════════════════ HEADER -->
 <header class="site-header">
   <div class="container site-header__bar">
-    <a class="brandmark" href="#topo">Amaral <span class="brandmark__amp">&amp;</span> Silva</a>
+    <div class="brand-group">
+      <span class="brand-dots" aria-hidden="true"><i></i><i></i></span>
+      <a class="brandmark" href="#topo">Amaral &amp; Silva</a>
+      <div class="lang-toggle" role="group" aria-label="Idioma / Language">
+        <button type="button" data-lang="pt" aria-pressed="true" lang="pt-BR">PT</button>
+        <span class="lang-toggle__sep" aria-hidden="true">/</span>
+        <button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button>
+      </div>
+    </div>
 
     <nav class="site-nav" id="site-nav" aria-label="Navegação principal">
       <a href="#dupla" data-en="The pair">A dupla</a>
       <a href="#servicos" data-en="Services">Serviços</a>
       <a href="#cases" data-en="Cases">Casos</a>
       <a href="#processo" data-en="Process">Processo</a>
-      <a href="#stack" data-en="Stack">Tecnologia</a>
-      <a href="#contato" class="btn-ghost" data-en="Start a conversation">Iniciar conversa</a>
     </nav>
 
-    <div class="header-actions">
-      <div class="lang-toggle" role="group" aria-label="Idioma / Language">
-        <button type="button" data-lang="pt" aria-pressed="true" lang="pt-BR">PT</button>
-        <span class="lang-toggle__sep" aria-hidden="true">/</span>
-        <button type="button" data-lang="en" aria-pressed="false" lang="en">EN</button>
-      </div>
-      <a href="#contato" class="btn-ghost header-actions__cta" data-en="Start a conversation">Iniciar conversa</a>
-      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav" data-en="Menu">Menu</button>
-    </div>
+    <a href="#contato" class="btn-ghost" data-en="Start a conversation">Iniciar conversa</a>
   </div>
 </header>
 
@@ -884,14 +1221,16 @@ button {
 
 <!-- ═══════════════════════════════════════════════ HERO -->
 <section class="hero" id="topo">
+  <svg class="hero__net" id="hero-net" aria-hidden="true" focusable="false" preserveAspectRatio="none"></svg>
+
   <div class="container">
     <p class="eyebrow" data-en="Brand strategy &nbsp;×&nbsp; Systems engineering">Estratégia de marca &nbsp;×&nbsp; Engenharia de sistemas</p>
 
     <div class="hero__body">
       <div class="hero__main">
-        <h1 class="hero__title" data-en="Brands that stand out. <em>Systems</em> <span class=&quot;hero__slash&quot;>/</span> that hold them up.">Marcas que se destacam. <em>Sistemas</em> <span class="hero__slash">/</span> que sustentam.</h1>
+        <h1 class="hero__title" data-en="Brands that stand out. <em>Systems</em> that hold them up.">Marcas que se destacam. <em>Sistemas</em> que sustentam.</h1>
 
-        <p class="hero__lede" data-en="A pair — a marketing and branding strategist, a data and software engineer — building the brand and the technology behind it from zero. No middlemen, no rework between vendors.">Somos uma dupla — um estrategista de marketing e branding, um engenheiro de dados e software — que constrói, do zero, a marca e a tecnologia por trás dela. Sem intermediários, sem retrabalho entre fornecedores.</p>
+        <p class="hero__lede" data-en="A pair — brand strategy and software engineering — building, from zero, the brand and the technology behind it.">Uma dupla — estratégia de marca e engenharia de software — construindo, do zero, a marca e a tecnologia por trás dela.</p>
 
         <div class="hero__actions">
           <a href="#contato" class="btn btn--primary" data-en="Talk to us">Falar com a gente</a>
@@ -901,20 +1240,12 @@ button {
 
       <dl class="ledger">
         <div class="ledger__row">
-          <dt data-en="Combined track record">Trajetória combinada</dt>
+          <dt data-en="Track record">Trajetória</dt>
           <dd><b>15+ <span data-en="years">anos</span></b></dd>
         </div>
         <div class="ledger__row">
-          <dt data-en="Sectors served">Setores atendidos</dt>
+          <dt data-en="Sectors">Setores</dt>
           <dd><b>B2B · B2C · <span data-en="Media">Mídia</span></b></dd>
-        </div>
-        <div class="ledger__row">
-          <dt data-en="Disciplines">Disciplinas</dt>
-          <dd><b data-en="Brand + Product">Marca + Produto</b></dd>
-        </div>
-        <div class="ledger__row">
-          <dt data-en="Model">Modelo</dt>
-          <dd><b data-en="Lean squad">Squad enxuto</b></dd>
         </div>
         <div class="ledger__row">
           <dt data-en="Languages">Idiomas</dt>
@@ -922,22 +1253,37 @@ button {
         </div>
       </dl>
     </div>
-
-    <div class="proof">
-      <span class="proof__label" data-en="Passed through these hands">Já passaram por essas mãos</span>
-      <ul class="proof__list">
-        <li>Corning</li>
-        <li>Americanas S/A</li>
-        <li>QuintoAndar</li>
-        <li>Media Portal</li>
-        <li>TV Cultura</li>
-        <li>Informa Markets</li>
-        <li>Gipsyy</li>
-      </ul>
-    </div>
-
-    <p class="hero__note" data-en="Projects run in Portuguese and English — fluency and prior experience in international markets (Latin America, USA).">Projetos conduzidos em português e inglês — fluência e experiência prévia em mercados internacionais (América Latina, EUA).</p>
   </div>
+
+  <div class="proof">
+    <div class="container">
+      <span class="proof__label" data-en="Passed through these hands">Já passaram por essas mãos</span>
+    </div>
+    <div class="marquee">
+      <div class="marquee__track">
+        <ul class="proof__list">
+          <li>Corning</li>
+          <li>Americanas S/A</li>
+          <li>QuintoAndar</li>
+          <li>Media Portal</li>
+          <li>TV Cultura</li>
+          <li>Informa Markets</li>
+          <li>Gipsyy</li>
+        </ul>
+        <ul class="proof__list" aria-hidden="true">
+          <li>Corning</li>
+          <li>Americanas S/A</li>
+          <li>QuintoAndar</li>
+          <li>Media Portal</li>
+          <li>TV Cultura</li>
+          <li>Informa Markets</li>
+          <li>Gipsyy</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <p class="hero__note"><span class="container" data-en="PT-BR / EN — experience in international markets (Latin America, USA).">PT-BR / EN — experiência em mercados internacionais (América Latina, EUA).</span></p>
 </section>
 
 <!-- ═══════════════════════════════════════════════ DOSSIÊ 01 · A DUPLA -->
@@ -948,39 +1294,55 @@ button {
         <p class="eyebrow" data-en="Dossier 01 — The pair">Dossiê 01 — A dupla</p>
         <h2 class="section-title" data-en="One brand, two crafts.">Uma marca, dois ofícios.</h2>
       </div>
-      <p class="section-intro" data-en="The thesis is simple: most companies hire the strategy and the system separately. Here they are born together — faster, more coherent, cheaper.">A tese é simples: a maioria das marcas contrata separadamente quem pensa a estratégia e quem constrói o sistema. Aqui, isso nasce junto — e chega mais rápido, mais coerente, mais barato.</p>
+      <p class="section-intro" data-en="Most hire the strategy and the system separately. Here they are born together.">A maioria contrata separado quem pensa a estratégia e quem constrói o sistema. Aqui nasce junto.</p>
     </div>
 
     <div class="rule-grid rule-grid--2">
       <article class="person">
-        <p class="person__tag person__tag--ochre" data-en="Brand &amp; Strategy">Marca &amp; Estratégia</p>
-        <h3 class="person__name">Bruno Amaral</h3>
+        <div class="person__head">
+          <!-- Foto: salvar em /img/bruno.jpg (quadrada, 400×400 ou mais). Sem o arquivo, a moldura "foto aqui" aparece. -->
+          <figure class="avatar">
+            <img src="/img/bruno.jpg" alt="Bruno Amaral" width="96" height="96" onerror="this.parentNode.classList.add('avatar--empty')" />
+            <figcaption data-en="Photo here">Foto aqui</figcaption>
+          </figure>
+          <div>
+            <p class="person__tag person__tag--ochre" data-en="Brand &amp; Strategy">Marca &amp; Estratégia</p>
+            <h3 class="person__name">Bruno Amaral</h3>
+          </div>
+        </div>
         <p class="person__role" data-en="Marketing Strategist &amp; Branding Consultant">Estrategista de Marketing &amp; Consultor de Branding</p>
-        <p class="person__bio" data-en="A track record built inside Fortune 500 companies and reference fintechs — Corning, Informa Markets, Ame Digital (Americanas S/A group), Gipsyy, QuintoAndar. Today a consultant, combining strategic vision, market research and creative execution.">Trajetória construída em empresas Fortune 500 e fintechs de referência — Corning, Informa Markets, Ame Digital (grupo Americanas S/A), Gipsyy, QuintoAndar. Hoje atua como consultor, combinando visão estratégica, pesquisa de mercado e execução criativa.</p>
+        <p class="person__bio" data-en="Corning, Informa Markets, Ame Digital (Americanas S/A), Gipsyy, QuintoAndar — strategic vision, research and creative execution.">Corning, Informa Markets, Ame Digital (Americanas S/A), Gipsyy, QuintoAndar — visão estratégica, pesquisa e execução criativa.</p>
         <ul class="chips">
           <li>Branding</li>
           <li data-en="Market Research">Pesquisa de Mercado</li>
           <li data-en="Creative Planning">Planejamento Criativo</li>
           <li>Go-to-Market</li>
-          <li data-en="Brand Health">Saúde de Marca</li>
         </ul>
       </article>
 
       <article class="person">
-        <p class="person__tag person__tag--blue" data-en="Technology &amp; Data">Tecnologia &amp; Dados</p>
-        <h3 class="person__name">Matheus Silva</h3>
-        <p class="person__role" data-en="Civil Engineer, MSc in Structures &amp; Full-Stack Developer">Engenheiro Civil, Mestre em Estruturas &amp; Desenvolvedor Full-Stack</p>
-        <p class="person__bio" data-en="Six years building custom systems — from management SaaS to AI-assisted risk analysis platforms. Turns complex business processes into clear, secure, scalable software.">Seis anos desenvolvendo sistemas sob medida — de SaaS de gestão a plataformas de análise de risco com IA. Traduz processos de negócio complexos em software claro, seguro e escalável.</p>
+        <div class="person__head">
+          <!-- Foto: salvar em /img/matheus.jpg (quadrada, 400×400 ou mais). -->
+          <figure class="avatar">
+            <img src="/img/matheus.jpg" alt="Matheus Silva" width="96" height="96" onerror="this.parentNode.classList.add('avatar--empty')" />
+            <figcaption data-en="Photo here">Foto aqui</figcaption>
+          </figure>
+          <div>
+            <p class="person__tag person__tag--blue" data-en="Technology &amp; Data">Tecnologia &amp; Dados</p>
+            <h3 class="person__name">Matheus Silva</h3>
+          </div>
+        </div>
+        <p class="person__role" data-en="Civil Eng., MSc in Structures &amp; Full-Stack Dev">Eng. Civil, Mestre em Estruturas &amp; Dev Full-Stack</p>
+        <p class="person__bio" data-en="Six years building custom systems — from management SaaS to AI-assisted risk platforms.">Seis anos criando sistemas sob medida — de SaaS de gestão a plataformas de risco com IA.</p>
         <ul class="chips">
           <li data-en="Custom systems">Sistemas sob medida</li>
           <li data-en="Dashboards &amp; Data">Dashboards &amp; Dados</li>
           <li data-en="Automation">Automação</li>
           <li data-en="Applied AI">IA aplicada</li>
-          <li data-en="Scientific computing">Computação científica</li>
         </ul>
       </article>
 
-      <blockquote class="pull-quote" data-en="“A brand without a system doesn't scale. A system without a brand doesn't convince. We deliver both at the same table.”">“Uma marca sem sistema não escala. Um sistema sem marca não convence. A gente entrega as duas coisas na mesma mesa.”</blockquote>
+      <blockquote class="pull-quote" data-en="“A brand without a system doesn't scale. A system without a brand doesn't convince.”">“Uma marca sem sistema não escala. Um sistema sem marca não convence.”</blockquote>
     </div>
   </div>
 </section>
@@ -990,42 +1352,41 @@ button {
   <div class="container">
     <div class="section-head">
       <div>
-        <p class="eyebrow" data-en="Dossier 02 — Diagnosis">Dossiê 02 — Diagnóstico</p>
+        <p class="eyebrow" data-en="Dossier 02">Dossiê 02</p>
         <h2 class="section-title" data-en="Does your operation recognise itself here?">Sua operação se reconhece aqui?</h2>
       </div>
-      <p class="section-intro" data-en="Most projects we take on start at one of these points — brand side or system side.">A maioria dos projetos que tocamos começa em um destes pontos — de marca ou de sistema.</p>
     </div>
 
     <div class="rule-grid rule-grid--3">
       <article class="symptom">
-        <p class="symptom__index symptom__index--ochre">01 · <span data-en="brand">marca</span></p>
+        <p class="symptom__index">01</p>
         <h3 class="symptom__title" data-en="Brand with no narrative">Marca sem narrativa</h3>
-        <p class="symptom__text" data-en="Visual identity in place, but no story that connects and differentiates in the market.">Identidade visual pronta, mas sem uma história que conecte e diferencie no mercado.</p>
+        <p class="symptom__text" data-en="Identity in place, no story that differentiates.">Identidade pronta, sem história que diferencie.</p>
       </article>
       <article class="symptom">
-        <p class="symptom__index symptom__index--blue">02 · <span data-en="system">sistema</span></p>
-        <h3 class="symptom__title" data-en="Manual controls that don't scale">Controles manuais que não escalam</h3>
-        <p class="symptom__text" data-en="Processes, spreadsheets and information scattered with no central system, no rules, no history.">Processos, planilhas e informações espalhadas sem sistema central, sem regras, sem histórico.</p>
+        <p class="symptom__index">02</p>
+        <h3 class="symptom__title" data-en="Controls that don't scale">Controles que não escalam</h3>
+        <p class="symptom__text" data-en="Scattered processes, no central system.">Processos espalhados, sem sistema central.</p>
       </article>
       <article class="symptom">
-        <p class="symptom__index symptom__index--ochre">03 · <span data-en="brand">marca</span></p>
+        <p class="symptom__index">03</p>
         <h3 class="symptom__title" data-en="Inconsistent communication">Comunicação inconsistente</h3>
-        <p class="symptom__text" data-en="Tone of voice and positioning that change from channel to channel.">Tom de voz e posicionamento que mudam de canal pra canal.</p>
+        <p class="symptom__text" data-en="Tone of voice that changes from channel to channel.">Tom de voz que muda de canal pra canal.</p>
       </article>
       <article class="symptom">
-        <p class="symptom__index symptom__index--blue">04 · <span data-en="data">dados</span></p>
+        <p class="symptom__index">04</p>
         <h3 class="symptom__title" data-en="Data with no reading">Dados sem leitura</h3>
-        <p class="symptom__text" data-en="Spreadsheets, PDFs, databases and APIs exist — nobody turns them into a decision.">Planilhas, PDFs, bancos e APIs existem — mas ninguém transforma isso em decisão.</p>
+        <p class="symptom__text" data-en="Information exists, but nobody decides with it.">Informação existe, mas ninguém decide com ela.</p>
       </article>
       <article class="symptom">
-        <p class="symptom__index symptom__index--blue">05 · <span data-en="system">sistema</span></p>
-        <h3 class="symptom__title" data-en="Off-the-shelf software that doesn't fit">Software pronto que não encaixa</h3>
-        <p class="symptom__text" data-en="Ready-made tools forcing the company to adapt to them — instead of the opposite.">Ferramentas prontas forçando a empresa a se adaptar a elas — não o contrário.</p>
+        <p class="symptom__index">05</p>
+        <h3 class="symptom__title" data-en="Software that doesn't fit">Software que não encaixa</h3>
+        <p class="symptom__text" data-en="Off-the-shelf tool forcing the company to adapt.">Ferramenta pronta forçando a empresa a se adaptar.</p>
       </article>
       <article class="symptom">
-        <p class="symptom__index symptom__index--ochre">06 · <span data-en="brand">marca</span></p>
-        <h3 class="symptom__title" data-en="Launches with no strategy">Lançamentos sem estratégia</h3>
-        <p class="symptom__text" data-en="Product or brand live with no go-to-market or acquisition plan.">Produto ou marca no ar sem plano de go-to-market ou de aquisição.</p>
+        <p class="symptom__index">06</p>
+        <h3 class="symptom__title" data-en="Launch with no strategy">Lançamento sem estratégia</h3>
+        <p class="symptom__text" data-en="Product live with no go-to-market plan.">Produto no ar sem plano de go-to-market.</p>
       </article>
     </div>
   </div>
@@ -1036,10 +1397,9 @@ button {
   <div class="container">
     <div class="section-head">
       <div>
-        <p class="eyebrow" data-en="Dossier 03 — Fronts">Dossiê 03 — Frentes</p>
+        <p class="eyebrow" data-en="Dossier 03">Dossiê 03</p>
         <h2 class="section-title" data-en="What we deliver.">O que entregamos.</h2>
       </div>
-      <p class="section-intro" data-en="Two fronts, always working together — never one without the other when the project needs both.">Duas frentes, sempre operando junto — nunca uma sem a outra quando o projeto pede as duas.</p>
     </div>
 
     <div class="fronts">
@@ -1051,19 +1411,19 @@ button {
         <ul class="front__list">
           <li class="front__item">
             <h4 data-en="Brand strategy">Estratégia de marca</h4>
-            <p data-en="Diagnosis, positioning, brand architecture and roadmap.">Diagnóstico, posicionamento, arquitetura de marca e roadmap.</p>
+            <p data-en="Diagnosis, positioning, roadmap.">Diagnóstico, posicionamento, roadmap.</p>
           </li>
           <li class="front__item">
             <h4 data-en="Market research">Pesquisa de mercado</h4>
-            <p data-en="Qualitative and quantitative studies, brand health tracking and competitive intelligence.">Estudos qualitativos e quantitativos, saúde de marca e inteligência competitiva.</p>
+            <p data-en="Qualitative, quantitative, competitive.">Qualitativa, quantitativa, competitiva.</p>
           </li>
           <li class="front__item">
             <h4 data-en="Creative &amp; content">Criação &amp; conteúdo</h4>
-            <p data-en="Key visual, copy, verbal identity and tone of voice.">Key visual, copy, identidade verbal e tom de voz.</p>
+            <p data-en="Key visual, copy, tone of voice.">Key visual, copy, tom de voz.</p>
           </li>
           <li class="front__item">
             <h4>Go-to-market</h4>
-            <p data-en="Launch planning and execution, activation and measurement.">Planejamento e execução de lançamentos, ativação e mensuração.</p>
+            <p data-en="Launch, activation, measurement.">Lançamento, ativação, mensuração.</p>
           </li>
         </ul>
       </div>
@@ -1076,19 +1436,19 @@ button {
         <ul class="front__list">
           <li class="front__item">
             <h4 data-en="Custom systems">Sistemas sob medida</h4>
-            <p data-en="Internal platforms for operations, finance, inventory, production, commissions and business-specific flows — with roles, permissions and history.">Plataformas internas para operação, financeiro, estoque, produção, comissões e fluxos específicos — com perfis, permissões e histórico.</p>
+            <p data-en="End-to-end internal platforms.">Plataformas internas ponta a ponta.</p>
           </li>
           <li class="front__item">
             <h4 data-en="Dashboards &amp; intelligence">Dashboards &amp; inteligência</h4>
-            <p data-en="Panels with indicators, filters, period comparisons, exports and automatic reports.">Painéis com indicadores, filtros, comparações por período, exportações e relatórios automáticos.</p>
+            <p data-en="Panels and automatic reports.">Painéis e relatórios automáticos.</p>
           </li>
           <li class="front__item">
             <h4 data-en="Automation &amp; integrations">Automações &amp; integrações</h4>
-            <p data-en="APIs, spreadsheets, PDFs, ERPs, CRMs, payment gateways and legacy systems connected.">APIs, planilhas, PDFs, ERPs, CRMs, gateways de pagamento e sistemas legados conectados.</p>
+            <p data-en="APIs, ERPs, CRMs connected.">APIs, ERPs, CRMs conectados.</p>
           </li>
           <li class="front__item">
             <h4 data-en="AI applied to the business">IA aplicada ao negócio</h4>
-            <p data-en="Document analysis, information classification, report generation, pattern detection and decision support.">Análise documental, classificação de informações, geração de relatórios, detecção de padrões e apoio à decisão.</p>
+            <p data-en="Classification and decision support.">Classificação e apoio à decisão.</p>
           </li>
         </ul>
       </div>
@@ -1099,363 +1459,448 @@ button {
 <!-- ═══════════════════════════════════════════════ DOSSIÊ 04 · CASOS -->
 <section class="section section--deep" id="cases">
   <div class="container">
-    <div class="section-head section-head--flush">
+    <div class="section-head">
       <div>
         <p class="eyebrow" data-en="Dossier 04 — Selected cases">Dossiê 04 — Casos selecionados</p>
         <h2 class="section-title" data-en="Proof, not promise.">Prova, não promessa.</h2>
       </div>
-      <p class="section-intro" data-en="Each case with the problem, what was built, the technical sheet and the value delivered. Some run jointly, others by a single discipline.">Cada caso com o problema, o que foi construído, a ficha técnica e o valor entregue. Alguns conduzidos em conjunto, outros por uma disciplina só.</p>
+      <p class="section-intro" data-en="Tap “see details” to open the problem, the solution and the value delivered.">Toque em "ver detalhes" pra abrir problema, solução e valor entregue.</p>
     </div>
 
-    <!-- Caso 01 ─────────────────────────────────────────────────── -->
-    <article class="case">
-      <div class="case__grid">
-        <div>
-          <div class="case__head">
-            <span class="case__number">01</span>
-            <span class="case__client">Media Portal Soluções</span>
-            <span class="case__sector" data-en="Media &amp; Broadcast · joint">Mídia &amp; Broadcast · conjunto</span>
-          </div>
-          <h3 class="case__title" data-en="Digital repositioning of an 18-year-old company">Reposicionamento digital de uma empresa de 18+ anos</h3>
+    <div class="cases">
+<!-- Caso 01 ─────────────────────────────────────────────────── -->
+    <article class="case case--featured">
+  <!-- Foto de capa: /img/casos/mediaportal.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--photo">
+    <div class="case__chips">
+      <span class="case__chip"><span data-en="Case">Caso</span> 01</span>
+      <span class="case__chip" data-en="Joint">Conjunto</span>
+    </div>
+    <div class="case__media">
+      <figure class="media" data-slot="case-mediaportal">
+        <img src="/img/casos/mediaportal.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        <span class="media__client">Media Portal Soluções</span>
+        <figcaption class="media__hint" data-en="Awaiting the real site screenshot">Aguardando print real do site</figcaption>
+      </figure>
+    </div>
+    <div class="case__caption">
+      <h3 class="case__title" data-en="Media Portal — Digital repositioning">Media Portal — Reposicionamento digital</h3>
+      <p class="case__metric" data-en="18+ years of operation · full redesign">18+ anos de operação · redesign completo</p>
+      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-01-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+    </div>
+  </div>
 
-          <div class="case__block">
-            <p class="label label--ochre" data-en="Problem">Problema</p>
-            <p data-en="A consolidated company — 18+ years, hundreds of clients, names like TV Cultura, MTV and CazéTV — with a digital presence far behind the maturity of the business.">Empresa consolidada — 18+ anos, centenas de clientes, nomes como TV Cultura, MTV e CazéTV — com presença digital muito atrás da maturidade do negócio.</p>
-          </div>
-          <div class="case__block">
-            <p class="label label--blue" data-en="Solution">Solução</p>
-            <p data-en="Bruno structured the narrative, the institutional timeline and the product communication system; Matheus took the redesign into production — home, timeline, modules and the partner-ecosystem page — on a scope and schedule formalised in the first two weeks.">Bruno estruturou a narrativa, a timeline institucional e o sistema de comunicação de produto; Matheus implementou o redesign — home, linha do tempo, módulos e página de ecossistema de parceiros — sobre escopo e cronograma formalizados nas duas primeiras semanas.</p>
-          </div>
-          <div class="case__value">
-            <p class="label" data-en="Value delivered">Valor entregue</p>
-            <p data-en="A digital presence that matches the brand's maturity, ready to attract and convert new corporate contracts.">Presença digital condizente com a maturidade da marca, pronta para captar e converter novos contratos corporativos.</p>
-          </div>
-        </div>
-
-        <!-- Apoio visual pendente: substituir o .media__hint por <img src="..." alt="..."> -->
-        <figure class="media" data-slot="case-mediaportal">
-          <figcaption class="media__hint" data-en="Site screenshots — before / after">Prints do site — antes / depois</figcaption>
-        </figure>
+  <div class="case__details" id="case-01-details" hidden>
+    <p class="case__client">Media Portal Soluções</p>
+    <span class="case__sector" data-en="Media &amp; Broadcast · joint">Mídia &amp; Broadcast · conjunto</span>
+    <div>
+      <div class="case__block">
+        <p class="label label--ochre" data-en="Problem">Problema</p>
+        <p data-en="A consolidated company — 18+ years, hundreds of clients, names like TV Cultura, MTV and CazéTV — with a digital presence far behind the maturity of the business.">Empresa consolidada — 18+ anos, centenas de clientes, nomes como TV Cultura, MTV e CazéTV — com presença digital muito atrás da maturidade do negócio.</p>
       </div>
-
-      <div class="ficha">
-        <div class="ficha__cell">
-          <p class="ficha__label">Stack</p>
-          <ul class="ficha__tags"><li>Next.js</li><li>TypeScript</li><li>Supabase</li><li>Vercel</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Numbers">Números</p>
-          <ul class="ficha__list">
-            <li><b>18+</b> <span data-en="years of operation">anos de operação</span></li>
-            <li><b>3</b> <span data-en="months of initial cycle">meses de ciclo inicial</span></li>
-            <li><b>2</b> <span data-en="weeks of scope definition">semanas de definição de escopo</span></li>
-          </ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Architecture">Arquitetura</p>
-          <ul class="ficha__list" data-en="<li>Relational database, auth and storage on Supabase</li><li>Institutional timeline driven by data</li><li>Product modules + partner ecosystem</li><li>Staging and production, assisted deploy</li>"><li>Banco relacional, auth e storage em Supabase</li><li>Linha do tempo institucional orientada a dados</li><li>Módulos de produto + ecossistema de parceiros</li><li>Homologação e produção, implantação assistida</li></ul>
-        </div>
+      <div class="case__block">
+        <p class="label label--blue" data-en="Solution">Solução</p>
+        <p data-en="Bruno structured the narrative, the institutional timeline and the product communication system; Matheus took the redesign into production — home, timeline, modules and the partner-ecosystem page — on a scope and schedule formalised in the first two weeks.">Bruno estruturou a narrativa, a timeline institucional e o sistema de comunicação de produto; Matheus implementou o redesign — home, linha do tempo, módulos e página de ecossistema de parceiros — sobre escopo e cronograma formalizados nas duas primeiras semanas.</p>
       </div>
-    </article>
+      <div class="case__value">
+        <p class="label" data-en="Value delivered">Valor entregue</p>
+        <p data-en="A digital presence that matches the brand's maturity, ready to attract and convert new corporate contracts.">Presença digital condizente com a maturidade da marca, pronta para captar e converter novos contratos corporativos.</p>
+      </div>
+    </div>
+
+    <div class="ficha">
+      <div class="ficha__cell">
+        <p class="ficha__label">Stack</p>
+        <ul class="ficha__tags"><li>Next.js</li><li>TypeScript</li><li>Supabase</li><li>Vercel</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Numbers">Números</p>
+        <ul class="ficha__list">
+          <li><b>18+</b> <span data-en="years of operation">anos de operação</span></li>
+          <li><b>3</b> <span data-en="months of initial cycle">meses de ciclo inicial</span></li>
+          <li><b>2</b> <span data-en="weeks of scope definition">semanas de definição de escopo</span></li>
+        </ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Architecture">Arquitetura</p>
+        <ul class="ficha__list" data-en="<li>Relational database, auth and storage on Supabase</li><li>Institutional timeline driven by data</li><li>Product modules + partner ecosystem</li><li>Staging and production, assisted deploy</li>"><li>Banco relacional, auth e storage em Supabase</li><li>Linha do tempo institucional orientada a dados</li><li>Módulos de produto + ecossistema de parceiros</li><li>Homologação e produção, implantação assistida</li></ul>
+      </div>
+    </div>
+  </div>
+</article>
 
     <!-- Caso 02 ─────────────────────────────────────────────────── -->
     <article class="case">
-      <div class="case__grid">
-        <div>
-          <div class="case__head">
-            <span class="case__number">02</span>
-            <span class="case__client">Ame Digital × MindMiners</span>
-            <span class="case__sector" data-en="Fintech · case validated by MindMiners · Bruno">Fintech · case validado pela MindMiners · Bruno</span>
-          </div>
-          <h3 class="case__title" data-en="Building the Research &amp; Insights function on data">Estruturando a área de Pesquisa e Insights com dados</h3>
+  <!-- Foto de capa: /img/casos/mindminers.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--photo">
+    <div class="case__chips">
+      <span class="case__chip"><span data-en="Case">Caso</span> 02</span>
+      <span class="case__chip" data-en="Research">Pesquisa</span>
+    </div>
+    <div class="case__media">
+      <figure class="media" data-slot="case-mindminers">
+        <img src="/img/casos/mindminers.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        <span class="media__client">Ame Digital × MindMiners</span>
+        <figcaption class="media__hint" data-en="Awaiting the case screenshot">Aguardando print do case</figcaption>
+      </figure>
+    </div>
+    <div class="case__caption">
+      <h3 class="case__title" data-en="Ame × MindMiners">Ame × MindMiners</h3>
+      <p class="case__metric" data-en="360º brand view">360º de visão de marca</p>
+      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-02-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+    </div>
+  </div>
 
-          <div class="case__block">
-            <p class="label label--ochre" data-en="Problem">Problema</p>
-            <p data-en="With the new Marketing Analytics function, the fintech lacked a partner to structure market trends, competitive analysis and a more strategic reading of its data.">Com a criação da área de Marketing Analytics, faltava um parceiro para estruturar tendências de mercado, análise de concorrência e leitura mais estratégica dos dados.</p>
-          </div>
-          <div class="case__block">
-            <p class="label label--blue" data-en="Solution">Solução</p>
-            <p data-en="Joint definition of strategic KPIs and recurring rollout of the Brand Health methodology, widening the research pillars the fintech tracked.">Definição conjunta de KPIs estratégicos e implantação recorrente da Metodologia de Saúde de Marca, ampliando os pilares de pesquisa analisados pela fintech.</p>
-          </div>
-          <div class="case__value">
-            <p class="label" data-en="Value delivered">Valor entregue</p>
-            <p data-en="A 360º view of the brand — brand health, funnel, journeys, competitive positioning — with decisions from product launch to regional expansion guided by data. Official case published by MindMiners, quoting Bruno Amaral as Senior Marketing Research Analyst.">Visão 360º da marca — saúde de marca, funil, jornadas, posicionamento competitivo — e decisões, de lançamento de produto a expansão regional, passaram a ser guiadas por dado. Case oficial publicado pela MindMiners, com citação direta de Bruno Amaral como Senior Marketing Research Analyst.</p>
-          </div>
-        </div>
-
-        <figure class="media" data-slot="case-mindminers">
-          <figcaption class="media__hint" data-en="Screenshot of the official case — mindminers.com">Print do case oficial — mindminers.com</figcaption>
-        </figure>
+  <div class="case__details" id="case-02-details" hidden>
+    <p class="case__client">Ame Digital × MindMiners</p>
+    <span class="case__sector" data-en="Fintech · case validated by MindMiners · Bruno">Fintech · case validado pela MindMiners · Bruno</span>
+    <div>
+      <div class="case__block">
+        <p class="label label--ochre" data-en="Problem">Problema</p>
+        <p data-en="With the new Marketing Analytics function, the fintech lacked a partner to structure market trends, competitive analysis and a more strategic reading of its data.">Com a criação da área de Marketing Analytics, faltava um parceiro para estruturar tendências de mercado, análise de concorrência e leitura mais estratégica dos dados.</p>
       </div>
-
-      <div class="ficha">
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Deliverables">Entregáveis</p>
-          <ul class="ficha__tags"><li>KPIs</li><li data-en="Brand Health">Saúde de Marca</li><li data-en="Competition">Concorrência</li><li data-en="Trends">Tendências</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Numbers">Números</p>
-          <ul class="ficha__list">
-            <li><b>360º</b> <span data-en="brand view">de visão de marca</span></li>
-            <li><b>4</b> <span data-en="research pillars tracked">pilares de pesquisa acompanhados</span></li>
-            <li><b>1</b> <span data-en="official published case">case oficial publicado</span></li>
-          </ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Method">Método</p>
-          <ul class="ficha__list" data-en="<li>Recurring quantitative waves</li><li>Funnel and journey reading</li><li>Competitive positioning</li><li>Insight routine feeding launches</li>"><li>Ondas quantitativas recorrentes</li><li>Leitura de funil e jornadas</li><li>Posicionamento competitivo</li><li>Rotina de insights alimentando lançamentos</li></ul>
-        </div>
+      <div class="case__block">
+        <p class="label label--blue" data-en="Solution">Solução</p>
+        <p data-en="Joint definition of strategic KPIs and recurring rollout of the Brand Health methodology, widening the research pillars the fintech tracked.">Definição conjunta de KPIs estratégicos e implantação recorrente da Metodologia de Saúde de Marca, ampliando os pilares de pesquisa analisados pela fintech.</p>
       </div>
-    </article>
+      <div class="case__value">
+        <p class="label" data-en="Value delivered">Valor entregue</p>
+        <p data-en="A 360º view of the brand — brand health, funnel, journeys, competitive positioning — with decisions from product launch to regional expansion guided by data. Official case published by MindMiners, quoting Bruno Amaral as Senior Marketing Research Analyst.">Visão 360º da marca — saúde de marca, funil, jornadas, posicionamento competitivo — e decisões, de lançamento de produto a expansão regional, passaram a ser guiadas por dado. Case oficial publicado pela MindMiners, com citação direta de Bruno Amaral como Senior Marketing Research Analyst.</p>
+      </div>
+    </div>
+
+    <div class="ficha">
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Deliverables">Entregáveis</p>
+        <ul class="ficha__tags"><li>KPIs</li><li data-en="Brand Health">Saúde de Marca</li><li data-en="Competition">Concorrência</li><li data-en="Trends">Tendências</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Numbers">Números</p>
+        <ul class="ficha__list">
+          <li><b>360º</b> <span data-en="brand view">de visão de marca</span></li>
+          <li><b>4</b> <span data-en="research pillars tracked">pilares de pesquisa acompanhados</span></li>
+          <li><b>1</b> <span data-en="official published case">case oficial publicado</span></li>
+        </ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Method">Método</p>
+        <ul class="ficha__list" data-en="<li>Recurring quantitative waves</li><li>Funnel and journey reading</li><li>Competitive positioning</li><li>Insight routine feeding launches</li>"><li>Ondas quantitativas recorrentes</li><li>Leitura de funil e jornadas</li><li>Posicionamento competitivo</li><li>Rotina de insights alimentando lançamentos</li></ul>
+      </div>
+    </div>
+  </div>
+</article>
 
     <!-- Caso 03 ─────────────────────────────────────────────────── -->
     <article class="case">
-      <div class="case__grid">
-        <div>
-          <div class="case__head">
-            <span class="case__number">03</span>
-            <span class="case__client">Ame Digital × X (Twitter)</span>
-            <span class="case__sector" data-en="Fintech · case validated by X · Bruno">Fintech · case validado pela X · Bruno</span>
-          </div>
-          <h3 class="case__title" data-en="An official case published by the platform itself">Case oficial publicado pela própria plataforma</h3>
+  <!-- Foto de capa: /img/casos/ame-x.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--photo">
+    <div class="case__chips">
+      <span class="case__chip"><span data-en="Case">Caso</span> 03</span>
+      <span class="case__chip" data-en="Validated case · X">Case validado · X</span>
+    </div>
+    <div class="case__media">
+      <figure class="media" data-slot="case-x">
+        <img src="/img/casos/ame-x.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        <span class="media__client">Ame Digital × X (Twitter)</span>
+        <figcaption class="media__hint" data-en="Awaiting the case screenshot">Aguardando print do case</figcaption>
+      </figure>
+    </div>
+    <div class="case__caption">
+      <h3 class="case__title" data-en="AME × X (Twitter)">AME × X (Twitter)</h3>
+      <p class="case__metric" data-en="28.3M impressions">28,3M impressões</p>
+      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-03-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+    </div>
+  </div>
 
-          <div class="case__block">
-            <p class="label label--ochre" data-en="Problem">Problema</p>
-            <p data-en="The fintech needed to plug into culturally relevant conversations — a reality show, Pride Month — and earn brand relevance on the platform.">A fintech precisava se conectar com conversas culturais relevantes — reality show, Mês do Orgulho — e ganhar relevância de marca na plataforma.</p>
-          </div>
-          <div class="case__block">
-            <p class="label label--blue" data-en="Solution">Solução</p>
-            <p data-en="Media and content strategy across the #AMEnoDFCEX and #AmeSemModeração campaigns, with Promoted Trends and First View.">Estratégia de mídia e conteúdo nas campanhas #AMEnoDFCEX e #AmeSemModeração, com Trends Promovidas e First View.</p>
-          </div>
-          <div class="case__value">
-            <p class="label" data-en="Value delivered">Valor entregue</p>
-            <p data-en="+28.3M impressions, +600K engagements (8% rate), mentions 900% and 520% above benchmark across the two campaigns — results published as an official X success case.">+28,3M de impressões, +600K engajamentos (8% de taxa), menções 900% e 520% acima do benchmark nas duas campanhas — resultados publicados como case de sucesso oficial da X.</p>
-          </div>
-        </div>
-
-        <figure class="media" data-slot="case-x">
-          <figcaption class="media__hint" data-en="Screenshot of the official page — marketing.x.com">Print da página oficial — marketing.x.com</figcaption>
-        </figure>
+  <div class="case__details" id="case-03-details" hidden>
+    <p class="case__client">Ame Digital × X (Twitter)</p>
+    <span class="case__sector" data-en="Fintech · case validated by X · Bruno">Fintech · case validado pela X · Bruno</span>
+    <div>
+      <div class="case__block">
+        <p class="label label--ochre" data-en="Problem">Problema</p>
+        <p data-en="The fintech needed to plug into culturally relevant conversations — a reality show, Pride Month — and earn brand relevance on the platform.">A fintech precisava se conectar com conversas culturais relevantes — reality show, Mês do Orgulho — e ganhar relevância de marca na plataforma.</p>
       </div>
-
-      <div class="ficha">
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Formats">Formatos</p>
-          <ul class="ficha__tags"><li data-en="Promoted Trend">Trend Promovida</li><li>First View</li><li data-en="Always-on content">Conteúdo always-on</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Numbers">Números</p>
-          <ul class="ficha__list">
-            <li><b>28,3M</b> <span data-en="impressions">impressões</span></li>
-            <li><b>600K</b> <span data-en="engagements · 8% rate">engajamentos · taxa 8%</span></li>
-            <li><b>900% / 520%</b> <span data-en="mentions above benchmark">menções acima do benchmark</span></li>
-          </ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Method">Método</p>
-          <ul class="ficha__list" data-en="<li>Cultural calendar as media anchor</li><li>Two campaigns, one voice</li><li>Real-time engagement management</li><li>Post-campaign measurement vs. benchmark</li>"><li>Calendário cultural como âncora de mídia</li><li>Duas campanhas, uma só voz</li><li>Gestão de engajamento em tempo real</li><li>Mensuração pós-campanha vs. benchmark</li></ul>
-        </div>
+      <div class="case__block">
+        <p class="label label--blue" data-en="Solution">Solução</p>
+        <p data-en="Media and content strategy across the #AMEnoDFCEX and #AmeSemModeração campaigns, with Promoted Trends and First View.">Estratégia de mídia e conteúdo nas campanhas #AMEnoDFCEX e #AmeSemModeração, com Trends Promovidas e First View.</p>
       </div>
-    </article>
+      <div class="case__value">
+        <p class="label" data-en="Value delivered">Valor entregue</p>
+        <p data-en="+28.3M impressions, +600K engagements (8% rate), mentions 900% and 520% above benchmark across the two campaigns — results published as an official X success case.">+28,3M de impressões, +600K engajamentos (8% de taxa), menções 900% e 520% acima do benchmark nas duas campanhas — resultados publicados como case de sucesso oficial da X.</p>
+      </div>
+    </div>
+
+    <div class="ficha">
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Formats">Formatos</p>
+        <ul class="ficha__tags"><li data-en="Promoted Trend">Trend Promovida</li><li>First View</li><li data-en="Always-on content">Conteúdo always-on</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Numbers">Números</p>
+        <ul class="ficha__list">
+          <li><b>28,3M</b> <span data-en="impressions">impressões</span></li>
+          <li><b>600K</b> <span data-en="engagements · 8% rate">engajamentos · taxa 8%</span></li>
+          <li><b>900% / 520%</b> <span data-en="mentions above benchmark">menções acima do benchmark</span></li>
+        </ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Method">Método</p>
+        <ul class="ficha__list" data-en="<li>Cultural calendar as media anchor</li><li>Two campaigns, one voice</li><li>Real-time engagement management</li><li>Post-campaign measurement vs. benchmark</li>"><li>Calendário cultural como âncora de mídia</li><li>Duas campanhas, uma só voz</li><li>Gestão de engajamento em tempo real</li><li>Mensuração pós-campanha vs. benchmark</li></ul>
+      </div>
+    </div>
+  </div>
+</article>
 
     <!-- Caso 04 ─────────────────────────────────────────────────── -->
     <article class="case">
-      <div class="case__grid">
-        <div>
-          <div class="case__head">
-            <span class="case__number">04</span>
-            <span class="case__client">Corning CALA Summit</span>
-            <span class="case__sector" data-en="Fortune 500 · B2B events · Bruno">Fortune 500 · Eventos B2B · Bruno</span>
-          </div>
-          <h3 class="case__title" data-en="Corning's first C-Level event in Latin America">Primeiro evento C-Level da Corning na América Latina</h3>
+  <!-- Foto de capa: /img/casos/corning.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--photo">
+    <div class="case__chips">
+      <span class="case__chip"><span data-en="Case">Caso</span> 04</span>
+      <span class="case__chip" data-en="Fortune 500">Fortune 500</span>
+    </div>
+    <div class="case__media">
+      <figure class="media" data-slot="case-corning">
+        <img src="/img/casos/corning.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        <span class="media__client">Corning CALA Summit</span>
+        <figcaption class="media__hint" data-en="Awaiting event photos">Aguardando fotos do evento</figcaption>
+      </figure>
+    </div>
+    <div class="case__caption">
+      <h3 class="case__title" data-en="Corning CALA Summit">Corning CALA Summit</h3>
+      <p class="case__metric" data-en="4 editions — Panama, Cartagena, Lima, Santiago">4 edições — Panamá, Cartagena, Lima, Santiago</p>
+      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-04-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+    </div>
+  </div>
 
-          <div class="case__block">
-            <p class="label label--ochre" data-en="Problem">Problema</p>
-            <p data-en="No direct relationship channel with C-Level channel partners in the region.">Ausência de um canal de relacionamento direto com parceiros de canal C-Level na região.</p>
-          </div>
-          <div class="case__block">
-            <p class="label label--blue" data-en="Solution">Solução</p>
-            <p data-en="The event created from zero — strategic planning, content curation and experience management, with editions in Panama, Cartagena, Lima and Santiago.">Criação do evento do zero — planejamento estratégico, curadoria de conteúdo e gestão de experiência, com edições no Panamá, Cartagena, Lima e Santiago.</p>
-          </div>
-          <div class="case__value">
-            <p class="label" data-en="Value delivered">Valor entregue</p>
-            <p data-en="A recurring institutional channel for relationships with regional partners.">Novo canal institucional recorrente de relacionamento com parceiros regionais.</p>
-          </div>
-        </div>
-
-        <figure class="media" data-slot="case-corning">
-          <figcaption class="media__hint" data-en="Event photos / badge / printed material">Fotos do evento / crachá / material impresso</figcaption>
-        </figure>
+  <div class="case__details" id="case-04-details" hidden>
+    <p class="case__client">Corning CALA Summit</p>
+    <span class="case__sector" data-en="Fortune 500 · B2B events · Bruno">Fortune 500 · Eventos B2B · Bruno</span>
+    <div>
+      <div class="case__block">
+        <p class="label label--ochre" data-en="Problem">Problema</p>
+        <p data-en="No direct relationship channel with C-Level channel partners in the region.">Ausência de um canal de relacionamento direto com parceiros de canal C-Level na região.</p>
       </div>
-
-      <div class="ficha">
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Deliverables">Entregáveis</p>
-          <ul class="ficha__tags"><li data-en="Event concept">Conceito do evento</li><li data-en="Content curation">Curadoria</li><li data-en="Experience">Experiência</li><li data-en="Printed material">Material impresso</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Numbers">Números</p>
-          <ul class="ficha__list">
-            <li><b>4</b> <span data-en="editions: Panama, Cartagena, Lima, Santiago">edições: Panamá, Cartagena, Lima, Santiago</span></li>
-            <li><b>1º</b> <span data-en="C-Level event in the region">evento C-Level da região</span></li>
-            <li><b>C-Level</b> <span data-en="channel partners as audience">parceiros de canal como público</span></li>
-          </ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Method">Método</p>
-          <ul class="ficha__list" data-en="<li>Regional partner mapping</li><li>Agenda built with local business teams</li><li>Repeatable format across four countries</li><li>Post-event follow-up with sales</li>"><li>Mapeamento de parceiros regionais</li><li>Agenda construída com times de negócio locais</li><li>Formato replicável em quatro países</li><li>Follow-up pós-evento com vendas</li></ul>
-        </div>
+      <div class="case__block">
+        <p class="label label--blue" data-en="Solution">Solução</p>
+        <p data-en="The event created from zero — strategic planning, content curation and experience management, with editions in Panama, Cartagena, Lima and Santiago.">Criação do evento do zero — planejamento estratégico, curadoria de conteúdo e gestão de experiência, com edições no Panamá, Cartagena, Lima e Santiago.</p>
       </div>
-    </article>
+      <div class="case__value">
+        <p class="label" data-en="Value delivered">Valor entregue</p>
+        <p data-en="A recurring institutional channel for relationships with regional partners.">Novo canal institucional recorrente de relacionamento com parceiros regionais.</p>
+      </div>
+    </div>
+
+    <div class="ficha">
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Deliverables">Entregáveis</p>
+        <ul class="ficha__tags"><li data-en="Event concept">Conceito do evento</li><li data-en="Content curation">Curadoria</li><li data-en="Experience">Experiência</li><li data-en="Printed material">Material impresso</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Numbers">Números</p>
+        <ul class="ficha__list">
+          <li><b>4</b> <span data-en="editions: Panama, Cartagena, Lima, Santiago">edições: Panamá, Cartagena, Lima, Santiago</span></li>
+          <li><b>1º</b> <span data-en="C-Level event in the region">evento C-Level da região</span></li>
+          <li><b>C-Level</b> <span data-en="channel partners as audience">parceiros de canal como público</span></li>
+        </ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Method">Método</p>
+        <ul class="ficha__list" data-en="<li>Regional partner mapping</li><li>Agenda built with local business teams</li><li>Repeatable format across four countries</li><li>Post-event follow-up with sales</li>"><li>Mapeamento de parceiros regionais</li><li>Agenda construída com times de negócio locais</li><li>Formato replicável em quatro países</li><li>Follow-up pós-evento com vendas</li></ul>
+      </div>
+    </div>
+  </div>
+</article>
 
     <!-- Caso 05 ─────────────────────────────────────────────────── -->
     <article class="case">
-      <div class="case__grid">
-        <div>
-          <div class="case__head">
-            <span class="case__number">05</span>
-            <span class="case__client">Genma</span>
-            <span class="case__sector" data-en="Hospitality · SaaS · Matheus">Gastronomia · SaaS · Matheus</span>
-          </div>
-          <h3 class="case__title" data-en="Multi-user management SaaS for restaurants">SaaS de gestão para restaurantes multiusuário</h3>
+  <!-- Foto de capa: /img/casos/genma.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--photo">
+    <div class="case__chips">
+      <span class="case__chip"><span data-en="Case">Caso</span> 05</span>
+      <span class="case__chip" data-en="Tech · Matheus">Tech · Matheus</span>
+    </div>
+    <div class="case__media">
+      <figure class="media" data-slot="case-genma">
+        <img src="/img/casos/genma.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        <span class="media__client" data-en="Genma — Management SaaS">Genma — SaaS de gestão</span>
+        <figcaption class="media__hint" data-en="Awaiting the product screenshot">Aguardando screenshot do produto</figcaption>
+      </figure>
+    </div>
+    <div class="case__caption">
+      <h3 class="case__title" data-en="Genma — Multi-user SaaS for restaurants">Genma — SaaS multiusuário para restaurantes</h3>
+      <p class="case__metric case__metric--blue" data-en="5 modules integrated in real time">5 módulos integrados em tempo real</p>
+      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-05-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+    </div>
+  </div>
 
-          <div class="case__block">
-            <p class="label label--ochre" data-en="Problem">Problema</p>
-            <p data-en="Restaurants controlling orders, tables, kitchen, cash and reports through manual processes and disconnected tools.">Restaurantes controlando pedidos, mesas, cozinha, caixa e relatórios com processos manuais e ferramentas desconectadas.</p>
-          </div>
-          <div class="case__block">
-            <p class="label label--blue" data-en="Solution">Solução</p>
-            <p data-en="A multi-user SaaS with digital menu, electronic order pad, real-time order flow, kitchen control, cash closing and management reports.">SaaS multiusuário com cardápio digital, comanda eletrônica, fluxo de pedidos em tempo real, controle de cozinha, fechamento de caixa e relatórios gerenciais.</p>
-          </div>
-          <div class="case__value">
-            <p class="label" data-en="Value delivered">Valor entregue</p>
-            <p data-en="A centralised operation, orders in one place, less rework and a full management view of the restaurant.">Operação centralizada, pedidos num só lugar, menos retrabalho e visão gerencial completa do restaurante.</p>
-          </div>
-        </div>
-
-        <figure class="media" data-slot="case-genma">
-          <figcaption class="media__hint" data-en="Product screenshot — order pad / dashboard">Screenshot do produto — comanda / dashboard</figcaption>
-        </figure>
+  <div class="case__details" id="case-05-details" hidden>
+    <p class="case__client">Genma</p>
+    <span class="case__sector" data-en="Hospitality · SaaS · Matheus">Gastronomia · SaaS · Matheus</span>
+    <div>
+      <div class="case__block">
+        <p class="label label--ochre" data-en="Problem">Problema</p>
+        <p data-en="Restaurants controlling orders, tables, kitchen, cash and reports through manual processes and disconnected tools.">Restaurantes controlando pedidos, mesas, cozinha, caixa e relatórios com processos manuais e ferramentas desconectadas.</p>
       </div>
-
-      <div class="ficha">
-        <div class="ficha__cell">
-          <p class="ficha__label">Stack</p>
-          <ul class="ficha__tags"><li>Next.js</li><li>TypeScript</li><li>Supabase</li><li>Tailwind</li><li>Realtime</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Modules">Módulos</p>
-          <ul class="ficha__list" data-en="<li>Digital menu</li><li>Electronic order pad</li><li>Kitchen display</li><li>Cash closing</li><li>Management reports</li>"><li>Cardápio digital</li><li>Comanda eletrônica</li><li>Painel de cozinha</li><li>Fechamento de caixa</li><li>Relatórios gerenciais</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Architecture">Arquitetura</p>
-          <ul class="ficha__list" data-en="<li>Multi-tenant with roles per venue</li><li>Realtime order flow (subscriptions)</li><li>Row-level permissions</li><li>Web-first, tablet in the kitchen</li>"><li>Multiempresa com perfis por unidade</li><li>Fluxo de pedidos em tempo real (subscriptions)</li><li>Permissões por linha de dado</li><li>Web-first, tablet na cozinha</li></ul>
-        </div>
+      <div class="case__block">
+        <p class="label label--blue" data-en="Solution">Solução</p>
+        <p data-en="A multi-user SaaS with digital menu, electronic order pad, real-time order flow, kitchen control, cash closing and management reports.">SaaS multiusuário com cardápio digital, comanda eletrônica, fluxo de pedidos em tempo real, controle de cozinha, fechamento de caixa e relatórios gerenciais.</p>
       </div>
-    </article>
-
-    <!-- Caso 06 ─────────────────────────────────────────────────── -->
-    <article class="case">
-      <div class="case__grid">
-        <div>
-          <div class="case__head">
-            <span class="case__number">06</span>
-            <span class="case__client">VisionOne</span>
-            <span class="case__sector" data-en="Fintech &amp; AI · Matheus">Fintech &amp; IA · Matheus</span>
-          </div>
-          <h3 class="case__title" data-en="Credit risk analysis with AI support">Análise de risco de crédito com apoio de IA</h3>
-
-          <div class="case__block">
-            <p class="label label--ochre" data-en="Problem">Problema</p>
-            <p data-en="Credit analysis requires crossing many data sources, documents, indicators and subjective criteria — slow and hard to standardise.">Análises de crédito exigem cruzar muitos dados, documentos, indicadores e critérios subjetivos — processo lento e difícil de padronizar.</p>
-          </div>
-          <div class="case__block">
-            <p class="label label--blue" data-en="Solution">Solução</p>
-            <p data-en="A risk platform with scoring, external data integration, PDF extraction, behavioural classification and AI-assisted report generation.">Plataforma de análise de risco com scoring, integração com dados externos, extração de PDFs, classificação comportamental e geração de relatórios com apoio de IA.</p>
-          </div>
-          <div class="case__value">
-            <p class="label" data-en="Value delivered">Valor entregue</p>
-            <p data-en="Faster decisions, standardised criteria and complete reports for risk assessment and compliance.">Decisões mais rápidas, critérios padronizados e relatórios completos para avaliação de risco e compliance.</p>
-          </div>
-        </div>
-
-        <figure class="media" data-slot="case-visionone">
-          <figcaption class="media__hint" data-en="Product dashboard — score / indicators">Dashboard do produto — score / indicadores</figcaption>
-        </figure>
+      <div class="case__value">
+        <p class="label" data-en="Value delivered">Valor entregue</p>
+        <p data-en="A centralised operation, orders in one place, less rework and a full management view of the restaurant.">Operação centralizada, pedidos num só lugar, menos retrabalho e visão gerencial completa do restaurante.</p>
       </div>
+    </div>
 
-      <div class="ficha">
-        <div class="ficha__cell">
-          <p class="ficha__label">Stack</p>
-          <ul class="ficha__tags"><li>React</li><li>TypeScript</li><li>Supabase</li><li>ECharts</li><li>IA / LLM</li><li data-en="External APIs">APIs externas</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Score criteria">Critérios do score</p>
-          <ul class="ficha__list" data-en="<li>Revenue</li><li>Protests</li><li>Lawsuits</li><li>Payment punctuality</li><li>Behavioural profile</li>"><li>Faturamento</li><li>Protestos</li><li>Ações judiciais</li><li>Pontualidade de pagamento</li><li>Perfil comportamental</li></ul>
-        </div>
-        <div class="ficha__cell">
-          <p class="ficha__label" data-en="Architecture">Arquitetura</p>
-          <ul class="ficha__list" data-en="<li>PDF extraction pipeline into structured fields</li><li>Weighted scoring engine with audit trail</li><li>External data APIs enriching the record</li><li>LLM writing the analyst's report draft</li>"><li>Pipeline de extração de PDFs para campos estruturados</li><li>Motor de scoring ponderado com trilha de auditoria</li><li>APIs de dados externos enriquecendo o cadastro</li><li>LLM redigindo o rascunho do parecer</li></ul>
-        </div>
+    <div class="ficha">
+      <div class="ficha__cell">
+        <p class="ficha__label">Stack</p>
+        <ul class="ficha__tags"><li>Next.js</li><li>TypeScript</li><li>Supabase</li><li>Tailwind</li><li>Realtime</li></ul>
       </div>
-    </article>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Modules">Módulos</p>
+        <ul class="ficha__list" data-en="<li>Digital menu</li><li>Electronic order pad</li><li>Kitchen display</li><li>Cash closing</li><li>Management reports</li>"><li>Cardápio digital</li><li>Comanda eletrônica</li><li>Painel de cozinha</li><li>Fechamento de caixa</li><li>Relatórios gerenciais</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Architecture">Arquitetura</p>
+        <ul class="ficha__list" data-en="<li>Multi-tenant with roles per venue</li><li>Realtime order flow (subscriptions)</li><li>Row-level permissions</li><li>Web-first, tablet in the kitchen</li>"><li>Multiempresa com perfis por unidade</li><li>Fluxo de pedidos em tempo real (subscriptions)</li><li>Permissões por linha de dado</li><li>Web-first, tablet na cozinha</li></ul>
+      </div>
+    </div>
+  </div>
+</article>
+
+</div>
 
     <!-- Outros projetos ─────────────────────────────────────────── -->
     <div class="more">
       <p class="more__label" data-en="Other selected projects">Outros projetos selecionados</p>
       <div class="rule-grid rule-grid--3">
         <article class="more-card">
-          <figure class="media media--short" data-slot="more-nog">
-            <figcaption class="media__hint" data-en="NOG report">Relatório NOG</figcaption>
-          </figure>
-          <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
-          <h3 class="more-card__title" data-en="NOG — Auditing medical payouts">NOG — Auditoria de repasses médicos</h3>
-          <p class="more-card__text" data-en="Crosses medical production, payout rules, procedures and insurer statements, flagging divergences automatically. Next.js · Supabase · PDF Parse · Excel · jsPDF.">Cruza produção médica, regras de repasse, procedimentos e demonstrativos de convênio, apontando divergências automaticamente. Next.js · Supabase · PDF Parse · Excel · jsPDF.</p>
+          <!-- Imagem: /img/projetos/amwc.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-amwc">
+            <img src="/img/projetos/amwc.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">AMWC Brazil 2024</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
+            <h3 class="more-card__title" data-en="AMWC Brazil 2024">AMWC Brazil 2024</h3>
+            <p class="more-card__text" data-en="Visual communication for the largest aesthetics congress in Brazil.">Comunicação visual do maior congresso de aesthetics do Brasil.</p>
+          </div>
         </article>
 
         <article class="more-card">
-          <figure class="media media--short" data-slot="more-fundacalc">
-            <figcaption class="media__hint" data-en="FundaCalc 3D model">Modelo 3D FundaCalc</figcaption>
-          </figure>
-          <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
-          <h3 class="more-card__title">FundaCalc &amp; FCO</h3>
-          <p class="more-card__text" data-en="Systems and notebooks for structural calculation, 3D visualisation and non-linear analysis. Python · Jupyter · NumPy · SciPy · Three.js · .NET MAUI.">Sistemas e notebooks para cálculo estrutural, visualização 3D e análise não-linear. Python · Jupyter · NumPy · SciPy · Three.js · .NET MAUI.</p>
+          <!-- Imagem: /img/projetos/ame-tom-de-voz.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-ame-tom-de-voz">
+            <img src="/img/projetos/ame-tom-de-voz.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">Ame Digital</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
+            <h3 class="more-card__title" data-en="Ame Digital — Tone of voice">Ame Digital — Tom de voz</h3>
+            <p class="more-card__text" data-en="The fintech’s complete brand manual.">Manual de marca completo da fintech.</p>
+          </div>
         </article>
 
         <article class="more-card">
-          <figure class="media media--short" data-slot="more-flora">
-            <figcaption class="media__hint" data-en="FloraServiços dashboard">Dashboard FloraServiços</figcaption>
-          </figure>
-          <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
-          <h3 class="more-card__title" data-en="FloraServiços — Finance">FloraServiços — Financeiro</h3>
-          <p class="more-card__text" data-en="Platform for service providers with sales, commissions, payables/receivables and cash flow on interactive dashboards.">Plataforma para prestadores de serviço com vendas, comissões, contas a pagar/receber e fluxo de caixa em dashboards interativos.</p>
+          <!-- Imagem: /img/projetos/istoe.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-istoe">
+            <img src="/img/projetos/istoe.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">IstoÉ Dinheiro</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
+            <h3 class="more-card__title" data-en="IstoÉ Dinheiro">IstoÉ Dinheiro</h3>
+            <p class="more-card__text" data-en="Communication case with a prestigious business outlet.">Case de comunicação com veículo de negócios de prestígio.</p>
+          </div>
         </article>
 
         <article class="more-card">
-          <figure class="media media--short" data-slot="more-gipsyy">
-            <figcaption class="media__hint" data-en="Screenshot — futuro.gipsyy.com.br">Print — futuro.gipsyy.com.br</figcaption>
-          </figure>
-          <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
-          <h3 class="more-card__title">Gipsyy — Friday do Futuro</h3>
-          <p class="more-card__text" data-en="Black Friday campaign with up to 70% off on tickets, leading the brand's creative expansion in the period.">Campanha de Black Friday com até 70% off em passagens, liderança criativa da expansão de marca no período.</p>
+          <!-- Imagem: /img/projetos/nog.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-nog">
+            <img src="/img/projetos/nog.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">NOG</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
+            <h3 class="more-card__title" data-en="NOG — Medical audit">NOG — Auditoria médica</h3>
+            <p class="more-card__text" data-en="Crosses production and payouts, flags divergences.">Cruza produção e repasses, aponta divergências.</p>
+          </div>
         </article>
 
         <article class="more-card">
-          <figure class="media media--short" data-slot="more-ame">
-            <figcaption class="media__hint" data-en="Brand manual — Ame Digital">Manual de marca — Ame Digital</figcaption>
-          </figure>
-          <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
-          <h3 class="more-card__title" data-en="Ame Digital — Tone of voice">Ame Digital — Tom de voz</h3>
-          <p class="more-card__text" data-en="Ideation and go-to-market of the tone of voice and brand manual for the Americanas S/A group fintech.">Ideação e go-to-market do tom de voz e manual de marca da fintech do grupo Americanas S/A.</p>
+          <!-- Imagem: /img/projetos/visionone.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-visionone">
+            <img src="/img/projetos/visionone.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">VisionOne</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
+            <h3 class="more-card__title" data-en="VisionOne — Credit risk">VisionOne — Risco de crédito</h3>
+            <p class="more-card__text" data-en="AI scoring and PDF extraction.">Scoring com IA e extração de PDFs.</p>
+          </div>
         </article>
 
         <article class="more-card">
-          <figure class="media media--short" data-slot="more-amwc">
-            <figcaption class="media__hint" data-en="Visual communication — AMWC Brazil">Comunicação visual — AMWC Brazil</figcaption>
-          </figure>
-          <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
-          <h3 class="more-card__title">AMWC Brazil 2024</h3>
-          <p class="more-card__text" data-en="Visual communication and social media for the largest aesthetics medical congress in Brazil.">Comunicação visual e social media do maior congresso médico de aesthetics do Brasil.</p>
+          <!-- Imagem: /img/projetos/gipsyy.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-gipsyy">
+            <img src="/img/projetos/gipsyy.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">Gipsyy</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--ochre" data-en="Brand">Marca</p>
+            <h3 class="more-card__title" data-en="Gipsyy — Friday do Futuro">Gipsyy — Friday do Futuro</h3>
+            <p class="more-card__text" data-en="Black Friday campaign with up to 70% off.">Campanha de Black Friday com até 70% off.</p>
+          </div>
+        </article>
+
+        <article class="more-card">
+          <!-- Imagem: /img/projetos/fundacalc.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-fundacalc">
+            <img src="/img/projetos/fundacalc.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">FundaCalc & FCO</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
+            <h3 class="more-card__title" data-en="FundaCalc &amp; FCO">FundaCalc &amp; FCO</h3>
+            <p class="more-card__text" data-en="Structural calculation, 3D and non-linear analysis.">Cálculo estrutural, 3D e análise não-linear.</p>
+          </div>
+        </article>
+
+        <article class="more-card">
+          <!-- Imagem: /img/projetos/flora.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <div class="more-card__media" data-slot="more-flora">
+            <img src="/img/projetos/flora.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <figure class="media">
+              <span class="media__client">FloraServiços</span>
+              <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
+            </figure>
+          </div>
+          <div class="more-card__body">
+            <p class="more-card__tag more-card__tag--blue" data-en="Technology">Tecnologia</p>
+            <h3 class="more-card__title" data-en="FloraServiços — Finance">FloraServiços — Financeiro</h3>
+            <p class="more-card__text" data-en="Sales, commissions and cash flow on dashboards.">Vendas, comissões e fluxo de caixa em dashboards.</p>
+          </div>
         </article>
       </div>
     </div>
@@ -1465,76 +1910,35 @@ button {
 <!-- ═══════════════════════════════════════════════ DOSSIÊ 05 · MÉTODO -->
 <section class="section" id="processo">
   <div class="container">
-    <div class="section-head section-head--tight">
+    <div class="section-head">
       <div>
         <p class="eyebrow" data-en="Dossier 05 — Method">Dossiê 05 — Método</p>
         <h2 class="section-title" data-en="How we work.">Como trabalhamos.</h2>
       </div>
-      <p class="section-intro" data-en="One flow — brand and system diagnosed, designed and built together.">Um único fluxo — marca e sistema diagnosticados, desenhados e construídos juntos.</p>
     </div>
 
     <ol class="steps">
       <li class="step">
         <span class="step__number">01</span>
         <h3 class="step__title" data-en="Diagnosis">Diagnóstico</h3>
-        <p class="step__text" data-en="We map the business, the current brand, the processes and the rules — from positioning to system.">Entendemos o negócio, a marca atual, os processos e as regras — de posicionamento a sistema.</p>
+        <p class="step__text" data-en="Business, current brand, processes.">Negócio, marca atual, processos.</p>
       </li>
       <li class="step">
         <span class="step__number">02</span>
         <h3 class="step__title" data-en="Scope &amp; schedule">Escopo &amp; cronograma</h3>
-        <p class="step__text" data-en="Two weeks to formalise positioning, narrative, screens, modules and a clear order of execution for both fronts — the reference for everything that follows.">Duas semanas para formalizar posicionamento, narrativa, telas, módulos e uma ordem clara de execução para as duas frentes — a referência de tudo que vem depois.</p>
+        <p class="step__text" data-en="Positioning, screens, order of execution.">Posicionamento, telas, ordem de execução.</p>
       </li>
       <li class="step">
         <span class="step__number">03</span>
         <h3 class="step__title" data-en="Incremental build">Construção incremental</h3>
-        <p class="step__text" data-en="Brand and system evolve in parallel, with frequent validations to avoid rework and keep both aligned.">Marca e sistema evoluem em paralelo, com validações frequentes para evitar retrabalho e manter tudo alinhado.</p>
+        <p class="step__text" data-en="Brand and system evolve in parallel.">Marca e sistema evoluem em paralelo.</p>
       </li>
       <li class="step">
         <span class="step__number">04</span>
         <h3 class="step__title" data-en="Launch &amp; evolution">Entrega &amp; evolução</h3>
-        <p class="step__text" data-en="We publish, watch real usage and adjust — with a warranty window and continuous 30-day evolution cycles on demand.">Publicamos, acompanhamos o uso real e ajustamos — com janela de garantia e ciclos de evolução contínua de 30 dias sob demanda.</p>
+        <p class="step__text" data-en="We publish, follow up, adjust.">Publicamos, acompanhamos, ajustamos.</p>
       </li>
     </ol>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════ DOSSIÊ 06 · TECNOLOGIA -->
-<section class="section section--deep" id="stack">
-  <div class="container">
-    <div class="section-head section-head--tight">
-      <div>
-        <p class="eyebrow" data-en="Dossier 06 — Technology">Dossiê 06 — Tecnologia</p>
-        <h2 class="section-title section-title--wide" data-en="Chosen per project, never by fashion.">Escolhida por projeto, nunca por moda.</h2>
-      </div>
-      <p class="section-intro" data-en="What matters is delivering fast, secure, maintainable systems ready to grow — with authentication, role-based permissions, automatic backup and LGPD compliance.">O que importa é entregar sistemas rápidos, seguros, fáceis de manter e preparados para crescer — com autenticação, permissões por perfil, backup automático e conformidade com a LGPD.</p>
-    </div>
-
-    <div class="rule-grid rule-grid--3">
-      <article class="stack-card">
-        <p class="stack-card__label">Front-end</p>
-        <ul class="stack-card__list"><li>React</li><li>Next.js</li><li>TypeScript</li><li>Tailwind</li></ul>
-      </article>
-      <article class="stack-card">
-        <p class="stack-card__label" data-en="Data &amp; back-end">Dados &amp; back-end</p>
-        <ul class="stack-card__list"><li>Supabase</li><li>PostgreSQL</li><li>Firebase</li><li>Realtime / APIs</li></ul>
-      </article>
-      <article class="stack-card">
-        <p class="stack-card__label" data-en="Infrastructure">Infraestrutura</p>
-        <ul class="stack-card__list"><li>Vercel</li><li>Cloudflare</li><li>GitHub</li><li data-en="Staging + production">Homologação + produção</li></ul>
-      </article>
-      <article class="stack-card">
-        <p class="stack-card__label" data-en="Analysis, AI &amp; calculation">Análise, IA &amp; cálculo</p>
-        <ul class="stack-card__list"><li>Python · Jupyter</li><li>NumPy · SciPy</li><li>ECharts</li><li>LLM / IA</li><li>Three.js · .NET MAUI</li></ul>
-      </article>
-      <article class="stack-card">
-        <p class="stack-card__label" data-en="Security">Segurança</p>
-        <ul class="stack-card__list"><li data-en="Authentication">Autenticação</li><li data-en="Role-based permissions">Permissões por perfil</li><li data-en="Automatic backup">Backup automático</li><li data-en="LGPD compliance">Conformidade LGPD</li></ul>
-      </article>
-      <article class="stack-card">
-        <p class="stack-card__label" data-en="Multiplatform">Multiplataforma</p>
-        <ul class="stack-card__list"><li data-en="Web">Web</li><li>Mobile</li><li>Desktop</li><li data-en="Chosen per user routine">Escolhida pela rotina do usuário</li></ul>
-      </article>
-    </div>
   </div>
 </section>
 
@@ -1542,17 +1946,58 @@ button {
 <section class="contact" id="contato">
   <div class="container contact__inner">
     <div class="contact__main">
-      <p class="eyebrow" data-en="Contact">Contato</p>
+      <p class="eyebrow" data-en="Dossier 06 — Contact">Dossiê 06 — Contato</p>
       <h2 class="contact__title" data-en="Shall we build your brand and the system behind it?">Vamos construir sua marca e o sistema por trás dela?</h2>
-      <p class="contact__text" data-en="Tell us where your business stands today. We reply within one business day with the next steps.">Conte um pouco sobre o momento do seu negócio. Respondemos em até 1 dia útil com os próximos passos.</p>
+      <p class="contact__text" data-en="Tell us a bit about where your business stands. We reply within one business day.">Conte um pouco sobre o momento do seu negócio. Respondemos em até 1 dia útil.</p>
+
+      <div class="contact__links">
+        <a href="https://wa.me/5511969041800?text=Ol%C3%A1%2C%20vi%20o%20portf%C3%B3lio%20e%20quero%20conversar%20sobre%20um%20projeto." target="_blank" rel="noopener" data-en="WhatsApp — talk now">WhatsApp — falar agora</a>
+        <!-- TODO: confirmar o endereço definitivo antes de divulgar (o domínio amaralesilva.com ainda não está ativo). -->
+        <a href="mailto:contato@amaralesilva.com">contato@amaralesilva.com</a>
+        <span class="contact__note" data-en="São Paulo · projects run remotely across Brazil and abroad">São Paulo · projetos conduzidos remotamente no Brasil e fora</span>
+      </div>
+
+      <div class="qr">
+        <!-- QR: salvar em /img/qr.svg (ou .png) apontando para o site ou o WhatsApp. -->
+        <figure class="qr__box">
+          <img src="/img/qr.svg" alt="QR code" onerror="this.parentNode.classList.add('is-empty')" />
+          <figcaption data-en="QR code<br>physical<br>materials">QR code<br>materiais<br>físicos</figcaption>
+        </figure>
+        <div>
+          <p class="qr__label" data-en="Physical use">Uso físico</p>
+          <p class="qr__text" data-en="Cards, badges, proposals — points to the site or WhatsApp.">Cartão, crachás, propostas — aponta pro site ou WhatsApp.</p>
+        </div>
+      </div>
     </div>
 
-    <div class="contact__links">
-      <a href="https://wa.me/5511969041800?text=Ol%C3%A1%2C%20vi%20o%20portf%C3%B3lio%20e%20quero%20conversar%20sobre%20um%20projeto." target="_blank" rel="noopener">WhatsApp — (11) 96904-1800</a>
-      <!-- TODO: confirmar o endereço definitivo antes de divulgar (o domínio amaralesilva.com ainda não está ativo). -->
-      <a href="mailto:contato@amaralesilva.com">contato@amaralesilva.com</a>
-      <span class="contact__note" data-en="São Paulo · projects run remotely across Brazil and abroad">São Paulo · projetos conduzidos remotamente no Brasil e fora</span>
-    </div>
+    <form class="lead" id="lead-form" novalidate>
+      <p class="lead__title" data-en="Start a conversation">Iniciar conversa</p>
+
+      <label class="field">
+        <span class="field__label" data-en="Name">Nome</span>
+        <input class="field__input" type="text" name="nome" autocomplete="name" required />
+      </label>
+      <label class="field">
+        <span class="field__label" data-en="Company">Empresa</span>
+        <input class="field__input" type="text" name="empresa" autocomplete="organization" />
+      </label>
+      <label class="field field--select">
+        <span class="field__label" data-en="What you need">O que você precisa</span>
+        <select class="field__input" name="precisa">
+          <option value="marca" data-en="Brand &amp; branding">Marca &amp; branding</option>
+          <option value="sistema" data-en="System &amp; technology">Sistema &amp; tecnologia</option>
+          <option value="ambos" data-en="Both">As duas coisas</option>
+          <option value="nao-sei" data-en="Not sure yet">Ainda não sei</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="field__label" data-en="Message">Mensagem</span>
+        <textarea class="field__input" name="mensagem" rows="4"></textarea>
+      </label>
+
+      <button type="submit" class="lead__submit" data-en="Send">Enviar</button>
+      <p class="lead__hint" data-en="Opens WhatsApp with your message ready to send.">Abre o WhatsApp com a mensagem pronta pra enviar.</p>
+    </form>
   </div>
 </section>
 
@@ -1688,38 +2133,92 @@ button {
 
   window.addEventListener('popstate', function () { applyLang(langFromLocation()); });
 
-  /* ─── Menu de navegação (abaixo de 860px) ─────────────────────── */
-  var toggle = document.getElementById('nav-toggle');
-  var nav = document.getElementById('site-nav');
+  /* ─── Constelação do hero ─────────────────────────────────────────
+     Nós e arestas gerados com semente fixa (mesmo desenho a cada
+     visita): ocre à esquerda, azul à direita. Redesenha ao
+     redimensionar, pois o SVG cobre a seção inteira em pixels.
+     ───────────────────────────────────────────────────────────────── */
+  var net = document.getElementById('hero-net');
 
-  function closeNav() {
-    if (!toggle || !nav) return;
-    nav.removeAttribute('data-open');
-    toggle.setAttribute('aria-expanded', 'false');
+  function seeded(seed) {
+    return function () {
+      seed = (seed * 1664525 + 1013904223) % 4294967296;
+      return seed / 4294967296;
+    };
   }
 
-  if (toggle && nav) {
-    toggle.addEventListener('click', function () {
-      var open = nav.getAttribute('data-open') === 'true';
-      if (open) closeNav();
-      else {
-        nav.setAttribute('data-open', 'true');
-        toggle.setAttribute('aria-expanded', 'true');
+  function drawNet() {
+    if (!net) return;
+    var w = net.clientWidth, h = net.clientHeight;
+    if (!w || !h) return;
+
+    var rnd = seeded(20260904);
+    var count = Math.max(18, Math.min(42, Math.round(w / 36)));
+    var reach = Math.min(w, h) * 0.32;
+    var pts = [], parts = [], i, j;
+
+    for (i = 0; i < count; i++) {
+      var x = rnd() * w, y = rnd() * h;
+      pts.push({ x: x, y: y, tone: x < w * 0.45 ? 'ochre' : 'blue', r: rnd() < 0.35 ? 4 : 2.5 });
+    }
+
+    for (i = 0; i < count; i++) {
+      for (j = i + 1; j < count; j++) {
+        var dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d >= reach) continue;
+        var tone = pts[i].tone === pts[j].tone ? pts[i].tone : 'mix';
+        parts.push('<line class="net__edge net__edge--' + tone + '" x1="' + pts[i].x.toFixed(1) + '" y1="' + pts[i].y.toFixed(1) +
+          '" x2="' + pts[j].x.toFixed(1) + '" y2="' + pts[j].y.toFixed(1) +
+          '" style="opacity:' + (0.1 + 0.45 * (1 - d / reach)).toFixed(2) + '"/>');
       }
+    }
+    pts.forEach(function (p) {
+      parts.push('<circle class="net__node net__node--' + p.tone + '" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + p.r + '"/>');
     });
 
-    nav.addEventListener('click', function (event) {
-      if (event.target.closest('a')) closeNav();
-    });
+    net.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    net.innerHTML = parts.join('');
+  }
 
-    document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') closeNav();
-    });
+  drawNet();
 
-    window.addEventListener('resize', function () {
-      if (window.innerWidth >= 860) closeNav();
+  /* ─── Formulário de contato → WhatsApp com a mensagem montada ── */
+  var form = document.getElementById('lead-form');
+  if (form) {
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var en = current === 'en';
+      var nome = form.nome.value.trim();
+      var empresa = form.empresa.value.trim();
+      var precisa = form.precisa.options[form.precisa.selectedIndex].textContent.trim();
+      var mensagem = form.mensagem.value.trim();
+      if (!nome) { form.nome.focus(); return; }
+
+      var linhas = en
+        ? ['Hi, I came from the Amaral & Silva site.', 'Name: ' + nome, empresa ? 'Company: ' + empresa : '', 'Need: ' + precisa, mensagem]
+        : ['Olá, vim pelo site da Amaral & Silva.', 'Nome: ' + nome, empresa ? 'Empresa: ' + empresa : '', 'Preciso de: ' + precisa, mensagem];
+      var texto = linhas.filter(Boolean).join('\n');
+      window.open('https://wa.me/5511969041800?text=' + encodeURIComponent(texto), '_blank', 'noopener');
     });
   }
+
+  /* ─── Casos: abrir / fechar detalhes ──────────────────────────── */
+  document.querySelectorAll('.case__toggle').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var panel = document.getElementById(btn.getAttribute('aria-controls'));
+      if (!panel) return;
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      panel.hidden = open;
+    });
+  });
+
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(drawNet, 150);
+  });
 })();
 </script>
 
