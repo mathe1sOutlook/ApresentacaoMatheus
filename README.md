@@ -16,6 +16,8 @@ A prova social roda em marquee.
 
 ```
 index.html      site completo (marcação + <style> + <script>, sem build)
+en/index.html   versão inglesa pré-renderizada (gerada, ver "Idiomas")
+scripts/        build-en.mjs, gerador do en/index.html (só desenvolvimento)
 favicon.svg     "&" em ocre sobre fundo escuro
 og.png, og-en.png  imagem de compartilhamento (1200×630) em PT e EN
 fonts/          woff2 variáveis (latin + latin-ext) usadas pelo site
@@ -23,8 +25,11 @@ img/qr.svg      QR do site para a caixa "uso físico"; img/qr-print.svg é a
                 versão preto-no-branco para cartão, crachá e proposta
 robots.txt      libera o site, bloqueia as propostas e o /admin
 sitemap.xml     / e /en com hreflang
-vercel.json     rewrites (inclui /en e /admin) e noindex das propostas e do admin
-proposta-mediaportal-*/   propostas privadas, fora do índice
+vercel.json     rewrites (/en, /admin, propostas), noindex das propostas e do
+                admin, cache longo para /fonts. Não há catch-all: caminho que
+                não existe responde 404 (antes devolvia o index inteiro)
+.vercelignore   o que não sobe para a Vercel (router PHP local, scripts/)
+proposta-mediaportal-*/   duas propostas privadas para a Media Portal, fora do índice
 admin/          painel interno da dupla (CRM, financeiro, agenda, tarefas)
 ```
 
@@ -35,10 +40,19 @@ licença OFL) são servidas de `/fonts`, sem chamada ao Google Fonts.
 ## Idiomas
 
 O idioma vive na URL — `/` é PT-BR e `/en` é inglês (em `file://` o fallback é
-`?lang=en`). Cada nó traduzível carrega o texto em inglês no atributo `data-en`;
-o português é o próprio conteúdo do HTML. O script troca `innerHTML`, `<html
+`?lang=en`). Cada nó traduzível carrega o texto em inglês no atributo `data-en`
+(atributos usam `data-en-href`, `data-en-alt`, `data-en-aria-label`); o
+português é o próprio conteúdo do HTML. O script troca `innerHTML`, `<html
 lang>`, `<title>`, a meta description, o canonical e as tags Open Graph, e usa
 `history.pushState`, então o botão voltar funciona.
+
+`/en` é **pré-renderizado**: `en/index.html` é gerado por
+`node scripts/build-en.mjs` (precisa do Playwright, só em desenvolvimento) com
+o `<head>`, o conteúdo e o JSON-LD já em inglês, porque robôs de
+compartilhamento e buscadores não executam JS. O PT de cada nó fica guardado
+em `data-pt`, e o script continua trocando de idioma sem recarregar.
+**Sempre que editar o `index.html`, rode o script e versione o `en/index.html`
+junto.**
 
 Para editar uma frase, mude os dois lados: o texto no HTML (PT) e o `data-en`
 (EN). Se um dia o site virar Next.js, esses pares alimentam direto os
@@ -50,9 +64,12 @@ O "Iniciar conversa" em `#contato` faz duas coisas ao enviar: abre o WhatsApp
 com a mensagem montada e grava o lead na tabela `amaralesilva_leads` do
 Supabase (projeto `mApps`), via REST com a chave publicável. A política RLS
 permite ao papel anônimo apenas INSERT com `source = 'site'` e
-`status = 'novo'`; leitura e edição só para membros, pela tela **Leads do
-site** do painel `/admin`, que também converte o lead em cliente com um
-clique. Um campo-isca (`website`) barra robôs simples.
+`status = 'novo'`, e só nas colunas que o formulário preenche; um trigger
+limita a uma linha por requisição e a 30 leads por 10 minutos. Leitura e
+edição só para membros, pela tela **Leads do site** do painel `/admin`, que
+também converte o lead em cliente com um clique. Um campo-isca (`website`)
+barra robôs simples, e o formulário avisa que os dados servem só para
+responder ao contato (o campo de contato aceita e-mail ou WhatsApp).
 
 ## Seções
 
@@ -115,7 +132,8 @@ Google já está ativo no projeto.)
   `/img/projetos/` (amwc, ame-tom-de-voz, istoe, nog, visionone, gipsyy,
   fundacalc, flora), todos `.jpg` em paisagem. Basta salvar o arquivo com esse
   nome; enquanto ele não existe, o `onerror` do `<img>` mostra a moldura
-  tracejada "aguardando". Quando as imagens chegarem, exporte em WebP (ou AVIF)
+  tracejada "aguardando" (as imagens ausentes respondem 404, que é barato).
+  Quando as imagens chegarem, exporte em WebP (ou AVIF)
   com largura 1600 px para as capas e 800 px para os cards; o nome do arquivo
   pode manter `.jpg` ou trocar a extensão no HTML.
 - **E-mail** — `contato@amaralesilva.com` veio do design como provisório e o

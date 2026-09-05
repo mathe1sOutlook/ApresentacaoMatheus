@@ -370,7 +370,8 @@ body.drawer-open { overflow: hidden; }
 .rowlist__sub { font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft); margin-top: 1px; overflow-wrap: anywhere; }
 .rowlist li.is-late .rowlist__when { color: var(--red); }
 .empty { padding: 22px 18px; color: var(--ink-soft); font-size: 13.5px; }
-.tbl tr.is-new td:first-child { box-shadow: inset 3px 0 0 var(--blue); }
+.tbl tr.is-target td { background: var(--ochre-soft, #F3E9D2); }
+tr.is-new td:first-child { box-shadow: inset 3px 0 0 var(--blue); }
 .lead-status { font: inherit; font-size: 12.5px; padding: 4px 6px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); }
 
 /* ─── Chips de estado ────────────────────────────────────────────── */
@@ -793,7 +794,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 <div class="toast" id="toast" role="status"></div>
 <div class="chart-tip" id="chart-tip"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.js" integrity="sha384-ysv13JVP3fufiEXfjML9OdCa/rRbMJvUBOWyor82wfuK8INNZAvmbxHgKIHi+oqz" crossorigin="anonymous"></script>
 <script>
 'use strict';
 
@@ -889,13 +890,17 @@ const LEAD_STATUS_LABEL = { novo: 'Novo', em_contato: 'Em contato', convertido: 
 const LEAD_NEED_LABEL = { marca: 'Marca & branding', sistema: 'Sistema & tecnologia', ambos: 'As duas coisas', 'nao-sei': 'Ainda não sabe' };
 const leadById = (id) => state.leads.find((l) => l.id === id) || null;
 /* contato do lead vira link: e-mail → mailto, número → wa.me */
+/* Contato vem do formulário público: só vira link quando tem formato seguro
+   (e-mail sem ?/&, que injetariam cc/bcc/body; telefone só dígitos). */
 const leadContactLink = (c) => {
   const v = String(c || '').trim();
   if (!v) return '';
-  if (/@/.test(v)) return `<a href="mailto:${esc(v)}">${esc(v)}</a>`;
+  if (/^[^\s@?&#]+@[^\s@?&#]+\.[^\s@?&#]+$/.test(v)) return `<a href="mailto:${encodeURIComponent(v)}">${esc(v)}</a>`;
+  if (/@/.test(v)) return esc(v);
   const digits = v.replace(/\D/g, '');
-  if (digits.length >= 10) return `<a href="https://wa.me/${digits.length <= 11 ? '55' + digits : digits}" target="_blank" rel="noopener">${esc(v)}</a>`;
-  return esc(v);
+  if (digits.length < 10 || digits.length > 15) return esc(v);
+  const intl = v.startsWith('+') || v.startsWith('00') || digits.length > 11;
+  return `<a href="https://wa.me/${intl ? digits.replace(/^00/, '') : '55' + digits}" target="_blank" rel="noopener">${esc(v)}</a>`;
 };
 
 const projById   = (id) => state.projects.find((p) => p.id === id) || null;
@@ -1047,6 +1052,8 @@ function renderApp() {
 function afterRender(route) {
   const chart = $('#fin-chart');
   if (chart) bindChartTooltip(chart);
+  const target = route.name === 'leads' && route.id ? $('#lead-' + route.id) : null;
+  if (target) target.scrollIntoView({ block: 'center' });
 }
 
 document.addEventListener('change', (e) => {
@@ -1230,12 +1237,12 @@ VIEWS.crm = function () {
 /* ═══ Leads do site ════════════════════════════════════════════════
    Vêm do formulário público (#contato) via INSERT anônimo no Supabase.
    Aqui a dupla marca o andamento e converte em cliente com um clique. */
-VIEWS.leads = function () {
+VIEWS.leads = function (route) {
   const filter = ui.leadFilter || 'abertos';
   const list = state.leads.filter((l) => filter === 'todos' ? true : filter === 'abertos' ? (l.status === 'novo' || l.status === 'em_contato') : l.status === filter);
   const rows = list.map((l) => {
     const cli = l.client_id ? clientById(l.client_id) : null;
-    return `<tr class="${l.status === 'novo' ? 'is-new' : ''}">
+    return `<tr class="${l.status === 'novo' ? 'is-new' : ''} ${route && route.id === l.id ? 'is-target' : ''}" ${route && route.id === l.id ? 'id="lead-' + l.id + '"' : ''}>
       <td class="mono" style="font-size:11.5px;white-space:nowrap">${fmtDate(toISODate(new Date(l.created_at)))}<br /><span class="soft">${fmtTime(l.created_at)} · ${esc(l.lang.toUpperCase())}</span></td>
       <td><b>${esc(l.name)}</b>${l.company ? `<br /><span class="mono soft" style="font-size:11px">${esc(l.company)}</span>` : ''}</td>
       <td class="mono" style="font-size:12px">${leadContactLink(l.contact) || '<span class="soft">—</span>'}</td>
@@ -1966,7 +1973,15 @@ function clientModal(c, prefill, fromLeadId) {
     return mutate(async () => {
       const { data, error } = await sb.from(TB('clients')).insert(row).select('id').single();
       if (error) throw error;
-      if (fromLeadId) await dbUpdate('leads', fromLeadId, { status: 'convertido', client_id: data.id });
+      if (fromLeadId) {
+        try {
+          await dbUpdate('leads', fromLeadId, { status: 'convertido', client_id: data.id });
+        } catch (err) {
+          /* compensação: não deixa cliente órfão nem lead duplicável */
+          await sb.from(TB('clients')).delete().eq('id', data.id);
+          throw err;
+        }
+      }
     }, fromLeadId ? 'Lead convertido em cliente.' : 'Cliente cadastrado.');
   });
 }
@@ -2206,7 +2221,7 @@ const ACTIONS = {
 
   newClient: () => { closeDrawer(); clientModal(); },
   leadFilter: (el) => { ui.leadFilter = el.dataset.filter; renderApp(); },
-  openLead: () => { location.hash = '#/leads'; },
+  openLead: (el) => { ui.leadFilter = 'abertos'; location.hash = '#/leads/' + (el?.dataset?.id || ''); },
   leadStatus: (el) => {
     const id = el.dataset.id, status = el.value;
     mutate(() => dbUpdate('leads', id, { status }), 'Lead atualizado.');
@@ -2304,6 +2319,7 @@ const ACTIONS = {
 document.addEventListener('click', (e) => {
   const el = e.target.closest('[data-action]');
   if (!el) return;
+  if (el.tagName === 'SELECT') return; /* selects com data-action respondem a 'change' */
   /* reunião dentro de célula de dia: o clique mais interno vence */
   if (el.dataset.action === 'newMeeting' && e.target.closest('.cal__evt')) return;
   if (el.tagName === 'A' && el.getAttribute('href') === '#') e.preventDefault();
