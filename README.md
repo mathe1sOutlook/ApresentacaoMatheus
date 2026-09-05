@@ -18,6 +18,9 @@ A prova social roda em marquee.
 index.html      site completo (marcação + <style> + <script>, sem build)
 favicon.svg     "&" em ocre sobre fundo escuro
 og.png, og-en.png  imagem de compartilhamento (1200×630) em PT e EN
+fonts/          woff2 variáveis (latin + latin-ext) usadas pelo site
+img/qr.svg      QR do site para a caixa "uso físico"; img/qr-print.svg é a
+                versão preto-no-branco para cartão, crachá e proposta
 robots.txt      libera o site, bloqueia as propostas e o /admin
 sitemap.xml     / e /en com hreflang
 vercel.json     rewrites (inclui /en e /admin) e noindex das propostas e do admin
@@ -26,7 +29,8 @@ admin/          painel interno da dupla (CRM, financeiro, agenda, tarefas)
 ```
 
 Sem etapa de build e sem dependências: é HTML estático servido direto pela
-Vercel, como o site anterior. As fontes vêm do Google Fonts.
+Vercel, como o site anterior. As fontes (Fraunces, Inter, IBM Plex Mono —
+licença OFL) são servidas de `/fonts`, sem chamada ao Google Fonts.
 
 ## Idiomas
 
@@ -101,12 +105,19 @@ Google já está ativo no projeto.)
 - **Fotos da dupla** — os avatares em `#dupla` apontam para `/img/bruno.jpg` e
   `/img/matheus.jpg` (quadradas, 400×400 ou mais). Enquanto o arquivo não
   existe, a moldura tracejada "foto aqui" aparece no lugar.
+- **Logos da faixa "já passaram por essas mãos"** — `/img/logos/<slug>.svg`
+  (corning, americanas, quintoandar, mediaportal, tvcultura, informa, gipsyy),
+  monocromáticos; o CSS pinta de creme. Sem o arquivo, fica o nome em texto.
+- **Vercel Web Analytics** — o site já carrega `/_vercel/insights/script.js`;
+  só começa a contar depois de ativar *Analytics* no projeto na Vercel.
 - **Imagens dos casos e projetos** — cada card já aponta para um arquivo em
   `/img/casos/` (mediaportal, mindminers, ame-x, corning, genma) e em
   `/img/projetos/` (amwc, ame-tom-de-voz, istoe, nog, visionone, gipsyy,
   fundacalc, flora), todos `.jpg` em paisagem. Basta salvar o arquivo com esse
   nome; enquanto ele não existe, o `onerror` do `<img>` mostra a moldura
-  tracejada "aguardando".
+  tracejada "aguardando". Quando as imagens chegarem, exporte em WebP (ou AVIF)
+  com largura 1600 px para as capas e 800 px para os cards; o nome do arquivo
+  pode manter `.jpg` ou trocar a extensão no HTML.
 - **E-mail** — `contato@amaralesilva.com` veio do design como provisório e o
   domínio `amaralesilva.com` ainda não está ativo. Confirmar o endereço
   definitivo antes de divulgar o site (o WhatsApp já é um canal real).

@@ -32,11 +32,28 @@
 
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&amp;family=Inter:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet" />
+<!-- Fontes auto-hospedadas (OFL): nada sai para o Google Fonts. As duas do
+     hero entram em preload; o resto carrega com swap. -->
+<link rel="preload" href="/fonts/fraunces-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/fonts/inter-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+<!-- Vercel Web Analytics: só coleta depois de ativado em Project → Analytics;
+     antes disso o script responde 404 e nada acontece. -->
+<script defer src="/_vercel/insights/script.js"></script>
 
 <style>
+/* ═══════════════════════════════════════════════════════════════════
+   Fontes (variáveis, subsets latin + latin-ext)
+   ═══════════════════════════════════════════════════════════════════ */
+@font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 300 600; font-display: swap; src: url('/fonts/fraunces-normal-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 300 600; font-display: swap; src: url('/fonts/fraunces-normal-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 400; font-display: swap; src: url('/fonts/fraunces-italic-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 400; font-display: swap; src: url('/fonts/fraunces-italic-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400 600; font-display: swap; src: url('/fonts/inter-normal-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400 600; font-display: swap; src: url('/fonts/inter-normal-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400 500; font-display: swap; src: url('/fonts/plex-mono-normal-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400 500; font-display: swap; src: url('/fonts/plex-mono-normal-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
 /* ═══════════════════════════════════════════════════════════════════
    AMARAL & SILVA — tokens
    Fundo quase preto, tinta creme, ocre para marca, azul para tecnologia.
@@ -210,7 +227,11 @@ button {
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
+  transition: transform 0.32s ease;
 }
+/* Recolhe ao descer, volta ao subir (script); ganha tela no mobile. */
+.site-header.is-hidden { transform: translateY(-100%); }
+.site-header:focus-within { transform: none; }
 
 .site-header__bar {
   display: flex;
@@ -421,7 +442,18 @@ button {
   width: max-content;
   animation: marquee 40s linear infinite;
 }
-.marquee:hover .marquee__track { animation-play-state: paused; }
+.marquee:hover .marquee__track,
+.marquee.is-paused .marquee__track { animation-play-state: paused; }
+.proof__list li { display: flex; align-items: center; height: 40px; }
+.proof__list img {
+  height: 30px;
+  width: auto;
+  max-width: 200px;
+  opacity: 0.85;
+  /* qualquer logo vira silhueta creme, coerente com a identidade */
+  filter: brightness(0) invert(0.93);
+}
+.proof__list img + span { display: none; }
 .proof__list {
   display: flex;
   gap: 88px;
@@ -925,6 +957,32 @@ button {
 .step__title { font-family: var(--serif); font-size: 26px; font-weight: 600; }
 .step__text { font-size: 17px; color: var(--ink-soft); }
 
+/* ─── WhatsApp flutuante (só telas estreitas, depois do hero) ─────── */
+.wa-float {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 40;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--bg);
+  border: 1px solid var(--ink);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(12px) scale(0.9);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+.wa-float svg { width: 26px; height: 26px; display: block; }
+.wa-float.is-on { opacity: 1; transform: none; pointer-events: auto; }
+.wa-float:hover { background: var(--ochre); border-color: var(--ochre); color: var(--bg); }
+@media (max-width: 1023px) { .wa-float { display: flex; } }
+
 /* ─── Contato + footer ───────────────────────────────────────────── */
 .contact {
   padding: 96px 0;
@@ -987,14 +1045,15 @@ button {
   height: 120px;
   margin: 0;
   border: 1px solid var(--line-strong);
-  background: var(--bg-deep);
+  background: var(--ink);
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 10px;
+  padding: 6px;
 }
 .qr__box img { width: 100%; height: 100%; display: block; }
+.qr__box.is-empty { background: var(--bg-deep); padding: 10px; }
 .qr__box figcaption {
   display: none;
   font-family: var(--mono);
@@ -1282,23 +1341,24 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
     <div class="marquee">
       <div class="marquee__track">
+        <!-- Logos: /img/logos/<slug>.svg (monocromático; o CSS pinta de creme). Sem o arquivo, fica o nome em texto. -->
         <ul class="proof__list">
-          <li>Corning</li>
-          <li>Americanas S/A</li>
-          <li>QuintoAndar</li>
-          <li>Media Portal</li>
-          <li>TV Cultura</li>
-          <li>Informa Markets</li>
-          <li>Gipsyy</li>
+          <li><img src="/img/logos/corning.svg" alt="Corning" onerror="this.remove()" /><span>Corning</span></li>
+          <li><img src="/img/logos/americanas.svg" alt="Americanas S/A" onerror="this.remove()" /><span>Americanas S/A</span></li>
+          <li><img src="/img/logos/quintoandar.svg" alt="QuintoAndar" onerror="this.remove()" /><span>QuintoAndar</span></li>
+          <li><img src="/img/logos/mediaportal.svg" alt="Media Portal" onerror="this.remove()" /><span>Media Portal</span></li>
+          <li><img src="/img/logos/tvcultura.svg" alt="TV Cultura" onerror="this.remove()" /><span>TV Cultura</span></li>
+          <li><img src="/img/logos/informa.svg" alt="Informa Markets" onerror="this.remove()" /><span>Informa Markets</span></li>
+          <li><img src="/img/logos/gipsyy.svg" alt="Gipsyy" onerror="this.remove()" /><span>Gipsyy</span></li>
         </ul>
         <ul class="proof__list" aria-hidden="true">
-          <li>Corning</li>
-          <li>Americanas S/A</li>
-          <li>QuintoAndar</li>
-          <li>Media Portal</li>
-          <li>TV Cultura</li>
-          <li>Informa Markets</li>
-          <li>Gipsyy</li>
+          <li><img src="/img/logos/corning.svg" alt="Corning" onerror="this.remove()" /><span>Corning</span></li>
+          <li><img src="/img/logos/americanas.svg" alt="Americanas S/A" onerror="this.remove()" /><span>Americanas S/A</span></li>
+          <li><img src="/img/logos/quintoandar.svg" alt="QuintoAndar" onerror="this.remove()" /><span>QuintoAndar</span></li>
+          <li><img src="/img/logos/mediaportal.svg" alt="Media Portal" onerror="this.remove()" /><span>Media Portal</span></li>
+          <li><img src="/img/logos/tvcultura.svg" alt="TV Cultura" onerror="this.remove()" /><span>TV Cultura</span></li>
+          <li><img src="/img/logos/informa.svg" alt="Informa Markets" onerror="this.remove()" /><span>Informa Markets</span></li>
+          <li><img src="/img/logos/gipsyy.svg" alt="Gipsyy" onerror="this.remove()" /><span>Gipsyy</span></li>
         </ul>
       </div>
     </div>
@@ -1979,9 +2039,9 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       </div>
 
       <div class="qr">
-        <!-- QR: salvar em /img/qr.svg (ou .png) apontando para o site ou o WhatsApp. -->
+        <!-- /img/qr.svg aponta para o site (utm_source=qr). Para impressão use /img/qr-print.svg (preto no branco). -->
         <figure class="qr__box">
-          <img src="/img/qr.svg" alt="QR code" onerror="this.parentNode.classList.add('is-empty')" />
+          <img src="/img/qr.svg" alt="QR code para amaralesilva.vercel.app" onerror="this.parentNode.classList.add('is-empty')" />
           <figcaption data-en="QR code<br>physical<br>materials">QR code<br>materiais<br>físicos</figcaption>
         </figure>
         <div>
@@ -2032,6 +2092,10 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 </section>
 
 </main>
+
+<a class="wa-float" id="wa-float" href="https://wa.me/5511969041800?text=Ol%C3%A1%2C%20vi%20o%20portf%C3%B3lio%20e%20quero%20conversar%20sobre%20um%20projeto." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2m0 1.67c4.54 0 8.24 3.7 8.24 8.24s-3.7 8.24-8.24 8.24c-1.48 0-2.93-.4-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24M8.53 7.33c-.16 0-.43.06-.66.31-.22.25-.87.86-.87 2.07 0 1.22.89 2.39 1 2.56.14.17 1.76 2.67 4.25 3.73.59.27 1.05.42 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.16-.48-.27-.25-.14-1.47-.74-1.69-.82-.23-.08-.37-.12-.56.12-.16.25-.64.81-.78.97-.15.17-.29.19-.53.07-.26-.13-1.06-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.12-.24-.01-.39.11-.5.11-.11.27-.29.37-.44.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.11-.56-1.35-.77-1.84-.2-.48-.4-.42-.56-.43-.14 0-.3-.01-.47-.01"/></svg>
+</a>
 
 <!-- ═══════════════════════════════════════════════ FOOTER -->
 <footer class="site-footer">
@@ -2244,9 +2308,13 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     }
   }
 
+  var coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+
   function stepNet(now) {
     netState.raf = null;
     var st = netState;
+    /* em telas de toque basta metade dos quadros: menos bateria, mesma sensação */
+    if (coarsePointer && st.last && now - st.last < 30) { st.raf = window.requestAnimationFrame(stepNet); return; }
     var dt = Math.min(48, now - (st.last || now)) / 16.67; /* em frames de 60fps */
     st.last = now;
     var pts = st.pts, m = st.mouse;
@@ -2391,16 +2459,74 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     });
   }
 
-  /* ─── Casos: abrir / fechar detalhes ──────────────────────────── */
+  /* ─── Casos: abrir / fechar detalhes com altura animada ───────── */
+  function expandPanel(panel) {
+    panel.hidden = false;
+    if (!motionOK || !panel.animate) return;
+    var h = panel.scrollHeight;
+    panel.style.overflow = 'hidden';
+    panel.animate([{ height: '0px', opacity: 0 }, { height: h + 'px', opacity: 1 }], { duration: 380, easing: 'ease' })
+      .onfinish = function () { panel.style.overflow = ''; };
+  }
+  function collapsePanel(panel) {
+    if (!motionOK || !panel.animate) { panel.hidden = true; return; }
+    var h = panel.scrollHeight;
+    panel.style.overflow = 'hidden';
+    panel.animate([{ height: h + 'px', opacity: 1 }, { height: '0px', opacity: 0 }], { duration: 300, easing: 'ease' })
+      .onfinish = function () { panel.hidden = true; panel.style.overflow = ''; };
+  }
   document.querySelectorAll('.case__toggle').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var panel = document.getElementById(btn.getAttribute('aria-controls'));
       if (!panel) return;
       var open = btn.getAttribute('aria-expanded') === 'true';
       btn.setAttribute('aria-expanded', String(!open));
-      panel.hidden = open;
+      if (open) collapsePanel(panel); else expandPanel(panel);
     });
   });
+
+  /* ─── Header recolhe ao descer, volta ao subir ────────────────── */
+  var header = document.querySelector('.site-header');
+  var lastY = window.pageYOffset, scrollTick = false;
+  function onScroll() {
+    scrollTick = false;
+    var y = window.pageYOffset;
+    if (header) {
+      if (y > 160 && y > lastY + 6) header.classList.add('is-hidden');
+      else if (y < lastY - 6 || y <= 160) header.classList.remove('is-hidden');
+    }
+    if (waFloat) {
+      var pastHero = hero ? y > hero.offsetTop + hero.offsetHeight - 200 : y > 600;
+      waFloat.classList.toggle('is-on', pastHero && !contactVisible);
+    }
+    lastY = y;
+  }
+  window.addEventListener('scroll', function () {
+    if (scrollTick) return;
+    scrollTick = true;
+    window.requestAnimationFrame(onScroll);
+  }, { passive: true });
+
+  /* ─── WhatsApp flutuante: aparece depois do hero, some no contato ─ */
+  var waFloat = document.getElementById('wa-float');
+  var contactVisible = false;
+  var contact = document.getElementById('contato');
+  if (waFloat && contact && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      contactVisible = entries[0].isIntersecting;
+      onScroll();
+    }, { threshold: 0.15 }).observe(contact);
+  }
+  onScroll();
+
+  /* ─── Marquee: pausa enquanto o dedo está sobre a faixa ──────────── */
+  var marquee = document.querySelector('.marquee');
+  if (marquee) {
+    marquee.addEventListener('pointerdown', function () { marquee.classList.add('is-paused'); });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) {
+      marquee.addEventListener(ev, function () { marquee.classList.remove('is-paused'); });
+    });
+  }
 
   var resizeTimer = null;
   window.addEventListener('resize', function () {
