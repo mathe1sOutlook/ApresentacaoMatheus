@@ -234,3 +234,40 @@ create policy "amaralesilva members full access" on public.amaralesilva_leads
 create policy "amaralesilva site inserts leads" on public.amaralesilva_leads
   for insert to anon
   with check (source = 'site' and status = 'novo' and client_id is null);
+
+-- ═══ Migração amaralesilva_leads_hardening ═══
+-- 1) anon só insere as colunas que o formulário preenche (id, status,
+--    client_id, created_at, updated_at e user_agent ficam fora do alcance);
+-- 2) trava por statement: uma linha por requisição e no máximo 30 leads a
+--    cada 10 minutos para o papel anon (anti-flood simples).
+revoke insert on public.amaralesilva_leads from anon;
+grant insert (name, company, contact, need, message, lang, source) on public.amaralesilva_leads to anon;
+
+create or replace function public.amaralesilva_leads_guard()
+returns trigger
+language plpgsql security definer
+set search_path = public
+as $$
+declare
+  n int;
+begin
+  if coalesce(auth.role(), '') <> 'anon' then
+    return null;
+  end if;
+  select count(*) into n from inserted;
+  if n > 1 then
+    raise exception 'one lead per request' using errcode = 'P0001';
+  end if;
+  select count(*) into n from public.amaralesilva_leads
+   where created_at > now() - interval '10 minutes';
+  if n > 30 then
+    raise exception 'too many leads, try again later' using errcode = 'P0001';
+  end if;
+  return null;
+end;
+$$;
+
+create trigger amaralesilva_leads_guard
+  after insert on public.amaralesilva_leads
+  referencing new table as inserted
+  for each statement execute function public.amaralesilva_leads_guard();

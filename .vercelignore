@@ -1,0 +1,4 @@
+# só para desenvolvimento local; não vai para a Vercel
+.php-preview-router.php
+scripts/
+README.md

@@ -9,6 +9,14 @@
       "destination": "/proposta-mediaportal-j9dAnRpXIs2Dq6ZIENhQx2FbSDVF/index.html"
     },
     {
+      "source": "/proposta-mediaportal-R7kP3vN8sQ2mL5xT9cF4hJ6wZ1aB",
+      "destination": "/proposta-mediaportal-R7kP3vN8sQ2mL5xT9cF4hJ6wZ1aB/index.html"
+    },
+    {
+      "source": "/proposta-mediaportal-R7kP3vN8sQ2mL5xT9cF4hJ6wZ1aB/(.*)",
+      "destination": "/proposta-mediaportal-R7kP3vN8sQ2mL5xT9cF4hJ6wZ1aB/index.html"
+    },
+    {
       "source": "/admin",
       "destination": "/admin/index.html"
     },
@@ -18,11 +26,7 @@
     },
     {
       "source": "/en",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/en/index.html"
     }
   ],
   "headers": [
@@ -36,6 +40,12 @@
       "source": "/admin(.*)",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    },
+    {
+      "source": "/fonts/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     }
   ]
