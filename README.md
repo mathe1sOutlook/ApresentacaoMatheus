@@ -20,7 +20,8 @@ en/index.html   versão inglesa pré-renderizada (gerada, ver "Idiomas")
 scripts/        build-en.mjs, gerador do en/index.html (só desenvolvimento)
 favicon.svg     "&" em ocre sobre fundo escuro
 og.png, og-en.png  imagem de compartilhamento (1200×630) em PT e EN
-fonts/          woff2 variáveis (latin + latin-ext) usadas pelo site
+fonts/          woff2 variáveis (latin + latin-ext): Fraunces, Inter e IBM Plex
+                Mono para o site; Space Grotesk para a proposta do CRM
 img/qr.svg      QR do site para a caixa "uso físico"; img/qr-print.svg é a
                 versão preto-no-branco para cartão, crachá e proposta
 robots.txt      libera o site, bloqueia as propostas e o /admin
@@ -29,7 +30,8 @@ vercel.json     rewrites (/en, /admin, propostas), noindex das propostas e do
                 admin, cache longo para /fonts. Não há catch-all: caminho que
                 não existe responde 404 (antes devolvia o index inteiro)
 .vercelignore   o que não sobe para a Vercel (router PHP local, scripts/)
-proposta-mediaportal-*/   duas propostas privadas para a Media Portal, fora do índice
+proposta-mediaportal-*/   três propostas privadas para a Media Portal, fora do índice
+                (site, contrato e CRM & Inteligência de Dados)
 admin/          painel interno da dupla (CRM, financeiro, agenda, tarefas)
 ```
 

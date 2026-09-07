@@ -17,6 +17,14 @@
       "destination": "/proposta-mediaportal-R7kP3vN8sQ2mL5xT9cF4hJ6wZ1aB/index.html"
     },
     {
+      "source": "/proposta-mediaportal-crm-gkE7aZiV41L2LYkWDqhXLz7l",
+      "destination": "/proposta-mediaportal-crm-gkE7aZiV41L2LYkWDqhXLz7l/index.html"
+    },
+    {
+      "source": "/proposta-mediaportal-crm-gkE7aZiV41L2LYkWDqhXLz7l/(.*)",
+      "destination": "/proposta-mediaportal-crm-gkE7aZiV41L2LYkWDqhXLz7l/index.html"
+    },
+    {
       "source": "/admin",
       "destination": "/admin/index.html"
     },
