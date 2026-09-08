@@ -324,21 +324,121 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 .telas-nota{margin-top:34px;padding:16px 20px;border:1px dashed var(--line-strong);border-radius:12px;font-size:13.5px;color:var(--dim);max-width:78ch}
 .telas-nota b{color:var(--muted);font-weight:600}
 
-/* ═══ CRONOGRAMA · 3 FASES EM ESCADA ═══ */
-.fases{display:grid;gap:16px}
-.fase{background:var(--panel);border:1px solid var(--line);border-left:2px solid var(--line-strong);border-radius:16px;padding:26px 28px;display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:start}
-.fase:nth-child(1){border-left-color:var(--blue)}
-.fase:nth-child(2){margin-left:26px;border-left-color:var(--blue-light)}
-.fase:nth-child(3){margin-left:52px;border-left-color:var(--orange)}
-.fase .rot{font-family:var(--display);font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);display:block;margin-bottom:9px}
-.fase:nth-child(3) .rot{color:var(--orange-soft)}
-.fase h3{font-size:21px;line-height:1.2;margin-bottom:7px}
-.fase .quando{font-size:12.5px;color:var(--dim)}
-.fase ul{list-style:none;margin:0;padding:0;display:grid;gap:11px}
-.fase li{position:relative;padding-left:24px;font-size:15px;color:var(--muted);line-height:1.5}
-.fase li::before{content:'';position:absolute;left:0;top:8px;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--blue);background:rgba(90,164,242,.18)}
-.fase:nth-child(3) li::before{border-color:var(--orange);background:rgba(242,102,28,.18)}
-@media (max-width:820px){.fase{grid-template-columns:1fr;gap:16px}.fase:nth-child(2),.fase:nth-child(3){margin-left:0}}
+/* ═══ CRONOGRAMA · AS SETE FRENTES NOS TRÊS MESES ═══
+   Substitui o bloco "3 FASES EM ESCADA". As regras .fases/.fase saem inteiras,
+   e com elas o `.fase li em` que ficou lá embaixo, em COMPLEMENTOS.
+
+   O escopo, logo acima, já listou as sete frentes. O que faltava era em que
+   mês cada uma corre, e isso é matriz, não painel: sete linhas (na numeração
+   do escopo, para conferência linha a linha) por três colunas de mês.
+
+   Marcação de tabela de verdade — cabeçalho de coluna é o mês, cabeçalho de
+   linha é a frente —, então quem usa leitor de tela percorre a mesma matriz
+   que o olho vê. A frente que atravessa a virada do mês é um `colspan`, e daí
+   cai o argumento visual da seção: o fio do fim do mês 1 não existe naquela
+   linha, e a barra passa por onde as outras são interrompidas.
+
+   Uma cor nas barras, o azul de dado técnico do manual: as sete frentes não
+   são sete categorias, são a mesma coisa acontecendo em meses diferentes. O
+   laranja é gasto uma vez, na entrega em operação e no losango que fecha o
+   mês 3. Sem painel: o gráfico é desenhado sobre o fundo da seção, e a moldura
+   são os próprios fios do eixo. */
+.crono-mapa{margin:0}
+.crono{--rot:290px;width:100%;table-layout:fixed;border-collapse:collapse}
+.crono th,.crono td{padding:0;text-align:left;font-weight:400;vertical-align:middle}
+.crono-nb{white-space:nowrap}
+
+/* O eixo dos meses. A régua do cabeçalho é o único fio mais forte do gráfico;
+   o resto da grade fica recessivo. O losango do checkpoint senta no cruzamento
+   entre essa régua e o fio que fecha o mês — no alto, onde o olho chega
+   primeiro, e não num rodapé que ninguém lê. A legenda ocupa o canto vazio,
+   na mesma linha de leitura dos três losangos, então uma frase explica as três
+   marcas e nenhuma delas precisa de rótulo próprio. */
+.crono thead th,.crono thead .crono-canto{vertical-align:bottom;border-bottom:1px solid var(--line-strong)}
+.crono thead th{position:relative;padding:0 0 15px 18px;border-left:1px solid var(--line)}
+.crono thead th:last-child{border-right:1px solid var(--line)}
+.crono thead .crono-canto{width:var(--rot);padding:0 26px 15px 0;border-bottom-color:var(--line)}
+/* Recuo pendente em vez de flex: as linhas seguintes alinham pela letra, e o
+   bloco continua encostando no fio de baixo junto com o nome dos meses. */
+.crono-legenda{display:block;padding-left:17px;text-indent:-17px;font-size:12.5px;line-height:1.5;color:var(--muted)}
+.crono-losango{display:inline-block;width:8px;height:8px;margin-right:9px;text-indent:0;transform:rotate(45deg);background:var(--blue);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.crono-fase{display:block;font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:7px}
+.crono-nome{display:block;font-family:var(--display);font-size:16.5px;font-weight:700;letter-spacing:-.015em;line-height:1.2;color:var(--text)}
+.crono-marco{position:absolute;right:-5px;bottom:-5px;width:9px;height:9px;transform:rotate(45deg);background:var(--blue);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.crono-marco.fim{background:var(--orange)}
+
+/* As linhas. O número repete o do escopo: quem acabou de ler as sete frentes
+   reencontra cada uma pelo mesmo par de número e nome. */
+.crono tbody tr{border-top:1px solid var(--line)}
+.crono-rot{display:flex;gap:12px;align-items:baseline;padding:13px 24px 13px 0;font-size:14.5px;line-height:1.4;color:var(--muted)}
+.crono-rot .n{flex:none;width:22px;font-family:var(--display);font-weight:700;font-size:12.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+.crono td.crono-cel{border-left:1px solid var(--line);padding:11px 0}
+.crono td.crono-cel:last-child{border-right:1px solid var(--line)}
+.crono tbody tr:last-child td.crono-cel{border-bottom:1px solid var(--line)}
+/* Barra fina, com 8px de respiro em cada ponta para nunca encostar no fio do
+   mês: o vão é que separa, sem contorno desenhado em volta. */
+.crono-barra{display:block;height:13px;margin-inline:8px;border-radius:4px;background:var(--blue);transform-origin:left center;transition:transform .55s cubic-bezier(.22,.7,.3,1);transition-delay:calc(var(--i,1) * 55ms);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.crono-barra.fim{background:var(--orange)}
+
+/* A entrega não é uma das sete frentes: fica sem número, o texto alinha pelo
+   recuo das outras, o fio de cima é mais forte e a barra é a única laranja. */
+.crono tbody tr.crono-fecho{border-top:1px solid var(--line-strong)}
+.crono-fecho .crono-rot{padding-left:34px;color:var(--text);font-weight:600}
+
+.crono-nota{margin:18px 0 0;font-size:13px;line-height:1.6;color:var(--dim);max-width:80ch}
+.crono-texto{margin-top:40px}
+
+/* As barras crescem da esquerda quando a seção entra em quadro. O esconderijo
+   depende da classe que o próprio script põe em <html>: sem JavaScript o
+   gráfico já nasce desenhado. */
+html.js .reveal:not(.vis) .crono-barra{transform:scaleX(0)}
+.crono tbody tr:nth-child(1){--i:1}
+.crono tbody tr:nth-child(2){--i:2}
+.crono tbody tr:nth-child(3){--i:3}
+.crono tbody tr:nth-child(4){--i:4}
+.crono tbody tr:nth-child(5){--i:5}
+.crono tbody tr:nth-child(6){--i:6}
+.crono tbody tr:nth-child(7){--i:7}
+.crono tbody tr:nth-child(8){--i:8}
+/* O reset global de movimento zera transição, mas não alcança este transform. */
+@media (prefers-reduced-motion:reduce){html.js .reveal:not(.vis) .crono-barra{transform:none}}
+
+/* Escopadas em `screen` de propósito: a caixa de página A4 com as margens de
+   12mm mede ~703px e cairia em duas destas faixas. No papel vale o bloco de
+   impressão, que mantém a matriz lado a lado. */
+@media screen and (max-width:1020px){.crono{--rot:250px}.crono-nome{font-size:15.5px}}
+@media screen and (max-width:860px){
+  .crono{--rot:196px}
+  .crono thead th{padding-left:13px}
+  .crono thead .crono-canto{padding-right:20px}
+  .crono-rot{font-size:13.5px;gap:10px;padding-right:16px}
+  .crono-nome{font-size:14.5px}
+  .crono-legenda{font-size:12px}
+}
+/* Abaixo de 660px a coluna de rótulos não cabe ao lado de três meses. A matriz
+   se desmonta e se remonta: o nome da frente sobe para uma linha inteira e a
+   faixa dos três meses fica embaixo dele, na largura toda. A legenda faz o
+   mesmo e vira a primeira linha do cabeçalho. Continua o mesmo gráfico, com a
+   mesma leitura de distribuição — inclusive o colspan, refeito em `grid`. */
+@media screen and (max-width:660px){
+  .crono,.crono thead,.crono tbody{display:block}
+  .crono tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .crono thead .crono-canto{display:block;grid-column:1/-1;width:auto;padding:0 0 17px;border-bottom:0}
+  .crono thead th{padding:0 0 12px 10px}
+  .crono-fase{font-size:10px;letter-spacing:.1em;margin-bottom:5px}
+  .crono-nome{font-size:13.5px}
+  .crono tbody tr:first-child{border-top:0}
+  .crono tbody th{grid-column:1/-1}
+  .crono-rot{padding:14px 0 8px;font-size:14px}
+  .crono td.crono-cel{padding:0 0 14px}
+  .crono td.crono-cel.dois{grid-column:span 2}
+  .crono-fecho .crono-rot{padding-left:34px}
+}
+@media screen and (max-width:400px){
+  .crono thead th{padding-left:8px}
+  .crono-barra{margin-inline:6px}
+  .crono-rot{font-size:13.5px}
+}
 
 /* ═══ FICHA TÉCNICA ═══
    Tabela de verdade: é uma lista de fatos, não prosa fatiada em cartões. */
@@ -407,7 +507,7 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
   section{padding:34px 0}
   .sec-cab{break-after:avoid}
   .capa{padding:24px 0 34px}
-  .tela,.fase,.plano,.cartao,.frente,.passos li{break-inside:avoid}
+  .tela,.crono-mapa,.plano,.cartao,.frente,.passos li{break-inside:avoid}
   .telas{gap:30px}
   .chrome{box-shadow:none}
   /* No papel não há para onde rolar: o mockup é reduzido até caber na página,
@@ -420,6 +520,12 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
   .telas-palco.on .telas{grid-auto-flow:row!important;grid-auto-columns:auto!important;gap:30px!important;transform:none!important;transition:none!important}
   .telas-palco.on .tela{padding-inline:0!important}
   .tabela-tec tr,.tabela-tec th,.tabela-tec td{break-inside:avoid}
+  .crono{--rot:200px}
+  .crono-legenda{font-size:9pt}
+  .crono-nome{font-size:10.5pt}
+  .crono-rot{font-size:9.5pt;padding-block:9px}
+  .crono-nota{font-size:9pt}
+  .crono-barra{transform:none!important}
   .reveal{opacity:1!important;transform:none!important}
   a{color:var(--blue)!important}
 }
@@ -428,7 +534,6 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
 .pular{position:absolute;left:-9999px;top:0;z-index:100;background:var(--orange);color:var(--ink);font-weight:700;font-size:14px;padding:12px 20px;border-radius:0 0 9px 0}
 .pular:focus{left:0;color:var(--ink)}
 .chrome-body:focus-visible{outline-offset:-3px}
-.fase li em{font-style:normal;color:var(--dim);font-size:13.5px}
 .rod > p{max-width:46ch}
 .rod-contato{text-align:right}
 @media (max-width:620px){.rod-contato{text-align:left}}
@@ -603,22 +708,76 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
     <div class="wrap">
       <div class="sec-cab reveal">
         <span class="eyebrow">Cronograma</span>
-        <h2 id="t-cronograma">As três fases, mês a mês</h2>
-        <p class="sec-lead">Cada fase termina com uma entrega demonstrável, antes de a seguinte começar. A intenção é que o valor apareça ao longo do caminho, e não só no último mês.</p>
+        <h2 id="t-cronograma">Em que mês cada frente acontece</h2>
       </div>
-      <div class="fases reveal">
-        <article class="fase">
-          <div><span class="rot">Fase 1 · Mês 1</span><h3>Aterração inicial</h3><p class="quando">Inclui as três semanas de levantamento e estruturação da base.</p></div>
-          <ul><li>Auditoria e consolidação completa dos dados existentes <em>(frente 1)</em>.</li><li>Definição da arquitetura do esqueleto do sistema <em>(frente 2)</em>.</li><li>Validação da base tratada como fundação do restante do projeto.</li></ul>
-        </article>
-        <article class="fase">
-          <div><span class="rot">Fase 2 · Mês 2</span><h3>Primeiras telas</h3><p class="quando">30 dias de construção.</p></div>
-          <ul><li>Busca, filtros, ordenação, agrupamento e jornada por conta <em>(frente 2)</em>.</li><li>Primeiras versões dos dashboards e relatórios <em>(frente 3)</em>.</li><li>Estruturação da base de dados inteligente <em>(frente 7)</em>.</li></ul>
-        </article>
-        <article class="fase">
-          <div><span class="rot">Fase 3 · Mês 3</span><h3>Operação e entrega</h3></div>
-          <ul><li>APIs de integração com outras fontes <em>(frente 4)</em>.</li><li>Projeto de disparo de e-mail e CTAs <em>(frente 5)</em>.</li><li>Integração com o site institucional <em>(frente 6)</em>.</li><li>Testes, ajustes finais e entrega em operação.</li></ul>
-        </article>
+
+      <figure class="crono-mapa reveal">
+        <table class="crono">
+          <caption class="oculto">As sete frentes do escopo distribuídas nos três meses do projeto. Cada linha é uma frente e cada coluna é um mês; a marca indica os meses em que aquela frente corre. A última linha, sem número, fecha o projeto.</caption>
+          <thead>
+            <tr>
+              <td class="crono-canto"><span class="crono-legenda"><i class="crono-losango" aria-hidden="true"></i>Checkpoint ao fim de cada mês, com entrega demonstrável antes de a fase seguinte começar.</span></td>
+              <th scope="col"><span class="crono-fase">Fase 1 · Mês 1</span><span class="crono-nome">Aterração inicial</span><i class="crono-marco" aria-hidden="true"></i></th>
+              <th scope="col"><span class="crono-fase">Fase 2 · Mês 2</span><span class="crono-nome">Primeiras telas</span><i class="crono-marco" aria-hidden="true"></i></th>
+              <th scope="col"><span class="crono-fase">Fase 3 · Mês 3</span><span class="crono-nome">Operação e entrega</span><i class="crono-marco fim" aria-hidden="true"></i></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row"><span class="crono-rot"><span class="n">01</span><span>Auditoria e consolidação</span></span></th>
+              <td class="crono-cel"><span class="crono-barra"><span class="oculto">Em curso</span></span></td>
+              <td class="crono-cel"></td>
+              <td class="crono-cel"></td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="crono-rot"><span class="n">02</span><span>Esqueleto do sistema</span></span></th>
+              <td class="crono-cel dois" colspan="2"><span class="crono-barra"><span class="oculto">Em curso</span></span></td>
+              <td class="crono-cel"></td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="crono-rot"><span class="n">03</span><span>Dashboards e relatórios</span></span></th>
+              <td class="crono-cel"></td>
+              <td class="crono-cel"><span class="crono-barra"><span class="oculto">Em curso</span></span></td>
+              <td class="crono-cel"></td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="crono-rot"><span class="n">04</span><span>APIs de integração</span></span></th>
+              <td class="crono-cel"></td>
+              <td class="crono-cel"></td>
+              <td class="crono-cel"><span class="crono-barra"><span class="oculto">Em curso</span></span></td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="crono-rot"><span class="n">05</span><span>Marketing e disparo de <span class="crono-nb">e-mail</span></span></span></th>
+              <td class="crono-cel"></td>
+              <td class="crono-cel"></td>
+              <td class="crono-cel"><span class="crono-barra"><span class="oculto">Em curso</span></span></td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="crono-rot"><span class="n">06</span><span>Integração com o site</span></span></th>
+              <td class="crono-cel"></td>
+              <td class="crono-cel"></td>
+              <td class="crono-cel"><span class="crono-barra"><span class="oculto">Em curso</span></span></td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="crono-rot"><span class="n">07</span><span>Base de dados inteligente</span></span></th>
+              <td class="crono-cel"></td>
+              <td class="crono-cel"><span class="crono-barra"><span class="oculto">Em curso</span></span></td>
+              <td class="crono-cel"></td>
+            </tr>
+            <tr class="crono-fecho">
+              <th scope="row"><span class="crono-rot"><span>Testes, ajustes finais e entrega em operação</span></span></th>
+              <td class="crono-cel"></td>
+              <td class="crono-cel"></td>
+              <td class="crono-cel"><span class="crono-barra fim"><span class="oculto">Em curso</span></span></td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="crono-nota">Cada barra cobre os meses em que aquela frente corre; a escala é mensal e não reparte o esforço dentro do mês. A ordem das linhas é a da numeração do escopo, o que deixa a 07 embaixo de frentes que só começam no mês 3. A última linha fecha o projeto e por isso não recebe número.</p>
+      </figure>
+
+      <div class="corpo crono-texto reveal">
+        <p>O primeiro mês é quase todo levantamento: são três semanas para auditar e consolidar o que já existe. A arquitetura do sistema é desenhada sobre essa base tratada, que fica validada como a fundação do resto do projeto. A frente 02 é a única que atravessa a virada do mês. O que no mês 1 é decisão de arquitetura vira, nos trinta dias seguintes, a tela que se usa todo dia: busca, filtros, ordenação, agrupamento e a jornada de cada conta. Ao lado dela crescem as primeiras versões dos dashboards e a estruturação da base inteligente.</p>
+        <p>As APIs e o disparo de <span class="crono-nb">e-mail</span> entram no terceiro mês, sobre um sistema que já está de pé, e a conexão com o site institucional fecha a entrada de leads no mesmo fluxo do funil. O mês termina em testes e ajustes finais, com o sistema entregue em operação.</p>
       </div>
     </div>
   </section>

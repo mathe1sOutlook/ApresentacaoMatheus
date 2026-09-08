@@ -48,6 +48,12 @@ ele descreve. O que denuncia, e não entra:
 - Travessão como conector principal de toda frase.
 - Tudo em trios, com simetria perfeita.
 - Toda seção com a mesma forma: chapéu + título + frase-resumo + N itens iguais.
+  A frase-resumo em *toda* seção é metade do problema: onde o título já basta,
+  ela sai.
+- **Escada de painéis** — três blocos deslocados, cada um com rótulo, título e
+  uma lista de tópicos. Reagrupa em outra forma o que a seção anterior já disse
+  e esconde a informação que o leitor procura. Se o conteúdo é uma distribuição
+  (o que acontece quando, quanto de cada), é gráfico ou tabela, não painel.
 - Frase que anuncia o que o texto vai fazer: "O essencial para decidir. O
   detalhamento vem depois."
 
@@ -55,13 +61,25 @@ Escreva como um sócio escreve para um cliente que ele conhece: parágrafos de
 tamanhos diferentes, uma ideia por vez, sem métrica uniforme. Prosa onde é
 prosa; lista só onde a informação é mesmo uma lista.
 
-### 3. Não inventar
+### 3. Liberdade para propor a forma
+
+O que o Matheus manda é **direcionamento, não especificação**. Onde a decisão é
+técnica ou de apresentação, o certo é criar: propor a forma que resolve melhor,
+testar mais de uma quando vale a pena, e mostrar a escolhida — não executar ao
+pé da letra o que foi descrito se existe coisa melhor. O que não se inventa é
+fato (regra 4); forma se inventa à vontade.
+
+Antes de desenhar, pergunte que informação a seção precisa entregar. Se a
+resposta é uma distribuição, uma comparação ou uma ordem, o formato é gráfico
+ou tabela — e aí vale carregar a skill `dataviz` e seguir o método dela.
+
+### 4. Não inventar
 
 Nenhum número, prazo, entrega, garantia, integração ou promessa que não esteja
 no material de origem. Número que aparece dentro de um mockup de tela é
 ilustrativo e a página tem de dizer isso por extenso, na própria seção.
 
-### 4. Rota privada
+### 5. Rota privada
 
 Cada proposta fica numa pasta `proposta-<cliente>-<sufixo aleatório>/`, servida
 por um rewrite em `vercel.json`. O prefixo `proposta-` já é bloqueado no
@@ -73,7 +91,7 @@ fora do `sitemap.xml`.
 `/admin`, nem para outra proposta. Quem recebe o endereço vê aquela proposta e
 mais nada.
 
-### 5. A página tem de funcionar sem JavaScript
+### 6. A página tem de funcionar sem JavaScript
 
 Conteúdo escondido por padrão e revelado por script deixa a proposta em branco
 para quem tem JS desligado por política da empresa ou abre o link dentro do
@@ -81,7 +99,7 @@ navegador de um cliente de e-mail. Animação de entrada é bem-vinda, mas o
 esconderijo depende de uma classe que o próprio script põe em `<html>`: sem
 script, nada some.
 
-### 6. Impressão importa
+### 7. Impressão importa
 
 Boa parte dos clientes salva a proposta em PDF. Toda proposta tem botão
 "Salvar em PDF" e um `@media print` que a deixa legível em papel — inclusive
