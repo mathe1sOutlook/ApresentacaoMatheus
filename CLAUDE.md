@@ -104,6 +104,17 @@ convenções que não estão lá:
   em `amaralesilva_payments` e alimentam o Financeiro. Nunca criar linhas lá a
   partir de uma proposta ainda não aceita.
 
+## Material de trabalho
+
+`docs/` guarda briefing, especificação e material de apoio — o que orienta o
+trabalho mas não é o site. Está no `.vercelignore`: **nada em `docs/` vai ao
+ar**. Documento que descreve uma proposta, um cliente ou um valor não pode
+ficar numa pasta servida pela Vercel.
+
+- `docs/briefing-telas-crm.md` — especificação das três telas do CRM da Media
+  Portal: sistema visual, inventário dos controles, o que mudar em cada tela e
+  a tabela de números que amarra as três. É o anexo do prompt do Claude Design.
+
 ## Convenções gerais
 
 - Português do Brasil, no site e nesta documentação.

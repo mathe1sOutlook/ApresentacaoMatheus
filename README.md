@@ -29,7 +29,8 @@ sitemap.xml     / e /en com hreflang
 vercel.json     rewrites (/en, /admin, propostas), noindex das propostas e do
                 admin, cache longo para /fonts. Não há catch-all: caminho que
                 não existe responde 404 (antes devolvia o index inteiro)
-.vercelignore   o que não sobe para a Vercel (router PHP local, scripts/)
+.vercelignore   o que não sobe para a Vercel (router PHP local, scripts/, docs/)
+docs/           material de trabalho interno; não vai para o ar
 proposta-mediaportal-*/   três propostas privadas para a Media Portal, fora do índice
                 (site, contrato e CRM & Inteligência de Dados)
 admin/          painel interno da dupla (CRM, financeiro, agenda, tarefas)
