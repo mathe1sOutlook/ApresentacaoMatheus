@@ -117,18 +117,93 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 .cartao p{font-size:15px;color:var(--muted);line-height:1.58}
 .cartao .det{display:block;margin-top:14px;padding-top:13px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim);font-family:var(--display);font-weight:500}
 
-/* ═══ ESCOPO · 7 FRENTES ═══ */
-.frentes{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr))}
-.frente{background:var(--panel);padding:28px 26px;display:grid;grid-template-columns:44px 1fr;gap:18px;align-items:start;transition:background .2s ease}
-.frente:hover{background:var(--panel-strong)}
-.frente .n{font-family:var(--display);font-weight:700;font-size:15px;line-height:1;color:var(--blue);width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line-blue);border-radius:50%;background:rgba(90,164,242,.08);font-variant-numeric:tabular-nums}
-.frente:last-child .n{color:var(--orange-soft);border-color:rgba(242,102,28,.4);background:rgba(242,102,28,.08)}
-/* A sétima frente é a consolidação das outras seis: ocupa a linha inteira em
-   vez de deixar buraco no fim da grade. */
-.frente:last-child{grid-column:1/-1}
-.frente:last-child p{max-width:80ch}
-.frente h3{font-size:18px;line-height:1.25;margin-bottom:8px}
-.frente p{font-size:14.8px;color:var(--muted);line-height:1.56}
+/* ═══ ESCOPO · AS SETE FRENTES, EM LISTA EDITORIAL ═══
+   Substitui o bloco "ESCOPO · 7 FRENTES". As regras .frentes/.frente saem
+   inteiras, e com elas a exceção do `:last-child` que esticava a sétima.
+
+   A seção afirmava uma relação ("as sete se sustentam umas nas outras") e
+   desenhava sete caixas soltas de mesmo peso, que é o contrário disso. Aqui
+   não há caixa nem fio: número pendente na margem, título, e um parágrafo do
+   comprimento que aquela frente merece — a 02 tem seis coisas dentro e ocupa
+   quatro linhas, a 03 resolve em duas. É a ausência de métrica uniforme que
+   diz que nada foi cortado no mesmo tamanho.
+
+   As duas dependências que o material afirma (a 01 sustenta a 03, a 07
+   sustenta a 04) saem do parágrafo de abertura e viram nota na margem da
+   própria linha. Uma aponta para trás e a outra para a frente, o que impede
+   ler a lista como fila. São as duas únicas que existem no material: as
+   outras cinco margens ficam vazias, e é esse silêncio que prova que nenhuma
+   dependência foi inventada.
+
+   A 07 é o fecho e recebe outro peso — corpo maior, cor mais clara e medida
+   mais larga —, mas nenhum fio e nenhum laranja: esse par pertence ao
+   cronograma logo abaixo, onde marca a linha que NÃO é uma das sete. Usá-lo
+   aqui, na 07, que é uma frente, inverteria o sentido.
+
+   Nada de tempo aqui: em que mês cada frente corre é o gráfico logo abaixo. */
+.esc-lista{--esc-num:56px;--esc-gap:22px;list-style:none;margin:0;padding:0}
+
+/* Três faixas de largura fixa: número pendente · texto na medida de leitura ·
+   margem da nota. A terceira é 30ch e não `1fr` de propósito — com `1fr` ela
+   engolia toda a folga da página e as cinco entradas sem nota abriam uma
+   coluna morta do lado direito, que lê como célula de tabela que não carregou.
+   Fechada em 30ch, a folga que sobra vira margem da página, como num livro.
+   `minmax(0,…)` nas três para o grid nunca empurrar a página na horizontal. */
+.esc-item{display:grid;grid-template-columns:var(--esc-num) minmax(0,64ch) minmax(0,30ch);
+  grid-template-areas:"n tit tit" ". txt liga";
+  column-gap:var(--esc-gap);align-items:baseline;margin-top:34px}
+.esc-item:first-child{margin-top:0}
+
+/* O número aparece aqui pela primeira vez, e por isso é azul, a cor de dado
+   técnico do manual; no cronograma ele se repete em --dim, porque lá já é
+   referência e não apresentação. O tamanho é praticamente o mesmo (13px
+   contra 12,5px) para a coluna ser reconhecível de uma seção à outra. */
+.esc-n{grid-area:n;font-family:var(--display);font-weight:700;font-size:13px;line-height:1;
+  letter-spacing:.1em;color:var(--blue);font-variant-numeric:tabular-nums}
+.esc-tit{grid-area:tit;font-size:19.5px;line-height:1.28;margin:0 0 9px;text-wrap:balance}
+.esc-txt{grid-area:txt;margin:0;font-size:16px;line-height:1.62;color:var(--muted)}
+.esc-nb{white-space:nowrap}
+
+/* A nota da margem. Fio azul cheio (o --line-blue a 35% some sobre o fundo
+   alternado) e tipo do display em corpo menor: precisa ler como aparte em
+   qualquer estado, inclusive empilhada, que é como ela sai no papel. Fica em
+   --muted, e não em --dim: é a informação que a seção existe para entregar,
+   não legenda. */
+.esc-liga{grid-area:liga;margin:0;padding-left:18px;border-left:1px solid var(--blue);
+  font-family:var(--display);font-size:12.5px;font-weight:500;line-height:1.55;
+  letter-spacing:.005em;color:var(--muted)}
+.esc-liga b{font-weight:700;color:var(--blue);font-variant-numeric:tabular-nums}
+
+/* O fecho: só respiro e tipografia. Vem depois de `.esc-item` de propósito —
+   mesma especificidade, ganha por ordem. */
+.esc-fecho{grid-template-areas:"n tit tit" ". txt txt";margin-top:54px}
+.esc-fecho .esc-tit{font-size:22px}
+.esc-fecho .esc-txt{font-size:17px;color:var(--quote);max-width:70ch}
+
+/* As três faixas somam 1071px e a régua do .wrap é `min(100% - 44px,1180px)`:
+   abaixo de 1120px de janela elas param de caber lado a lado sem espremer a
+   nota. Aí a nota desce para debaixo do parágrafo, com o mesmo fio, e o número
+   segue pendente. A caixa de página A4 com as margens de 12mm mede ~704px e
+   cai aqui — é este o layout que sai no PDF, e o bloco de impressão só acerta
+   os corpos. */
+@media (max-width:1120px){
+  .esc-item{grid-template-columns:var(--esc-num) minmax(0,1fr);
+    grid-template-areas:"n tit" ". txt" ". liga"}
+  .esc-fecho{grid-template-areas:"n tit" ". txt"}
+  .esc-txt{max-width:66ch}
+  .esc-liga{margin-top:13px;max-width:62ch}
+}
+/* Abaixo de 480px o recuo pendente custa caro demais na largura: o número
+   sobe para a linha de cima e o texto ocupa tudo. */
+@media (max-width:480px){
+  .esc-item{grid-template-columns:minmax(0,1fr);grid-template-areas:"n" "tit" "txt" "liga"}
+  .esc-fecho{grid-template-areas:"n" "tit" "txt"}
+  .esc-n{margin-bottom:7px}
+  .esc-tit{font-size:17.5px}
+  .esc-fecho .esc-tit{font-size:19px}
+  .esc-fecho .esc-txt{font-size:16.5px}
+  .esc-liga{padding-left:16px}
+}
 
 /* ═══ TELAS (mockups nativos) ═══
    Recriação do handoff do Claude Design com o sistema de classes daqui — o
@@ -507,7 +582,7 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
   section{padding:34px 0}
   .sec-cab{break-after:avoid}
   .capa{padding:24px 0 34px}
-  .tela,.crono-mapa,.plano,.cartao,.frente,.passos li{break-inside:avoid}
+  .tela,.crono-mapa,.plano,.cartao,.esc-item,.passos li{break-inside:avoid}
   .telas{gap:30px}
   .chrome{box-shadow:none}
   /* No papel não há para onde rolar: o mockup é reduzido até caber na página,
@@ -520,6 +595,18 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
   .telas-palco.on .telas{grid-auto-flow:row!important;grid-auto-columns:auto!important;gap:30px!important;transform:none!important;transition:none!important}
   .telas-palco.on .tela{padding-inline:0!important}
   .tabela-tec tr,.tabela-tec th,.tabela-tec td{break-inside:avoid}
+  /* A seção inteira cabe numa folha A4 com as margens de 12mm (~1033px úteis)
+     e é presa ali: sem isto, o chapéu e a frente 01 ficam órfãos no pé da
+     página anterior e as outras seis viram para a seguinte. */
+  #escopo .sec-cab,.esc-lista{break-inside:avoid}
+  .esc-item{margin-top:22px}
+  .esc-n{font-size:9pt}
+  .esc-tit{font-size:13pt;margin-bottom:6px}
+  .esc-txt{font-size:11pt;line-height:1.55}
+  .esc-liga{font-size:9.5pt;margin-top:9px}
+  .esc-fecho{margin-top:34px}
+  .esc-fecho .esc-tit{font-size:14pt}
+  .esc-fecho .esc-txt{font-size:11.5pt}
   .crono{--rot:200px}
   .crono-legenda{font-size:9pt}
   .crono-nome{font-size:10.5pt}
@@ -646,7 +733,7 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
       </div>
     </div>
   </section>
-  <section id="o-sistema" class="alt" aria-labelledby="t-o-sistema" class="alt">
+  <section id="o-sistema" class="alt" aria-labelledby="t-o-sistema">
     <div class="wrap">
       <div class="sec-cab reveal">
         <h2 id="t-o-sistema">O que muda no dia a dia</h2>
@@ -686,22 +773,51 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
       </div>
     </div>
   </section>
-  <section id="escopo" class="alt" aria-labelledby="t-escopo" class="alt">
+  <section id="escopo" class="alt" aria-labelledby="t-escopo">
     <div class="wrap">
       <div class="sec-cab reveal">
         <span class="eyebrow">Escopo</span>
         <h2 id="t-escopo">As sete frentes de entrega</h2>
-        <p class="sec-lead">As sete se sustentam umas nas outras. A auditoria de dados é o que torna os dashboards confiáveis, e a base inteligente é o que faz as integrações valerem alguma coisa.</p>
       </div>
-      <div class="frentes reveal">
-        <article class="frente"><span class="n">01</span><div><h3>Auditoria interna de dados e consolidação</h3><p>Levantamento completo da base atual — histórico, cadastro, CNPJ e todas as informações existentes de cada cliente —, validada, limpa e consolidada em uma fonte única de verdade.</p></div></article>
-        <article class="frente"><span class="n">02</span><div><h3>Esqueleto do sistema</h3><p>Busca, filtros, ordenação e agrupamento sobre toda a base; visão de jornada por conta; módulo de performance comercial; módulo financeiro; e acesso a dados brutos para quem precisa ir além das telas prontas.</p></div></article>
-        <article class="frente"><span class="n">03</span><div><h3>Dashboards e relatórios</h3><p>Painéis e relatórios personalizados, exportáveis em diferentes formatos, para cada nível de leitura: operação, comercial e diretoria.</p></div></article>
-        <article class="frente"><span class="n">04</span><div><h3>APIs de integração</h3><p>Camada para conectar o CRM a outras fontes de dados e sistemas já usados pela Media Portal, de modo que a plataforma cresça sem retrabalho.</p></div></article>
-        <article class="frente"><span class="n">05</span><div><h3>Visão de marketing, performance e disparo de e-mail</h3><p>Projeto do disparo de e-mails da operação comercial, com CTAs, segmentação e cadência alinhados ao plano de reativação já desenhado.</p></div></article>
-        <article class="frente"><span class="n">06</span><div><h3>Integração com o site institucional</h3><p>Conexão direta entre o CRM e o site já existente da Media Portal, unificando a entrada de leads e a leitura do funil comercial em um único fluxo.</p></div></article>
-        <article class="frente"><span class="n">07</span><div><h3>Base de dados inteligente</h3><p>A consolidação de tudo: uma base estruturada para crescer, servir os módulos acima e sustentar decisão, não apenas registrar histórico.</p></div></article>
-      </div>
+      <ol class="esc-lista reveal" role="list">
+        <li class="esc-item">
+          <span class="esc-n" aria-hidden="true">01</span>
+          <h3 class="esc-tit"><span class="oculto">Frente 01. </span>Auditoria interna de dados e consolidação</h3>
+          <p class="esc-txt">O levantamento cobre a base atual inteira: histórico, cadastro, CNPJ e todas as informações que já existem de cada cliente. A base sai dali limpa e consolidada em uma fonte única de verdade.</p>
+        </li>
+        <li class="esc-item">
+          <span class="esc-n" aria-hidden="true">02</span>
+          <h3 class="esc-tit"><span class="oculto">Frente 02. </span>Esqueleto do sistema</h3>
+          <p class="esc-txt">Busca, filtros, ordenação e agrupamento funcionam sobre toda a base, e a visão de jornada abre cada conta ponta a ponta. Há ainda o módulo de performance comercial, o módulo financeiro e o acesso aos dados brutos, para quem precisa ir além das telas prontas.</p>
+        </li>
+        <li class="esc-item">
+          <span class="esc-n" aria-hidden="true">03</span>
+          <h3 class="esc-tit"><span class="oculto">Frente 03. </span>Dashboards e relatórios</h3>
+          <p class="esc-txt">Operação, comercial e diretoria recebem painéis e relatórios personalizados, exportáveis em diferentes formatos.</p>
+          <p class="esc-liga">Estes painéis só são confiáveis porque a base foi auditada na frente <b>01</b>.</p>
+        </li>
+        <li class="esc-item">
+          <span class="esc-n" aria-hidden="true">04</span>
+          <h3 class="esc-tit"><span class="oculto">Frente 04. </span>APIs de integração</h3>
+          <p class="esc-txt">Uma camada de conexão liga o CRM a outras fontes de dados e aos sistemas que a Media Portal já usa, de modo que a plataforma cresça sem retrabalho.</p>
+          <p class="esc-liga">A camada só vale alguma coisa sobre a base inteligente da frente <b>07</b>.</p>
+        </li>
+        <li class="esc-item">
+          <span class="esc-n" aria-hidden="true">05</span>
+          <h3 class="esc-tit"><span class="oculto">Frente 05. </span>Visão de marketing, performance e disparo de <span class="esc-nb">e-mail</span></h3>
+          <p class="esc-txt">O disparo de <span class="esc-nb">e-mails</span> da operação comercial é projetado aqui, com CTAs, segmentação e cadência alinhados ao plano de reativação que a Media Portal já desenhou.</p>
+        </li>
+        <li class="esc-item">
+          <span class="esc-n" aria-hidden="true">06</span>
+          <h3 class="esc-tit"><span class="oculto">Frente 06. </span>Integração com o site institucional</h3>
+          <p class="esc-txt">A conexão direta com o site que a Media Portal já tem no ar coloca a entrada de leads e a leitura do funil comercial em um fluxo só.</p>
+        </li>
+        <li class="esc-item esc-fecho">
+          <span class="esc-n" aria-hidden="true">07</span>
+          <h3 class="esc-tit"><span class="oculto">Frente 07. </span>Base de dados inteligente</h3>
+          <p class="esc-txt">A consolidação de tudo é uma base estruturada para crescer, servir os módulos acima e sustentar decisão. As sete se sustentam umas nas outras.</p>
+        </li>
+      </ol>
     </div>
   </section>
   <section id="cronograma" aria-labelledby="t-cronograma">
@@ -781,7 +897,7 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
       </div>
     </div>
   </section>
-  <section id="telas" class="alt" aria-labelledby="t-telas" class="alt">
+  <section id="telas" class="alt" aria-labelledby="t-telas">
     <div class="wrap">
       <div class="sec-cab reveal">
         <span class="eyebrow">Telas</span>

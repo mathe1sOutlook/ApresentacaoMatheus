@@ -40,8 +40,11 @@ ele descreve. O que denuncia, e não entra:
 
 - **Grade de N cartões com rótulos paralelos de uma palavra** — "O que é" /
   "Por que agora" / "Quanto custa" / "O que acontece depois". É o pior ofensor.
-  Cartão serve para informação que é mesmo uma lista (as sete frentes de um
-  escopo, as três fases de um cronograma), não para prosa fatiada em quatro.
+  Cartão serve para item que é mesmo um objeto avulso — os dois anexos de uma
+  proposta, as duas condições de pagamento —, não para prosa fatiada em quatro
+  nem para uma lista que o texto trata como um conjunto. Uma grade de N cartões
+  do mesmo tamanho afirma que os N são equivalentes e independentes; se não
+  forem, a grade está mentindo.
 - "Não é X. É Y." e suas primas.
 - Fragmento de frase para dar ênfase: "Falta o sistema.", "O diagnóstico está
   feito."
@@ -60,6 +63,14 @@ ele descreve. O que denuncia, e não entra:
 Escreva como um sócio escreve para um cliente que ele conhece: parágrafos de
 tamanhos diferentes, uma ideia por vez, sem métrica uniforme. Prosa onde é
 prosa; lista só onde a informação é mesmo uma lista.
+
+**O defeito que se repete**: a seção *afirma* uma relação numa frase de abertura
+e depois *desenha* uma forma que esconde essa relação. Aconteceu duas vezes —
+o cronograma dizia "as fases se encadeiam" e desenhava três painéis de tópicos
+sem mostrar quando cada frente corria; o escopo dizia "as sete se sustentam
+umas nas outras" e desenhava sete caixas soltas de peso idêntico. Quando o
+texto de abertura carrega a única informação estrutural da seção, o lugar dela
+não é a abertura: é o desenho. E aí a abertura sai.
 
 ### 3. Liberdade para propor a forma
 
