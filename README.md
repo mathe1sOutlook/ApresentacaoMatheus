@@ -141,9 +141,11 @@ Google já está ativo no projeto.)
   Quando as imagens chegarem, exporte em WebP (ou AVIF)
   com largura 1600 px para as capas e 800 px para os cards; o nome do arquivo
   pode manter `.jpg` ou trocar a extensão no HTML.
-- **E-mail** — `contato@amaralesilva.com` veio do design como provisório e o
-  domínio `amaralesilva.com` ainda não está ativo. Confirmar o endereço
-  definitivo antes de divulgar o site (o WhatsApp já é um canal real).
+- **Contato** — enquanto o domínio `amaralesilva.com` não estiver ativo, o
+  canal é o do Bruno: `bamaralpenha@gmail.com` e WhatsApp (11) 99977-3471.
+  O `contato@amaralesilva.com` do design nunca existiu, e o antigo
+  (11) 96904-1800 saiu do site — a dupla atende por um canal só. Quando o
+  domínio entrar, é aqui que o endereço muda.
 ## Desvio do design
 
 O ocre e o azul foram clareados para o fundo escuro: `#C9A24E` e `#7A93E6`
