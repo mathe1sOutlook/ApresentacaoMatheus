@@ -420,6 +420,7 @@ tr.is-new td:first-child { box-shadow: inset 3px 0 0 var(--blue); }
 .kcard__name { font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
 .kcard__client { font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft); margin-top: 2px; overflow-wrap: anywhere; }
 .kcard__value { font-family: var(--mono); font-size: 12px; color: var(--ochre); margin-top: 8px; }
+.kcard__alt { font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft); margin-top: 2px; }
 .kcard__foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
 .kcard__move { display: flex; gap: 4px; }
 .kcard__move button {
@@ -909,6 +910,24 @@ const clientById = (id) => state.clients.find((c) => c.id === id) || null;
 const memberByEmail = (em) => state.members.find((m) => m.email.toLowerCase() === String(em || '').toLowerCase()) || null;
 const memberName = (em) => { const m = memberByEmail(em); return m ? m.name : (em || '—'); };
 const projectValue = (p) => (p.price_final != null && p.price_final !== '' ? N(p.price_final) : N(p.price_proposed));
+/* N() devolve 0 para nulo/vazio — serve para somar, não para distinguir "sem
+   valor" de "zero". Onde a diferença importa (as condições da proposta),
+   usa-se priceNum, que devolve null. */
+const priceNum = (v) => (v == null || v === '' ? null : Number(v));
+const PARC_HINT = 'A condição da proposta. As parcelas do que já fechou ficam no card de Pagamentos.';
+/* "3x de R$ 6.000,00" a partir do valor cheio e do nº de vezes: a parcela é
+   DERIVADA e nunca gravada — total, quantidade e parcela guardados juntos
+   seriam três números para um problema de dois graus de liberdade, e um dia
+   dois deles divergiriam. Não dividindo exato, os centavos que sobram vão para
+   as primeiras parcelas, como a dupla já faz nas parcelas reais do MediaPortal
+   (2.916,67 / 2.916,67 / 2.916,66). */
+function installmentsLabel(p) {
+  const n = Number(p.installments_count || 0), total = priceNum(p.price_proposed);
+  if (!(n >= 2) || !total) return '';
+  const cents = Math.round(total * 100), base = Math.floor(cents / n), rest = cents - base * n;
+  if (!rest) return `${n}x de ${fmtBRL(base / 100)}`;
+  return `${n}x · ${rest} de ${fmtBRL((base + 1) / 100)} e ${n - rest} de ${fmtBRL(base / 100)}`;
+}
 const notesOf    = (pid) => state.notes.filter((n) => n.project_id === pid);
 const meetingsOf = (pid) => state.meetings.filter((m) => m.project_id === pid);
 const paymentsOf = (pid) => state.payments.filter((p) => p.project_id === pid);
@@ -1009,6 +1028,8 @@ function renderPreservingForm() {
       }
     }
   }
+  /* A dica do parcelado não é campo de formulário: o laço acima não a alcança. */
+  refreshParcHint();
 }
 
 const GONE_MSG = 'Registro não encontrado — pode ter sido alterado pelo outro membro. Os dados foram atualizados.';
@@ -1199,10 +1220,22 @@ VIEWS.crm = function () {
     const cards = items.map((p) => {
       const cli = clientById(p.client_id);
       const val = projectValue(p);
+      /* Enquanto o negócio não fecha, o cartão diz também COMO a proposta é
+         oferecida. O à vista só entra quando existe de verdade — os dois
+         números preenchidos E diferentes —, senão o cartão repetiria o mesmo
+         valor duas vezes. Fechado, a alternativa some: a condição que perdeu
+         vira ruído numa coluna estreita. */
+      const emAberto = p.price_final == null || p.price_final === '';
+      const cash = priceNum(p.price_cash), cheio = priceNum(p.price_proposed);
+      const alt = !emAberto ? [] : [
+        installmentsLabel(p),
+        cash && cheio && cash !== cheio ? `ou ${fmtBRL(cash)} à vista` : '',
+      ].filter(Boolean);
       return `<div class="kcard" data-action="openProject" data-id="${p.id}" role="link" tabindex="0">
         <div class="kcard__name">${esc(p.name)}</div>
         ${cli ? `<div class="kcard__client">${esc(cli.name)}${cli.company ? ' · ' + esc(cli.company) : ''}</div>` : ''}
         ${val ? `<div class="kcard__value">${fmtBRL(val)}</div>` : ''}
+        ${alt.length ? `<div class="kcard__alt">${esc(alt.join(' · '))}</div>` : ''}
         <div class="kcard__foot">
           <span class="label label--soft" style="font-size:9.5px">${fmtDateShort(toISODate(new Date(p.created_at)))}</span>
           <span class="kcard__move">
@@ -1413,11 +1446,20 @@ VIEWS.projeto = function (route) {
             <div class="field"><label for="pf-site">URL do site</label>
               <input id="pf-site" name="site_url" type="url" placeholder="https://…" value="${esc(p.site_url || '')}" /></div>
             <div class="field"><label for="pf-pp">Preço proposto (R$)</label>
-              <input id="pf-pp" name="price_proposed" type="number" step="0.01" min="0" value="${p.price_proposed ?? ''}" /></div>
+              <input id="pf-pp" name="price_proposed" type="number" step="0.01" min="0" value="${p.price_proposed ?? ''}" data-sync="parc" />
+              <span class="field__hint">Valor cheio / parcelado — aparece no cartão do funil enquanto não houver preço final.</span></div>
+            <div class="field"><label for="pf-pc">Preço à vista (R$)</label>
+              <input id="pf-pc" name="price_cash" type="number" step="0.01" min="0" value="${p.price_cash ?? ''}" />
+              <span class="field__hint">Só quando a proposta oferece um valor menor para pagamento único. Vazio = condição única.</span></div>
+            <div class="field"><label for="pf-ic">Parcelado em (nº de vezes)</label>
+              <input id="pf-ic" name="installments_count" type="number" step="1" min="2" placeholder="vazio = não oferece" value="${p.installments_count ?? ''}" data-sync="parc" />
+              <span class="field__hint" id="pf-parc-hint">${esc(installmentsLabel(p) || PARC_HINT)}</span></div>
             <div class="field"><label for="pf-pf">Preço final (R$)</label>
-              <input id="pf-pf" name="price_final" type="number" step="0.01" min="0" value="${p.price_final ?? ''}" /></div>
+              <input id="pf-pf" name="price_final" type="number" step="0.01" min="0" value="${p.price_final ?? ''}" />
+              <span class="field__hint">O que foi fechado — preenchido aqui, é ele que o funil passa a mostrar. No fechamento, copie o proposto ou o à vista.</span></div>
             <div class="field span2"><label for="pf-terms">Condições de pagamento</label>
-              <textarea id="pf-terms" name="payment_terms" placeholder="Ex.: 40% na assinatura, 30% na entrega intermediária, 30% na entrega final.">${esc(p.payment_terms || '')}</textarea></div>
+              <textarea id="pf-terms" name="payment_terms" placeholder="Ex.: 40% na assinatura, 30% na entrega intermediária, 30% na entrega final.">${esc(p.payment_terms || '')}</textarea>
+              <span class="field__hint">Como cada condição é paga: vencimentos, entrada, custos à parte. Os valores ficam nos campos acima.</span></div>
             <div class="field"><label for="pf-sm">Divisão — Matheus (%)</label>
               <input id="pf-sm" name="split_matheus" type="number" step="0.01" min="0" max="100" value="${p.split_matheus ?? 50}" data-change="splitM" /></div>
             <div class="field"><label for="pf-sb">Divisão — Bruno (%)</label>
@@ -2367,9 +2409,22 @@ function syncPaymentSplits() {
   sbEl.value = Math.round((100 - pctM) * 100) / 100;
 }
 
+/* Linha derivada do parcelado: sai SEMPRE do que está na tela (pf-pp/pf-ic),
+   nunca do que está gravado. Depois de um re-render com edição não salva o
+   formulário volta com os valores digitados; uma dica vinda do banco
+   contradiria o preço logo acima — e o número errado seria justo o da parcela. */
+function refreshParcHint() {
+  const box = document.getElementById('pf-parc-hint');
+  const ic = document.getElementById('pf-ic'), pp = document.getElementById('pf-pp');
+  if (!box || !ic || !pp) return;
+  box.textContent = installmentsLabel({ installments_count: ic.value, price_proposed: pp.value }) || PARC_HINT;
+}
+
 document.addEventListener('input', (e) => {
   const el = e.target.closest('[data-sync="pay"]');
   if (el) syncPaymentSplits();
+  /* recalculada a cada tecla: pega erro de digitação na hora e não grava nada */
+  if (e.target.closest('[data-sync="parc"]')) refreshParcHint();
 });
 
 /* mudanças de filtros e selects */
@@ -2407,6 +2462,8 @@ document.addEventListener('submit', async (e) => {
     const row = {
       name: d.name, client_id: strOrNull(d.client_id), site_url: strOrNull(d.site_url),
       price_proposed: numOrNull(d.price_proposed), price_final: numOrNull(d.price_final),
+      price_cash: numOrNull(d.price_cash),
+      installments_count: numOrNull(d.installments_count),
       payment_terms: strOrNull(d.payment_terms),
       split_matheus: d.split_matheus === '' ? 50 : Number(d.split_matheus),
       split_bruno: d.split_bruno === '' ? 50 : Number(d.split_bruno),
@@ -2415,6 +2472,20 @@ document.addEventListener('submit', async (e) => {
     };
     if (Math.abs(N(row.split_matheus) + N(row.split_bruno) - 100) > 0.01) {
       toast('A divisão Matheus + Bruno precisa somar 100%.');
+      return;
+    }
+    /* Barra aqui o que a trava do banco barraria — senão a mensagem crua do
+       Postgres apareceria dentro do toast. */
+    if (row.installments_count != null && (!Number.isInteger(row.installments_count) || row.installments_count < 2)) {
+      toast('O parcelado começa em 2 vezes, em número inteiro — em 1 vez é à vista.');
+      return;
+    }
+    /* À vista maior que o cheio é troca de campo ou dedo escorregado: o cartão
+       anunciaria "ou … à vista" prometendo a condição melhor e entregando a
+       pior. Igual passa (o cartão já esconde a linha), vazio também. */
+    if (row.price_cash != null && row.price_proposed != null
+        && Math.round(row.price_cash * 100) > Math.round(row.price_proposed * 100)) {
+      toast('O preço à vista não pode ser maior que o cheio — confira qual valor vai em cada campo.');
       return;
     }
     mutate(() => dbUpdate('projects', form.dataset.id, row), 'Projeto salvo.');

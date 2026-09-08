@@ -41,6 +41,14 @@ create table public.amaralesilva_clients (
   updated_at timestamptz not null default now()
 );
 
+-- Preços: price_proposed é o valor CHEIO da proposta (o parcelado, quando há
+-- parcelamento) e é o número que o funil mostra; price_cash é a condição à
+-- vista quando a proposta oferece desconto no pagamento único (migração
+-- amaralesilva_projects_duas_condicoes), e installments_count diz em quantas
+-- vezes o parcelado é oferecido — o valor da parcela é derivado na tela, nunca
+-- gravado. price_final é o que foi fechado, e é ele que registra qual das duas
+-- condições venceu. price_proposed NÃO é "à vista": os R$ 12.500 do projeto
+-- MediaPortal (o site) foram entrada de 30% + 3 parcelas reais.
 create table public.amaralesilva_projects (
   id             uuid primary key default gen_random_uuid(),
   client_id      uuid references public.amaralesilva_clients(id) on delete set null,
@@ -51,6 +59,8 @@ create table public.amaralesilva_projects (
   proposal_url   text,
   contract_url   text,
   price_proposed numeric(12,2),
+  price_cash     numeric(12,2) constraint amaralesilva_projects_price_cash_nonneg check (price_cash is null or price_cash >= 0),
+  installments_count smallint  constraint amaralesilva_projects_installments_min check (installments_count is null or installments_count >= 2),
   price_final    numeric(12,2),
   payment_terms  text,
   split_matheus  numeric(5,2) not null default 50,
