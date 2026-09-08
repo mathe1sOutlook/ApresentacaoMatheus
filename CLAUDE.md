@@ -90,7 +90,14 @@ Nenhum número, prazo, entrega, garantia, integração ou promessa que não este
 no material de origem. Número que aparece dentro de um mockup de tela é
 ilustrativo e a página tem de dizer isso por extenso, na própria seção.
 
-### 5. Rota privada
+### 5. Proposta enviada não se mexe
+
+Cada `proposta-*/` é um documento datado, com um endereço que já está na mão de
+alguém. Quando algo muda — contato, preço, prazo, identidade —, a mudança entra
+na proposta em curso e nas próximas; as antigas ficam como foram enviadas. Não
+sair corrigindo o que já circulou, nem sugerir isso: o que é antigo é antigo.
+
+### 6. Rota privada
 
 Cada proposta fica numa pasta `proposta-<cliente>-<sufixo aleatório>/`, servida
 por um rewrite em `vercel.json`. O prefixo `proposta-` já é bloqueado no
@@ -102,7 +109,7 @@ fora do `sitemap.xml`.
 `/admin`, nem para outra proposta. Quem recebe o endereço vê aquela proposta e
 mais nada.
 
-### 6. A página tem de funcionar sem JavaScript
+### 7. A página tem de funcionar sem JavaScript
 
 Conteúdo escondido por padrão e revelado por script deixa a proposta em branco
 para quem tem JS desligado por política da empresa ou abre o link dentro do
@@ -110,7 +117,7 @@ navegador de um cliente de e-mail. Animação de entrada é bem-vinda, mas o
 esconderijo depende de uma classe que o próprio script põe em `<html>`: sem
 script, nada some.
 
-### 7. Impressão importa
+### 8. Impressão importa
 
 Boa parte dos clientes salva a proposta em PDF. Toda proposta tem botão
 "Salvar em PDF" e um `@media print` que a deixa legível em papel — inclusive
