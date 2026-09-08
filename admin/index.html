@@ -483,6 +483,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   border-color: var(--ink);
 }
 .field__hint { font-family: var(--mono); font-size: 10px; color: var(--ink-soft); }
+.field__acao { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .form-grid .span2 { grid-column: 1 / -1; }
 .form-foot { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
@@ -873,6 +874,32 @@ function toast(msg) {
   el.classList.add('on');
   clearTimeout(toast._t);
   toast._t = setTimeout(() => el.classList.remove('on'), 4200);
+}
+
+/* Área de transferência: navigator.clipboard só existe em contexto seguro
+   (https ou localhost) e pode ser recusado pelo navegador. O textarea fora da
+   tela é o plano B — sem ele, um clique que não copia nada seria indistinguível
+   de um que copiou. Devolve se conseguiu, para quem chama poder avisar. */
+async function copyText(txt) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(txt);
+      return true;
+    }
+  } catch { /* recusado ou indisponível: cai no plano B */ }
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = txt;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:0;left:-9999px;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand('copy');
+    ta.remove();
+    return ok;
+  } catch {
+    return false;
+  }
 }
 
 /* ═══ Domínio ══════════════════════════════════════════════════════ */
@@ -1465,7 +1492,11 @@ VIEWS.projeto = function (route) {
             <div class="field"><label for="pf-sb">Divisão — Bruno (%)</label>
               <input id="pf-sb" name="split_bruno" type="number" step="0.01" min="0" max="100" value="${p.split_bruno ?? 50}" /></div>
             <div class="field"><label for="pf-purl">URL da proposta (HTML no site)</label>
-              <input id="pf-purl" name="proposal_url" placeholder="/proposta-…" value="${esc(p.proposal_url || '')}" /></div>
+              <input id="pf-purl" name="proposal_url" placeholder="/proposta-…" value="${esc(p.proposal_url || '')}" />
+              <span class="field__acao">
+                <button type="button" class="btn-mini" data-action="copyProposalUrl">Copiar link para enviar</button>
+                <span class="field__hint">Copia o endereço completo, com o domínio, pronto para colar.</span>
+              </span></div>
             <div class="field"><label for="pf-curl">URL do contrato (HTML no site)</label>
               <input id="pf-curl" name="contract_url" placeholder="/proposta-…#contrato" value="${esc(p.contract_url || '')}" /></div>
             <div class="field span2"><label for="pf-desc">Observações relevantes</label>
@@ -2242,6 +2273,34 @@ const ACTIONS = {
 
   newProject: () => { closeDrawer(); projectModal(); },
   openProject: (el) => { location.hash = '#/projeto/' + el.dataset.id; },
+  /* Link da proposta pronto para mandar ao cliente. O campo guarda o caminho
+     relativo (/proposta-…) e o que se cola numa conversa precisa do domínio
+     junto. Lê o que está NA TELA, não o que está gravado: copiar funciona
+     antes mesmo de salvar o campo. */
+  copyProposalUrl: async () => {
+    const campo = document.getElementById('pf-purl');
+    const bruto = (campo ? campo.value : '').trim();
+    if (!bruto) {
+      toast('Cadastre o endereço da proposta antes de copiar.');
+      return;
+    }
+    /* Mesma regra do safeUrl: https passa inteiro, caminho do site ganha o
+       domínio, e qualquer outro esquema é recusado em vez de ir para a área de
+       transferência. */
+    if (/^[a-z][a-z0-9+.-]*:/i.test(bruto) && !/^https?:/i.test(bruto)) {
+      toast('Endereço inválido — use um caminho do site (/proposta-…) ou um https://.');
+      return;
+    }
+    let url;
+    try {
+      url = new URL(bruto, location.origin).toString();
+    } catch {
+      toast('Endereço inválido — confira o campo.');
+      return;
+    }
+    const ok = await copyText(url);
+    toast(ok ? 'Link copiado — é só colar.' : 'Não consegui copiar. Selecione o endereço no campo e copie à mão.');
+  },
   deleteProject: (el) => {
     const p = projById(el.dataset.id);
     if (!p) return;
