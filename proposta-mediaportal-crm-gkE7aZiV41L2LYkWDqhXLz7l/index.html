@@ -55,18 +55,20 @@ a:hover{color:var(--blue-light)}
 /* ═══ BARRA SUPERIOR ═══ */
 .topo{position:sticky;top:0;z-index:60;background:rgba(5,7,13,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .topo-in{display:flex;align-items:center;gap:18px;min-height:66px}
-.marca{display:flex;align-items:center;gap:11px;margin-right:auto}
+.marca{display:flex;align-items:center;gap:11px;margin-right:auto;flex:none}
 .marca img.sim{height:26px;width:auto}
 .marca img.word{height:22px;width:auto}
 .marca .sep{width:1px;height:22px;background:var(--line-strong)}
-.marca .doc{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)}
-.indice{display:flex;gap:22px}
+.marca .doc{display:none;font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);white-space:nowrap}
+.marca .sep{display:none}
+@media (min-width:620px) and (max-width:1120px){.marca .doc,.marca .sep{display:block}}
+.indice{display:flex;gap:17px}
 .indice a{font-size:13.5px;font-weight:500;color:var(--muted);white-space:nowrap;transition:color .18s ease;padding-block:4px;border-bottom:2px solid transparent}
 .indice a:hover{color:var(--text)}
 .indice a.on{color:var(--text);border-bottom-color:var(--blue)}
 .btn-print{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--muted);background:transparent;border:1px solid var(--line-strong);border-radius:9px;padding:8px 15px;cursor:pointer;transition:all .18s ease;white-space:nowrap}
 .btn-print:hover{color:var(--blue);border-color:var(--line-blue)}
-@media (max-width:1020px){.indice{display:none}}
+@media (max-width:1120px){.indice{display:none}}
 @media (max-width:560px){.marca img.word{display:none}.marca .doc{font-size:10px}}
 
 /* ═══ CAPA ═══ */
@@ -128,76 +130,139 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 .frente h3{font-size:18px;line-height:1.25;margin-bottom:8px}
 .frente p{font-size:14.8px;color:var(--muted);line-height:1.56}
 
-/* ═══ TELAS (mockups nativos) ═══ */
+/* ═══ TELAS (mockups nativos) ═══
+   Recriação do handoff do Claude Design com o sistema de classes daqui — o
+   protótipo vem com estilo em cada elemento, que não se mantém. Tokens novos
+   só onde o desenho pediu (--trilha, --neutro, --icone-off, --blue-bg). */
+:root{
+  --blue-bg:rgba(90,164,242,.10);
+  --orange-bg:rgba(242,102,28,.12); --orange-line:rgba(242,102,28,.30);
+  --trilha:rgba(255,255,255,.07);
+  --neutro:rgba(255,255,255,.12); --neutro-forte:rgba(255,255,255,.24);
+  --icone-off:#1c2b47; --chrome:#080b14;
+}
+
+/* ——— Carrossel ———
+   Por padrão as três telas ficam empilhadas: é o que quem não tem JavaScript
+   vê, e é o que sai na impressão. O carrossel só existe depois que o script
+   consegue montar os controles e marca `.on` no palco — assim uma falha no
+   meio do caminho não deixa o leitor preso na primeira tela. */
+.telas-palco{position:relative}
 .telas{display:grid;gap:56px}
 .tela,.chrome{min-width:0}
 .tela-cap>*{min-width:0}
+
+.telas-nav{display:flex;align-items:center;gap:10px;margin-bottom:26px;flex-wrap:wrap}
+.telas-nav .passo{width:34px;height:34px;flex:none;display:grid;place-items:center;font-size:15px;color:var(--muted);background:transparent;border:1px solid var(--line-strong);border-radius:10px;cursor:pointer;transition:border-color .18s ease,color .18s ease}
+.telas-nav .passo:hover:not(:disabled){border-color:var(--line-blue);color:var(--text)}
+.telas-nav .passo:disabled{opacity:.35;cursor:default}
+.telas-nav .pontos{display:flex;gap:6px;margin-left:6px;flex-wrap:wrap}
+.telas-nav .ponto{font-family:var(--display);font-size:11.5px;font-weight:700;letter-spacing:.04em;color:var(--dim);background:transparent;border:1px solid var(--line-strong);border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap;transition:all .18s ease}
+.telas-nav .ponto:hover{border-color:var(--line-blue);color:var(--text)}
+.telas-nav .ponto[aria-current="true"]{background:var(--blue-deep);border-color:var(--blue-deep);color:#fff}
+
+.telas-palco.on{overflow:hidden}
+.telas-palco.on .telas{grid-auto-flow:column;grid-auto-columns:100%;gap:0;align-items:start;transition:transform .45s cubic-bezier(.4,0,.2,1)}
+.telas-palco.on .tela{padding-inline:1px}
+@media (prefers-reduced-motion:reduce){.telas-palco.on .telas{transition:none}}
+
+/* ——— Legenda de cada tela ——— */
 .tela-cap{display:grid;grid-template-columns:auto auto 1fr;align-items:baseline;gap:8px 14px;margin-bottom:18px}
 .tela-num{font-family:var(--display);font-weight:700;font-size:12.5px;letter-spacing:.14em;color:var(--blue);font-variant-numeric:tabular-nums}
 .tela-tit{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.015em;color:var(--text)}
+.tela-selo{grid-column:2;justify-self:start;font-family:var(--display);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-soft);background:var(--orange-bg);border:1px solid var(--orange-line);border-radius:20px;padding:3px 10px;white-space:nowrap}
 .tela-txt{font-size:14.5px;color:var(--muted);grid-column:2/-1}
-@media (max-width:620px){.tela-cap{grid-template-columns:auto 1fr}.tela-txt{grid-column:1/-1}}
+@media (max-width:620px){.tela-cap{grid-template-columns:auto 1fr}.tela-selo,.tela-txt{grid-column:1/-1}}
+
+/* ——— Moldura ——— */
 .chrome{border:1px solid var(--line-strong);border-radius:14px;overflow:hidden;background:var(--bg-alt);box-shadow:0 30px 80px rgba(0,0,0,.5)}
-.chrome-bar{display:flex;align-items:center;gap:7px;padding:11px 14px;background:#080b14;border-bottom:1px solid var(--line)}
+.chrome-bar{display:flex;align-items:center;gap:7px;padding:11px 14px;background:var(--chrome);border-bottom:1px solid var(--line)}
 .dot{width:10px;height:10px;border-radius:50%;flex:none}
 .dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
 .url{margin-left:12px;font-size:11.5px;color:var(--dim);background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:4px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* O rolador é este; o mockup lá dentro guarda a largura mínima. Se os dois
-   papéis ficassem no mesmo elemento, ele cresceria em vez de rolar — e a
-   página inteira ganharia rolagem lateral no celular. */
+   papéis ficassem no mesmo elemento, ele cresceria em vez de rolar. */
 .chrome-body{overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13px}
+.chrome-body:focus-visible{outline-offset:-3px}
 .chrome-body .mk-t1{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.02em;color:var(--text);margin-bottom:3px}
-.chrome-body .mk-t2{font-family:var(--display);font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.chrome-body .mk-t2{font-family:var(--display);font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.chrome-body .mk-t2>span{font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--dim)}
 .chrome-body .mk-t2.forte{font-size:15px;letter-spacing:-.01em;text-transform:none;color:var(--text)}
 .chrome-body p{font-size:12.5px;color:var(--dim)}
 .painel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
 
-/* tela 1 */
-.app{display:grid;grid-template-columns:186px 1fr;gap:22px;min-width:880px}
-.rail{background:var(--bg-alt);border-right:1px solid var(--line);padding:20px 14px}
+/* ——— Tela 1 · Visão geral ——— */
+.app{display:grid;grid-template-columns:186px 1fr;gap:22px;min-width:880px;align-items:stretch}
+.rail{background:var(--bg-alt);border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column}
 .rail-marca{display:flex;align-items:center;gap:9px;margin-bottom:22px;font-family:var(--display);font-size:14px;font-weight:700}
 .rail-quad{width:20px;height:20px;border-radius:6px;background:linear-gradient(140deg,var(--blue),var(--blue-deep));flex:none}
 .rail-nav{display:grid;gap:3px}
 .rail-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:12.5px;color:var(--dim)}
-.rail-item i{width:13px;height:13px;border-radius:4px;background:#1c2b47;flex:none}
-.rail-item.on{background:rgba(90,164,242,.1);color:var(--text);font-weight:600}
+.rail-item i{width:13px;height:13px;border-radius:4px;background:var(--icone-off);flex:none}
+.rail-item b{margin-left:auto;font-weight:400;font-variant-numeric:tabular-nums}
+.rail-item.on{background:var(--blue-bg);color:var(--text);font-weight:600}
 .rail-item.on i{background:var(--blue)}
-.app-main{padding:20px 22px 24px 0;display:grid;gap:18px;min-width:0}
+.rail-fim{margin-top:auto;padding-top:16px;border-top:1px solid var(--line)}
+.rail-grupo{display:block;font-family:var(--display);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:0 10px 10px}
+.app-main{padding:20px 22px 24px 0;display:grid;gap:18px;min-width:0;align-content:start}
 .app-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .app-top div:first-child{margin-right:auto}
 .app-top-dir{display:flex;align-items:center;gap:12px}
-.busca{font-size:12px;color:var(--dim);background:var(--panel);border:1px solid var(--line-strong);border-radius:9px;padding:8px 16px}
+.busca{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dim);background:var(--panel);border:1px solid var(--line-strong);border-radius:9px;padding:8px 12px 8px 11px;white-space:nowrap}
+.busca svg{flex:none;opacity:.85}
+.busca b{margin-left:6px;font-weight:400;font-size:10.5px;border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+.botao-falso{font-size:12px;font-weight:600;color:var(--muted);border:1px solid var(--line-strong);border-radius:9px;padding:8px 14px;white-space:nowrap}
 .avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(140deg,var(--blue),var(--blue-deep));flex:none}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:start}
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 17px}
 .kpi-rot{display:block;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
-.kpi-num{display:block;font-family:var(--display);font-size:29px;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-bottom:8px}
-.kpi-var{font-size:11px;font-weight:600}
-.kpi-var.pos{color:var(--green)}
+.kpi-num{display:block;font-family:var(--display);font-size:29px;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-bottom:10px}
+/* Todo número tem denominador ou composição: nenhum indicador é número solto. */
+.kpi-var{display:block;font-size:11px;font-weight:600;color:var(--dim);line-height:1.45}
 .kpi-var.alerta{color:var(--orange-soft)}
-.app-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:12px;align-items:start}
+.composicao{display:flex;height:6px;border-radius:3px;overflow:hidden;margin-bottom:10px}
+.composicao i{width:var(--f);display:block}
+.c-ok{background:var(--green)}.c-alerta{background:var(--orange-soft)}.c-nada{background:var(--neutro)}
+.kpi-legenda{display:grid;gap:4px}
+.kpi-legenda em{display:flex;align-items:center;gap:7px;font-style:normal;font-size:10.5px;color:var(--dim)}
+.kpi-legenda i{width:6px;height:6px;border-radius:50%;flex:none}
+.kpi-legenda .c-nada{background:var(--neutro-forte)}
+.app-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;align-items:start}
 .barras{display:grid;grid-template-columns:repeat(6,1fr);gap:11px}
-.barras .barra{display:grid;grid-template-rows:168px auto;gap:8px}
-.barras .barra i{align-self:end;height:var(--h);border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--blue-deep),rgba(19,110,242,.35))}
+.barras .barra{display:grid;grid-template-rows:auto 132px auto;gap:8px}
+.barras .barra span{font-family:var(--display);font-weight:700;font-size:12px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.barras .barra i{align-self:end;height:var(--h);border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--blue-deep),rgba(19,110,242,.35));opacity:.45}
+.barras .barra.forte i{opacity:1}
 .barras .barra em{font-size:10.5px;font-style:normal;color:var(--dim);text-align:center}
+.filtro{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-6px 0 14px}
+.chip-filtro{font-size:10.5px;color:var(--dim);border:1px solid var(--line-strong);border-radius:20px;padding:3px 11px;white-space:nowrap}
 .revisar{list-style:none;margin:0;padding:0}
-.revisar li{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:11px 0;border-top:1px solid var(--line)}
+.revisar li{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
 .revisar li:first-child{border-top:0;padding-top:0}
+.revisar li>span:nth-of-type(2){margin-right:auto;min-width:0}
+.ini{width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:10px;color:#fff;background:linear-gradient(140deg,var(--blue),var(--blue-deep))}
 .revisar b{display:block;font-size:12.5px;font-weight:600}
 .revisar em{font-size:11px;font-style:normal;color:var(--dim)}
-.tag{font-size:10px;font-weight:700;border-radius:20px;padding:4px 10px;white-space:nowrap;flex:none}
-.tag.atencao{color:var(--orange-soft);background:rgba(242,102,28,.13);border:1px solid rgba(242,102,28,.3)}
-.tag.ativo{color:var(--green);background:rgba(52,211,153,.11);border:1px solid rgba(52,211,153,.28)}
+.aberto{font-family:var(--display);font-weight:700;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap;flex:none}
+.painel-pe{display:flex;justify-content:space-between;gap:10px;margin-top:14px;padding-top:13px;border-top:1px solid var(--line);font-size:11.5px}
+.painel-pe span{color:var(--blue)}
 
-/* tela 2 */
+/* ——— Tela 2 · Ficha da conta ——— */
 .ficha{display:grid;gap:20px;padding:24px;min-width:840px}
 .ficha-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.ficha-av{width:52px;height:52px;border-radius:13px;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:17px;background:linear-gradient(140deg,var(--blue),var(--blue-deep));flex:none}
+.ficha-av{width:52px;height:52px;border-radius:13px;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:17px;color:#fff;background:linear-gradient(140deg,var(--blue),var(--blue-deep));flex:none}
 .ficha-top>div:first-of-type{margin-right:auto}
-.ficha-alerta{text-align:right;display:grid;gap:6px;justify-items:end}
-.ficha-alerta em{font-size:11px;font-style:normal;color:var(--dim)}
+.tag{font-size:10px;font-weight:700;border-radius:20px;padding:4px 10px;white-space:nowrap;flex:none}
+.tag.atencao{color:var(--orange-soft);background:var(--orange-bg);border:1px solid var(--orange-line)}
+.relacao{display:grid;grid-template-columns:repeat(4,1fr)}
+.relacao div{padding:0 20px;border-left:1px solid var(--line)}
+.relacao div:first-child{border-left:0;padding-left:0}
+.relacao b{display:block;font-family:var(--display);font-size:26px;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-bottom:8px}
+.relacao b.quente{color:var(--orange-soft)}
+.relacao span{font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
 .abas{display:flex;gap:24px;border-bottom:1px solid var(--line);overflow-x:auto}
-.abas span{font-size:12.5px;color:var(--dim);padding-bottom:10px;border-bottom:2px solid transparent;white-space:nowrap}
+.abas span{display:flex;gap:6px;font-size:12.5px;color:var(--dim);padding-bottom:10px;border-bottom:2px solid transparent;white-space:nowrap}
+.abas span b{font-weight:400;font-size:11px;font-variant-numeric:tabular-nums}
 .abas span.on{color:var(--text);font-weight:600;border-bottom-color:var(--blue)}
 .ficha-grid{display:grid;grid-template-columns:270px 1fr;gap:14px;align-items:start}
 .ficha-col{display:grid;gap:14px}
@@ -206,29 +271,55 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 .campos dt:first-of-type{margin-top:0}
 .campos dd{margin:2px 0 0;font-size:13.5px;font-weight:600}
 .campos dd.vazio{color:var(--dim);font-weight:400;font-style:italic}
+.completude{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:11px}
+.completude i{display:block;height:4px;border-radius:2px;background:var(--trilha);margin-top:8px;position:relative;overflow:hidden}
+.completude i::after{content:'';position:absolute;inset:0 auto 0 0;width:var(--f);background:var(--blue)}
+.vazio-medido{display:grid;gap:7px;text-align:center;padding:6px 0 2px}
+.vazio-medido b{font-size:12.5px;font-weight:400;color:var(--muted)}
+.vazio-medido span{font-size:11px;color:var(--dim);line-height:1.5}
 .jornada{list-style:none;margin:0;padding:0}
-.jornada li{display:flex;align-items:center;gap:13px;padding:13px 0;border-top:1px solid var(--line)}
+/* A régua liga os eventos; nos intervalos sem registro ela vira tracejada, que
+   é o achado da auditoria desenhado em vez de escrito. */
+.jornada li{display:flex;align-items:center;gap:13px;padding:13px 0;border-top:1px solid var(--line);position:relative}
 .jornada li:first-child{border-top:0;padding-top:0}
-.jornada li > span:nth-of-type(1){margin-right:auto}
-.jornada i{width:22px;height:22px;border-radius:7px;background:rgba(90,164,242,.16);border:1px solid var(--line-blue);flex:none;position:relative}
+.jornada li::before{content:'';position:absolute;left:10.5px;top:0;bottom:0;width:1px;background:var(--line)}
+.jornada li:first-child::before{top:50%}
+.jornada li:last-child::before{bottom:50%}
+.jornada li.lacuna::before{background:none;border-left:1px dashed var(--line-strong)}
+.jornada li>span:nth-of-type(1){margin-right:auto;min-width:0}
+.jornada i{width:22px;height:22px;border-radius:7px;background:var(--blue-bg);border:1px solid var(--line-blue);flex:none;position:relative;z-index:1}
 .jornada i::after{content:'';position:absolute;inset:6px;border-radius:3px;background:var(--blue)}
+.jornada li.lacuna i{background:var(--panel);border-color:var(--line-strong)}
+.jornada li.lacuna i::after{display:none}
 .jornada b{display:block;font-size:13px;font-weight:600}
 .jornada em{font-size:11px;font-style:normal;color:var(--dim)}
-.jornada-tag{font-size:10.5px;color:var(--dim);white-space:nowrap;flex:none}
+.jornada li.lacuna em{font-size:10.5px}
+.jornada-tag{font-size:10.5px;color:var(--dim);border:1px solid var(--line);border-radius:20px;padding:4px 10px;white-space:nowrap;flex:none}
 
-/* tela 3 */
+/* ——— Tela 3 · Funil ——— */
 .funil{display:grid;gap:18px;padding:24px;min-width:840px}
-.funil-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.funil-top{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
 .funil-top>div:first-of-type{margin-right:auto}
-.pipe{font-family:var(--display);font-weight:700;font-size:14px;background:var(--panel);border:1px solid var(--line-strong);border-radius:10px;padding:11px 18px;white-space:nowrap}
-.colunas{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
-.coluna{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 12px;min-height:230px;display:grid;gap:9px;align-content:start}
-.chrome-body .mk-t3{font-family:var(--display);font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.1em;color:var(--muted);display:flex;justify-content:space-between;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:2px}
+.funil-top p+p{margin-top:2px}
+.pipe{font-family:var(--display);font-weight:700;font-size:14px;background:var(--panel);border:1px solid var(--line-strong);border-radius:10px;padding:11px 18px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.colunas{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;align-items:start}
+.coluna{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 12px;display:grid;gap:9px;align-content:start}
+/* O funil ganha forma pelo cabeçalho da coluna, não por trapézio desenhado. */
+.chrome-body .mk-t3{font-family:var(--display);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
 .chrome-body .mk-t3 span{color:var(--dim);font-weight:500}
+.coluna-sub{display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:baseline;padding-bottom:9px;margin-bottom:2px}
+.coluna-sub b{font-family:var(--display);font-weight:700;font-size:13px;font-variant-numeric:tabular-nums;color:var(--text)}
+.coluna-sub span{font-size:11px;color:var(--dim);text-align:right}
+.coluna-sub i{grid-column:1/-1;height:3px;border-radius:2px;background:var(--trilha);position:relative;overflow:hidden}
+.coluna-sub i::after{content:'';position:absolute;inset:0 auto 0 0;width:var(--f);background:var(--blue)}
 .neg{background:var(--panel-strong);border:1px solid var(--line);border-radius:9px;padding:12px 13px;display:grid;gap:5px}
+.neg.parado{box-shadow:inset 2px 0 0 var(--orange)}
 .neg b{font-size:12px;font-weight:600;line-height:1.32}
 .neg .valor{font-family:var(--display);font-weight:700;font-size:14px;color:var(--green);font-variant-numeric:tabular-nums}
 .neg em{font-size:10.5px;font-style:normal;color:var(--dim)}
+.neg.parado em{color:var(--orange-soft)}
+.funil-pe{padding-top:14px;border-top:1px solid var(--line);font-size:12px}
+.funil-pe b{color:var(--green);font-weight:600}
 
 .telas-nota{margin-top:34px;padding:16px 20px;border:1px dashed var(--line-strong);border-radius:12px;font-size:13.5px;color:var(--dim);max-width:78ch}
 .telas-nota b{color:var(--muted);font-weight:600}
@@ -248,6 +339,23 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 .fase li::before{content:'';position:absolute;left:0;top:8px;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--blue);background:rgba(90,164,242,.18)}
 .fase:nth-child(3) li::before{border-color:var(--orange);background:rgba(242,102,28,.18)}
 @media (max-width:820px){.fase{grid-template-columns:1fr;gap:16px}.fase:nth-child(2),.fase:nth-child(3){margin-left:0}}
+
+/* ═══ FICHA TÉCNICA ═══
+   Tabela de verdade: é uma lista de fatos, não prosa fatiada em cartões. */
+.tabela-tec{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel)}
+.tabela-tec table{width:100%;border-collapse:collapse}
+.tabela-tec tr+tr{border-top:1px solid var(--line)}
+.tabela-tec th,.tabela-tec td{text-align:left;vertical-align:baseline;padding:18px 24px;font-weight:400}
+.tabela-tec th{width:210px;font-family:var(--display);font-weight:700;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);white-space:nowrap}
+.tabela-tec td{font-size:15px;color:var(--muted);line-height:1.55}
+.tabela-tec tr.acento th{color:var(--orange-soft)}
+.tabela-tec tr.acento td{color:var(--text)}
+.oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media (max-width:720px){
+  .tabela-tec th,.tabela-tec td{display:block;padding:0 20px}
+  .tabela-tec th{width:auto;padding-top:18px}
+  .tabela-tec td{padding-bottom:18px;padding-top:6px}
+}
 
 /* ═══ INVESTIMENTO ═══ */
 .planos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:18px}
@@ -305,6 +413,13 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
   /* No papel não há para onde rolar: o mockup é reduzido até caber na página,
      e `zoom` refaz o layout (ao contrário de `transform`, que deixaria buraco). */
   .chrome-body{overflow:visible!important;zoom:.74}
+  /* O carrossel não existe no papel: as três telas saem corridas, uma embaixo
+     da outra, e os controles somem. */
+  .telas-nav{display:none!important}
+  .telas-palco{overflow:visible!important}
+  .telas-palco.on .telas{grid-auto-flow:row!important;grid-auto-columns:auto!important;gap:30px!important;transform:none!important;transition:none!important}
+  .telas-palco.on .tela{padding-inline:0!important}
+  .tabela-tec tr,.tabela-tec th,.tabela-tec td{break-inside:avoid}
   .reveal{opacity:1!important;transform:none!important}
   a{color:var(--blue)!important}
 }
@@ -371,6 +486,7 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
       <a href="#escopo">Escopo</a>
       <a href="#cronograma">Cronograma</a>
       <a href="#telas">Telas</a>
+      <a href="#ficha-tecnica">Ficha técnica</a>
       <a href="#investimento">Investimento</a>
       <a href="#proximos-passos">Próximos passos</a>
     </nav>
@@ -425,7 +541,7 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
       </div>
     </div>
   </section>
-  <section id="o-sistema" aria-labelledby="t-o-sistema" class="alt">
+  <section id="o-sistema" class="alt" aria-labelledby="t-o-sistema" class="alt">
     <div class="wrap">
       <div class="sec-cab reveal">
         <h2 id="t-o-sistema">O que muda no dia a dia</h2>
@@ -465,7 +581,7 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
       </div>
     </div>
   </section>
-  <section id="escopo" aria-labelledby="t-escopo" class="alt">
+  <section id="escopo" class="alt" aria-labelledby="t-escopo" class="alt">
     <div class="wrap">
       <div class="sec-cab reveal">
         <span class="eyebrow">Escopo</span>
@@ -506,62 +622,91 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
       </div>
     </div>
   </section>
-  <section id="telas" aria-labelledby="t-telas" class="alt">
+  <section id="telas" class="alt" aria-labelledby="t-telas" class="alt">
     <div class="wrap">
       <div class="sec-cab reveal">
         <span class="eyebrow">Telas</span>
         <h2 id="t-telas">As telas propostas</h2>
         <p class="sec-lead">Desenhamos três mockups na identidade visual da Media Portal, para tirar a conversa do abstrato. É o formato que estamos propondo para a interface.</p>
       </div>
-      <div class="telas">
+      <nav class="telas-nav reveal" aria-label="Navegar entre as telas" hidden>
+        <button type="button" class="passo" data-passo="-1" aria-label="Tela anterior">‹</button>
+        <button type="button" class="passo" data-passo="1" aria-label="Próxima tela">›</button>
+        <span class="pontos" role="tablist">
+          <button type="button" class="ponto" role="tab" data-ir="0" aria-current="true">01 Visão geral</button>
+          <button type="button" class="ponto" role="tab" data-ir="1">02 Ficha da conta</button>
+          <button type="button" class="ponto" role="tab" data-ir="2">03 Funil</button>
+        </span>
+      </nav>
+      <div class="telas-palco">
+        <div class="telas">
         <!-- ═══ TELA 1 · VISÃO GERAL ═══ -->
         <figure class="tela reveal" data-tela="visao-geral">
           <figcaption class="tela-cap"><span class="tela-num">01</span><h3 class="tela-tit">Visão geral</h3><span class="tela-selo">Dados ilustrativos</span><span class="tela-txt">Os números da base inteira em uma tela só, com o que precisa de atenção em destaque.</span></figcaption>
           <div class="chrome">
             <div class="chrome-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="url">app.mediaportal.com.br/crm/visao-geral</span></div>
-            <div class="chrome-body" role="img" tabindex="0" aria-label="Ilustração da tela de visão geral do CRM: indicadores da base, gráfico de interações por categoria e lista de contas para revisar."><div class="app">
+            <div class="chrome-body" role="img" tabindex="0" aria-label="Tela de visão geral do CRM: composição da base em 306 contas, 1.348 interações por categoria e as contas paradas há mais de doze meses com o valor em aberto de cada uma."><div class="app">
               <aside class="rail">
                 <div class="rail-marca"><span class="rail-quad"></span><b>MP · CRM</b></div>
                 <div class="rail-nav">
                   <span class="rail-item on"><i></i>Visão Geral</span>
-                  <span class="rail-item"><i></i>Contas</span>
-                  <span class="rail-item"><i></i>Negócios</span>
-                  <span class="rail-item"><i></i>Atividades</span>
+                  <span class="rail-item"><i></i>Contas<b>306</b></span>
+                  <span class="rail-item"><i></i>Negócios<b>11</b></span>
+                  <span class="rail-item"><i></i>Interações</span>
+                  <span class="rail-item"><i></i>Financeiro</span>
+                  <span class="rail-item"><i></i>Marketing</span>
                   <span class="rail-item"><i></i>Relatórios</span>
-                  <span class="rail-item"><i></i>Configurações</span>
+                </div>
+                <div class="rail-fim">
+                  <span class="rail-grupo">Sistema</span>
+                  <div class="rail-nav">
+                    <span class="rail-item"><i></i>Dados brutos</span>
+                    <span class="rail-item"><i></i>Integrações</span>
+                    <span class="rail-item"><i></i>Configurações</span>
+                  </div>
                 </div>
               </aside>
               <div class="app-main">
                 <header class="app-top">
-                  <div><p class="mk-t1">Visão Geral</p><p>Atualizado agora · 306 contas monitoradas</p></div>
-                  <div class="app-top-dir"><span class="busca">Buscar conta, contato ou negócio</span><span class="avatar"></span></div>
+                  <div><p class="mk-t1">Visão Geral</p><p>Base consolidada · atualizada em 05/09/2026</p></div>
+                  <div class="app-top-dir">
+                    <span class="busca"><svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="5" cy="5" r="3.6"/><path d="M7.7 7.7 11 11"/></svg>Buscar conta, contato, negócio ou solução<b>⌘K</b></span>
+                    <span class="botao-falso">Exportar</span>
+                    <span class="avatar"></span>
+                  </div>
                 </header>
                 <div class="kpis">
-                  <div class="kpi"><span class="kpi-rot">CONTAS ATIVAS</span><b class="kpi-num">150</b><span class="kpi-var pos">↑ estável no mês</span></div>
-                  <div class="kpi"><span class="kpi-rot">EM ATENÇÃO</span><b class="kpi-num">63</b><span class="kpi-var alerta">prioridade de reativação</span></div>
-                  <div class="kpi"><span class="kpi-rot">PIPELINE ABERTO</span><b class="kpi-num">R$&nbsp;412k</b><span class="kpi-var pos">↑ 8% vs. mês anterior</span></div>
-                  <div class="kpi"><span class="kpi-rot">TAXA DE CONVERSÃO</span><b class="kpi-num">27%</b><span class="kpi-var pos">↑ 3pp no trimestre</span></div>
+                  <div class="kpi">
+                    <span class="kpi-rot">Base consolidada</span><b class="kpi-num">306</b>
+                    <span class="composicao"><i style="--f:49%" class="c-ok"></i><i style="--f:20.6%" class="c-alerta"></i><i style="--f:30.4%" class="c-nada"></i></span>
+                    <span class="kpi-legenda"><em><i class="c-ok"></i>150 ativas</em><em><i class="c-alerta"></i>63 em atenção</em><em><i class="c-nada"></i>93 sem registro</em></span>
+                  </div>
+                  <div class="kpi"><span class="kpi-rot">Em atenção</span><b class="kpi-num">63</b><span class="kpi-var alerta">R$&nbsp;156.500 parados<br>há mais de 12 meses</span></div>
+                  <div class="kpi"><span class="kpi-rot">Pipeline aberto</span><b class="kpi-num">R$&nbsp;412k</b><span class="kpi-var">11 negócios em aberto<br>média de R$&nbsp;37,5 mil</span></div>
+                  <div class="kpi"><span class="kpi-rot">Taxa de conversão</span><b class="kpi-num">27%</b><span class="kpi-var">10 de 37 negócios<br>encerrados em 12 meses</span></div>
                 </div>
                 <div class="app-grid">
                   <div class="painel">
-                    <p class="mk-t2 forte">Interações por categoria</p>
+                    <p class="mk-t2 forte">Interações por categoria<span>1.348 interações consolidadas</span></p>
                     <div class="barras">
-                      <div class="barra" style="--h:78%"><i></i><em>Proposta</em></div>
-                      <div class="barra" style="--h:62%"><i></i><em>Reunião</em></div>
-                      <div class="barra" style="--h:100%"><i></i><em>Suporte</em></div>
-                      <div class="barra" style="--h:44%"><i></i><em>Renov.</em></div>
-                      <div class="barra" style="--h:57%"><i></i><em>Visita</em></div>
-                      <div class="barra" style="--h:33%"><i></i><em>Outro</em></div>
+                      <div class="barra forte" style="--h:100%"><span>360</span><i></i><em>Suporte</em></div>
+                      <div class="barra" style="--h:78%"><span>281</span><i></i><em>Proposta</em></div>
+                      <div class="barra" style="--h:62%"><span>223</span><i></i><em>Reunião</em></div>
+                      <div class="barra" style="--h:57%"><span>205</span><i></i><em>Visita</em></div>
+                      <div class="barra" style="--h:44%"><span>159</span><i></i><em>Renov.</em></div>
+                      <div class="barra" style="--h:33%"><span>120</span><i></i><em>Implant.</em></div>
                     </div>
                   </div>
                   <div class="painel">
                     <p class="mk-t2 forte">Contas para revisar</p>
+                    <p class="filtro"><span class="chip-filtro">sem interação há +12 meses</span><span>4 de 63</span></p>
                     <ul class="revisar">
-                      <li><span><b>TV Cultura</b><em>última interação · 2024</em></span><span class="tag atencao">Atenção</span></li>
-                      <li><span><b>Assembleia Legislativa · PI</b><em>última interação · 2023</em></span><span class="tag atencao">Atenção</span></li>
-                      <li><span><b>Museu da Imagem e do Som</b><em>última interação · 2025</em></span><span class="tag ativo">Ativo</span></li>
-                      <li><span><b>EPTV Regional</b><em>última interação · 2024</em></span><span class="tag atencao">Atenção</span></li>
+                      <li><span class="ini">TC</span><span><b>TV Cultura</b><em>mar/2024 · 30 meses</em></span><span class="aberto">R$&nbsp;68.000</span></li>
+                      <li><span class="ini">AL</span><span><b>Assembleia Legislativa · PI</b><em>nov/2023 · 34 meses</em></span><span class="aberto">R$&nbsp;45.000</span></li>
+                      <li><span class="ini">ER</span><span><b>EPTV Regional</b><em>set/2024 · 24 meses</em></span><span class="aberto">R$&nbsp;27.500</span></li>
+                      <li><span class="ini">TCC</span><span><b>TV Câmara · Campinas</b><em>ago/2025 · 13 meses</em></span><span class="aberto">R$&nbsp;16.000</span></li>
                     </ul>
+                    <p class="painel-pe">ordenadas pelo valor em aberto<span>ver as 63 →</span></p>
                   </div>
                 </div>
               </div>
@@ -575,41 +720,50 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
           <figcaption class="tela-cap"><span class="tela-num">02</span><h3 class="tela-tit">Ficha da conta</h3><span class="tela-selo">Dados ilustrativos</span><span class="tela-txt">Contato, histórico e status de cada cliente reunidos em um só lugar, sem caçar informação espalhada.</span></figcaption>
           <div class="chrome">
             <div class="chrome-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="url">app.mediaportal.com.br/crm/contas/tv-cultura</span></div>
-            <div class="chrome-body" role="img" tabindex="0" aria-label="Ilustração da ficha de uma conta no CRM: dados do cliente, contato principal e linha do tempo do relacionamento."><div class="ficha">
+            <div class="chrome-body" role="img" tabindex="0" aria-label="Ficha de uma conta no CRM: números derivados do relacionamento, cadastro medido em percentual de completude e linha do tempo com os intervalos sem registro marcados."><div class="ficha">
               <header class="ficha-top">
                 <span class="ficha-av">TC</span>
-                <div><p class="mk-t1">TV Cultura</p><p>Emissora de TV · São Paulo, SP · parceiro TVCSP</p></div>
-                <div class="ficha-alerta"><span class="tag atencao">Atenção · revisar</span><em>sem interação desde 2024</em></div>
+                <div><p class="mk-t1">TV Cultura</p><p>São Paulo, SP · cliente desde 2005</p></div>
+                <span class="tag atencao">Atenção · revisar</span>
               </header>
-              <div class="abas"><span class="on">Visão Geral</span><span>Contatos</span><span>Negócios</span><span>Histórico</span><span>Documentos</span></div>
+              <div class="relacao">
+                <div><b class="quente">30</b><span>Meses sem interação</span></div>
+                <div><b>18</b><span>Interações registradas</span></div>
+                <div><b>R$&nbsp;68.000</b><span>Em negócio aberto</span></div>
+                <div><b>21</b><span>Anos de relação</span></div>
+              </div>
+              <div class="abas"><span class="on">Visão Geral</span><span>Contatos<b>0</b></span><span>Negócios<b>1</b></span><span>Histórico<b>18</b></span><span>Financeiro</span></div>
               <div class="ficha-grid">
                 <div class="ficha-col">
                   <div class="painel">
-                    <p class="mk-t2">DADOS DA CONTA</p>
+                    <p class="mk-t2">Dados da conta</p>
                     <dl class="campos">
                       <dt>Segmento</dt><dd>Emissora de TV</dd>
                       <dt>Responsável</dt><dd class="vazio">A definir</dd>
                       <dt>Produto</dt><dd>Media Portal MAM1</dd>
                       <dt>Cliente desde</dt><dd>2005</dd>
                     </dl>
+                    <p class="completude">Cadastro 43% completo · 3 de 7 campos preenchidos<i style="--f:43%"></i></p>
                   </div>
                   <div class="painel">
-                    <p class="mk-t2">CONTATO PRINCIPAL</p>
-                    <dl class="campos">
-                      <dt>Nome</dt><dd class="vazio">A cadastrar</dd>
-                      <dt>Cargo</dt><dd class="vazio">A cadastrar</dd>
-                      <dt>E-mail</dt><dd class="vazio">A cadastrar</dd>
-                    </dl>
+                    <p class="mk-t2">Contato principal</p>
+                    <div class="vazio-medido">
+                      <b>Nenhum contato nomeado nesta conta.</b>
+                      <span>118 das 306 contas estão assim — a auditoria lista todas.</span>
+                      <span>Segmentação e cadência de e-mail dependem deste cadastro.</span>
+                    </div>
                   </div>
                 </div>
                 <div class="painel">
-                  <p class="mk-t2">LINHA DO TEMPO</p>
+                  <p class="mk-t2">Linha do tempo<span>5 de 18 registros</span></p>
                   <ul class="jornada">
-                    <li><i></i><span><b>Proposta de renovação enviada</b><em>2024 · Comercial</em></span><span class="jornada-tag">Proposta</span></li>
-                    <li><i></i><span><b>Reunião de acompanhamento</b><em>2023 · Kickoff</em></span><span class="jornada-tag">Reunião</span></li>
-                    <li><i></i><span><b>Chamado de suporte resolvido</b><em>2023 · Técnico</em></span><span class="jornada-tag">Suporte</span></li>
-                    <li><i></i><span><b>Ampliação de infraestrutura</b><em>2021 · Técnico</em></span><span class="jornada-tag">Ampliação</span></li>
-                    <li><i></i><span><b>Migração para MAM1</b><em>2009 · Operação 100% digital</em></span><span class="jornada-tag">Migração</span></li>
+                    <li class="lacuna"><i></i><span><em>hoje · set/2026 — 30 meses sem registro</em></span></li>
+                    <li><i></i><span><b>Proposta de renovação enviada</b><em>mar/2024 · Comercial</em></span><span class="jornada-tag">Proposta</span></li>
+                    <li><i></i><span><b>Reunião de acompanhamento</b><em>ago/2023 · Kickoff</em></span><span class="jornada-tag">Reunião</span></li>
+                    <li><i></i><span><b>Chamado de suporte resolvido</b><em>fev/2023 · Técnico</em></span><span class="jornada-tag">Suporte</span></li>
+                    <li><i></i><span><b>Ampliação de infraestrutura</b><em>set/2021 · Técnico</em></span><span class="jornada-tag">Implantação</span></li>
+                    <li class="lacuna"><i></i><span><em>12 anos sem registro no sistema anterior</em></span></li>
+                    <li><i></i><span><b>Migração para MAM1</b><em>set/2009 · Operação 100% digital</em></span><span class="jornada-tag">Implantação</span></li>
                   </ul>
                 </div>
               </div>
@@ -623,44 +777,87 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
           <figcaption class="tela-cap"><span class="tela-num">03</span><h3 class="tela-tit">Funil de negócios</h3><span class="tela-selo">Dados ilustrativos</span><span class="tela-txt">Cada oportunidade comercial no estágio certo, com valor e responsável visíveis.</span></figcaption>
           <div class="chrome">
             <div class="chrome-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="url">app.mediaportal.com.br/crm/negocios</span></div>
-            <div class="chrome-body" role="img" tabindex="0" aria-label="Ilustração do funil de negócios do CRM: cinco colunas de estágio comercial, com valor e situação de cada oportunidade."><div class="funil">
+            <div class="chrome-body" role="img" tabindex="0" aria-label="Funil de negócios do CRM: cinco estágios com subtotal e proporção do pipeline, tempo parado em cada negócio e o resultado dos negócios encerrados no período."><div class="funil">
               <header class="funil-top">
-                <div><p class="mk-t1">Negócios</p><p>Funil comercial · 11 negócios em aberto</p></div>
+                <div>
+                  <p class="mk-t1">Negócios</p>
+                  <p>Funil comercial · 11 negócios em aberto</p>
+                  <p>Ticket médio R$&nbsp;37,5 mil · R$&nbsp;156.500 parados há mais de 12 meses, em 4 negócios</p>
+                </div>
                 <span class="pipe">R$&nbsp;412.000 em pipeline</span>
               </header>
               <div class="colunas">
-                <div class="coluna"><p class="mk-t3">LEAD <span>3</span></p>
-                  <div class="neg"><b>TV Assembleia · GO</b><span class="valor">R$&nbsp;18.000</span><em>novo</em></div>
-                  <div class="neg"><b>Rádio Cultura FM</b><span class="valor">R$&nbsp;9.500</span><em>novo</em></div>
-                  <div class="neg"><b>Instituto Embratel 21</b><span class="valor">R$&nbsp;22.000</span><em>indicação</em></div>
+                <div class="coluna">
+                  <p class="mk-t3">Lead<span>3</span></p>
+                  <p class="coluna-sub"><b>R$&nbsp;49.500</b><span>12%</span><i style="--f:12%"></i></p>
+                  <div class="neg"><b>Instituto Embratel 21</b><span class="valor">R$&nbsp;22.000</span><em>indicação · há 26 dias</em></div>
+                  <div class="neg"><b>TV Assembleia · GO</b><span class="valor">R$&nbsp;18.000</span><em>site · há 4 dias</em></div>
+                  <div class="neg"><b>Rádio Cultura FM</b><span class="valor">R$&nbsp;9.500</span><em>site · há 11 dias</em></div>
                 </div>
-                <div class="coluna"><p class="mk-t3">QUALIFICADO <span>2</span></p>
-                  <div class="neg"><b>Museu da Imagem e do Som</b><span class="valor">R$&nbsp;31.000</span><em>fit confirmado</em></div>
-                  <div class="neg"><b>EPTV Regional</b><span class="valor">R$&nbsp;27.500</span><em>fit confirmado</em></div>
+                <div class="coluna">
+                  <p class="mk-t3">Contato feito<span>2</span></p>
+                  <p class="coluna-sub"><b>R$&nbsp;61.000</b><span>15%</span><i style="--f:15%"></i></p>
+                  <div class="neg parado"><b>Assembleia Legislativa · PI</b><span class="valor">R$&nbsp;45.000</span><em>parado há 34 meses</em></div>
+                  <div class="neg parado"><b>TV Câmara · Campinas</b><span class="valor">R$&nbsp;16.000</span><em>parado há 13 meses</em></div>
                 </div>
-                <div class="coluna"><p class="mk-t3">CONTATO FEITO <span>2</span></p>
-                  <div class="neg"><b>Assembleia Legislativa · PI</b><span class="valor">R$&nbsp;45.000</span><em>call feita</em></div>
-                  <div class="neg"><b>TV Câmara · Campinas</b><span class="valor">R$&nbsp;16.000</span><em>call feita</em></div>
+                <div class="coluna">
+                  <p class="mk-t3">Qualificado<span>2</span></p>
+                  <p class="coluna-sub"><b>R$&nbsp;58.500</b><span>14%</span><i style="--f:14%"></i></p>
+                  <div class="neg"><b>Museu da Imagem e do Som</b><span class="valor">R$&nbsp;31.000</span><em>há 9 dias</em></div>
+                  <div class="neg parado"><b>EPTV Regional</b><span class="valor">R$&nbsp;27.500</span><em>parado há 24 meses</em></div>
                 </div>
-                <div class="coluna"><p class="mk-t3">PROPOSTA ENVIADA <span>2</span></p>
-                  <div class="neg"><b>TV Cultura</b><span class="valor">R$&nbsp;68.000</span><em>renovação</em></div>
-                  <div class="neg"><b>Sesc São Paulo</b><span class="valor">R$&nbsp;54.000</span><em>ampliação</em></div>
+                <div class="coluna">
+                  <p class="mk-t3">Proposta enviada<span>2</span></p>
+                  <p class="coluna-sub"><b>R$&nbsp;122.000</b><span>30%</span><i style="--f:30%"></i></p>
+                  <div class="neg parado"><b>TV Cultura</b><span class="valor">R$&nbsp;68.000</span><em>parado há 30 meses</em></div>
+                  <div class="neg"><b>Sesc São Paulo</b><span class="valor">R$&nbsp;54.000</span><em>há 12 dias</em></div>
                 </div>
-                <div class="coluna"><p class="mk-t3">NEGOCIAÇÃO <span>2</span></p>
-                  <div class="neg"><b>Novo Tempo</b><span class="valor">R$&nbsp;39.000</span><em>ajuste de escopo</em></div>
-                  <div class="neg"><b>CazéTV</b><span class="valor">R$&nbsp;82.000</span><em>ajuste de preço</em></div>
+                <div class="coluna">
+                  <p class="mk-t3">Negociação<span>2</span></p>
+                  <p class="coluna-sub"><b>R$&nbsp;121.000</b><span>29%</span><i style="--f:29%"></i></p>
+                  <div class="neg"><b>CazéTV</b><span class="valor">R$&nbsp;82.000</span><em>há 6 dias</em></div>
+                  <div class="neg"><b>Novo Tempo</b><span class="valor">R$&nbsp;39.000</span><em>há 21 dias</em></div>
                 </div>
               </div>
+              <p class="funil-pe">Encerrados nos últimos 12 meses · 10 de 37 negócios viraram contrato · <b>R$&nbsp;286.000 fechados</b> · conversão 27%</p>
               </div>
             </div>
           </div>
         </figure>
 
+        </div>
       </div>
       <p class="telas-nota reveal"><b>Sobre os dados destas telas.</b> Contas ativas, pipeline, taxa de conversão, nomes de contas e valores de negócio são exemplos de interface, criados para ilustrar o funcionamento — não são dados da Media Portal. A exceção é o total de 306 contas, que é o tamanho real da base já mapeada.</p>
     </div>
   </section>
-  <section id="investimento" aria-labelledby="t-investimento">
+  <section id="ficha-tecnica" aria-labelledby="t-ficha-tecnica">
+    <div class="wrap">
+      <div class="sec-cab reveal">
+        <span class="eyebrow">Ficha técnica</span>
+        <h2 id="t-ficha-tecnica">O que está sendo contratado</h2>
+        <p class="sec-lead">O resumo do que foi descrito acima, em uma tabela — para conferir antes de decidir.</p>
+      </div>
+      <div class="tabela-tec reveal">
+        <table>
+          <caption class="oculto">Resumo técnico do que está sendo contratado</caption>
+          <tbody>
+            <tr><th scope="row">Objeto</th><td>Sistema próprio de CRM e inteligência de dados sobre a base comercial da Media Portal, integrado ao site institucional já existente.</td></tr>
+            <tr><th scope="row">Escopo</th><td>Sete frentes de entrega: auditoria e consolidação da base · esqueleto do sistema · dashboards e relatórios · APIs de integração · visão de marketing e disparo de e-mail · integração com o site · base de dados inteligente.</td></tr>
+            <tr><th scope="row">Ponto de partida</th><td>306 contas e 1.348 interações já mapeadas, e a especificação técnica do CRM pronta. Os dois materiais vão em anexo.</td></tr>
+            <tr><th scope="row">Prazo de execução</th><td>Três meses, em três fases de um mês cada.</td></tr>
+            <tr><th scope="row">Fase 1 · mês 1</th><td>Auditoria e consolidação dos dados e definição da arquitetura. Inclui as três semanas de levantamento e estruturação da base.</td></tr>
+            <tr><th scope="row">Fase 2 · mês 2</th><td>Busca, filtros, ordenação, agrupamento e jornada por conta; primeiras versões dos dashboards; estruturação da base de dados inteligente.</td></tr>
+            <tr><th scope="row">Fase 3 · mês 3</th><td>APIs de integração, projeto de disparo de e-mail, integração com o site institucional, testes e entrega em operação.</td></tr>
+            <tr><th scope="row">Acompanhamento</th><td>Checkpoint ao final de cada fase, com entrega demonstrável antes de a seguinte começar.</td></tr>
+            <tr class="acento"><th scope="row">Garantia</th><td>Três meses após a entrega em operação.</td></tr>
+            <tr><th scope="row">Relatórios</th><td>Painéis e relatórios personalizados, exportáveis em diferentes formatos, para operação, comercial e diretoria.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="investimento" class="alt" aria-labelledby="t-investimento">
     <div class="wrap">
       <div class="sec-cab reveal">
         <span class="eyebrow">Investimento</span>
@@ -734,6 +931,50 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
       });
     }, { rootMargin: '-45% 0px -50% 0px' });
     secoes.forEach(function (s) { espiao.observe(s); });
+  }
+
+  /* Carrossel das telas. Só liga depois que os controles estão montados: até
+     lá as três telas ficam empilhadas, que é o que quem não tem JavaScript vê
+     e o que sai na impressão. Uma falha aqui deixa a lista corrida, nunca o
+     leitor preso na primeira tela. */
+  var palco = document.querySelector('.telas-palco');
+  var trilho = palco && palco.querySelector('.telas');
+  var nav = document.querySelector('.telas-nav');
+  if (palco && trilho && nav) {
+    var telas = trilho.querySelectorAll('.tela');
+    var pontos = nav.querySelectorAll('[data-ir]');
+    var passos = nav.querySelectorAll('[data-passo]');
+    var atual = 0;
+
+    var mostrar = function (i) {
+      atual = Math.max(0, Math.min(telas.length - 1, i));
+      trilho.style.transform = 'translateX(' + (-atual * 100) + '%)';
+      for (var k = 0; k < telas.length; k++) {
+        /* a tela fora de quadro sai da ordem de tabulação e da leitura de tela */
+        telas[k].setAttribute('aria-hidden', k === atual ? 'false' : 'true');
+        telas[k].querySelector('.chrome-body').tabIndex = k === atual ? 0 : -1;
+      }
+      for (var j = 0; j < pontos.length; j++) {
+        pontos[j].setAttribute('aria-current', j === atual ? 'true' : 'false');
+      }
+      passos[0].disabled = atual === 0;
+      passos[1].disabled = atual === telas.length - 1;
+    };
+
+    nav.addEventListener('click', function (e) {
+      var ir = e.target.closest('[data-ir]');
+      if (ir) { mostrar(Number(ir.dataset.ir)); return; }
+      var passo = e.target.closest('[data-passo]');
+      if (passo) mostrar(atual + Number(passo.dataset.passo));
+    });
+    palco.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); mostrar(atual + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); mostrar(atual - 1); }
+    });
+
+    nav.hidden = false;
+    palco.classList.add('on');
+    mostrar(0);
   }
 
   var botao = document.querySelector('.btn-print');
