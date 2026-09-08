@@ -47,7 +47,7 @@ create table public.amaralesilva_projects (
   name           text not null,
   site_url       text,
   status         text not null default 'contato'
-                 check (status in ('contato','proposta_enviada','negociacao','fechado','concluido','perdido')),
+                 check (status in ('contato','proposta_a_enviar','proposta_enviada','negociacao','fechado','concluido','perdido')),
   proposal_url   text,
   contract_url   text,
   price_proposed numeric(12,2),

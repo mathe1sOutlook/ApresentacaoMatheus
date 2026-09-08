@@ -84,8 +84,9 @@ Painel interno do Matheus e do Bruno, em `admin/index.html` — um SPA estático
 no mesmo espírito do site (arquivo único, sem build, mesmos tokens de design).
 Reúne:
 
-- **CRM** — pipeline de propostas (contato → proposta enviada → negociação →
-  contrato fechado → concluído / perdido), com preço proposto, preço final,
+- **CRM** — pipeline de propostas (contato → proposta a enviar → proposta
+  enviada → negociação → contrato fechado → concluído / perdido), com preço
+  proposto, preço final,
   condições de pagamento, divisão de valores entre a dupla e links para a
   proposta e o contrato em HTML hospedados no próprio site.
 - **Devolutivas** — registro por projeto do que o cliente devolveu, do que foi
