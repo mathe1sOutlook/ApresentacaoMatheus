@@ -247,7 +247,10 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 .telas-nav .ponto:hover{border-color:var(--line-blue);color:var(--text)}
 .telas-nav .ponto[aria-current="true"]{background:var(--blue-deep);border-color:var(--blue-deep);color:#fff}
 
-.telas-palco.on{overflow:hidden}
+/* Sem altura própria o palco fica do tamanho da tela mais alta, e as outras
+   duas deixam um vão de até 278px entre o mockup e a nota — que passa a
+   parecer solta na página. O script mede a tela em quadro e a altura segue. */
+.telas-palco.on{overflow:hidden;transition:height .45s cubic-bezier(.4,0,.2,1)}
 .telas-palco.on .telas{grid-auto-flow:column;grid-auto-columns:100%;gap:0;align-items:start;transition:transform .45s cubic-bezier(.4,0,.2,1)}
 .telas-palco.on .tela{padding-inline:1px}
 @media (prefers-reduced-motion:reduce){.telas-palco.on .telas{transition:none}}
@@ -407,8 +410,6 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 .funil-pe{padding-top:14px;border-top:1px solid var(--line);font-size:12px}
 .funil-pe b{color:var(--green);font-weight:600}
 
-.telas-nota{margin-top:34px;padding:16px 20px;border:1px dashed var(--line-strong);border-radius:12px;font-size:13.5px;color:var(--dim);max-width:78ch}
-.telas-nota b{color:var(--muted);font-weight:600}
 
 /* ═══ CRONOGRAMA · AS SETE FRENTES NOS TRÊS MESES ═══
    Substitui o bloco "3 FASES EM ESCADA". As regras .fases/.fase saem inteiras,
@@ -622,7 +623,7 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
   /* O carrossel não existe no papel: as três telas saem corridas, uma embaixo
      da outra, e os controles somem. */
   .telas-nav{display:none!important}
-  .telas-palco{overflow:visible!important}
+  .telas-palco{overflow:visible!important;height:auto!important}
   .telas-palco.on .telas{grid-auto-flow:row!important;grid-auto-columns:auto!important;gap:30px!important;transform:none!important;transition:none!important}
   .telas-palco.on .tela{padding-inline:0!important}
   .tabela-tec tr,.tabela-tec th,.tabela-tec td{break-inside:avoid}
@@ -1308,7 +1309,6 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
 
         </div>
       </div>
-      <p class="telas-nota reveal"><b>Sobre os dados destas telas.</b> Contas ativas, pipeline, taxa de conversão, nomes de contas e valores de negócio são exemplos de interface, criados para ilustrar o funcionamento — não são dados da Media Portal. A exceção é o total de 306 contas, que é o tamanho real da base já mapeada.</p>
     </div>
   </section>
   <section id="ficha-tecnica" aria-labelledby="t-ficha-tecnica">
@@ -1431,6 +1431,15 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
     var passos = nav.querySelectorAll('[data-passo]');
     var atual = 0;
 
+    /* A altura do palco é a da tela em quadro. Sem isto ele fica do tamanho da
+       mais alta e sobra um vão embaixo das outras duas — que empurra a nota
+       para longe do mockup. */
+    var ajustarAltura = function () {
+      palco.style.height = telas[atual].offsetHeight + 'px';
+    };
+    window.addEventListener('resize', ajustarAltura);
+    window.addEventListener('load', ajustarAltura);
+
     var mostrar = function (i) {
       atual = Math.max(0, Math.min(telas.length - 1, i));
       trilho.style.transform = 'translateX(' + (-atual * 100) + '%)';
@@ -1444,6 +1453,7 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
       }
       passos[0].disabled = atual === 0;
       passos[1].disabled = atual === telas.length - 1;
+      ajustarAltura();
     };
 
     nav.addEventListener('click', function (e) {
