@@ -472,7 +472,19 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 .crono-fecho .crono-rot{padding-left:34px;color:var(--text);font-weight:600}
 
 .crono-nota{margin:18px 0 0;font-size:13px;line-height:1.6;color:var(--dim);max-width:80ch}
-.crono-texto{margin-top:40px}
+
+/* A prosa sobe para o lado do título: o gráfico usa a largura inteira e passa
+   a fechar a seção, em vez de virar ilustração no meio dela com uma faixa
+   morta embaixo. Como o leitor chega ao gráfico já com a leitura dos três
+   meses na cabeça, o texto perde o que a matriz desenha — a frente que
+   atravessa a virada, os meses de cada frente, a linha de entrega. */
+.crono-cab{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1fr);gap:64px;align-items:start;margin-bottom:52px}
+.crono-cab .sec-cab{margin-bottom:0;max-width:none}
+.crono-cab .corpo p{max-width:none}
+@media (max-width:980px){
+  .crono-cab{grid-template-columns:1fr;gap:30px;margin-bottom:40px}
+  .crono-cab .corpo p{max-width:70ch}
+}
 
 /* As barras crescem da esquerda quando a seção entra em quadro. O esconderijo
    depende da classe que o próprio script põe em <html>: sem JavaScript o
@@ -1014,9 +1026,15 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
   </section>
   <section id="cronograma" aria-labelledby="t-cronograma">
     <div class="wrap">
-      <div class="sec-cab reveal">
-        <span class="eyebrow">Cronograma</span>
-        <h2 id="t-cronograma">Em que mês cada frente acontece</h2>
+      <div class="crono-cab reveal">
+        <div class="sec-cab">
+          <span class="eyebrow">Cronograma</span>
+          <h2 id="t-cronograma">Em que mês cada frente acontece</h2>
+        </div>
+        <div class="corpo">
+          <p>O primeiro mês é quase todo levantamento: são três semanas para auditar e consolidar o que já existe. A arquitetura é desenhada sobre essa base tratada, que fica validada como a fundação do resto do projeto.</p>
+          <p>O que no mês 1 é decisão de arquitetura vira, nos trinta dias seguintes, a tela que se usa todo dia. As APIs e o disparo de <span class="crono-nb">e-mail</span> só entram depois, sobre um sistema que já está de pé, e a conexão com o site institucional fecha a entrada de leads no mesmo fluxo do funil.</p>
+        </div>
       </div>
 
       <figure class="crono-mapa reveal">
@@ -1083,10 +1101,6 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
         <p class="crono-nota">Cada barra cobre os meses em que aquela frente corre; a escala é mensal e não reparte o esforço dentro do mês. A ordem das linhas é a da numeração do escopo, o que deixa a 07 embaixo de frentes que só começam no mês 3. A última linha fecha o projeto e por isso não recebe número.</p>
       </figure>
 
-      <div class="corpo crono-texto reveal">
-        <p>O primeiro mês é quase todo levantamento: são três semanas para auditar e consolidar o que já existe. A arquitetura do sistema é desenhada sobre essa base tratada, que fica validada como a fundação do resto do projeto. A frente 02 é a única que atravessa a virada do mês. O que no mês 1 é decisão de arquitetura vira, nos trinta dias seguintes, a tela que se usa todo dia: busca, filtros, ordenação, agrupamento e a jornada de cada conta. Ao lado dela crescem as primeiras versões dos dashboards e a estruturação da base inteligente.</p>
-        <p>As APIs e o disparo de <span class="crono-nb">e-mail</span> entram no terceiro mês, sobre um sistema que já está de pé, e a conexão com o site institucional fecha a entrada de leads no mesmo fluxo do funil. O mês termina em testes e ajustes finais, com o sistema entregue em operação.</p>
-      </div>
     </div>
   </section>
   <section id="telas" class="alt" aria-labelledby="t-telas">
