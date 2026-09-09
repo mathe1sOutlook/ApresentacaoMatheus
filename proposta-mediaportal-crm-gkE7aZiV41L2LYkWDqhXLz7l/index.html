@@ -85,11 +85,22 @@ h1 .az{color:var(--blue)}
 .lead{font-size:17.5px;line-height:1.62;color:var(--muted);max-width:64ch}
 .capa-meta{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:34px;padding-top:26px;border-top:1px solid var(--line);font-size:13.5px;color:var(--dim)}
 .capa-meta b{color:var(--muted);font-weight:600}
-.numeros{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1px;margin-top:44px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-.numeros div{background:var(--bg);padding:20px 22px}
-.numeros b{display:block;font-family:var(--display);font-weight:700;font-size:30px;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-bottom:7px}
-.numeros span{font-size:12.5px;line-height:1.4;color:var(--dim);display:block}
-.numeros div:last-child b{color:var(--orange-soft)}
+
+/* ═══ CONTEXTO · a ficha do levantamento ═══
+   Os dois números reais do projeto ficam aqui, ao lado do parágrafo que os
+   sustenta, e não na capa, onde apareceriam antes de qualquer texto que os
+   explicasse. De quebra ocupam a faixa direita, que ficava vazia. */
+.ctx{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:62px;align-items:start}
+.ctx .corpo p{max-width:none}
+.lev{border:1px solid var(--line);border-radius:16px;background:linear-gradient(160deg,var(--panel-strong),var(--panel));overflow:hidden}
+.lev-rot{display:block;font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);padding:20px 24px 0}
+.lev-item{padding:18px 24px 20px}
+.lev-item + .lev-item{border-top:1px solid var(--line)}
+.lev-item b{display:block;font-family:var(--display);font-weight:700;font-size:40px;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-bottom:8px}
+.lev-item + .lev-item b{color:var(--blue-light)}
+.lev-item span{display:block;font-size:13px;line-height:1.45;color:var(--dim)}
+.lev-pe{padding:14px 24px;border-top:1px solid var(--line);background:rgba(255,255,255,.02);font-size:12.5px;line-height:1.5;color:var(--dim)}
+@media (max-width:900px){.ctx{grid-template-columns:1fr;gap:38px}.lev{max-width:420px}}
 
 /* ═══ SEÇÕES ═══ */
 /* O cabeçalho é fixo: sem esta margem, pular por um item do índice esconderia
@@ -582,6 +593,10 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
   section{padding:34px 0}
   .sec-cab{break-after:avoid}
   .capa{padding:24px 0 34px}
+  /* Decoração não vai ao papel; a ficha vai, inteira. */
+  #contexto .ambiente,#contexto::before{display:none!important}
+  .ctx{grid-template-columns:minmax(0,1fr) 250px;gap:32px}
+  .lev{break-inside:avoid}
   .tela,.crono-mapa,.plano,.cartao,.esc-item,.passos li{break-inside:avoid}
   .telas{gap:30px}
   .chrome{box-shadow:none}
@@ -639,6 +654,12 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
 .ambiente .no-acento{fill:var(--orange);opacity:.7}
 @keyframes pulso{0%,100%{opacity:.28;transform:scale(1)}50%{opacity:1;transform:scale(1.45)}}
 @media (max-width:1100px){.ambiente{display:none}}
+/* A mesma linguagem segue na primeira seção, mais esparsa e mais apagada — o
+   desenho da capa está 600px acima e repeti-lo igual denunciaria a cópia. */
+#contexto{overflow:hidden}
+#contexto::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 640px 430px at 84% 46%,rgba(19,110,242,.13),transparent 66%);pointer-events:none;z-index:0}
+#contexto .ambiente{opacity:.55}
+#contexto .wrap{position:relative;z-index:1}
 
 /* ═══ FLUXO DO DADO (seção "O sistema") ═══
    Ilustra exatamente o que o texto ao lado afirma: quatro registros que hoje
@@ -710,26 +731,39 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
       <p class="sub">Sistema próprio de gestão comercial, dados e performance, integrado ao site institucional da Media Portal</p>
       <p class="lead">Em três meses, a base comercial que já levantamos e organizamos vira um sistema em operação, ligado ao site institucional que a Media Portal já tem no ar.</p>
      </div>
-      <div class="numeros">
-        <div><b>306</b><span>contas na base já mapeada</span></div>
-        <div><b>1.348</b><span>interações registradas no histórico</span></div>
-        <div><b>7</b><span>frentes de entrega</span></div>
-        <div><b>3</b><span>fases, uma por mês</span></div>
-      </div>
       <p class="capa-meta"><span><b>Preparado para</b> a diretoria da Media Portal Soluções</span><span><b>Por</b> Amaral &amp; Silva</span><span><b>Data</b> 6 de setembro de 2026</span></p>
     </div>
   </div>
 
   <!-- ═══ RESUMO ═══ -->
   <section id="contexto" aria-labelledby="t-contexto">
+    <svg class="ambiente" viewBox="0 0 560 620" fill="none" aria-hidden="true" focusable="false">
+      <line x1="120" y1="70" x2="250" y2="160"/><line x1="250" y1="160" x2="410" y2="110"/>
+      <line x1="250" y1="160" x2="180" y2="320"/><line x1="180" y1="320" x2="350" y2="380"/>
+      <line x1="350" y1="380" x2="500" y2="290"/><line x1="410" y1="110" x2="500" y2="290"/>
+      <line x1="180" y1="320" x2="270" y2="520"/>
+      <polyline points="270,520 430,490 350,380"/>
+      <circle cx="120" cy="70" r="2.5"/><circle cx="250" cy="160" r="3.5"/>
+      <circle cx="410" cy="110" r="3"/><circle cx="180" cy="320" r="4" class="no-acento"/>
+      <circle cx="350" cy="380" r="3"/><circle cx="500" cy="290" r="2.5"/>
+      <circle cx="270" cy="520" r="3"/><circle cx="430" cy="490" r="2.5"/>
+    </svg>
     <div class="wrap">
       <div class="sec-cab reveal">
         <h2 id="t-contexto">Onde a Media Portal está hoje</h2>
       </div>
-      <div class="corpo reveal">
-        <p>A base comercial da Media Portal já foi levantada e organizada. São <b>306 contas</b> e <b>1.348 interações históricas</b> mapeadas, cada conta com o status do relacionamento anotado e com as lacunas de dado à vista. Há também um plano de reativação em curso.</p>
-        <p>O levantamento deixou claro que o histórico comercial da empresa vale mais do que a operação consegue aproveitar hoje. Ele existe, mas continua espalhado, e toda pergunta simples custa uma garimpagem: quais contas pararam de comprar, quanto há de negócio aberto neste mês, o que já foi conversado com um cliente antes de ligar para ele de novo. Não existe hoje um ponto em que a diretoria leia o mesmo dado que a operação registra.</p>
-        <p>Esta proposta trata do passo seguinte, que é dar a esse trabalho um lugar onde ele seja usado todos os dias, com busca, cruzamento e leitura de performance sobre a base inteira.</p>
+      <div class="ctx reveal">
+        <div class="corpo">
+          <p>A base comercial da Media Portal já foi levantada e organizada. Cada conta tem o status do relacionamento anotado e as lacunas de dado à vista, e há um plano de reativação em curso.</p>
+          <p>O levantamento deixou claro que o histórico comercial da empresa vale mais do que a operação consegue aproveitar hoje. Ele existe, mas continua espalhado, e toda pergunta simples custa uma garimpagem: quais contas pararam de comprar, quanto há de negócio aberto neste mês, o que já foi conversado com um cliente antes de ligar para ele de novo. Não existe hoje um ponto em que a diretoria leia o mesmo dado que a operação registra.</p>
+          <p>Esta proposta trata do passo seguinte, que é dar a esse trabalho um lugar onde ele seja usado todos os dias, com busca, cruzamento e leitura de performance sobre a base inteira.</p>
+        </div>
+        <aside class="lev">
+          <span class="lev-rot">O que já está levantado</span>
+          <div class="lev-item"><b>306</b><span>contas mapeadas, com status de relacionamento</span></div>
+          <div class="lev-item"><b>1.348</b><span>interações históricas consolidadas</span></div>
+          <p class="lev-pe">A base tratada e a especificação técnica vão em anexo.</p>
+        </aside>
       </div>
     </div>
   </section>
