@@ -336,6 +336,71 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 .painel-pe{display:flex;justify-content:space-between;gap:10px;margin-top:14px;padding-top:13px;border-top:1px solid var(--line);font-size:11.5px}
 .painel-pe span{color:var(--blue)}
 
+/* ═══ O MOCKUP RESPONDE AO MOUSE ═══
+   Tudo aqui é hover puro: `.chrome-body` é `role="img"`, então os filhos são
+   apresentacionais por contrato e nada pode virar focável ou navegável por
+   teclado. Nenhum dado novo entra — o que muda é o que já está na tela ficar
+   evidente quando o mouse passa, e é o que faz o mockup ler como sistema em
+   vez de print. No toque e no papel o estado de repouso é o de sempre. */
+
+/* Cada módulo do menu diz qual frente do escopo o entrega. Numa apresentação
+   ao vivo é a deixa que fecha o círculo: o menu da tela é a lista das sete
+   frentes outra vez. "Configurações" fica de fora porque não é uma delas. */
+.rail-item{position:relative;transition:background .2s ease,color .2s ease}
+.rail-item i{transition:background .2s ease}
+.rail-item[data-frente]{cursor:help}
+@media (hover:hover){
+  .rail-item[data-frente]:not(.on):hover{background:rgba(255,255,255,.05);color:var(--text)}
+  .rail-item[data-frente]:not(.on):hover i{background:var(--blue-light)}
+  .rail-item[data-frente]::after{
+    content:attr(data-frente);position:absolute;left:calc(100% + 12px);top:50%;
+    transform:translateY(-50%) translateX(-5px);
+    padding:7px 12px;border:1px solid var(--line-blue);border-radius:8px;
+    background:var(--panel-strong);box-shadow:0 10px 26px rgba(0,0,0,.55);
+    font-family:var(--sans);font-size:11px;font-weight:500;line-height:1;
+    color:var(--text);white-space:nowrap;
+    opacity:0;pointer-events:none;z-index:6;
+    transition:opacity .18s ease,transform .18s ease;
+  }
+  .rail-item[data-frente]:hover::after{opacity:1;transform:translateY(-50%) translateX(0)}
+}
+
+/* Passar numa barra apaga as outras — a mesma linguagem do mapa da seção "O
+   sistema". O valor já está impresso em cima de cada uma, então o realce não
+   revela número nenhum: só isola a categoria. */
+.barras .barra,.barras .barra i,.barras .barra span{transition:opacity .22s ease,color .22s ease}
+@media (hover:hover){
+  .barras:hover .barra{opacity:.3}
+  .barras .barra:hover{opacity:1}
+  .barras .barra:hover i{opacity:1}
+  .barras .barra:hover span{color:var(--text)}
+}
+
+/* A lista de contas paradas e os controles do topo reagem: sem isso o mockup
+   é uma fotografia, e o cliente lê como fotografia. */
+.revisar li{transition:background .2s ease}
+.aberto,.painel-pe span,.busca,.botao-falso{transition:color .2s ease,border-color .2s ease}
+@media (hover:hover){
+  .revisar li:hover{background:linear-gradient(90deg,rgba(90,164,242,.10),transparent 72%)}
+  .revisar li:hover .aberto{color:var(--blue-light)}
+  .painel-pe:hover span{color:var(--blue-light)}
+  .busca:hover{border-color:var(--line-blue);color:var(--muted)}
+  .botao-falso:hover{border-color:var(--line-blue);color:var(--text)}
+}
+
+/* As barras crescem quando a tela entra em quadro, como as do cronograma.
+   Fora de `html.js` e sob movimento reduzido elas já nascem na altura certa. */
+@media (prefers-reduced-motion:no-preference){
+  html.js .tela.reveal .barras .barra i{transform:scaleY(0);transform-origin:bottom center}
+  html.js .tela.reveal.vis .barras .barra i{transform:none;transition:transform .75s cubic-bezier(.22,.7,.3,1),opacity .22s ease}
+  html.js .tela.reveal.vis .barras .barra:nth-child(1) i{transition-delay:.26s}
+  html.js .tela.reveal.vis .barras .barra:nth-child(2) i{transition-delay:.33s}
+  html.js .tela.reveal.vis .barras .barra:nth-child(3) i{transition-delay:.40s}
+  html.js .tela.reveal.vis .barras .barra:nth-child(4) i{transition-delay:.47s}
+  html.js .tela.reveal.vis .barras .barra:nth-child(5) i{transition-delay:.54s}
+  html.js .tela.reveal.vis .barras .barra:nth-child(6) i{transition-delay:.61s}
+}
+
 /* ——— Tela 2 · Ficha da conta ——— */
 .ficha{display:grid;gap:20px;padding:24px;min-width:840px}
 .ficha-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
@@ -645,6 +710,10 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
   .crono-rot{font-size:9.5pt;padding-block:9px}
   .crono-nota{font-size:9pt}
   .crono-barra{transform:none!important}
+  /* As barras da tela 01 crescem quando ela entra em quadro. Quem manda
+     imprimir sem ter passado por lá não dispara o observador, e elas sairiam
+     zeradas no papel. */
+  .barras .barra i{transform:none!important}
   .reveal{opacity:1!important;transform:none!important}
   a{color:var(--blue)!important}
 }
@@ -1131,19 +1200,19 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
               <aside class="rail">
                 <div class="rail-marca"><span class="rail-quad"></span><b>MP · CRM</b></div>
                 <div class="rail-nav">
-                  <span class="rail-item on"><i></i>Visão Geral</span>
-                  <span class="rail-item"><i></i>Contas<b>306</b></span>
-                  <span class="rail-item"><i></i>Negócios<b>11</b></span>
-                  <span class="rail-item"><i></i>Interações</span>
-                  <span class="rail-item"><i></i>Financeiro</span>
-                  <span class="rail-item"><i></i>Marketing</span>
-                  <span class="rail-item"><i></i>Relatórios</span>
+                  <span class="rail-item on" data-frente="Frente 03 · Dashboards e relatórios"><i></i>Visão Geral</span>
+                  <span class="rail-item" data-frente="Frente 02 · Esqueleto do sistema"><i></i>Contas<b>306</b></span>
+                  <span class="rail-item" data-frente="Frente 02 · Esqueleto do sistema"><i></i>Negócios<b>11</b></span>
+                  <span class="rail-item" data-frente="Frente 02 · Esqueleto do sistema"><i></i>Interações</span>
+                  <span class="rail-item" data-frente="Frente 02 · Módulo financeiro"><i></i>Financeiro</span>
+                  <span class="rail-item" data-frente="Frente 05 · Marketing e disparo de e-mail"><i></i>Marketing</span>
+                  <span class="rail-item" data-frente="Frente 03 · Dashboards e relatórios"><i></i>Relatórios</span>
                 </div>
                 <div class="rail-fim">
                   <span class="rail-grupo">Sistema</span>
                   <div class="rail-nav">
-                    <span class="rail-item"><i></i>Dados brutos</span>
-                    <span class="rail-item"><i></i>Integrações</span>
+                    <span class="rail-item" data-frente="Frente 02 · Acesso aos dados brutos"><i></i>Dados brutos</span>
+                    <span class="rail-item" data-frente="Frente 04 · APIs de integração"><i></i>Integrações</span>
                     <span class="rail-item"><i></i>Configurações</span>
                   </div>
                 </div>
