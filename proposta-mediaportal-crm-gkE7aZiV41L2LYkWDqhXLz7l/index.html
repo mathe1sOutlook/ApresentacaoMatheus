@@ -229,7 +229,7 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 }
 
 /* ——— Carrossel ———
-   Por padrão as três telas ficam empilhadas: é o que quem não tem JavaScript
+   Por padrão as cinco telas ficam empilhadas: é o que quem não tem JavaScript
    vê, e é o que sai na impressão. O carrossel só existe depois que o script
    consegue montar os controles e marca `.on` no palco — assim uma falha no
    meio do caminho não deixa o leitor preso na primeira tela. */
@@ -239,6 +239,9 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 .tela-cap>*{min-width:0}
 
 .telas-nav{display:flex;align-items:center;gap:10px;margin-bottom:26px;flex-wrap:wrap}
+/* `display:flex` na classe vence o `[hidden]` da folha do navegador. Sem esta
+   linha, quem está sem JavaScript vê a barra de controles e ela não faz nada. */
+.telas-nav[hidden]{display:none}
 .telas-nav .passo{width:34px;height:34px;flex:none;display:grid;place-items:center;font-size:15px;color:var(--muted);background:transparent;border:1px solid var(--line-strong);border-radius:10px;cursor:pointer;transition:border-color .18s ease,color .18s ease}
 .telas-nav .passo:hover:not(:disabled){border-color:var(--line-blue);color:var(--text)}
 .telas-nav .passo:disabled{opacity:.35;cursor:default}
@@ -246,6 +249,14 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 .telas-nav .ponto{font-family:var(--display);font-size:11.5px;font-weight:700;letter-spacing:.04em;color:var(--dim);background:transparent;border:1px solid var(--line-strong);border-radius:20px;padding:6px 13px;cursor:pointer;white-space:nowrap;transition:all .18s ease}
 .telas-nav .ponto:hover{border-color:var(--line-blue);color:var(--text)}
 .telas-nav .ponto[aria-current="true"]{background:var(--blue-deep);border-color:var(--blue-deep);color:#fff}
+/* Enquanto a passagem automática roda, o chip da tela em quadro escoa uma
+   barrinha de tempo — o leitor entende que ela vira sozinha, e que parar o
+   mouse em cima segura. Fora do ciclo (mouse dentro, seção fora da tela,
+   controle já usado ou movimento reduzido) a barrinha simplesmente não existe. */
+.telas-nav .ponto{position:relative;overflow:hidden}
+.telas-nav .ponto[aria-current="true"]::after{content:'';position:absolute;left:0;bottom:0;height:2px;width:100%;background:rgba(255,255,255,.55);transform:scaleX(0);transform-origin:left center}
+.telas-nav.girando .ponto[aria-current="true"]::after{animation:escoa 7s linear}
+@keyframes escoa{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 
 /* Sem altura própria o palco fica do tamanho da tela mais alta, e as outras
    duas deixam um vão de até 278px entre o mockup e a nota — que passa a
@@ -336,6 +347,71 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 .painel-pe{display:flex;justify-content:space-between;gap:10px;margin-top:14px;padding-top:13px;border-top:1px solid var(--line);font-size:11.5px}
 .painel-pe span{color:var(--blue)}
 
+/* ═══ O MOCKUP RESPONDE AO MOUSE ═══
+   Tudo aqui é hover puro: `.chrome-body` é `role="img"`, então os filhos são
+   apresentacionais por contrato e nada pode virar focável ou navegável por
+   teclado. Nenhum dado novo entra — o que muda é o que já está na tela ficar
+   evidente quando o mouse passa, e é o que faz o mockup ler como sistema em
+   vez de print. No toque e no papel o estado de repouso é o de sempre. */
+
+/* Cada módulo do menu diz qual frente do escopo o entrega. Numa apresentação
+   ao vivo é a deixa que fecha o círculo: o menu da tela é a lista das sete
+   frentes outra vez. "Configurações" fica de fora porque não é uma delas. */
+.rail-item{position:relative;transition:background .2s ease,color .2s ease}
+.rail-item i{transition:background .2s ease}
+.rail-item[data-frente]{cursor:help}
+@media (hover:hover){
+  .rail-item[data-frente]:not(.on):hover{background:rgba(255,255,255,.05);color:var(--text)}
+  .rail-item[data-frente]:not(.on):hover i{background:var(--blue-light)}
+  .rail-item[data-frente]::after{
+    content:attr(data-frente);position:absolute;left:calc(100% + 12px);top:50%;
+    transform:translateY(-50%) translateX(-5px);
+    padding:7px 12px;border:1px solid var(--line-blue);border-radius:8px;
+    background:var(--panel-strong);box-shadow:0 10px 26px rgba(0,0,0,.55);
+    font-family:var(--sans);font-size:11px;font-weight:500;line-height:1;
+    color:var(--text);white-space:nowrap;
+    opacity:0;pointer-events:none;z-index:6;
+    transition:opacity .18s ease,transform .18s ease;
+  }
+  .rail-item[data-frente]:hover::after{opacity:1;transform:translateY(-50%) translateX(0)}
+}
+
+/* Passar numa barra apaga as outras — a mesma linguagem do mapa da seção "O
+   sistema". O valor já está impresso em cima de cada uma, então o realce não
+   revela número nenhum: só isola a categoria. */
+.barras .barra,.barras .barra i,.barras .barra span{transition:opacity .22s ease,color .22s ease}
+@media (hover:hover){
+  .barras:hover .barra{opacity:.3}
+  .barras .barra:hover{opacity:1}
+  .barras .barra:hover i{opacity:1}
+  .barras .barra:hover span{color:var(--text)}
+}
+
+/* A lista de contas paradas e os controles do topo reagem: sem isso o mockup
+   é uma fotografia, e o cliente lê como fotografia. */
+.revisar li{transition:background .2s ease}
+.aberto,.painel-pe span,.busca,.botao-falso{transition:color .2s ease,border-color .2s ease}
+@media (hover:hover){
+  .revisar li:hover{background:linear-gradient(90deg,rgba(90,164,242,.10),transparent 72%)}
+  .revisar li:hover .aberto{color:var(--blue-light)}
+  .painel-pe:hover span{color:var(--blue-light)}
+  .busca:hover{border-color:var(--line-blue);color:var(--muted)}
+  .botao-falso:hover{border-color:var(--line-blue);color:var(--text)}
+}
+
+/* As barras crescem quando a tela entra em quadro, como as do cronograma.
+   Fora de `html.js` e sob movimento reduzido elas já nascem na altura certa. */
+@media (prefers-reduced-motion:no-preference){
+  html.js .tela.reveal .barras .barra i{transform:scaleY(0);transform-origin:bottom center}
+  html.js .tela.reveal.vis .barras .barra i{transform:none;transition:transform .75s cubic-bezier(.22,.7,.3,1),opacity .22s ease}
+  html.js .tela.reveal.vis .barras .barra:nth-child(1) i{transition-delay:.26s}
+  html.js .tela.reveal.vis .barras .barra:nth-child(2) i{transition-delay:.33s}
+  html.js .tela.reveal.vis .barras .barra:nth-child(3) i{transition-delay:.40s}
+  html.js .tela.reveal.vis .barras .barra:nth-child(4) i{transition-delay:.47s}
+  html.js .tela.reveal.vis .barras .barra:nth-child(5) i{transition-delay:.54s}
+  html.js .tela.reveal.vis .barras .barra:nth-child(6) i{transition-delay:.61s}
+}
+
 /* ——— Tela 2 · Ficha da conta ——— */
 .ficha{display:grid;gap:20px;padding:24px;min-width:840px}
 .ficha-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
@@ -409,6 +485,44 @@ h2{font-size:clamp(28px,3.2vw,42px);line-height:1.08;margin-bottom:16px;text-wra
 .neg.parado em{color:var(--orange-soft)}
 .funil-pe{padding-top:14px;border-top:1px solid var(--line);font-size:12px}
 .funil-pe b{color:var(--green);font-weight:600}
+
+/* ——— Tela 4 · Marketing ——— */
+.camp{list-style:none;margin:0;padding:0}
+.camp li{display:grid;grid-template-columns:1fr 120px;gap:6px 16px;align-items:center;padding:13px 0;border-top:1px solid var(--line)}
+.camp li:first-child{border-top:0;padding-top:0}
+.camp-nome{display:flex;align-items:center;gap:9px;min-width:0}
+.camp b{font-size:12.5px;font-weight:600}
+.camp em{grid-column:1;font-size:11px;font-style:normal;color:var(--dim)}
+.camp-num{grid-column:2;grid-row:1;justify-self:end;font-family:var(--display);font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+.camp-bar{grid-column:2;grid-row:2;display:grid;grid-template-columns:1fr auto;gap:3px 7px;align-items:center}
+.camp-bar i{height:3px;border-radius:2px;background:var(--trilha);position:relative;overflow:hidden}
+.camp-bar i::after{content:'';position:absolute;inset:0 auto 0 0;width:var(--f);background:var(--blue)}
+.camp-bar span{font-size:10.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+.camp-tag{flex:none;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:20px;padding:2px 9px;color:var(--dim);border:1px solid var(--line-strong)}
+.camp-tag.viva{color:var(--green);border-color:rgba(52,211,153,.35)}
+.envio{list-style:none;margin:0;padding:0;display:grid;gap:13px}
+.envio li{display:grid;grid-template-columns:1fr auto;gap:5px 10px;align-items:baseline}
+.envio b{font-family:var(--display);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+.envio span{font-size:11.5px;color:var(--muted)}
+.envio i{grid-column:1/-1;height:7px;border-radius:4px;background:linear-gradient(90deg,var(--blue-deep),rgba(19,110,242,.4));width:var(--f)}
+.envio li:last-child i{background:linear-gradient(90deg,var(--green),rgba(52,211,153,.4))}
+.envio li:last-child b{color:var(--green)}
+
+/* ——— Tela 5 · Relatórios ——— */
+.rel{list-style:none;margin:0;padding:0}
+.rel li{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.rel li:first-child{border-top:0;padding-top:0}
+.rel li>span:nth-of-type(1){margin-right:auto;min-width:0}
+.rel b{display:block;font-size:12.5px;font-weight:600}
+.rel em{font-size:10.5px;font-style:normal;color:var(--dim)}
+.rel-area{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line-strong);border-radius:20px;padding:3px 10px;white-space:nowrap;flex:none}
+.rel-fmt{font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--blue);border:1px solid var(--line-blue);border-radius:6px;padding:3px 7px;white-space:nowrap;flex:none}
+.rel-prev{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.rel-prev div{background:var(--panel-strong);padding:14px 15px}
+.rel-prev b{display:block;font-family:var(--display);font-weight:700;font-size:19px;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-bottom:6px}
+.rel-prev span{font-size:10.5px;color:var(--dim)}
+.rel-envio{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:13px;border-top:1px solid var(--line);font-size:11.5px}
+.rel-formatos{display:flex;gap:6px;flex:none}
 
 
 /* ═══ CRONOGRAMA · AS SETE FRENTES NOS TRÊS MESES ═══
@@ -620,7 +734,7 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
   /* No papel não há para onde rolar: o mockup é reduzido até caber na página,
      e `zoom` refaz o layout (ao contrário de `transform`, que deixaria buraco). */
   .chrome-body{overflow:visible!important;zoom:.74}
-  /* O carrossel não existe no papel: as três telas saem corridas, uma embaixo
+  /* O carrossel não existe no papel: as cinco telas saem corridas, uma embaixo
      da outra, e os controles somem. */
   .telas-nav{display:none!important}
   .telas-palco{overflow:visible!important;height:auto!important}
@@ -645,6 +759,10 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
   .crono-rot{font-size:9.5pt;padding-block:9px}
   .crono-nota{font-size:9pt}
   .crono-barra{transform:none!important}
+  /* As barras da tela 01 crescem quando ela entra em quadro. Quem manda
+     imprimir sem ter passado por lá não dispara o observador, e elas sairiam
+     zeradas no papel. */
+  .barras .barra i{transform:none!important}
   .reveal{opacity:1!important;transform:none!important}
   a{color:var(--blue)!important}
 }
@@ -1109,7 +1227,7 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
       <div class="sec-cab reveal">
         <span class="eyebrow">Telas</span>
         <h2 id="t-telas">As telas propostas</h2>
-        <p class="sec-lead">Desenhamos três mockups na identidade visual da Media Portal, para tirar a conversa do abstrato. É o formato que estamos propondo para a interface.</p>
+        <p class="sec-lead">Desenhamos cinco mockups na identidade visual da Media Portal, para tirar a conversa do abstrato. É o formato que estamos propondo para a interface.</p>
       </div>
       <nav class="telas-nav reveal" aria-label="Navegar entre as telas" hidden>
         <button type="button" class="passo" data-passo="-1" aria-label="Tela anterior">‹</button>
@@ -1118,6 +1236,8 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
           <button type="button" class="ponto" role="tab" data-ir="0" aria-current="true">01 Visão geral</button>
           <button type="button" class="ponto" role="tab" data-ir="1">02 Ficha da conta</button>
           <button type="button" class="ponto" role="tab" data-ir="2">03 Funil</button>
+          <button type="button" class="ponto" role="tab" data-ir="3">04 Marketing</button>
+          <button type="button" class="ponto" role="tab" data-ir="4">05 Relatórios</button>
         </span>
       </nav>
       <div class="telas-palco">
@@ -1131,19 +1251,19 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
               <aside class="rail">
                 <div class="rail-marca"><span class="rail-quad"></span><b>MP · CRM</b></div>
                 <div class="rail-nav">
-                  <span class="rail-item on"><i></i>Visão Geral</span>
-                  <span class="rail-item"><i></i>Contas<b>306</b></span>
-                  <span class="rail-item"><i></i>Negócios<b>11</b></span>
-                  <span class="rail-item"><i></i>Interações</span>
-                  <span class="rail-item"><i></i>Financeiro</span>
-                  <span class="rail-item"><i></i>Marketing</span>
-                  <span class="rail-item"><i></i>Relatórios</span>
+                  <span class="rail-item on" data-frente="Frente 03 · Dashboards e relatórios"><i></i>Visão Geral</span>
+                  <span class="rail-item" data-frente="Frente 02 · Esqueleto do sistema"><i></i>Contas<b>306</b></span>
+                  <span class="rail-item" data-frente="Frente 02 · Esqueleto do sistema"><i></i>Negócios<b>11</b></span>
+                  <span class="rail-item" data-frente="Frente 02 · Esqueleto do sistema"><i></i>Interações</span>
+                  <span class="rail-item" data-frente="Frente 02 · Módulo financeiro"><i></i>Financeiro</span>
+                  <span class="rail-item" data-frente="Frente 05 · Marketing e disparo de e-mail"><i></i>Marketing</span>
+                  <span class="rail-item" data-frente="Frente 03 · Dashboards e relatórios"><i></i>Relatórios</span>
                 </div>
                 <div class="rail-fim">
                   <span class="rail-grupo">Sistema</span>
                   <div class="rail-nav">
-                    <span class="rail-item"><i></i>Dados brutos</span>
-                    <span class="rail-item"><i></i>Integrações</span>
+                    <span class="rail-item" data-frente="Frente 02 · Acesso aos dados brutos"><i></i>Dados brutos</span>
+                    <span class="rail-item" data-frente="Frente 04 · APIs de integração"><i></i>Integrações</span>
                     <span class="rail-item"><i></i>Configurações</span>
                   </div>
                 </div>
@@ -1307,6 +1427,164 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
           </div>
         </figure>
 
+        <!-- ═══ TELA 4 · MARKETING E DISPARO DE E-MAIL ═══ -->
+        <figure class="tela reveal" data-tela="marketing">
+          <figcaption class="tela-cap"><span class="tela-num">04</span><h3 class="tela-tit">Marketing e disparo</h3><span class="tela-selo">Dados ilustrativos</span><span class="tela-txt">Segmentos que saem da própria base, campanhas com resultado medido e a reativação em curso.</span></figcaption>
+          <div class="chrome">
+            <div class="chrome-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="url">app.mediaportal.com.br/crm/marketing</span></div>
+            <div class="chrome-body" role="img" tabindex="0" aria-label="Tela de marketing do CRM: contatos alcançáveis na base, campanhas do mês com taxa de abertura de cada uma, e o caminho do envio até a resposta."><div class="app">
+              <aside class="rail">
+                <div class="rail-marca"><span class="rail-quad"></span><b>MP · CRM</b></div>
+                <div class="rail-nav">
+                  <span class="rail-item" data-frente="Frente 03 · Dashboards e relatórios"><i></i>Visão Geral</span>
+                  <span class="rail-item" data-frente="Frente 02 · Esqueleto do sistema"><i></i>Contas<b>306</b></span>
+                  <span class="rail-item" data-frente="Frente 02 · Esqueleto do sistema"><i></i>Negócios<b>11</b></span>
+                  <span class="rail-item" data-frente="Frente 02 · Esqueleto do sistema"><i></i>Interações</span>
+                  <span class="rail-item" data-frente="Frente 02 · Módulo financeiro"><i></i>Financeiro</span>
+                  <span class="rail-item on" data-frente="Frente 05 · Marketing e disparo de e-mail"><i></i>Marketing</span>
+                  <span class="rail-item" data-frente="Frente 03 · Dashboards e relatórios"><i></i>Relatórios</span>
+                </div>
+                <div class="rail-fim">
+                  <span class="rail-grupo">Sistema</span>
+                  <div class="rail-nav">
+                    <span class="rail-item" data-frente="Frente 02 · Acesso aos dados brutos"><i></i>Dados brutos</span>
+                    <span class="rail-item" data-frente="Frente 04 · APIs de integração"><i></i>Integrações</span>
+                    <span class="rail-item"><i></i>Configurações</span>
+                  </div>
+                </div>
+              </aside>
+              <div class="app-main">
+                <header class="app-top">
+                  <div><p class="mk-t1">Marketing</p><p>Segmentação e disparo sobre a base consolidada</p></div>
+                  <div class="app-top-dir">
+                    <span class="busca"><svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="5" cy="5" r="3.6"/><path d="M7.7 7.7 11 11"/></svg>Buscar conta, contato, negócio ou solução<b>⌘K</b></span>
+                    <span class="botao-falso">Nova campanha</span>
+                    <span class="avatar"></span>
+                  </div>
+                </header>
+                <div class="kpis">
+                  <div class="kpi">
+                    <span class="kpi-rot">Contatos alcançáveis</span><b class="kpi-num">188</b>
+                    <span class="composicao"><i style="--f:61.4%" class="c-ok"></i><i style="--f:38.6%" class="c-nada"></i></span>
+                    <span class="kpi-legenda"><em><i class="c-ok"></i>188 com contato nomeado</em><em><i class="c-nada"></i>118 contas a cadastrar</em></span>
+                  </div>
+                  <div class="kpi"><span class="kpi-rot">Campanhas no mês</span><b class="kpi-num">4</b><span class="kpi-var">3 concluídas · 1 em curso<br>segmentos tirados da base</span></div>
+                  <div class="kpi"><span class="kpi-rot">Abertura média</span><b class="kpi-num">43%</b><span class="kpi-var">79 aberturas<br>em 184 e-mails entregues</span></div>
+                  <div class="kpi"><span class="kpi-rot">Contas reativadas</span><b class="kpi-num">9</b><span class="kpi-var alerta">das 63 contas<br>paradas há mais de 12 meses</span></div>
+                </div>
+                <div class="app-grid">
+                  <div class="painel">
+                    <p class="mk-t2 forte">Campanhas do mês<span>188 contatos, sem lista paralela</span></p>
+                    <ul class="camp">
+                      <li>
+                        <span class="camp-nome"><b>Reativação de carteira</b><span class="camp-tag viva">em curso</span></span>
+                        <span class="camp-num">41</span>
+                        <em>contas paradas há mais de 12 meses</em>
+                        <span class="camp-bar"><i style="--f:47%"></i><span>47%</span></span>
+                      </li>
+                      <li>
+                        <span class="camp-nome"><b>Renovação de contrato</b><span class="camp-tag">concluída</span></span>
+                        <span class="camp-num">22</span>
+                        <em>contratos vencendo em 90 dias</em>
+                        <span class="camp-bar"><i style="--f:52%"></i><span>52%</span></span>
+                      </li>
+                      <li>
+                        <span class="camp-nome"><b>Novidades do portfólio</b><span class="camp-tag">concluída</span></span>
+                        <span class="camp-num">112</span>
+                        <em>base ativa, com interação nos últimos 12 meses</em>
+                        <span class="camp-bar"><i style="--f:38%"></i><span>38%</span></span>
+                      </li>
+                      <li>
+                        <span class="camp-nome"><b>Boas-vindas</b><span class="camp-tag">automática</span></span>
+                        <span class="camp-num">13</span>
+                        <em>contas novas, disparo automático</em>
+                        <span class="camp-bar"><i style="--f:61%"></i><span>61%</span></span>
+                      </li>
+                    </ul>
+                    <p class="painel-pe">contatos e taxa de abertura por campanha<span>ver histórico →</span></p>
+                  </div>
+                  <div class="painel">
+                    <p class="mk-t2 forte">Do envio à resposta<span>setembro</span></p>
+                    <ul class="envio">
+                      <li><span>Enviados</span><b>188</b><i style="--f:100%"></i></li>
+                      <li><span>Entregues</span><b>184</b><i style="--f:98%"></i></li>
+                      <li><span>Abertos</span><b>79</b><i style="--f:43%"></i></li>
+                      <li><span>Cliques</span><b>26</b><i style="--f:14%"></i></li>
+                      <li><span>Respostas</span><b>11</b><i style="--f:6%"></i></li>
+                    </ul>
+                    <p class="painel-pe">cada resposta abre uma interação na conta<span>ver as 11 →</span></p>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <!-- ═══ TELA 5 · RELATÓRIOS ═══ -->
+        <figure class="tela reveal" data-tela="relatorios">
+          <figcaption class="tela-cap"><span class="tela-num">05</span><h3 class="tela-tit">Relatórios</h3><span class="tela-selo">Dados ilustrativos</span><span class="tela-txt">Cada área com o seu painel, na periodicidade que ela usa, exportável sem passar por ninguém.</span></figcaption>
+          <div class="chrome">
+            <div class="chrome-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="url">app.mediaportal.com.br/crm/relatorios</span></div>
+            <div class="chrome-body" role="img" tabindex="0" aria-label="Tela de relatórios do CRM: relatórios salvos por área e periodicidade, e a prévia do consolidado do mês com os números da base, pronta para exportar."><div class="app">
+              <aside class="rail">
+                <div class="rail-marca"><span class="rail-quad"></span><b>MP · CRM</b></div>
+                <div class="rail-nav">
+                  <span class="rail-item" data-frente="Frente 03 · Dashboards e relatórios"><i></i>Visão Geral</span>
+                  <span class="rail-item" data-frente="Frente 02 · Esqueleto do sistema"><i></i>Contas<b>306</b></span>
+                  <span class="rail-item" data-frente="Frente 02 · Esqueleto do sistema"><i></i>Negócios<b>11</b></span>
+                  <span class="rail-item" data-frente="Frente 02 · Esqueleto do sistema"><i></i>Interações</span>
+                  <span class="rail-item" data-frente="Frente 02 · Módulo financeiro"><i></i>Financeiro</span>
+                  <span class="rail-item" data-frente="Frente 05 · Marketing e disparo de e-mail"><i></i>Marketing</span>
+                  <span class="rail-item on" data-frente="Frente 03 · Dashboards e relatórios"><i></i>Relatórios</span>
+                </div>
+                <div class="rail-fim">
+                  <span class="rail-grupo">Sistema</span>
+                  <div class="rail-nav">
+                    <span class="rail-item" data-frente="Frente 02 · Acesso aos dados brutos"><i></i>Dados brutos</span>
+                    <span class="rail-item" data-frente="Frente 04 · APIs de integração"><i></i>Integrações</span>
+                    <span class="rail-item"><i></i>Configurações</span>
+                  </div>
+                </div>
+              </aside>
+              <div class="app-main">
+                <header class="app-top">
+                  <div><p class="mk-t1">Relatórios</p><p>Um painel por área, exportável em PDF, XLSX e CSV</p></div>
+                  <div class="app-top-dir">
+                    <span class="busca"><svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="5" cy="5" r="3.6"/><path d="M7.7 7.7 11 11"/></svg>Buscar conta, contato, negócio ou solução<b>⌘K</b></span>
+                    <span class="botao-falso">Novo relatório</span>
+                    <span class="avatar"></span>
+                  </div>
+                </header>
+                <div class="app-grid">
+                  <div class="painel">
+                    <p class="mk-t2 forte">Relatórios salvos<span>5 painéis · 3 áreas</span></p>
+                    <ul class="rel">
+                      <li><span><b>Carteira por status</b><em>toda segunda, 8h · 306 contas</em></span><span class="rel-area">Operação</span><span class="rel-fmt">PDF</span></li>
+                      <li><span><b>Funil e conversão</b><em>toda segunda, 8h · 11 negócios em aberto</em></span><span class="rel-area">Comercial</span><span class="rel-fmt">XLSX</span></li>
+                      <li><span><b>Consolidado do mês</b><em>1ª segunda do mês · base inteira</em></span><span class="rel-area">Diretoria</span><span class="rel-fmt">PDF</span></li>
+                      <li><span><b>Contas paradas há +12 meses</b><em>quinzenal · 63 contas</em></span><span class="rel-area">Comercial</span><span class="rel-fmt">XLSX</span></li>
+                      <li><span><b>Interações por categoria</b><em>mensal · 1.348 registros</em></span><span class="rel-area">Operação</span><span class="rel-fmt">CSV</span></li>
+                    </ul>
+                    <p class="painel-pe">todos leem a mesma base consolidada<span>ver agendamentos →</span></p>
+                  </div>
+                  <div class="painel">
+                    <p class="mk-t2 forte">Prévia · Consolidado do mês<span>setembro de 2026</span></p>
+                    <div class="rel-prev">
+                      <div><b>306</b><span>contas na base consolidada</span></div>
+                      <div><b>R$&nbsp;412k</b><span>em pipeline aberto</span></div>
+                      <div><b>27%</b><span>taxa de conversão em 12 meses</span></div>
+                      <div><b>1.348</b><span>interações registradas</span></div>
+                    </div>
+                    <p class="rel-envio"><span>enviado para a diretoria</span><span class="rel-formatos"><span class="rel-fmt">PDF</span><span class="rel-fmt">XLSX</span><span class="rel-fmt">CSV</span></span></p>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </figure>
+
         </div>
       </div>
     </div>
@@ -1419,7 +1697,7 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
   }
 
   /* Carrossel das telas. Só liga depois que os controles estão montados: até
-     lá as três telas ficam empilhadas, que é o que quem não tem JavaScript vê
+     lá as cinco telas ficam empilhadas, que é o que quem não tem JavaScript vê
      e o que sai na impressão. Uma falha aqui deixa a lista corrida, nunca o
      leitor preso na primeira tela. */
   var palco = document.querySelector('.telas-palco');
@@ -1458,14 +1736,48 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
 
     nav.addEventListener('click', function (e) {
       var ir = e.target.closest('[data-ir]');
-      if (ir) { mostrar(Number(ir.dataset.ir)); return; }
+      if (ir) { assumir(); mostrar(Number(ir.dataset.ir)); return; }
       var passo = e.target.closest('[data-passo]');
-      if (passo) mostrar(atual + Number(passo.dataset.passo));
+      if (passo) { assumir(); mostrar(atual + Number(passo.dataset.passo)); }
     });
     palco.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight') { e.preventDefault(); mostrar(atual + 1); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); mostrar(atual - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); assumir(); mostrar(atual + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); assumir(); mostrar(atual - 1); }
     });
+
+    /* Passagem automática. Roda só enquanto a seção está na tela e o mouse
+       está fora dela — quem parou para olhar não é interrompido. O primeiro
+       clique em qualquer controle desliga de vez: a partir dali quem manda é
+       quem está apresentando. Sob movimento reduzido nunca liga. */
+    var CICLO = 7000;
+    var relogio = null, assumido = false, naTela = false, comMouse = false;
+
+    var girar = function () {
+      if (assumido || !naTela || comMouse) return;
+      mostrar(atual === telas.length - 1 ? 0 : atual + 1);
+    };
+    var tocar = function () {
+      if (relogio || assumido) return;
+      relogio = setInterval(girar, CICLO);
+      nav.classList.add('girando');
+    };
+    var parar = function () {
+      clearInterval(relogio); relogio = null;
+      nav.classList.remove('girando');
+    };
+    var assumir = function () { assumido = true; parar(); };
+
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) assumido = true;
+
+    palco.addEventListener('mouseenter', function () { comMouse = true; parar(); });
+    palco.addEventListener('mouseleave', function () { comMouse = false; if (naTela) tocar(); });
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (linhas) {
+        naTela = linhas[0].isIntersecting;
+        if (naTela && !comMouse) tocar(); else parar();
+      }, { threshold: 0.35 }).observe(palco);
+    }
 
     nav.hidden = false;
     palco.classList.add('on');
