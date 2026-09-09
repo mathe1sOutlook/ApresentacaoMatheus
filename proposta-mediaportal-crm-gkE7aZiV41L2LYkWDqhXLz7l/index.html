@@ -600,6 +600,7 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
   /* No papel o mapa largo não cabe legível: vai a versão compacta. */
   .mapa{display:none!important}
   .fluxo{display:grid!important;break-inside:avoid}
+  .sist{display:block}
   .tela,.crono-mapa,.plano,.cartao,.esc-item,.passos li{break-inside:avoid}
   .telas{gap:30px}
   .chrome{box-shadow:none}
@@ -668,50 +669,88 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
    O terceiro parágrafo diz que cada área abre uma coisa diferente da mesma
    base: a operação a ficha e o histórico, o comercial o funil, a diretoria o
    consolidado. O mapa desenha esse caminho em vez de empilhar duas fileiras
-   anônimas, e ocupa a largura inteira da seção porque é ela que dá lugar aos
-   sete blocos e às linhas entre eles.
-   Decorativo — aria-hidden, porque o parágrafo já diz o mesmo em palavras.
-   Nada aqui é focável, nada depende de JavaScript, e o estado de repouso já
-   mostra o mapa completo: quem não passa o mouse não perde informação. */
-.mapa{display:none;position:relative;margin-top:58px}
-.mapa svg{display:block;width:100%;height:auto;overflow:visible}
-.mapa .rot{font-family:var(--display);font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;fill:var(--dim)}
-.mapa .tit{font-family:var(--sans);font-size:18px;font-weight:600;fill:var(--text)}
-.mapa .sub{font-family:var(--sans);font-size:13px;fill:var(--dim)}
+   anônimas ligadas por uma seta reta.
+   Decorativo — aria-hidden, porque o parágrafo ao lado já diz o mesmo em
+   palavras. Nada aqui é focável e nada depende de JavaScript. */
+.sist{display:grid;grid-template-columns:1fr;gap:52px}
+.mapa{display:none;position:relative}
+.mapa svg{display:block;width:100%;height:auto}
+.mapa .rot{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;fill:var(--dim)}
+.mapa .tit{font-family:var(--sans);font-size:15px;font-weight:600;fill:var(--text)}
+.mapa .sub{font-family:var(--sans);font-size:11.5px;fill:var(--dim)}
 .mapa .cx{fill:var(--panel);stroke:var(--line-strong);stroke-width:1}
 .mapa .nucleo-cx{fill:url(#mapa-nucleo);stroke:rgba(242,102,28,.42);stroke-width:1}
-.mapa .nucleo-tit{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.01em;fill:var(--orange-soft)}
+.mapa .nucleo-tit{font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:-.01em;fill:var(--orange-soft)}
 .mapa .fio{stroke:var(--line-blue);stroke-width:1.4;fill:none}
-.mapa [data-p],.mapa .cx,.mapa .fio{transition:opacity .28s ease,stroke .28s ease,stroke-width .28s ease,fill .28s ease}
-.mapa-dica{position:absolute;top:-24px;right:0;font-family:var(--display);font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);opacity:.7}
-.mapa-leg{margin-top:26px;text-align:center;font-size:15px;color:var(--muted);min-height:1.6em}
-.mapa-leg span{display:none}
-.mapa-leg .base{display:inline}
+.mapa-leg{position:relative;min-height:3.4em;margin-top:20px;text-align:center;font-size:14.5px;line-height:1.55;color:var(--muted)}
+.mapa-leg span{position:absolute;inset:0;opacity:0}
+.mapa-leg .base{opacity:1}
+.mapa-dica{display:block;margin-top:6px;text-align:center;font-family:var(--display);font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);opacity:.62}
+@media (hover:none){.mapa-dica{display:none}}
 
-/* O realce: passar o mouse em qualquer bloco de um caminho acende o caminho
-   inteiro e apaga os outros dois. Só onde há mouse de verdade — no toque não
-   existe hover, e o estado de repouso é o mapa completo. */
+/* O ciclo: o mapa percorre os três caminhos sozinho, 4,5s em cada um. O núcleo
+   fica de fora porque pertence aos três — é a `data-p` com os três nomes, que
+   nenhum dos seletores exatos abaixo alcança. Sob prefers-reduced-motion o
+   documento inteiro já mata animação, e aí o mapa aparece com tudo aceso e a
+   legenda volta para a frase geral: ninguém perde informação. */
+@keyframes mapa-a{0%,28%{opacity:1}33.3%,95%{opacity:.13}100%{opacity:1}}
+@keyframes mapa-b{0%,28%{opacity:.13}33.3%,61.6%{opacity:1}66.6%,100%{opacity:.13}}
+@keyframes mapa-c{0%,61.6%{opacity:.13}66.6%,95%{opacity:1}100%{opacity:.13}}
+@keyframes fio-a{0%,28%{stroke:var(--blue);stroke-width:2.4}33.3%,95%{stroke:var(--line-blue);stroke-width:1.4}100%{stroke:var(--blue);stroke-width:2.4}}
+@keyframes fio-b{0%,28%{stroke:var(--line-blue);stroke-width:1.4}33.3%,61.6%{stroke:var(--blue);stroke-width:2.4}66.6%,100%{stroke:var(--line-blue);stroke-width:1.4}}
+@keyframes fio-c{0%,61.6%{stroke:var(--line-blue);stroke-width:1.4}66.6%,95%{stroke:var(--blue);stroke-width:2.4}100%{stroke:var(--line-blue);stroke-width:1.4}}
+@keyframes leg-a{0%,28%{opacity:1}33.3%,95%{opacity:0}100%{opacity:1}}
+@keyframes leg-b{0%,28%{opacity:0}33.3%,61.6%{opacity:1}66.6%,100%{opacity:0}}
+@keyframes leg-c{0%,61.6%{opacity:0}66.6%,95%{opacity:1}100%{opacity:0}}
+@keyframes leg-base{0%,100%{opacity:0}}
+@media (prefers-reduced-motion:no-preference){
+  .mapa [data-p=op]{animation:mapa-a 13.5s linear infinite}
+  .mapa [data-p=com]{animation:mapa-b 13.5s linear infinite}
+  .mapa [data-p=dir]{animation:mapa-c 13.5s linear infinite}
+  .mapa .fio[data-p=op]{animation:mapa-a 13.5s linear infinite,fio-a 13.5s linear infinite}
+  .mapa .fio[data-p=com]{animation:mapa-b 13.5s linear infinite,fio-b 13.5s linear infinite}
+  .mapa .fio[data-p=dir]{animation:mapa-c 13.5s linear infinite,fio-c 13.5s linear infinite}
+  .mapa-leg .base{animation:leg-base 13.5s linear infinite}
+  .mapa-leg .op{animation:leg-a 13.5s linear infinite}
+  .mapa-leg .com{animation:leg-b 13.5s linear infinite}
+  .mapa-leg .dir{animation:leg-c 13.5s linear infinite}
+}
+
+/* O mouse assume: passar em qualquer bloco para o ciclo e fixa aquele caminho.
+   Só onde há mouse de verdade — no toque não existe hover e o ciclo continua. */
 @media (hover:hover){
+  .mapa:has([data-lvl]:hover) [data-p],
+  .mapa:has([data-lvl]:hover) .mapa-leg span{animation:none}
   .mapa:has([data-lvl=op]:hover)  [data-p]:not([data-p~=op]),
   .mapa:has([data-lvl=com]:hover) [data-p]:not([data-p~=com]),
-  .mapa:has([data-lvl=dir]:hover) [data-p]:not([data-p~=dir]){opacity:.14}
+  .mapa:has([data-lvl=dir]:hover) [data-p]:not([data-p~=dir]){opacity:.13}
   .mapa:has([data-lvl=op]:hover)  .fio[data-p~=op],
   .mapa:has([data-lvl=com]:hover) .fio[data-p~=com],
-  .mapa:has([data-lvl=dir]:hover) .fio[data-p~=dir]{stroke:var(--blue);stroke-width:2.6}
+  .mapa:has([data-lvl=dir]:hover) .fio[data-p~=dir]{stroke:var(--blue);stroke-width:2.4}
   .mapa:has([data-lvl=op]:hover)  [data-p~=op] .cx,
   .mapa:has([data-lvl=com]:hover) [data-p~=com] .cx,
   .mapa:has([data-lvl=dir]:hover) [data-p~=dir] .cx{fill:var(--panel-strong);stroke:var(--line-blue)}
-  .mapa:has([data-lvl]:hover) .mapa-leg .base{display:none}
+  .mapa:has([data-lvl]:hover) .mapa-leg .base{opacity:0}
   .mapa:has([data-lvl=op]:hover)  .mapa-leg .op,
   .mapa:has([data-lvl=com]:hover) .mapa-leg .com,
-  .mapa:has([data-lvl=dir]:hover) .mapa-leg .dir{display:inline;color:var(--text)}
+  .mapa:has([data-lvl=dir]:hover) .mapa-leg .dir{opacity:1;color:var(--text)}
 }
-@media (min-width:901px){.mapa{display:block}}
+
+/* A prosa estreita para ganhar altura e o mapa ocupa a coluna da direita. Só
+   acima de 1100px: abaixo disso a coluna do mapa fica pequena demais para os
+   sete blocos, e entra a versão compacta. */
+@media (min-width:1100px){
+  .sist{grid-template-columns:minmax(0,.82fr) minmax(0,1fr);gap:64px;align-items:center}
+  /* A coluna já é mais estreita que 70ch: o teto de linha sai para o texto
+     preencher a coluna inteira. Abaixo deste ponto ele volta. */
+  .sist .corpo p{max-width:none}
+  .mapa{display:block}
+}
 
 /* ═══ FLUXO DO DADO · versão compacta ═══
-   O mesmo conteúdo do mapa onde ele não caberia legível: celular e papel. */
+   O mesmo conteúdo do mapa onde ele não caberia legível: telas estreitas e papel. */
 .fluxo{display:grid;justify-items:center;gap:0;margin-top:54px}
-@media (min-width:901px){.fluxo{display:none}}
+@media (min-width:1100px){.fluxo{display:none}}
 .fluxo-linha{display:flex;flex-wrap:wrap;justify-content:center;gap:9px}
 .fluxo .chip{font-size:13px;font-weight:500;color:var(--muted);background:var(--panel);border:1px solid var(--line-strong);border-radius:20px;padding:8px 16px;white-space:nowrap}
 .fluxo-seta{width:1px;height:38px;background:linear-gradient(180deg,transparent,var(--blue),transparent);position:relative}
@@ -816,77 +855,77 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
       <div class="sec-cab reveal">
         <h2 id="t-o-sistema">O que muda no dia a dia</h2>
       </div>
-      <div class="corpo reveal">
+      <div class="sist">
+       <div class="corpo reveal">
         <p>O sistema reúne cadastro, histórico, funil e performance sobre a mesma base tratada. A diferença em relação à planilha está no cruzamento: uma planilha guarda cada conta em ordem, mas ligar essa conta ao histórico de interações e ao estágio da negociação é trabalho manual hoje.</p>
         <p>Na prática, quem abre uma conta vê a ficha inteira: os contatos, os negócios em aberto e a jornada daquele cliente ponta a ponta. Lembrar o que foi combinado meses atrás deixa de exigir a caça ao arquivo certo.</p>
         <p>Cada área precisa de uma coisa diferente do mesmo dado. Quem atende quer a ficha da conta aberta na frente, com o histórico à mão. O comercial vive no funil. Já a diretoria quer o número consolidado e o que está fora da curva. São leituras diferentes sobre uma <b>fonte só</b>, o que evita a cena conhecida de dois relatórios com números diferentes na mesma reunião.</p>
         <p>Como o site institucional já está no ar, o CRM se conecta a ele: o lead que chega pelo formulário entra direto na base que o time atende, e a leitura do funil acontece em um fluxo só.</p>
-      </div>
+       </div>
 
-      <!-- O mapa desenha o que o terceiro parágrafo afirma: cada área abre uma
-           coisa diferente da mesma base. Passar o mouse em qualquer bloco acende
-           o caminho inteiro daquela leitura. Decorativo e sem JavaScript — o
-           parágrafo ao lado já diz o mesmo em palavras, o estado de repouso
-           mostra tudo, e nada aqui é focável. -->
-      <div class="mapa reveal" aria-hidden="true">
-        <span class="mapa-dica">passe o mouse nos blocos</span>
-        <svg viewBox="0 0 1180 504" fill="none" focusable="false">
+       <!-- O mapa desenha o que o terceiro parágrafo afirma: cada área abre uma
+            coisa diferente da mesma base. Ele percorre os três caminhos sozinho,
+            e passar o mouse em qualquer bloco fixa um deles. Decorativo e sem
+            JavaScript — o parágrafo ao lado já diz o mesmo em palavras, nada
+            aqui é focável, e sem animação o mapa aparece inteiro aceso. -->
+       <div class="mapa reveal" aria-hidden="true">
+        <svg viewBox="0 0 660 600" fill="none" focusable="false">
           <defs>
             <linearGradient id="mapa-nucleo" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stop-color="#101a30"/><stop offset="1" stop-color="#0b1220"/>
             </linearGradient>
           </defs>
 
-          <text class="rot" x="590" y="20" text-anchor="middle">Hoje, separados</text>
+          <text class="rot" x="330" y="13" text-anchor="middle">Hoje, separados</text>
 
-          <path class="fio" data-p="op"  d="M155,100 C155,150 490,146 490,196"/>
-          <path class="fio" data-p="op"  d="M445,100 C445,150 540,146 540,196"/>
-          <path class="fio" data-p="com" d="M735,100 C735,150 640,146 640,196"/>
-          <path class="fio" data-p="dir" d="M1025,100 C1025,150 690,146 690,196"/>
+          <path class="fio" data-p="op"  d="M75,88 C75,160 245,187 245,259"/>
+          <path class="fio" data-p="op"  d="M245,88 C245,160 295,187 295,259"/>
+          <path class="fio" data-p="com" d="M415,88 C415,160 365,187 365,259"/>
+          <path class="fio" data-p="dir" d="M585,88 C585,160 415,187 415,259"/>
 
-          <path class="fio" data-p="op"  d="M515,284 C515,330 250,326 250,372"/>
-          <path class="fio" data-p="com" d="M590,284 C590,330 590,326 590,372"/>
-          <path class="fio" data-p="dir" d="M665,284 C665,330 930,326 930,372"/>
+          <path class="fio" data-p="op"  d="M270,341 C270,392 107,409 107,460"/>
+          <path class="fio" data-p="com" d="M330,341 C330,392 330,409 330,460"/>
+          <path class="fio" data-p="dir" d="M390,341 C390,392 553,409 553,460"/>
 
           <g data-p="op" data-lvl="op">
-            <rect class="cx" x="40" y="36" width="230" height="64" rx="18"/>
-            <text class="tit" x="155" y="74" text-anchor="middle">Cadastro</text>
+            <rect class="cx" x="0" y="30" width="150" height="58" rx="16"/>
+            <text class="tit" x="75" y="65" text-anchor="middle">Cadastro</text>
           </g>
           <g data-p="op" data-lvl="op">
-            <rect class="cx" x="330" y="36" width="230" height="64" rx="18"/>
-            <text class="tit" x="445" y="74" text-anchor="middle">Histórico</text>
+            <rect class="cx" x="170" y="30" width="150" height="58" rx="16"/>
+            <text class="tit" x="245" y="65" text-anchor="middle">Histórico</text>
           </g>
           <g data-p="com" data-lvl="com">
-            <rect class="cx" x="620" y="36" width="230" height="64" rx="18"/>
-            <text class="tit" x="735" y="74" text-anchor="middle">Funil</text>
+            <rect class="cx" x="340" y="30" width="150" height="58" rx="16"/>
+            <text class="tit" x="415" y="65" text-anchor="middle">Funil</text>
           </g>
           <g data-p="dir" data-lvl="dir">
-            <rect class="cx" x="910" y="36" width="230" height="64" rx="18"/>
-            <text class="tit" x="1025" y="74" text-anchor="middle">Performance</text>
+            <rect class="cx" x="510" y="30" width="150" height="58" rx="16"/>
+            <text class="tit" x="585" y="65" text-anchor="middle">Performance</text>
           </g>
 
           <g data-p="op com dir">
-            <rect class="nucleo-cx" x="450" y="196" width="280" height="88" rx="20"/>
-            <text class="nucleo-tit" x="590" y="248" text-anchor="middle">Fonte única</text>
+            <rect class="nucleo-cx" x="205" y="259" width="250" height="82" rx="19"/>
+            <text class="nucleo-tit" x="330" y="307" text-anchor="middle">Fonte única</text>
           </g>
 
           <g data-p="op" data-lvl="op">
-            <rect class="cx" x="125" y="372" width="250" height="80" rx="18"/>
-            <text class="tit" x="250" y="404" text-anchor="middle">Operação</text>
-            <text class="sub" x="250" y="428" text-anchor="middle">a ficha da conta e o histórico</text>
+            <rect class="cx" x="0" y="460" width="214" height="88" rx="17"/>
+            <text class="tit" x="107" y="494" text-anchor="middle">Operação</text>
+            <text class="sub" x="107" y="518" text-anchor="middle">a ficha da conta e o histórico</text>
           </g>
           <g data-p="com" data-lvl="com">
-            <rect class="cx" x="465" y="372" width="250" height="80" rx="18"/>
-            <text class="tit" x="590" y="404" text-anchor="middle">Comercial</text>
-            <text class="sub" x="590" y="428" text-anchor="middle">o funil, todo dia</text>
+            <rect class="cx" x="223" y="460" width="214" height="88" rx="17"/>
+            <text class="tit" x="330" y="494" text-anchor="middle">Comercial</text>
+            <text class="sub" x="330" y="518" text-anchor="middle">o funil, todo dia</text>
           </g>
           <g data-p="dir" data-lvl="dir">
-            <rect class="cx" x="805" y="372" width="250" height="80" rx="18"/>
-            <text class="tit" x="930" y="404" text-anchor="middle">Diretoria</text>
-            <text class="sub" x="930" y="428" text-anchor="middle">o consolidado e o fora da curva</text>
+            <rect class="cx" x="446" y="460" width="214" height="88" rx="17"/>
+            <text class="tit" x="553" y="494" text-anchor="middle">Diretoria</text>
+            <text class="sub" x="553" y="518" text-anchor="middle">o consolidado e o fora da curva</text>
           </g>
 
-          <text class="rot" x="590" y="496" text-anchor="middle">Três leituras da mesma base</text>
+          <text class="rot" x="330" y="590" text-anchor="middle">Três leituras da mesma base</text>
         </svg>
         <p class="mapa-leg">
           <span class="base">Cada área lê o que precisa, e todas leem a mesma base.</span>
@@ -894,9 +933,11 @@ html.js .reveal.vis{opacity:1;transform:none;transition:opacity .7s ease,transfo
           <span class="com">O comercial vive no funil.</span>
           <span class="dir">A diretoria olha o consolidado e o que está fora da curva.</span>
         </p>
+        <span class="mapa-dica">passe o mouse para fixar um caminho</span>
+       </div>
       </div>
 
-      <!-- Versão compacta: celular e papel, onde o mapa largo ficaria ilegível. -->
+      <!-- Versão compacta: telas estreitas e papel, onde o mapa ficaria ilegível. -->
       <div class="fluxo reveal" aria-hidden="true">
         <span class="fluxo-rot">Hoje, separados</span>
         <div class="fluxo-linha"><span class="chip">Cadastro</span><span class="chip">Histórico</span><span class="chip">Funil</span><span class="chip">Performance</span></div>
