@@ -673,13 +673,14 @@ html.js .reveal:not(.vis) .crono-barra{transform:scaleX(0)}
 /* ═══ INVESTIMENTO ═══ */
 .planos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:18px}
 .plano{background:var(--panel);border:1px solid var(--line-strong);border-radius:20px;padding:32px 30px;display:grid;align-content:start;gap:14px;position:relative;overflow:hidden}
+/* As duas condições cobrem o mesmo escopo, então os dois números têm o mesmo
+   peso e a mesma cor. O laranja fica onde há de fato uma diferença: a moldura,
+   o brilho e o selo do desconto. */
 .plano.destaque{border-color:rgba(242,102,28,.42);background:linear-gradient(150deg,var(--panel-strong),var(--panel))}
 .plano.destaque::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 340px 220px at 88% 0%,rgba(242,102,28,.13),transparent 68%);pointer-events:none}
 .plano > *{position:relative;z-index:1}
 .plano .rot{font-family:var(--display);font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
-.plano.destaque .rot{color:var(--orange-soft)}
 .plano .valor{font-family:var(--display);font-weight:700;font-size:clamp(38px,4.6vw,52px);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.plano.destaque .valor{color:var(--orange-soft)}
 .plano .cond{font-size:15px;color:var(--muted);line-height:1.55}
 .plano .selo{align-self:start;justify-self:start;font-size:12.5px;font-weight:600;color:var(--orange-soft);background:rgba(242,102,28,.12);border:1px solid rgba(242,102,28,.32);border-radius:20px;padding:6px 14px;margin-top:2px}
 .plano .escopo{margin-top:6px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--dim)}
