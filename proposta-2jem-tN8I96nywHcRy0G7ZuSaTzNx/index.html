@@ -586,11 +586,174 @@ a:hover {
   border-radius: 14px;
 }
 
-.fig-capa img {
-  display: block;
+/* --- ciclo de gestão (Fig. 01) -------------------------------------------
+ * Releitura vetorial do diagrama do cliente. As cinco etapas ficam num anel
+ * em torno do núcleo; abaixo de 430px de CARTÃO (não de tela — a coluna muda
+ * de largura com o layout, e é ela que manda aqui) o anel some e as etapas
+ * empilham na ordem.
+ * ---------------------------------------------------------------------- */
+
+.fig-capa {
+  container-type: inline-size;
+}
+
+.ciclo {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.08fr 0.84fr 1.08fr;
+  gap: 12px 10px;
+  align-items: center;
+  justify-items: center;
+  padding-block: 4px;
+}
+
+/* Hairline no lugar de seta: o sentido já está nos numerais 01→05, e este
+   sistema desenha com linha, não com aparato. */
+.ciclo-anel {
+  position: absolute;
+  inset: 13% 15%;
+  border: 1.5px dashed var(--navy);
+  border-radius: 50%;
+  opacity: 0.35;
+}
+
+.ciclo-nucleo,
+.ciclo-no {
+  position: relative;
   width: 100%;
-  height: auto;
-  border-radius: var(--r-img);
+}
+
+.ciclo-nucleo {
+  grid-area: 2 / 2;
+  background: var(--navy);
+  color: var(--branco);
+  border-radius: var(--r-nucleo);
+  padding: 14px 10px;
+  text-align: center;
+  font-family: var(--cond);
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ciclo-no {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  background: var(--branco);
+  border: 1.5px solid var(--navy);
+  border-radius: var(--r-mock-par);
+  padding: 9px 11px;
+}
+
+.ciclo-no b {
+  flex-shrink: 0;
+  font-family: var(--cond);
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.1;
+  color: var(--navy);
+  background: var(--verde);
+  border-radius: 0 8px 0 8px;
+  padding: 2px 6px;
+}
+
+.ciclo-no span {
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--navy);
+  text-wrap: balance;
+}
+
+.ciclo-no em {
+  display: block;
+  margin-top: 3px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 11.5px;
+  color: var(--texto-muted);
+}
+
+.no-1 {
+  grid-area: 1 / 1;
+}
+.no-2 {
+  grid-area: 1 / 3;
+}
+.no-3 {
+  grid-area: 2 / 3;
+}
+.no-4 {
+  grid-area: 3 / 2;
+}
+.no-5 {
+  grid-area: 2 / 1;
+}
+
+/* Cartão largo (monitor grande): sem folga o anel achata e vira uma elipse
+   deitada. O respiro e o corpo do texto crescem junto com o cartão. */
+@container (min-width: 500px) {
+  .ciclo {
+    /* Proporção fixa: sem ela o anel acompanha a altura do conteúdo, que é
+       curta, e num cartão de 800px vira uma elipse deitada. */
+    aspect-ratio: 1.35;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 20px 22px;
+  }
+
+  .ciclo-no {
+    padding: 12px 14px;
+    gap: 11px;
+  }
+
+  .ciclo-no b {
+    font-size: 20px;
+    padding: 3px 8px;
+  }
+
+  .ciclo-no span {
+    font-size: 14px;
+  }
+
+  .ciclo-no em {
+    font-size: 13px;
+  }
+
+  .ciclo-nucleo {
+    font-size: 24px;
+    padding: 20px 14px;
+  }
+}
+
+/* Cartão estreito: o anel não cabe e viraria um oval espremido. As etapas
+   empilham com a régua que já é a do bloco de decisões. */
+@container (max-width: 430px) {
+  .ciclo {
+    grid-template-columns: minmax(0, 1fr);
+    /* Sem vão: a régua da esquerda precisa correr inteira de 01 a 05 — é ela
+       que diz que as etapas são uma sequência, e não cinco itens soltos. */
+    gap: 0;
+    margin-top: 12px;
+  }
+
+  .ciclo-anel {
+    display: none;
+  }
+
+  .ciclo-nucleo,
+  .ciclo-no {
+    grid-area: auto;
+  }
+
+  .ciclo-no {
+    border: 0;
+    border-left: 2px solid var(--navy);
+    border-radius: 0;
+    padding: 9px 0 9px 14px;
+  }
 }
 
 .fig-capa figcaption,
@@ -1888,7 +2051,15 @@ a:hover {
 
     <figure class="fig-capa" data-reveal>
       <i aria-hidden></i>
-      <img src="/img/ciclo-gestao-2jem.jpg" width="1600" height="1295" alt="Ciclo de gestão 2JEM em cinco etapas ao redor de um núcleo: 1) loja, 2) pedido de suporte e reposição de equipamentos, 3) matriz/grupo, 4) suporte técnico e 5) instalação e configuração.">
+      <div class="ciclo">
+        <div class="ciclo-anel" aria-hidden></div>
+        <div class="ciclo-nucleo">Gestão 2JEM</div>
+        <div class="ciclo-no no-1"><b>01</b><span>Loja</span></div>
+        <div class="ciclo-no no-2"><b>02</b><span>Pedido de suporte e reposição de equipamentos</span></div>
+        <div class="ciclo-no no-3"><b>03</b><span>Matriz / Grupo</span></div>
+        <div class="ciclo-no no-4"><b>04</b><span>Suporte técnico</span></div>
+        <div class="ciclo-no no-5"><b>05</b><span>Instalação e configuração<em>Compra de equipamentos</em></span></div>
+      </div>
       <figcaption><span>Fig. 01 — Ciclo de gestão 2JEM</span><b>5 etapas · 1 núcleo</b></figcaption>
     </figure>
   </section>

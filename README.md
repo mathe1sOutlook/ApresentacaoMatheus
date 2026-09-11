@@ -24,9 +24,7 @@ fonts/          woff2 (latin + latin-ext): Fraunces, Inter e IBM Plex Mono para 
                 site; Space Grotesk para a proposta do CRM; Barlow e Barlow
                 Condensed para a proposta da 2JEM
 img/qr.svg      QR do site para a caixa "uso físico"; img/qr-print.svg é a
-                versão preto-no-branco para cartão, crachá e proposta;
-                img/ciclo-gestao-2jem.jpg é o diagrama do cliente na capa da
-                proposta da 2JEM
+                versão preto-no-branco para cartão, crachá e proposta
 robots.txt      libera o site, bloqueia as propostas e o /admin
 sitemap.xml     / e /en com hreflang
 vercel.json     rewrites (/en, /admin, propostas), noindex das propostas e do
