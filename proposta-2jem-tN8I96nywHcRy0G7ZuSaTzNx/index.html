@@ -162,9 +162,23 @@
   --r-img: 0 24px 0 24px;
   --pill: 999px;
 
+  /* escala tipográfica — os três degraus de tela (telefone, computador e
+     monitor acima do Full HD) reescrevem estes valores, e só estes */
+  --t-corpo: 16px;
+  --t-hero: clamp(64px, 9vw, 120px);
+  --t-display: clamp(40px, 5vw, 60px);
+  --t-proximos: clamp(48px, 6vw, 80px);
+  --t-mock: clamp(36px, 4.5vw, 52px);
+  --t-num-pilar: 72px;
+  --t-num-fase: 64px;
+
   /* medida */
   --doc: 1200px;
   --gutter: clamp(20px, 5vw, 72px);
+  --m-lead: 520px;
+  --m-desc: 640px;
+  --m-curto: 440px;
+  --m-prosa: 62ch;
   --reveal-shift: 12px;
 }
 
@@ -181,7 +195,7 @@ body {
   background: var(--fundo);
   color: var(--navy-escuro);
   font-family: var(--sans);
-  font-size: 16px;
+  font-size: var(--t-corpo);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-wrap: pretty;
@@ -308,11 +322,15 @@ a:hover {
 }
 
 .lead {
-  max-width: 520px;
+  max-width: var(--m-lead);
   color: var(--texto-corpo);
 }
 
+/* Teto de medida da prosa. Em 1200px a coluna já tem essa largura, então
+   aqui ele não faz nada — existe para o monitor grande, onde a mesma coluna
+   chegaria a 100 caracteres por linha. */
 .prosa p {
+  max-width: var(--m-prosa);
   margin-top: 28px;
 }
 
@@ -326,7 +344,7 @@ a:hover {
   margin: 0;
   font-family: var(--cond);
   font-weight: 600;
-  font-size: clamp(40px, 5vw, 60px);
+  font-size: var(--t-display);
   line-height: 0.95;
   text-transform: uppercase;
   color: var(--navy);
@@ -463,6 +481,10 @@ a:hover {
   letter-spacing: 0.06em;
 }
 
+.nav-links {
+  display: contents;
+}
+
 .nav a {
   font-size: 14px;
   color: var(--navy-escuro);
@@ -490,7 +512,7 @@ a:hover {
   margin: 28px 0 0;
   font-family: var(--cond);
   font-weight: 600;
-  font-size: clamp(64px, 9vw, 120px);
+  font-size: var(--t-hero);
   line-height: 0.9;
   letter-spacing: -0.01em;
   text-transform: uppercase;
@@ -507,18 +529,9 @@ a:hover {
   -webkit-text-stroke: 2px var(--navy);
 }
 
-/* O piso de 64px do desenho não cabe num telefone: em Barlow Condensed
-   "PLATAFORMA" mede ~7,4× o corpo da fonte e a folha passa a rolar de lado.
-   Em 560px os dois valores coincidem — abaixo disso o piso cede, e só ele. */
-@media (max-width: 560px) {
-  .capa h1 {
-    font-size: clamp(38px, 11.5vw, 64px);
-  }
-}
-
 .capa-lead {
   margin-top: 28px;
-  max-width: 520px;
+  max-width: var(--m-lead);
   font-size: 18px;
   color: var(--texto-corpo);
 }
@@ -705,7 +718,7 @@ a:hover {
 .pilar-num {
   font-family: var(--cond);
   font-weight: 600;
-  font-size: 72px;
+  font-size: var(--t-num-pilar);
   line-height: 1;
 }
 
@@ -821,7 +834,7 @@ a:hover {
 .fase-num {
   font-family: var(--cond);
   font-weight: 600;
-  font-size: 64px;
+  font-size: var(--t-num-fase);
   line-height: 1;
   color: var(--verde);
   -webkit-text-stroke: 1.5px var(--navy);
@@ -836,7 +849,7 @@ a:hover {
 
 .fase-desc {
   margin-top: 12px;
-  max-width: 640px;
+  max-width: var(--m-desc);
   color: var(--texto-corpo);
 }
 
@@ -1153,7 +1166,7 @@ a:hover {
 .mock-titulo {
   font-family: var(--cond);
   font-weight: 600;
-  font-size: clamp(36px, 4.5vw, 52px);
+  font-size: var(--t-mock);
   line-height: 0.95;
   text-transform: uppercase;
   color: var(--navy);
@@ -1170,7 +1183,7 @@ a:hover {
 }
 
 .mock-hero {
-  max-width: 520px;
+  max-width: var(--m-lead);
   margin-top: 40px;
 }
 
@@ -1514,7 +1527,7 @@ a:hover {
   margin: 20px 0 0;
   font-family: var(--cond);
   font-weight: 600;
-  font-size: clamp(48px, 6vw, 80px);
+  font-size: var(--t-proximos);
   line-height: 0.9;
   text-transform: uppercase;
 }
@@ -1525,7 +1538,7 @@ a:hover {
 
 .proximos-texto {
   margin-top: 24px;
-  max-width: 440px;
+  max-width: var(--m-curto);
 }
 
 .proximos-contato {
@@ -1558,6 +1571,194 @@ a:hover {
   padding-bottom: 48px;
   font-size: 13px;
   color: var(--texto-muted);
+}
+
+/* ===========================================================================
+ * DEGRAUS DE TELA
+ * O desenho foi entregue para ~1200px. Telefone e monitor grande são os dois
+ * extremos que ele não cobria, e cada um reescreve tokens — nenhuma regra de
+ * componente é duplicada aqui.
+ * ======================================================================== */
+
+/* --- telefone ------------------------------------------------------------ */
+
+@media (max-width: 560px) {
+  :root {
+    /* O piso de 64px do desenho não cabe num telefone: em Barlow Condensed
+       "PLATAFORMA" mede ~7,4× o corpo da fonte e a folha rolava de lado. Em
+       560px os dois valores coincidem — abaixo disso o piso cede, e só ele. */
+    --t-hero: clamp(34px, 11.5vw, 64px);
+    --t-num-pilar: 60px;
+    --t-num-fase: 52px;
+  }
+}
+
+/* Sete atalhos não cabem numa linha abaixo de ~1000px, e a nav passava a
+   ocupar duas ou três — grudada no topo, ao longo do documento inteiro. Eles
+   viram uma faixa que desliza de lado e a barra volta a ter uma linha só. */
+@media (max-width: 1000px) {
+  .nav-marca {
+    margin-right: 0;
+  }
+
+  .nav-links {
+    display: flex;
+    /* base 0, e não auto: com `flex-wrap` no pai, um item cujo tamanho
+       hipotético é o do conteúdo quebra a linha antes de encolher. */
+    flex: 1 1 0;
+    min-width: 0;
+    gap: 18px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-links a {
+    white-space: nowrap;
+  }
+}
+
+/* No telefone nem marca, faixa e botão cabem juntos: a faixa desce para a
+   segunda linha e a barra deixa de ser fixa — 90px presos no topo de uma tela
+   de 844px é caro demais para sete âncoras. */
+@media (max-width: 620px) {
+  .nav {
+    position: static;
+    gap: 10px 14px;
+    padding-block: 10px;
+  }
+
+  .nav-marca {
+    font-size: 18px;
+  }
+
+  .nav .btn {
+    padding: 8px 14px;
+  }
+
+  .nav-links {
+    order: 3;
+    flex: 1 0 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  /* Numeral ao lado de texto numa coluna de 200px deixa a prosa em 25
+     caracteres por linha. No telefone o numeral vira cabeçalho da própria
+     fase, e o texto recupera a folha inteira. */
+  .fase {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding: 24px 20px;
+  }
+
+  /* Mesma razão na ficha: a coluna do rótulo espremia "Prazo de execução" em
+     duas linhas e sobrava um terço da folha para o valor. */
+  .ficha-linha {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+    padding: 16px 20px;
+  }
+
+  /* O selo da prancha tem título e células de controle na mesma linha. Em
+     350px o título ficava com uma palavra por linha: ele passa a ocupar a
+     faixa inteira e as células descem para a linha de baixo. */
+  .prancha-head span:first-child {
+    flex: 1 0 100%;
+    min-width: 0;
+    padding: 12px 20px 8px;
+  }
+
+  .prancha-head span + span {
+    border-left: 0;
+    border-top: 1px solid var(--sobre-navy);
+    padding: 10px 16px;
+  }
+
+  .prancha-head span + span + span {
+    border-left: 1px solid var(--sobre-navy);
+  }
+
+  .decisoes,
+  .card,
+  .gantt {
+    padding-inline: 20px;
+  }
+
+  /* `1fr` tem piso de min-content: os cinco hexadecimais da paleta não cabiam
+     em cinco colunas de 40px e empurravam a seção inteira para fora da tela. */
+  .paleta {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .paleta b,
+  .paleta span {
+    font-size: 10px;
+  }
+}
+
+/* --- monitor acima do Full HD -------------------------------------------- */
+
+/* Numa tela de 2560 o documento era uma coluna de 1200px com 680px de vazio de
+   cada lado. A prancha passa a crescer com a tela, e a tipografia junto — o
+   ponto não é caber mais texto por linha (a medida continua travada), é o
+   documento ocupar o monitor em vez de flutuar no meio dele. */
+@media (min-width: 1600px) {
+  :root {
+    --doc: clamp(1200px, 66vw, 1760px);
+    --gutter: clamp(72px, 4.5vw, 120px);
+    --t-display: clamp(60px, 3.9vw, 78px);
+    --t-hero: clamp(120px, 7.6vw, 156px);
+    --t-proximos: clamp(80px, 5vw, 100px);
+    --t-mock: clamp(52px, 3.2vw, 62px);
+    --t-num-pilar: 84px;
+    --t-num-fase: 76px;
+    --m-lead: 580px;
+    --m-desc: 720px;
+    --m-curto: 500px;
+  }
+
+  /* Com a medida travada, a coluna de texto para antes do fim e o vão sobra
+     do lado errado. A folha redistribui: texto mais estreito, figura maior. */
+  .cols {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+
+  /* O valor da ficha é a única linha do documento sem coluna que o segure:
+     em 1600px ele passaria de 100 caracteres. */
+  .ficha-linha dd {
+    max-width: var(--m-prosa);
+  }
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --t-corpo: 17px;
+  }
+
+  .fase h3,
+  .decisoes-head h3 {
+    font-size: 30px;
+  }
+
+  .pilar h3 {
+    font-size: 25px;
+  }
+
+  .territorio {
+    font-size: 40px;
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    --t-corpo: 18px;
+  }
 }
 
 /* --- impressão ------------------------------------------------------------
@@ -1654,13 +1855,15 @@ a:hover {
 
 <nav class="nav no-print">
   <span class="nav-marca"><i aria-hidden></i>2JEM <b>· Proposta 01</b></span>
-  <a href="#contexto">Contexto</a>
-  <a href="#escopo">Escopo</a>
-  <a href="#cronograma">Cronograma</a>
-  <a href="#telas">Telas</a>
-  <a href="#conceito">Conceito</a>
-  <a href="#ficha">Ficha técnica</a>
-  <a href="#proximos">Próximos passos</a>
+  <div class="nav-links">
+    <a href="#contexto">Contexto</a>
+    <a href="#escopo">Escopo</a>
+    <a href="#cronograma">Cronograma</a>
+    <a href="#telas">Telas</a>
+    <a href="#conceito">Conceito</a>
+    <a href="#ficha">Ficha técnica</a>
+    <a href="#proximos">Próximos passos</a>
+  </div>
   <button type="button" class="btn" data-imprimir>Salvar em PDF</button>
 </nav>
 
