@@ -20,8 +20,9 @@ en/index.html   versão inglesa pré-renderizada (gerada, ver "Idiomas")
 scripts/        build-en.mjs, gerador do en/index.html (só desenvolvimento)
 favicon.svg     "&" em ocre sobre fundo escuro
 og.png, og-en.png  imagem de compartilhamento (1200×630) em PT e EN
-fonts/          woff2 variáveis (latin + latin-ext): Fraunces, Inter e IBM Plex
-                Mono para o site; Space Grotesk para a proposta do CRM
+fonts/          woff2 (latin + latin-ext): Fraunces, Inter e IBM Plex Mono para o
+                site; Space Grotesk para a proposta do CRM; Barlow e Barlow
+                Condensed para a proposta da 2JEM
 img/qr.svg      QR do site para a caixa "uso físico"; img/qr-print.svg é a
                 versão preto-no-branco para cartão, crachá e proposta
 robots.txt      libera o site, bloqueia as propostas e o /admin
@@ -33,6 +34,8 @@ vercel.json     rewrites (/en, /admin, propostas), noindex das propostas e do
 docs/           material de trabalho interno; não vai para o ar
 proposta-mediaportal-*/   três propostas privadas para a Media Portal, fora do índice
                 (site, contrato e CRM & Inteligência de Dados)
+proposta-2jem-*/          proposta de marca e plataforma digital da 2JEM, trazida
+                do repositório 2JEM (Next.js) já achatada em HTML estático
 admin/          painel interno da dupla (CRM, financeiro, agenda, tarefas)
 ```
 
