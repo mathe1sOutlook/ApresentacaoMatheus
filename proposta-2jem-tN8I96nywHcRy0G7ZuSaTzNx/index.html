@@ -1214,14 +1214,14 @@ a:hover {
   overflow-x: auto;
 }
 
-/* No papel não há para onde rolar: comprimir é melhor que perder o mês 3. */
+/* No papel não há para onde rolar: comprimir é melhor que perder a semana 8. */
 .gantt-rolagem {
   min-width: 640px;
 }
 
 .gantt-linha {
   display: grid;
-  grid-template-columns: minmax(200px, 1.4fr) repeat(6, 1fr);
+  grid-template-columns: minmax(200px, 1.4fr) repeat(8, 1fr);
 }
 
 .gantt-head {
@@ -1235,9 +1235,18 @@ a:hover {
 }
 
 .gantt-head span + span {
-  grid-column: span 2;
   border-left: 1px solid var(--sobre-navy);
   padding-left: 10px;
+}
+
+/* As três fases não têm o mesmo tamanho: 3, 2 e 3 semanas. */
+.gantt-head span:nth-child(2),
+.gantt-head span:nth-child(4) {
+  grid-column: span 3;
+}
+
+.gantt-head span:nth-child(3) {
+  grid-column: span 2;
 }
 
 .gantt-frente {
@@ -1259,7 +1268,7 @@ a:hover {
   color: var(--verde);
 }
 
-/* A coluna da barra é dado da proposta — em que quinzena a frente começa e
+/* A coluna da barra é dado da proposta — em que semana a frente começa e
    termina —, e muda a cada linha: vem inline, como as cotas de um desenho. */
 .barra {
   grid-column: var(--de) / var(--ate);
@@ -1297,6 +1306,13 @@ a:hover {
 
 .gantt-legenda i.entrega {
   background: var(--branco);
+}
+
+.gantt-nota {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--texto-em-navy);
+  max-width: var(--m-desc);
 }
 
 /* --- telas ---------------------------------------------------------------- */
@@ -2238,7 +2254,7 @@ a:hover {
       <dl class="capa-meta">
         <div><dt class="label">Cliente</dt><dd>2JEM — José Moreira</dd></div>
         <div><dt class="label">Emitente</dt><dd>Bruno Amaral e Matheus Silva</dd></div>
-        <div><dt class="label">Prazo</dt><dd>3 meses · 3 fases</dd></div>
+        <div><dt class="label">Prazo</dt><dd>6 a 8 semanas · 3 fases</dd></div>
       </dl>
     </div>
 
@@ -2422,55 +2438,56 @@ a:hover {
     <p class="kicker"><span>03 · Cronograma</span></p>
 
     <div class="cols-head">
-      <h2 class="display" data-reveal><span>Em que mês cada</span><span>frente acontece</span></h2>
-      <p class="lead" data-reveal>Marca e tecnologia correm em paralelo desde o mês 1 — o conceito de marca precisa estar maduro antes das telas de alta fidelidade do mês 3.</p>
+      <h2 class="display" data-reveal><span>Em que semana cada</span><span>frente acontece</span></h2>
+      <p class="lead" data-reveal>Marca e tecnologia correm em paralelo desde a semana 1 — o conceito de marca precisa estar maduro antes das telas de alta fidelidade da fase 3.</p>
     </div>
 
     <div class="gantt" data-reveal>
       <div class="gantt-rolagem">
         <!-- Grade em divs com papéis ARIA, e não <table>: o desenho depende de
-             grid-column para largar cada barra na quinzena certa, e uma tabela
+             grid-column para largar cada barra na semana certa, e uma tabela
              só chegaria à quarta coluna preenchendo três células vazias. -->
-        <div role="table" aria-label="Cronograma por frente de trabalho, em quinzenas, ao longo de três meses" aria-colcount="7" tabindex="0">
+        <div role="table" aria-label="Cronograma por frente de trabalho, em semanas, ao longo de oito semanas" aria-colcount="9" tabindex="0">
           <div role="row" class="gantt-linha gantt-head">
             <span role="columnheader" aria-colindex="1"></span>
-            <span role="columnheader" aria-colindex="2" aria-colspan="2">Fase 1 · Mês 1 — Fundação</span>
-            <span role="columnheader" aria-colindex="4" aria-colspan="2">Fase 2 · Mês 2 — Sistema</span>
-            <span role="columnheader" aria-colindex="6" aria-colspan="2">Fase 3 · Mês 3 — Lançamento</span>
+            <span role="columnheader" aria-colindex="2" aria-colspan="3">Fase 1 · Semanas 1–3 — Fundação</span>
+            <span role="columnheader" aria-colindex="5" aria-colspan="2">Fase 2 · Semanas 4–5 — Sistema</span>
+            <span role="columnheader" aria-colindex="7" aria-colspan="3">Fase 3 · Semanas 6–8 — Lançamento</span>
           </div>
           <div role="row" class="gantt-linha gantt-frente">
             <div role="rowheader" aria-colindex="1" class="gantt-rotulo"><b>01</b><span>Diagnóstico &amp; briefing</span></div>
-            <div role="cell" aria-colindex="2" aria-colspan="2" class="barra" style="--de:2;--ate:4"></div>
+            <div role="cell" aria-colindex="2" aria-colspan="3" class="barra" style="--de:2;--ate:5"></div>
           </div>
           <div role="row" class="gantt-linha gantt-frente">
             <div role="rowheader" aria-colindex="1" class="gantt-rotulo"><b>02</b><span>Conceito de marca</span></div>
-            <div role="cell" aria-colindex="2" aria-colspan="4" class="barra" style="--de:2;--ate:6"></div>
+            <div role="cell" aria-colindex="2" aria-colspan="5" class="barra" style="--de:2;--ate:7"></div>
           </div>
           <div role="row" class="gantt-linha gantt-frente">
             <div role="rowheader" aria-colindex="1" class="gantt-rotulo"><b>03</b><span>Manual da marca</span></div>
-            <div role="cell" aria-colindex="4" aria-colspan="2" class="barra" style="--de:4;--ate:6"></div>
+            <div role="cell" aria-colindex="5" aria-colspan="2" class="barra" style="--de:5;--ate:7"></div>
           </div>
           <div role="row" class="gantt-linha gantt-frente">
             <div role="rowheader" aria-colindex="1" class="gantt-rotulo"><b>04</b><span>Sitemap &amp; wireframes</span></div>
-            <div role="cell" aria-colindex="4" aria-colspan="2" class="barra" style="--de:4;--ate:6"></div>
+            <div role="cell" aria-colindex="5" aria-colspan="2" class="barra" style="--de:5;--ate:7"></div>
           </div>
           <div role="row" class="gantt-linha gantt-frente">
             <div role="rowheader" aria-colindex="1" class="gantt-rotulo"><b>05</b><span>Telas de alta fidelidade</span></div>
-            <div role="cell" aria-colindex="6" aria-colspan="2" class="barra" style="--de:6;--ate:8"></div>
+            <div role="cell" aria-colindex="7" aria-colspan="2" class="barra" style="--de:7;--ate:9"></div>
           </div>
           <div role="row" class="gantt-linha gantt-frente">
             <div role="rowheader" aria-colindex="1" class="gantt-rotulo"><b>06</b><span>Desenvolvimento &amp; conteúdo</span></div>
-            <div role="cell" aria-colindex="2" aria-colspan="4" class="barra barra-entrega" style="--de:2;--ate:6"></div>
+            <div role="cell" aria-colindex="2" aria-colspan="5" class="barra barra-entrega" style="--de:2;--ate:7"></div>
           </div>
           <div role="row" class="gantt-linha gantt-frente">
             <div role="rowheader" aria-colindex="1" class="gantt-rotulo"><b>07</b><span>QA, ajustes e entrega</span></div>
-            <div role="cell" aria-colindex="6" aria-colspan="2" class="barra barra-entrega" style="--de:6;--ate:8"></div>
+            <div role="cell" aria-colindex="8" aria-colspan="2" class="barra barra-entrega" style="--de:8;--ate:10"></div>
           </div>
         </div>
         <p class="gantt-legenda">
           <span><i aria-hidden></i>Produção</span>
           <span><i class="entrega" aria-hidden></i>Entrega &amp; testes</span>
         </p>
+        <p class="gantt-nota">Régua da opção A, de oito semanas. Na opção B as mesmas frentes correm em cinco semanas, e a sexta é de testes.</p>
       </div>
     </div>
   </section>
@@ -2661,10 +2678,10 @@ a:hover {
         <div class="ficha-linha"><dt>Escopo</dt><dd>Quatro frentes: diagnóstico e fundação · arquitetura de marca · arquitetura de produto e site · produção e lançamento.</dd></div>
         <div class="ficha-linha"><dt>Ponto de partida</dt><dd>Símbolo de marca existente (nautilus), cartão de visitas em uso, quatro pilares de serviço já definidos: Redes e Infraestruturas, Segurança, Manutenção Preventiva, Suporte Técnico.</dd></div>
         <div class="ficha-linha"><dt>Site</dt><dd>Seis módulos: Home · Soluções/Serviços · Ecossistema/Integrações · Cases · Sobre · Contato/Área do cliente.</dd></div>
-        <div class="ficha-linha"><dt>Prazo de execução</dt><dd>Três meses, em três fases mensais — descoberta e marca correndo em paralelo desde o mês 1.</dd></div>
-        <div class="ficha-linha"><dt>Fase 1 · Mês 1</dt><dd>Diagnóstico, briefing consolidado e abertura do conceito de marca.</dd></div>
-        <div class="ficha-linha"><dt>Fase 2 · Mês 2</dt><dd>Manual de marca, sitemap validado e wireframes de baixa fidelidade.</dd></div>
-        <div class="ficha-linha"><dt>Fase 3 · Mês 3</dt><dd>Telas em alta fidelidade, desenvolvimento, conteúdo, QA e lançamento.</dd></div>
+        <div class="ficha-linha"><dt>Prazo de execução</dt><dd>Oito semanas em três fases, ou seis na opção B — descoberta e marca correndo em paralelo desde a semana 1.</dd></div>
+        <div class="ficha-linha"><dt>Fase 1 · Semanas 1–3</dt><dd>Diagnóstico, briefing consolidado e abertura do conceito de marca.</dd></div>
+        <div class="ficha-linha"><dt>Fase 2 · Semanas 4–5</dt><dd>Manual de marca, sitemap validado e wireframes de baixa fidelidade.</dd></div>
+        <div class="ficha-linha"><dt>Fase 3 · Semanas 6–8</dt><dd>Telas em alta fidelidade, desenvolvimento, conteúdo, QA e lançamento.</dd></div>
       </dl>
     </div>
   </section>
