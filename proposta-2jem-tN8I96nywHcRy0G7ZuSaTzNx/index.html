@@ -295,6 +295,7 @@ a:hover {
 
 #cronograma,
 #telas,
+#investimento,
 #proximos {
   padding-block: 0 72px;
 }
@@ -1751,6 +1752,82 @@ a:hover {
   margin-top: 14px;
 }
 
+/* --- investimento --------------------------------------------------------- */
+/* Duas ofertas, dois cartões: aqui cada um é mesmo um objeto avulso — prazo,
+   valor e condição próprios —, não prosa fatiada. */
+
+.ofertas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 24px;
+}
+
+.oferta {
+  display: flex;
+  flex-direction: column;
+  background: var(--branco);
+  border-radius: var(--r-card);
+  padding: 28px 24px;
+}
+
+.oferta h3 {
+  margin: 8px 0 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.oferta-preco {
+  margin-top: 20px;
+  font-family: var(--cond);
+  font-weight: 600;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+
+.oferta-euro {
+  margin-top: 6px;
+  font-size: 15px;
+  color: var(--texto-muted);
+}
+
+.oferta-euro-inline {
+  color: var(--texto-muted);
+  margin-left: 6px;
+}
+
+.oferta-cond {
+  margin: 20px 0 0;
+}
+
+.oferta-cond div {
+  border-top: 1px solid var(--linha);
+  padding: 12px 0;
+}
+
+.oferta-cond dt {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.oferta-cond dd {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: var(--texto-corpo);
+}
+
+.investimento-nota {
+  margin-top: 20px;
+  max-width: var(--m-desc);
+  font-size: 13px;
+  color: var(--texto-muted);
+}
+
 /* --- próximos passos ------------------------------------------------------ */
 
 .proximos {
@@ -2087,6 +2164,7 @@ a:hover {
   .principio,
   .fig-espiral,
   .cartao-claro,
+  .oferta,
   .proximos {
     break-inside: avoid;
   }
@@ -2139,6 +2217,7 @@ a:hover {
     <a href="#telas">Telas</a>
     <a href="#conceito">Conceito</a>
     <a href="#ficha">Ficha técnica</a>
+    <a href="#investimento">Investimento</a>
     <a href="#proximos">Próximos passos</a>
   </div>
   <button type="button" class="btn" data-imprimir>Salvar em PDF</button>
@@ -2590,6 +2669,40 @@ a:hover {
     </div>
   </section>
 
+  <section id="investimento" class="wrap">
+    <p class="kicker"><span>07 · Investimento</span></p>
+
+    <div class="cols-head">
+      <h2 class="display" data-reveal><span>Dois prazos,</span><span>dois investimentos</span></h2>
+      <p class="lead" data-reveal>O valor acompanha o prazo. Nas duas opções, reunião de alinhamento semanal.</p>
+    </div>
+
+    <div class="ofertas">
+      <article class="oferta" data-reveal>
+        <div class="rotulo">Opção A · 8 semanas</div>
+        <h3>Oito semanas, uma delas de testes</h3>
+        <div class="oferta-preco">R$ 19.700</div>
+        <div class="oferta-euro">≈ € 3.328</div>
+        <dl class="oferta-cond">
+          <div><dt>Parcelado em três vezes</dt><dd>40% de entrada · 30% em 15 dias · 30% em 30 dias</dd></div>
+          <div><dt>À vista</dt><dd>R$ 17.600 <span class="oferta-euro-inline">≈ € 2.973</span></dd></div>
+        </dl>
+      </article>
+
+      <article class="oferta" data-reveal>
+        <div class="rotulo">Opção B · 6 semanas</div>
+        <h3>Cinco semanas de produção e a sexta de testes</h3>
+        <div class="oferta-preco">R$ 23.490</div>
+        <div class="oferta-euro">≈ € 3.969</div>
+        <dl class="oferta-cond">
+          <div><dt>Em duas vezes</dt><dd>50% de entrada · 50% na entrega do site</dd></div>
+        </dl>
+      </article>
+    </div>
+
+    <p class="investimento-nota">Referência em euro pela cotação de 12 de setembro de 2026 (€ 1 = R$ 5,919). Proposta válida por 10 dias, até 22 de setembro de 2026.</p>
+  </section>
+
   <section id="proximos" class="wrap">
     <div class="proximos" data-reveal>
       <svg class="proximos-marca" viewBox="0 0 13 8" aria-hidden>
@@ -2598,7 +2711,7 @@ a:hover {
       </svg>
 
       <div class="proximos-col">
-        <p class="kicker"><span>07 · Próximos passos</span></p>
+        <p class="kicker"><span>08 · Próximos passos</span></p>
         <h2><span>Fechar o</span><span>diagnóstico</span><span>e seguir</span></h2>
         <p class="proximos-texto">Alinhar com o José e destravar a fase 1. Com o briefing fechado, o conceito de marca e o sitemap do site já podem começar a caminhar juntos rumo à fase 2.</p>
         <div class="linha-de-pills pills-longo">
