@@ -281,3 +281,12 @@ create trigger amaralesilva_leads_guard
   after insert on public.amaralesilva_leads
   referencing new table as inserted
   for each statement execute function public.amaralesilva_leads_guard();
+
+-- ═══ Migração amaralesilva_anon_hardening ═══
+-- O papel anônimo (a chave publicável que vai no browser, sem login) não tem
+-- por que ter privilégio nenhum nas tabelas do CRM: a RLS já devolvia zero
+-- linhas para ele, isto tira a dependência dela. Leads fica como está — o
+-- formulário público do site insere como anon, com política e grant próprios.
+revoke all on public.amaralesilva_clients, public.amaralesilva_projects, public.amaralesilva_notes,
+  public.amaralesilva_meetings, public.amaralesilva_payments, public.amaralesilva_tasks,
+  public.amaralesilva_members from anon;
