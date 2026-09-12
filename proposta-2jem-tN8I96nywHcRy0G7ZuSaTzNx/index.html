@@ -635,6 +635,10 @@ a:hover {
   animation: ciclo-fluxo 1.6s linear infinite;
 }
 
+.ciclo-svg .brilho-cor {
+  stop-color: var(--verde);
+}
+
 .ciclo-svg .seta {
   fill: var(--navy);
 }
@@ -832,7 +836,10 @@ a:hover {
   color: var(--texto-muted);
 }
 
-@container (max-width: 430px) {
+/* Lista só no telefone. Em 430px de cartão a lista já aparecia numa janela
+   de 1100px de computador — notebook com zoom de 125% via a versão de celular
+   na capa. Em 340px o anel ainda lê (rótulo de 11px, ícone de 20px). */
+@container (max-width: 340px) {
   .ciclo-svg {
     display: none;
   }
@@ -2167,7 +2174,7 @@ a:hover {
 <symbol id="i-gestao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M12 16.5v4M8 20.5h8"/><path d="M7.5 13.5v-3M11.5 13.5v-6M15.5 13.5v-4.5"/></symbol>
 </defs></svg>
 <svg class="ciclo-svg" viewBox="0 0 1000 950" aria-hidden="true">
-<defs><radialGradient id="ciclo-brilho"><stop offset="0" stop-color="var(--verde)" stop-opacity=".28"/><stop offset="1" stop-color="var(--verde)" stop-opacity="0"/></radialGradient></defs>
+<defs><radialGradient id="ciclo-brilho"><stop class="brilho-cor" offset="0" stop-opacity=".28"/><stop class="brilho-cor" offset="1" stop-opacity="0"/></radialGradient></defs>
 <circle class="brilho" cx="500" cy="445" r="230" fill="url(#ciclo-brilho)"/>
 <ellipse class="anel" cx="500" cy="445" rx="320" ry="320"/>
 <path class="seta" transform="translate(500 125) rotate(0.0)" d="M-11 -9 10 0-11 9z"/>
