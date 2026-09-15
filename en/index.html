@@ -2574,11 +2574,11 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     /* só onde existe coluna livre à direita do título: abaixo disso o
        contorno cruzaria o texto, e leitura vem antes do motivo */
     if (!HOUSE || w < 1080 || h < 620) return [];
-    var width = Math.min(w * 0.26, 340);
+    var width = Math.min(w * 0.24, 310);
     var wall = width * 0.62;          /* altura da parede */
     var roof = width * 0.34;          /* altura do telhado */
-    var cx = w * 0.78;
-    var top = Math.max(h * 0.07, 48);
+    var cx = w * 0.80;
+    var top = Math.max(h * 0.055, 44);
     var left = cx - width / 2, right = cx + width / 2;
     var eave = top + roof, base = eave + wall;
     /* cumeeira, beiral direito, base direita, base esquerda, beiral esquerdo */
@@ -2659,10 +2659,13 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
        desenho técnico. Nunca uma casa literal — é uma sugestão. */
     var house = st.house;
     if (house.length) {
-      ctx.strokeStyle = colors.blue;
       for (var e = 0; e < HOUSE_EDGES.length; e++) {
         var a = pts[house[HOUSE_EDGES[e][0]]], b = pts[house[HOUSE_EDGES[e][1]]];
         var eave = e === HOUSE_EDGES.length - 1;
+        /* as duas águas do telhado em ocre, o resto em azul: a casa fala a
+           mesma dualidade do site, em vez de virar um ícone imobiliário */
+        var roof = HOUSE_EDGES[e][0] === 0 || HOUSE_EDGES[e][1] === 0;
+        ctx.strokeStyle = roof ? colors.ochre : colors.blue;
         /* tracejado de linha de construção: é o que separa o contorno do
            resto da malha sem precisar gritar mais alto que ela */
         ctx.setLineDash(eave ? [2, 7] : [7, 6]);

@@ -18,9 +18,11 @@ A prova social roda em marquee.
 ```
 index.html      site completo (marcação + <style> + <script>, sem build)
 en/index.html   versão inglesa pré-renderizada (gerada, ver "Idiomas")
-scripts/        build-en.mjs, gerador do en/index.html (só desenvolvimento)
+scripts/        build-en.mjs (gera en/index.html) e build-og.mjs (gera as duas
+                imagens de compartilhamento) — só desenvolvimento
 favicon.svg     a casa do hero em traço: telhado ocre, paredes azuis, sem texto
-og.png, og-en.png  imagem de compartilhamento (1200×630) em PT e EN
+og.png, og-en.png  imagem de compartilhamento (1200×630) em PT e EN, geradas por
+                scripts/build-og.mjs com as fontes e os tokens do site
 fonts/          woff2 (latin + latin-ext): Fraunces, Inter e IBM Plex Mono para o
                 site; Space Grotesk para a proposta do CRM; Barlow e Barlow
                 Condensed para a proposta da 2JEM
@@ -64,6 +66,14 @@ junto.**
 Para editar uma frase, mude os dois lados: o texto no HTML (PT) e o `data-en`
 (EN). Se um dia o site virar Next.js, esses pares alimentam direto os
 dicionários do `next-intl`.
+
+## Imagens de compartilhamento
+
+`og.png` e `og-en.png` são **geradas**, não desenhadas à mão: `node
+scripts/build-og.mjs` monta um cartão de 1200×630 com as fontes embutidas em
+base64, a mesma constelação de semente fixa do hero, o contorno de casa em linha
+de construção e a trilha ocre → azul. Se a tagline, o nome ou o endereço
+mudarem, é o script que muda — e as duas imagens são versionadas junto.
 
 ## Formulário de contato (leads)
 
