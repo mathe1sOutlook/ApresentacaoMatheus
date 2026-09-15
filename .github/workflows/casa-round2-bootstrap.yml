@@ -1,0 +1,94 @@
+name: Casa Martech round 2 bootstrap
+
+on:
+  push:
+    branches:
+      - casa-martech/round-2-cases
+    paths:
+      - '.github/workflows/casa-round2-bootstrap.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: casa-martech/round-2-cases
+
+      - name: Apply approved case selection
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          paths = [Path('index.html'), Path('en/index.html')]
+          remove_more = [
+              r'IstoÉ Dinheiro',
+              r'NOG —',
+              r'VisionOne',
+              r'FundaCalc',
+              r'FloraServiços',
+          ]
+
+          for path in paths:
+              s = path.read_text(encoding='utf-8')
+
+              # Remove o case técnico Genma da grade principal por enquanto.
+              s, n = re.subn(
+                  r'\n\s*<!-- Caso 05 .*?-->\s*<article class="case reveal">.*?</article>\s*',
+                  '\n',
+                  s,
+                  count=1,
+                  flags=re.S,
+              )
+              if n != 1:
+                  raise SystemExit(f'{path}: não foi possível localizar o case 05 / Genma')
+
+              # Mantém apenas AMWC, Ame Tom de Voz e Gipsyy em "Outros projetos".
+              for marker in remove_more:
+                  pattern = (
+                      r'\n\s*<article class="more-card reveal">'
+                      r'(?:(?!<article class="more-card reveal">).)*?'
+                      + marker +
+                      r'.*?</article>\s*'
+                  )
+                  s, n = re.subn(pattern, '\n', s, count=1, flags=re.S)
+                  if n != 1:
+                      raise SystemExit(f'{path}: card não encontrado: {marker}')
+
+              # Nome documentado do case.
+              s = s.replace('Corning CALA Summit</h3>', 'Corning CALA Channel Summit</h3>')
+              s = s.replace('data-en="Corning CALA Summit">Corning CALA Channel Summit</h3>',
+                            'data-en="Corning CALA Channel Summit">Corning CALA Channel Summit</h3>')
+
+              path.write_text(s, encoding='utf-8')
+
+          # O gerador de /en não pode voltar a identidade para Amaral & Silva.
+          p = Path('scripts/build-en.mjs')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace(
+              "title: 'Amaral & Silva — Brand strategy & systems engineering'",
+              "title: 'CASA MARTECH — Brand strategy & systems engineering'",
+          )
+          s = s.replace(
+              "ogDescription: 'Brands that stand out. Systems that sustain them. Brand strategy and systems engineering at the same table.'",
+              'ogDescription: "Brands that stand out. Systems that don\'t fail. Brand strategy and systems engineering at the same table.",',
+          )
+          s = s.replace(
+              "ogImageAlt: 'Amaral & Silva — Brands that stand out. Systems that sustain them.'",
+              'ogImageAlt: "CASA MARTECH — Brands that stand out. Systems that don\'t fail.",',
+          )
+          s = s.replace("name: 'Amaral & Silva'", "name: 'CASA MARTECH'")
+          p.write_text(s, encoding='utf-8')
+          PY
+
+          rm -f .github/workflows/casa-round2-bootstrap.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: mantém somente os cases aprovados da Casa Martech"
+          git push
