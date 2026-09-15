@@ -1165,20 +1165,67 @@ button {
   color: var(--ink-soft);
 }
 
-/* ─── Dossiê 05 · Método ─────────────────────────────────────────── */
-.steps { list-style: none; margin: 0; padding: 0; }
+/* ─── Dossiê 05 · Método ───────────────────────────────────────────
+   As quatro etapas num percurso só: um trilho que desce do ocre ao azul,
+   com um nó por etapa. O trilho se desenha ao entrar na tela. */
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 32px;
+  position: relative;
+}
+.steps::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 16px;
+  bottom: 0;
+  width: 1px;
+  /* a ponta some em vez de bater num fim seco: o processo continua */
+  background: linear-gradient(180deg, var(--ochre) 0%, #AF9D81 30%, #9498B3 58%, var(--blue) 82%, transparent 100%);
+  transform-origin: top;
+}
+.js-reveal .steps::before { transform: scaleY(0); transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.3, 1); }
+.js-reveal .steps.is-in::before { transform: none; }
+
 .step {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
   padding: 30px 0;
-  border-top: 1px solid var(--line-strong);
+  border-top: 1px solid var(--line);
   align-items: baseline;
 }
-.step:last-child { border-bottom: 1px solid var(--line-strong); }
-.step__number { font-family: var(--mono); font-size: 16px; color: var(--ink-soft); }
+.step:first-child { border-top: 0; }
+/* O nó da etapa, sobre o trilho. Quadrado, como o resto do site; o halo
+   abre no hover e é a única microinteração da seção. */
+.step::before,
+.step::after {
+  content: "";
+  position: absolute;
+  left: -32px;
+  top: 36px;
+  width: 7px;
+  height: 7px;
+  background: var(--step-tone);
+}
+.step::after {
+  opacity: 0;
+  transform: scale(1);
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.step:hover::after { opacity: 0.22; transform: scale(3.2); }
+.step:nth-child(1) { --step-tone: #C9A24E; }
+.step:nth-child(2) { --step-tone: #AF9D81; }
+.step:nth-child(3) { --step-tone: #9498B3; }
+.step:nth-child(4) { --step-tone: #7A93E6; }
+.step__number { font-family: var(--mono); font-size: 16px; color: var(--step-tone); }
 .step__title { font-family: var(--serif); font-size: 26px; font-weight: 600; }
 .step__text { font-size: 17px; color: var(--ink-soft); }
+@media (prefers-reduced-motion: reduce) {
+  .step:hover::after { opacity: 0; transform: scale(1); }
+}
 
 /* ─── WhatsApp flutuante (só telas estreitas, depois do hero) ─────── */
 .wa-float {
@@ -2162,7 +2209,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       </div>
     </div>
 
-    <ol class="steps">
+    <ol class="steps" data-draw>
       <li class="step reveal">
         <span class="step__number">01</span>
         <h3 class="step__title" data-en="Diagnosis">Diagnóstico</h3>
