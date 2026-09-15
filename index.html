@@ -1489,6 +1489,11 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .case--featured { grid-column: 1 / -1; }
   .case--featured .case__cover { min-height: 540px; }
   .case--featured .case__caption { max-width: 640px; }
+  /* Com o conjunto ocupando a primeira linha sozinho, um número par de casos
+     deixa o último órfão: ele abre a linha em vez de deixar metade vazia. */
+  .case:last-child:nth-child(even) { grid-column: 1 / -1; }
+  .case:last-child:nth-child(even) .case__cover { min-height: 400px; }
+  .case:last-child:nth-child(even) .case__caption { max-width: 640px; }
 }
 
 @media (min-width: 1024px) {
@@ -1504,6 +1509,13 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .more-card__text { font-size: 15px; }
   .step { grid-template-columns: 96px 1fr 2fr; }
   .step__number { grid-row: auto; }
+}
+
+/* Acima de 1600px o texto ganha um pouco de largura e as seções, de ar —
+   sem soltar a medida de leitura, que é o que segura o tom editorial. */
+@media (min-width: 1600px) {
+  :root { --container: 1280px; --gutter: 40px; }
+  .section { padding: 120px 0; }
 }
 
 /* Abaixo de 1024px o header fica só com marca + idioma + CTA, como no mobile. */
@@ -1569,6 +1581,9 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     color-scheme: light;
   }
   .js-reveal .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .js-reveal .fronts__rail::before,
+  .js-reveal .steps::before { transform: none !important; }
+  .js-reveal .fronts__node { opacity: 1 !important; }
   .hero__title em { background: none; color: var(--ochre); -webkit-text-fill-color: currentColor; }
   .hero__net, .wa-float, .site-header, .marquee, .lead, .skip-link { display: none !important; }
   .case__details[hidden] { display: block; }
