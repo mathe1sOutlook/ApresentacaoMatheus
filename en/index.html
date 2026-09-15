@@ -2496,7 +2496,39 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     };
   }
 
-  var netState = { w: 0, h: 0, dpr: 1, pts: [], reach: 0, mouse: null, raf: null, visible: true, last: 0, colors: null };
+  var netState = { w: 0, h: 0, dpr: 1, pts: [], reach: 0, mouse: null, raf: null, visible: true, last: 0, colors: null, house: [] };
+
+  /* ─── Contorno de casa no circuito ────────────────────────────────
+     Sete âncoras nos vértices de uma casa de desenho técnico entram na
+     mesma física dos outros pontos — mola de volta à origem, repulsão do
+     cursor —, então o contorno respira em vez de ser um desenho colado.
+     As arestas entre elas são traçadas com alpha baixo, em linha de
+     blueprint. Para tirar do ar, basta trocar HOUSE para false.
+     ───────────────────────────────────────────────────────────────── */
+  var HOUSE = true;
+
+  function houseShape(w, h) {
+    /* só onde existe coluna livre à direita do título: abaixo disso o
+       contorno cruzaria o texto, e leitura vem antes do motivo */
+    if (!HOUSE || w < 1080 || h < 620) return [];
+    var width = Math.min(w * 0.26, 340);
+    var wall = width * 0.62;          /* altura da parede */
+    var roof = width * 0.34;          /* altura do telhado */
+    var cx = w * 0.78;
+    var top = Math.max(h * 0.07, 48);
+    var left = cx - width / 2, right = cx + width / 2;
+    var eave = top + roof, base = eave + wall;
+    /* cumeeira, beiral direito, base direita, base esquerda, beiral esquerdo */
+    return [
+      { x: cx,    y: top },
+      { x: right, y: eave },
+      { x: right, y: base },
+      { x: left,  y: base },
+      { x: left,  y: eave }
+    ];
+  }
+  /* o perímetro mais a linha do beiral, que é o que faz ler como desenho */
+  var HOUSE_EDGES = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0], [4, 1]];
 
   function netColors() {
     var cs = getComputedStyle(document.documentElement);
@@ -2527,6 +2559,16 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
         r: rnd() < 0.35 ? 4 : 2.5
       });
     }
+    /* as âncoras da casa são pontos como os outros, só que com origem fixa */
+    var shape = houseShape(w, h);
+    netState.house = shape.map(function (a, i) { return pts.length + i; });
+    shape.forEach(function (a) {
+      pts.push({
+        x: a.x, y: a.y, ox: a.x, oy: a.y, vx: 0, vy: 0,
+        tone: a.x < w * 0.45 ? 'ochre' : 'blue',
+        r: 2, anchor: true
+      });
+    });
     netState.pts = pts;
     drawNet();
   }
@@ -2550,13 +2592,46 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
         ctx.stroke();
       }
     }
+    /* O contorno da casa: traço fraco e marcas de canto, como num
+       desenho técnico. Nunca uma casa literal — é uma sugestão. */
+    var house = st.house;
+    if (house.length) {
+      ctx.strokeStyle = colors.blue;
+      for (var e = 0; e < HOUSE_EDGES.length; e++) {
+        var a = pts[house[HOUSE_EDGES[e][0]]], b = pts[house[HOUSE_EDGES[e][1]]];
+        var eave = e === HOUSE_EDGES.length - 1;
+        /* tracejado de linha de construção: é o que separa o contorno do
+           resto da malha sem precisar gritar mais alto que ela */
+        ctx.setLineDash(eave ? [2, 7] : [7, 6]);
+        ctx.globalAlpha = eave ? 0.26 : 0.44;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 0.6;
+      for (var c = 0; c < house.length; c++) {
+        var v = pts[house[c]];
+        ctx.strokeStyle = colors[v.tone];
+        ctx.beginPath();
+        ctx.moveTo(v.x - 5, v.y);
+        ctx.lineTo(v.x + 5, v.y);
+        ctx.moveTo(v.x, v.y - 5);
+        ctx.lineTo(v.x, v.y + 5);
+        ctx.stroke();
+      }
+    }
+
     ctx.globalAlpha = 1;
     for (var k = 0; k < pts.length; k++) {
       ctx.fillStyle = colors[pts[k].tone];
+      ctx.globalAlpha = pts[k].anchor ? 0.55 : 1;
       ctx.beginPath();
       ctx.arc(pts[k].x, pts[k].y, pts[k].r, 0, Math.PI * 2);
       ctx.fill();
     }
+    ctx.globalAlpha = 1;
   }
 
   var coarsePointer = window.matchMedia('(pointer: coarse)').matches;
@@ -2571,9 +2646,11 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     var pts = st.pts, m = st.mouse;
     for (var i = 0; i < pts.length; i++) {
       var p = pts[i];
-      /* mola fraca de volta à origem + deriva própria */
-      p.vx += (p.ox - p.x) * 0.0006 * dt;
-      p.vy += (p.oy - p.y) * 0.0006 * dt;
+      /* mola fraca de volta à origem + deriva própria; nas âncoras da casa
+         a mola é mais firme, senão o contorno se desmancha */
+      var k = p.anchor ? 0.006 : 0.0006;
+      p.vx += (p.ox - p.x) * k * dt;
+      p.vy += (p.oy - p.y) * k * dt;
       if (m) {
         var dx = p.x - m.x, dy = p.y - m.y, d2 = dx * dx + dy * dy, R = 160;
         if (d2 < R * R && d2 > 1) {
@@ -2584,7 +2661,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       }
       p.vx *= 0.985; p.vy *= 0.985;
       var sp = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-      if (sp < 0.04) { p.vx += (Math.random() - 0.5) * 0.02; p.vy += (Math.random() - 0.5) * 0.02; }
+      if (sp < 0.04 && !p.anchor) { p.vx += (Math.random() - 0.5) * 0.02; p.vy += (Math.random() - 0.5) * 0.02; }
       if (sp > 0.9) { p.vx *= 0.9 / sp; p.vy *= 0.9 / sp; }
       p.x += p.vx * dt; p.y += p.vy * dt;
     }
