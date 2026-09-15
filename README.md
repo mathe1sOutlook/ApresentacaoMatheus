@@ -1,8 +1,9 @@
-# Amaral &amp; Silva — site institucional
+# CASA MARTECH — site institucional
 
-One-pager bilíngue (PT-BR / EN) da dupla **Bruno Amaral** (marca e estratégia) e
-**Matheus Silva** (tecnologia e dados). Publicado em
-<https://amaralesilva.vercel.app>.
+One-pager bilíngue (PT-BR / EN) da **CASA MARTECH** — a dupla **Bruno Amaral**
+(marca e estratégia) e **Matheus Silva** (tecnologia e dados). Publicado em
+<https://amaralesilva.vercel.app>: o endereço é herança do nome antigo e
+segue valendo como URL técnica até o domínio próprio ser decidido.
 
 Implementa o handoff *Reestruturação de branding* na versão escura — fundo
 quase preto, tinta creme, ocre para marca, azul para tecnologia, Fraunces +
@@ -18,7 +19,7 @@ A prova social roda em marquee.
 index.html      site completo (marcação + <style> + <script>, sem build)
 en/index.html   versão inglesa pré-renderizada (gerada, ver "Idiomas")
 scripts/        build-en.mjs, gerador do en/index.html (só desenvolvimento)
-favicon.svg     "&" em ocre sobre fundo escuro
+favicon.svg     a casa do hero em traço: telhado ocre, paredes azuis, sem texto
 og.png, og-en.png  imagem de compartilhamento (1200×630) em PT e EN
 fonts/          woff2 (latin + latin-ext): Fraunces, Inter e IBM Plex Mono para o
                 site; Space Grotesk para a proposta do CRM; Barlow e Barlow
@@ -150,14 +151,15 @@ Google já está ativo no projeto.)
   carrossel — arrasto nativo por scroll-snap, marcadores e setas do teclado
   entram sozinhos. A primeira imagem é a capa: se ela faltar, o caso inteiro
   volta para a moldura de espera.
-- **Contato** — enquanto o domínio `amaralesilva.com` não estiver ativo, o
-  canal é o do Bruno: `bamaralpenha@gmail.com` e WhatsApp (11) 99977-3471.
-  O `contato@amaralesilva.com` do design nunca existiu, e o antigo
-  (11) 96904-1800 saiu do site — a dupla atende por um canal só. Quando o
+- **Contato** — enquanto a CASA MARTECH não tiver domínio e e-mail próprios, o
+  canal é o do Bruno: `bamaralpenha@gmail.com` e WhatsApp (11) 99977-3471 — que
+  é também o telefone do JSON-LD. O `contato@amaralesilva.com` do design nunca
+  existiu, e o antigo (11) 96904-1800 saiu do site e do schema: a dupla atende
+  por um canal só. Quando o
   domínio entrar, é aqui que o endereço muda.
 ## Desvio do design
 
 O ocre e o azul foram clareados para o fundo escuro: `#C9A24E` e `#7A93E6`
 (ambos acima de 6:1 sobre `--bg`, o mínimo WCAG AA para texto pequeno é 4,5:1).
-Os tokens vivem no `:root` de `index.html`; a cor do `&` em `favicon.svg`
-acompanha o ocre.
+Os tokens vivem no `:root` de `index.html`; o `favicon.svg`
+usa as duas cores, ocre no telhado e azul nas paredes.
