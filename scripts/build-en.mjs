@@ -15,10 +15,10 @@ const src = readFileSync(resolve(root, 'index.html'), 'utf8');
 const META_EN = {
   title: 'CASA MARTECH — Brand strategy & systems engineering',
   description: 'A duo that builds a brand and the technology behind it from the ground up: strategy, research and go-to-market alongside custom systems, dashboards, automation and applied AI.',
-  ogDescription: "Brands that stand out. Systems that don't fail. Brand strategy and systems engineering at the same table.",,
+  ogDescription: "Brands that stand out. Systems that don't fail. Brand strategy and systems engineering at the same table.",
   canonical: 'https://amaralesilva.vercel.app/en',
   ogImage: 'https://amaralesilva.vercel.app/og-en.png',
-  ogImageAlt: "CASA MARTECH — Brands that stand out. Systems that don't fail.",,
+  ogImageAlt: "CASA MARTECH — Brands that stand out. Systems that don't fail.",
   jsonLd: {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
