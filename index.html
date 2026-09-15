@@ -615,24 +615,54 @@ button {
   color: var(--ochre);
 }
 
-/* ─── Dossiê 02 · Diagnóstico ────────────────────────────────────── */
-.symptom { padding: 44px 40px 48px; }
+/* ─── Dossiê 02 · Diagnóstico ──────────────────────────────────────
+   Seis sintomas em cascata, cada um pendurado numa régua de 1px. A cor
+   do índice diz de que lado vem o problema — ocre na marca, azul no
+   sistema —, e eles se alternam: é a tese da casa vista de perto. */
+.symptoms {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  /* cada régua tem a altura do seu próprio texto: o pé da seção fica irregular */
+  align-items: start;
+}
+.symptom {
+  position: relative;
+  padding: 4px 24px 28px 22px;
+  border-left: 1px solid var(--line-strong);
+}
+/* Trecho de régua na cor da disciplina, no alto de cada item. */
+.symptom::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 0;
+  width: 1px;
+  height: 46px;
+  background: var(--symptom-tone, var(--ochre));
+}
+.symptom--brand { --symptom-tone: var(--ochre); }
+.symptom--tech  { --symptom-tone: var(--blue); }
 .symptom__index {
   font-family: var(--mono);
   font-size: 14px;
-  color: var(--ink-soft);
+  color: var(--symptom-tone, var(--ink-soft));
 }
 .symptom__title {
   font-family: var(--serif);
   font-size: 24px;
   font-weight: 600;
-  margin-top: 20px;
+  margin-top: 18px;
 }
 .symptom__text {
   margin-top: 12px;
   font-size: 16px;
   color: var(--ink-soft);
+  max-width: 34ch;
 }
+/* A entrada vem da esquerda, para ler como cascata e não como fade de grade. */
+.js-reveal .symptom { transform: translate(-14px, 16px); }
+.js-reveal .symptom.is-in { transform: none; }
 
 /* ─── Dossiê 03 · Frentes ────────────────────────────────────────── */
 .fronts {
@@ -1335,6 +1365,9 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
    ═══════════════════════════════════════════════════════════════════ */
 @media (min-width: 640px) {
   .rule-grid--3 { grid-template-columns: repeat(2, 1fr); }
+  /* Duas colunas: o degrau alterna par/ímpar. */
+  .symptoms { grid-template-columns: repeat(2, 1fr); gap: 8px 40px; }
+  .symptom:nth-child(even) { margin-top: 36px; }
   .step {
     grid-template-columns: 96px 1fr;
     gap: 14px 24px;
@@ -1357,6 +1390,11 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
 @media (min-width: 1024px) {
   .rule-grid--3 { grid-template-columns: repeat(3, 1fr); }
+  /* Três colunas: o degrau é progressivo e o pé da seção fica irregular. */
+  .symptoms { grid-template-columns: repeat(3, 1fr); gap: 16px 48px; }
+  .symptom:nth-child(even) { margin-top: 0; }
+  .symptom:nth-child(3n + 2) { margin-top: 34px; }
+  .symptom:nth-child(3n + 3) { margin-top: 68px; }
   .more .rule-grid--3 { grid-template-columns: repeat(3, 1fr); }
   .more-card__body { padding: 22px 22px 28px; }
   .more-card__title { font-size: 21px; }
@@ -1408,7 +1446,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .person__name { font-size: 30px; }
   .pull-quote { padding: 36px 28px 36px 76px; font-size: 22px; }
   .pull-quote::before { left: 28px; top: 28px; font-size: 44px; }
-  .symptom { padding: 36px 28px; }
+  .symptom { padding: 2px 4px 26px 18px; }
   .proof__list { font-size: 22px; gap: 64px; }
   .case__cover { min-height: 420px; padding: 22px 24px 26px; }
   .case__chip { font-size: 12px; padding: 7px 12px; }
@@ -1604,33 +1642,35 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       </div>
     </div>
 
-    <div class="rule-grid rule-grid--3">
-      <article class="symptom reveal">
+    <!-- A cor de cada índice diz de que lado vem o problema: ocre na marca
+         (01, 03, 06), azul no sistema (02, 04, 05). Eles se alternam. -->
+    <div class="symptoms" data-reveal-step="90">
+      <article class="symptom symptom--brand reveal">
         <p class="symptom__index">01</p>
         <h3 class="symptom__title" data-en="Brand with no narrative">Marca sem narrativa</h3>
         <p class="symptom__text" data-en="Identity in place, no story that differentiates.">Identidade pronta, sem história que diferencie.</p>
       </article>
-      <article class="symptom reveal">
+      <article class="symptom symptom--tech reveal">
         <p class="symptom__index">02</p>
         <h3 class="symptom__title" data-en="Controls that don't scale">Controles que não escalam</h3>
         <p class="symptom__text" data-en="Scattered processes, no central system.">Processos espalhados, sem sistema central.</p>
       </article>
-      <article class="symptom reveal">
+      <article class="symptom symptom--brand reveal">
         <p class="symptom__index">03</p>
         <h3 class="symptom__title" data-en="Inconsistent communication">Comunicação inconsistente</h3>
         <p class="symptom__text" data-en="Tone of voice that changes from channel to channel.">Tom de voz que muda de canal pra canal.</p>
       </article>
-      <article class="symptom reveal">
+      <article class="symptom symptom--tech reveal">
         <p class="symptom__index">04</p>
         <h3 class="symptom__title" data-en="Data nobody reads">Dados sem leitura</h3>
         <p class="symptom__text" data-en="Information exists, but nobody decides with it.">Informação existe, mas ninguém decide com ela.</p>
       </article>
-      <article class="symptom reveal">
+      <article class="symptom symptom--tech reveal">
         <p class="symptom__index">05</p>
         <h3 class="symptom__title" data-en="Software that doesn't fit">Software que não encaixa</h3>
         <p class="symptom__text" data-en="Off-the-shelf tool forcing the company to adapt.">Ferramenta pronta forçando a empresa a se adaptar.</p>
       </article>
-      <article class="symptom reveal">
+      <article class="symptom symptom--brand reveal">
         <p class="symptom__index">06</p>
         <h3 class="symptom__title" data-en="Launch with no strategy">Lançamento sem estratégia</h3>
         <p class="symptom__text" data-en="Product live with no go-to-market plan.">Produto no ar sem plano de go-to-market.</p>
@@ -2461,12 +2501,17 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
   /* ─── Entrada ao rolar ─────────────────────────────────────────── */
   if (document.documentElement.classList.contains('js-reveal')) {
-    var revealEls = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
-    /* escalona irmãos dentro da mesma grade */
+    /* .reveal entra com fade; [data-draw] só recebe a classe e o CSS decide o
+       que fazer com ela (é assim que os trilhos se desenham) */
+    var revealEls = Array.prototype.slice.call(document.querySelectorAll('.reveal, [data-draw]'));
+    /* escalona irmãos dentro da mesma grade; o pai pode pedir outro passo */
     revealEls.forEach(function (el) {
       var parent = el.parentElement;
       var sibs = Array.prototype.filter.call(parent.children, function (c) { return c.classList.contains('reveal'); });
-      if (sibs.length > 1) el.style.setProperty('--reveal-delay', Math.min(sibs.indexOf(el), 5) * 70 + 'ms');
+      var step = parseInt(parent.getAttribute('data-reveal-step'), 10) || 70;
+      if (sibs.length > 1 && el.classList.contains('reveal')) {
+        el.style.setProperty('--reveal-delay', Math.min(sibs.indexOf(el), 7) * step + 'ms');
+      }
     });
     var revealObs = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
