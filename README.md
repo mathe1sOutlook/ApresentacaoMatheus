@@ -130,20 +130,26 @@ Google já está ativo no projeto.)
 - **Fotos da dupla** — os avatares em `#dupla` apontam para `/img/bruno.jpg` e
   `/img/matheus.jpg` (quadradas, 400×400 ou mais). Enquanto o arquivo não
   existe, a moldura tracejada "foto aqui" aparece no lugar.
-- **Logos da faixa "já passaram por essas mãos"** — `/img/logos/<slug>.svg`
-  (corning, americanas, quintoandar, mediaportal, tvcultura, informa, gipsyy),
-  monocromáticos; o CSS pinta de creme. Sem o arquivo, fica o nome em texto.
+- **Logos da faixa "já fizemos história com..."** — `/img/logos/<slug>.svg`
+  (corning, ame, quintoandar, mediaportal, informa, gipsyy), monocromáticos; o
+  CSS pinta de creme. Sem o arquivo, fica o nome em texto.
 - **Vercel Web Analytics** — o site já carrega `/_vercel/insights/script.js`;
   só começa a contar depois de ativar *Analytics* no projeto na Vercel.
-- **Imagens dos casos e projetos** — cada card já aponta para um arquivo em
-  `/img/casos/` (mediaportal, mindminers, ame-x, corning, genma) e em
-  `/img/projetos/` (amwc, ame-tom-de-voz, istoe, nog, visionone, gipsyy,
-  fundacalc, flora), todos `.jpg` em paisagem. Basta salvar o arquivo com esse
-  nome; enquanto ele não existe, o `onerror` do `<img>` mostra a moldura
-  tracejada "aguardando" (as imagens ausentes respondem 404, que é barato).
-  Quando as imagens chegarem, exporte em WebP (ou AVIF)
-  com largura 1600 px para as capas e 800 px para os cards; o nome do arquivo
-  pode manter `.jpg` ou trocar a extensão no HTML.
+- **Imagens dos casos e projetos** — cada card aponta para um arquivo em
+  `/img/casos/` (mediaportal, mindminers, ame-x, corning) e em `/img/projetos/`
+  (amwc, ame-tom-de-voz, gipsyy), todos `.jpg` em paisagem. **Esta lista é a
+  seleção aprovada; não acrescentar nomes sem aprovação** — os cases retirados
+  na rodada 2 não voltam. Basta salvar o arquivo com esse nome; enquanto ele
+  não existe, o `onerror` do `<img>` deixa a capa na moldura de espera sobre
+  uma malha de desenho (as imagens ausentes respondem 404, que é barato).
+  Quando as imagens chegarem, exporte em WebP (ou AVIF) com largura 1600 px
+  para as capas e 800 px para os cards; o nome do arquivo pode manter `.jpg` ou
+  trocar a extensão no HTML.
+  Um caso aceita **mais de uma imagem**: é duplicar o `<img class="case__shot">`
+  dentro da `<div class="case__shots">`. A partir da segunda, a faixa vira
+  carrossel — arrasto nativo por scroll-snap, marcadores e setas do teclado
+  entram sozinhos. A primeira imagem é a capa: se ela faltar, o caso inteiro
+  volta para a moldura de espera.
 - **Contato** — enquanto o domínio `amaralesilva.com` não estiver ativo, o
   canal é o do Bruno: `bamaralpenha@gmail.com` e WhatsApp (11) 99977-3471.
   O `contato@amaralesilva.com` do design nunca existiu, e o antigo

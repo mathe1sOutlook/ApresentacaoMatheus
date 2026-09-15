@@ -380,7 +380,35 @@ Essa ordem é deliberadamente conservadora para evitar outro salto visual grande
 
 ---
 
-## 16. Pendências
+## 16. Rodada 3 — implementada
+
+Cobriu os itens 4 a 9 da ordem sugerida na seção 15. Nenhum texto do site mudou;
+tudo é comportamento, ritmo e desenho, seção por seção, em commits separados.
+
+| Seção | O que entrou |
+|---|---|
+| Casos | Card limpo em repouso no desktop (imagem + título); métrica, régua e “Ver detalhes” acendem no hover e no foco. A capa inteira abre e fecha o caso, que é o gesto do toque. Onde não há mouse — ou ainda não há foto — tudo fica sempre à vista. |
+| Casos / galeria | Cada foto é um `<img class="case__shot">` dentro de `.case__shots`. Com duas ou mais, a faixa já é carrossel por scroll-snap **sem script**; o script só acrescenta marcadores, foco e setas do teclado. Nenhum caso tem duas imagens ainda. |
+| Casos / vazio | Sem foto, a capa é uma prancha de desenho (malha de 1px) em vez de retângulo vazio. |
+| Diagnóstico | Os seis sintomas descem em cascata (degrau de 34px e 68px em três colunas; alternado em duas; lista simples no telefone), cada um pendurado numa régua de 1px. Índice ocre nos problemas de marca (01, 03, 06) e azul nos de sistema (02, 04, 05) — alternados. Entrada escalonada em 90ms. |
+| Entregas | As duas frentes penduram num trilho único, ocre numa ponta e azul na outra, com quatro nós. Título dos itens em serif, régua que para antes da borda, entrada sequencial. |
+| Processo | As quatro etapas num percurso vertical ocre → azul, com nó por etapa e halo no hover. |
+| Hero | Cinco âncoras no circuito sugerem um contorno de casa, em tracejado de linha de construção, participando da mesma física das partículas. Só acima de 1080×620, onde há coluna livre ao lado do título. |
+| Polimento | Último caso órfão abre a linha inteira; “outros projetos” volta a três colunas (eram quatro para três cards); container a 1280px acima de 1600px; impressão cobre os elementos novos. |
+
+### Decisões de forma que valem registrar
+
+- **Sem degradê 01→06 no diagnóstico.** Um degradê afirmaria uma progressão que
+  o conteúdo não tem. A alternância ocre/azul é verdadeira e diz mais.
+- **Sem rótulos “marca → marketing → tecnologia → operação”** no trilho das
+  entregas: seriam texto novo. O trilho contínuo entrega a mesma ideia sem
+  inventar copy.
+- **Nada some sem JavaScript.** Trilhos, cascata e detalhes dos casos nascem
+  prontos; o esconderijo depende da classe `js-reveal`, que só existe com
+  IntersectionObserver e sem `prefers-reduced-motion`.
+- **O hero é reversível numa linha:** `HOUSE = false`.
+
+## 17. Pendências
 
 - [ ] confirmar domínio Casa Martech;
 - [ ] confirmar e-mail oficial;
@@ -388,15 +416,19 @@ Essa ordem é deliberadamente conservadora para evitar outro salto visual grande
 - [ ] decidir quais cases técnicos do Matheus entram;
 - [ ] receber/selecionar imagens dos cases técnicos do Matheus;
 - [ ] avaliar outras marcas do Matheus para a proof strip;
-- [ ] conferir e organizar os arquivos de imagem recebidos em paths definitivos do repositório quando a implementação começar;
-- [ ] prototipar uma alternativa leve para “O que entregamos”, sem bolhas;
-- [ ] prototipar cascata de problemas;
-- [ ] implementar caminho discreto em “Como trabalhamos”;
-- [ ] validar motivo casa+circuito antes de mexer no hero.
+- [ ] **incorporar os arquivos de imagem dos cases** — a arquitetura está pronta
+      (`/img/casos/mediaportal|mindminers|ame-x|corning.jpg`,
+      `/img/projetos/amwc|ame-tom-de-voz|gipsyy.jpg`, uma ou várias por caso);
+      falta só salvar os arquivos recebidos com esses nomes. Conferir antes se
+      os dois `amedigitallarge...` são o mesmo material;
+- [ ] validar o contorno de casa no hero — está no ar, mas sai com uma linha;
+- [x] prototipar uma alternativa leve para “O que entregamos”, sem bolhas;
+- [x] prototipar cascata de problemas;
+- [x] implementar caminho discreto em “Como trabalhamos”.
 
 ---
 
-## 17. Regra para futuras rodadas
+## 18. Regra para futuras rodadas
 
 Sempre que houver novo feedback:
 
