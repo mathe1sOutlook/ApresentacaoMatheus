@@ -664,20 +664,57 @@ button {
 .js-reveal .symptom { transform: translate(-14px, 16px); }
 .js-reveal .symptom.is-in { transform: none; }
 
-/* ─── Dossiê 03 · Frentes ────────────────────────────────────────── */
+/* ─── Dossiê 03 · Frentes ──────────────────────────────────────────
+   As duas frentes penduram no mesmo trilho: uma linha só, ocre numa ponta
+   e azul na outra, com um nó sobre cada par de itens. É o que diz que
+   marca, marketing, dados e engenharia são um sistema, não dois. */
 .fronts {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 56px;
+  gap: 28px 56px;
 }
+.fronts__rail {
+  grid-column: 1 / -1;
+  position: relative;
+  height: 2px;
+  margin-bottom: 20px;
+  background: var(--line);
+}
+.fronts__rail::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--ochre) 0%, #B4A283 50%, var(--blue) 100%);
+  transform-origin: left;
+}
+/* Os nós ficam sobre o trilho, um por par de itens de cada frente. */
+.fronts__node {
+  position: absolute;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  transform: translateX(-50%);
+  background: var(--ochre);
+}
+.fronts__node:nth-of-type(1) { left: 12%; background: var(--ochre); --node-delay: 260ms; }
+.fronts__node:nth-of-type(2) { left: 38%; background: #B99F6C;      --node-delay: 460ms; }
+.fronts__node:nth-of-type(3) { left: 62%; background: #9A99A9;      --node-delay: 660ms; }
+.fronts__node:nth-of-type(4) { left: 88%; background: var(--blue);  --node-delay: 860ms; }
+
+/* Sem script o trilho já está desenhado; com script ele corre ao entrar. */
+.js-reveal .fronts__rail::before { transform: scaleX(0); transition: transform 1.1s cubic-bezier(0.2, 0.7, 0.3, 1); }
+.js-reveal .fronts__rail.is-in::before { transform: none; }
+.js-reveal .fronts__node { opacity: 0; transition: opacity 0.4s ease; transition-delay: var(--node-delay, 0ms); }
+.js-reveal .fronts__rail.is-in .fronts__node { opacity: 1; }
+
 .front__head {
   display: flex;
   align-items: center;
   gap: 16px;
   padding-bottom: 18px;
 }
-.front--brand .front__head { border-bottom: 2px solid var(--ochre); }
-.front--tech  .front__head { border-bottom: 2px solid var(--blue); }
+.front--brand .front__head { border-bottom: 1px solid var(--ochre-soft); }
+.front--tech  .front__head { border-bottom: 1px solid var(--blue-soft); }
 .front__dot {
   width: 10px;
   height: 10px;
@@ -693,10 +730,26 @@ button {
 }
 .front__list { list-style: none; margin: 0; padding: 0; }
 .front__item {
+  position: relative;
   padding: 24px 0;
-  border-bottom: 1px dashed var(--line-strong);
 }
-.front__item h4 { font-size: 20px; font-weight: 600; color: var(--ink); }
+/* Régua que para antes da borda: separa sem fechar o item numa caixa. */
+.front__item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 72%;
+  height: 1px;
+  background: var(--line-strong);
+}
+.front__item:last-child::after { width: 32%; }
+.front__item h4 {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--ink);
+}
 .front__item p {
   margin-top: 8px;
   font-size: 17px;
@@ -1379,6 +1432,9 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .rule-grid--2 { grid-template-columns: repeat(2, 1fr); }
   .fronts { grid-template-columns: repeat(2, 1fr); }
 }
+@media (max-width: 767px) {
+  .front + .front { margin-top: 28px; }
+}
 
 @media (min-width: 900px) {
   .cases { grid-template-columns: repeat(2, 1fr); }
@@ -1690,25 +1746,34 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
 
     <div class="fronts">
+      <!-- Um trilho só para as duas frentes, com um nó sobre cada par de
+           itens. É decoração estrutural: fica fora da árvore de acessibilidade. -->
+      <div class="fronts__rail" data-draw="" aria-hidden="true">
+        <span class="fronts__node"></span>
+        <span class="fronts__node"></span>
+        <span class="fronts__node"></span>
+        <span class="fronts__node"></span>
+      </div>
+
       <div class="front front--brand reveal">
         <div class="front__head">
           <span class="front__dot" aria-hidden="true"></span>
           <h3 class="front__title" data-en="Brand &amp; Strategy" data-pt="Marca &amp;amp; Estratégia">Brand &amp; Strategy</h3>
         </div>
         <ul class="front__list">
-          <li class="front__item">
+          <li class="front__item reveal">
             <h4 data-en="Brand strategy" data-pt="Estratégia de marca">Brand strategy</h4>
             <p data-en="Diagnosis, positioning, roadmap." data-pt="Diagnóstico, posicionamento, roadmap.">Diagnosis, positioning, roadmap.</p>
           </li>
-          <li class="front__item">
+          <li class="front__item reveal">
             <h4 data-en="Market research" data-pt="Pesquisa de mercado">Market research</h4>
             <p data-en="Qualitative, quantitative, competitive." data-pt="Qualitativa, quantitativa, competitiva.">Qualitative, quantitative, competitive.</p>
           </li>
-          <li class="front__item">
+          <li class="front__item reveal">
             <h4 data-en="Creative &amp; content" data-pt="Criação &amp;amp; conteúdo">Creative &amp; content</h4>
             <p data-en="Key visual, copy, tone of voice." data-pt="Key visual, copy, tom de voz.">Key visual, copy, tone of voice.</p>
           </li>
-          <li class="front__item">
+          <li class="front__item reveal">
             <h4>Go-to-market</h4>
             <p data-en="Launch, activation, measurement." data-pt="Lançamento, ativação, mensuração.">Launch, activation, measurement.</p>
           </li>
@@ -1721,19 +1786,19 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
           <h3 class="front__title" data-en="Technology &amp; Data" data-pt="Tecnologia &amp;amp; Dados">Technology &amp; Data</h3>
         </div>
         <ul class="front__list">
-          <li class="front__item">
+          <li class="front__item reveal">
             <h4 data-en="Custom systems" data-pt="Sistemas sob medida">Custom systems</h4>
             <p data-en="End-to-end internal platforms." data-pt="Plataformas internas ponta a ponta.">End-to-end internal platforms.</p>
           </li>
-          <li class="front__item">
+          <li class="front__item reveal">
             <h4 data-en="Dashboards &amp; intelligence" data-pt="Dashboards &amp;amp; inteligência">Dashboards &amp; intelligence</h4>
             <p data-en="Dashboards and automatic reports." data-pt="Painéis e relatórios automáticos.">Dashboards and automatic reports.</p>
           </li>
-          <li class="front__item">
+          <li class="front__item reveal">
             <h4 data-en="Automation &amp; integrations" data-pt="Automações &amp;amp; integrações">Automation &amp; integrations</h4>
             <p data-en="APIs, ERPs, CRMs connected." data-pt="APIs, ERPs, CRMs conectados.">APIs, ERPs, CRMs connected.</p>
           </li>
-          <li class="front__item">
+          <li class="front__item reveal">
             <h4 data-en="AI applied to the business" data-pt="IA aplicada ao negócio">AI applied to the business</h4>
             <p data-en="Classification and decision support." data-pt="Classificação e apoio à decisão.">Classification and decision support.</p>
           </li>
