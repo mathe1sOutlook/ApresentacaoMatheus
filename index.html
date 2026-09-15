@@ -684,17 +684,34 @@ button {
 /* Card: capa (foto ou moldura tracejada) com chips, título, métrica e
    botão; os detalhes ficam recolhidos abaixo. */
 .case {
+  --case-rule: var(--ochre);
   border: 1px solid var(--line-strong);
   background: var(--bg-card);
+  transition: border-color 0.35s ease, transform 0.4s ease;
 }
+/* O caso conjunto leva a régua nas duas cores; os demais, no ocre. */
+.case--featured { --case-rule: linear-gradient(90deg, var(--ochre), var(--blue)); }
+.case:hover, .case:focus-within, .case.is-open { border-color: var(--ink-soft); }
+
 .case__cover {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 560px;
-  padding: 28px 32px 32px;
+  min-height: 460px;
+  padding: 26px 30px 30px;
   overflow: hidden;
 }
+/* Sem foto, a capa vira prancha de desenho: malha de 1px no lugar de um
+   retângulo vazio, enquanto o material dos casos não chega. */
+.case__cover:not(.case__cover--photo) {
+  background:
+    repeating-linear-gradient(90deg, rgba(58, 65, 80, 0.18) 0 1px, transparent 1px 48px),
+    repeating-linear-gradient(0deg,  rgba(58, 65, 80, 0.18) 0 1px, transparent 1px 48px),
+    var(--bg-deep);
+}
+/* A mão no cursor só aparece com o script de pé, que é quem atende o
+   toque na capa inteira. */
+.js-cases .case__cover { cursor: pointer; }
 .case__chips {
   position: relative;
   z-index: 2;
@@ -750,12 +767,14 @@ button {
   color: var(--ink-soft);
 }
 
-/* Com foto: a imagem cobre a capa inteira, com degradê para a legenda. */
+/* Com foto: a imagem cobre a capa inteira. Em repouso o degradê é curto —
+   quem manda é a imagem; o resto acende no hover e no foco. */
 .case__cover--photo .case__media {
   position: absolute;
   inset: 0;
   margin: 0;
   z-index: 0;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 .case__cover--photo .case__media .media {
   border: 0;
@@ -763,19 +782,68 @@ button {
   width: 100%;
   height: 100%;
 }
-.case__cover--photo .case__media img { width: 100%; height: 100%; object-fit: cover; }
 .case__cover--photo .case__media .media__hint,
 .case__cover--photo .case__media .media__client { display: none; }
-.case__media .media img { display: none; }
-.case__cover--photo .case__media .media img { display: block; }
+
+/* Faixa de imagens: com uma só é a capa; com duas ou mais vira carrossel de
+   arrasto nativo (scroll-snap), e o script acrescenta marcadores e teclado. */
+.case__shots { display: none; }
+.case__cover--photo .case__shots {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.case__cover--photo .case__shots::-webkit-scrollbar { display: none; }
+.case__shot {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  scroll-snap-align: center;
+}
+.case__dots {
+  position: absolute;
+  z-index: 3;
+  right: 30px;
+  bottom: 32px;
+  display: flex;
+  gap: 8px;
+}
+.case__dots button {
+  width: 22px;
+  height: 3px;
+  background: rgba(241, 238, 230, 0.35);
+  transition: background 0.3s ease;
+}
+.case__dots button[aria-current="true"] { background: var(--ink); }
+
 .case__cover--photo::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(180deg, rgba(11, 13, 18, 0.25) 0%, rgba(11, 13, 18, 0.05) 35%, rgba(11, 13, 18, 0.92) 78%, var(--bg-card) 100%);
+  background: linear-gradient(180deg, rgba(11, 13, 18, 0.32) 0%, rgba(11, 13, 18, 0.04) 32%, rgba(11, 13, 18, 0.56) 74%, rgba(11, 13, 18, 0.94) 100%);
   pointer-events: none;
 }
+/* Camada que só acende no hover/foco, para o texto revelado ler bem. */
+.case__cover--photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  background: linear-gradient(180deg, rgba(11, 13, 18, 0) 22%, rgba(11, 13, 18, 0.5) 66%, rgba(11, 13, 18, 0.93) 100%);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.case:hover .case__cover--photo::before,
+.case:focus-within .case__cover--photo::before,
+.case.is-open .case__cover--photo::before { opacity: 1; }
 
 .case__caption {
   position: relative;
@@ -788,15 +856,26 @@ button {
   font-weight: 500;
   line-height: 1.15;
 }
+/* Régua de 1px que corre sob o título quando o card acende. */
+.case__title::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 1px;
+  margin-top: 16px;
+  background: var(--case-rule);
+  transform-origin: left;
+  transition: transform 0.45s ease;
+}
 .case__metric {
-  margin-top: 12px;
+  margin-top: 14px;
   font-family: var(--mono);
   font-size: 15px;
   color: var(--ochre);
 }
 .case__metric--blue { color: var(--blue); }
 .case__toggle {
-  margin-top: 22px;
+  margin-top: 20px;
   font-family: var(--mono);
   font-size: 15px;
   color: var(--ink);
@@ -805,6 +884,34 @@ button {
   padding: 14px 20px;
 }
 .case__toggle:hover { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+
+/* Repouso limpo só onde há mouse e há foto: no toque falta o estado
+   intermediário que revelaria o botão, e sem foto não há imagem para ser
+   protagonista — nos dois casos métrica e botão ficam sempre à vista. */
+@media (hover: hover) and (pointer: fine) {
+  .case__cover--photo .case__reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .case__cover--photo .case__title::after { transform: scaleX(0); }
+  .case:hover, .case.is-open { transform: translateY(-3px); }
+  .case:hover .case__cover--photo .case__reveal,
+  .case:focus-within .case__cover--photo .case__reveal,
+  .case.is-open .case__cover--photo .case__reveal { opacity: 1; transform: none; }
+  .case:hover .case__cover--photo .case__title::after,
+  .case:focus-within .case__cover--photo .case__title::after,
+  .case.is-open .case__cover--photo .case__title::after { transform: none; }
+  .case:hover .case__cover--photo .case__media { transform: scale(1.045); }
+  .more-card__media img { transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1); }
+  .more-card:hover .more-card__media img { transform: scale(1.05); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .case:hover, .case.is-open { transform: none; }
+  .case:hover .case__cover--photo .case__media,
+  .more-card:hover .more-card__media img { transform: none; }
+}
+
 .case__toggle .is-close { display: none; }
 .case__toggle[aria-expanded="true"] .is-open { display: none; }
 .case__toggle[aria-expanded="true"] .is-close { display: inline; }
@@ -1244,13 +1351,13 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .cases { grid-template-columns: repeat(2, 1fr); }
   /* O caso conjunto abre a grade em largura total. */
   .case--featured { grid-column: 1 / -1; }
-  .case--featured .case__cover { min-height: 480px; }
+  .case--featured .case__cover { min-height: 540px; }
   .case--featured .case__caption { max-width: 640px; }
 }
 
 @media (min-width: 1024px) {
   .rule-grid--3 { grid-template-columns: repeat(3, 1fr); }
-  .more .rule-grid--3 { grid-template-columns: repeat(4, 1fr); }
+  .more .rule-grid--3 { grid-template-columns: repeat(3, 1fr); }
   .more-card__body { padding: 22px 22px 28px; }
   .more-card__title { font-size: 21px; }
   .more-card__text { font-size: 15px; }
@@ -1303,7 +1410,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .pull-quote::before { left: 28px; top: 28px; font-size: 44px; }
   .symptom { padding: 36px 28px; }
   .proof__list { font-size: 22px; gap: 64px; }
-  .case__cover { min-height: 520px; padding: 22px 24px 26px; }
+  .case__cover { min-height: 420px; padding: 22px 24px 26px; }
   .case__chip { font-size: 12px; padding: 7px 12px; }
   .case__title { font-size: 26px; }
   .case__details { padding: 26px 24px 30px; }
@@ -1324,7 +1431,10 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .hero__title em { background: none; color: var(--ochre); -webkit-text-fill-color: currentColor; }
   .hero__net, .wa-float, .site-header, .marquee, .lead, .skip-link { display: none !important; }
   .case__details[hidden] { display: block; }
-  .case__toggle { display: none; }
+  .case__toggle, .case__dots { display: none; }
+  .case__reveal { opacity: 1 !important; transform: none !important; }
+  .case__title::after { transform: none !important; }
+  .case__cover:not(.case__cover--photo) { background: none; }
   a { color: inherit; }
 }
 </style>
@@ -1615,15 +1725,23 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-mediaportal">
-        <img src="/img/casos/mediaportal.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
+             vira carrossel: arrasto nativo, setas do teclado e marcadores do
+             script. A primeira é a capa — se ela faltar, o caso volta para a
+             moldura de espera. -->
+        <div class="case__shots">
+          <img class="case__shot" src="/img/casos/mediaportal.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        </div>
         <span class="media__client">Media Portal Soluções</span>
         <figcaption class="media__hint" data-en="Awaiting the real site screenshot">Aguardando print real do site</figcaption>
       </figure>
     </div>
     <div class="case__caption">
       <h3 class="case__title" data-en="Media Portal — Digital repositioning">Media Portal — Reposicionamento digital</h3>
-      <p class="case__metric" data-en="18+ years of operation · full redesign">18+ anos de operação · redesign completo</p>
-      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-01-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+      <div class="case__reveal">
+        <p class="case__metric" data-en="18+ years of operation · full redesign">18+ anos de operação · redesign completo</p>
+        <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-01-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+      </div>
     </div>
   </div>
 
@@ -1676,15 +1794,23 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-mindminers">
-        <img src="/img/casos/mindminers.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
+             vira carrossel: arrasto nativo, setas do teclado e marcadores do
+             script. A primeira é a capa — se ela faltar, o caso volta para a
+             moldura de espera. -->
+        <div class="case__shots">
+          <img class="case__shot" src="/img/casos/mindminers.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        </div>
         <span class="media__client">Ame Digital × MindMiners</span>
         <figcaption class="media__hint" data-en="Awaiting the case screenshot">Aguardando print do case</figcaption>
       </figure>
     </div>
     <div class="case__caption">
       <h3 class="case__title" data-en="Ame × MindMiners">Ame × MindMiners</h3>
-      <p class="case__metric" data-en="360° brand view">360° de visão de marca</p>
-      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-02-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+      <div class="case__reveal">
+        <p class="case__metric" data-en="360° brand view">360° de visão de marca</p>
+        <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-02-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+      </div>
     </div>
   </div>
 
@@ -1737,15 +1863,23 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-x">
-        <img src="/img/casos/ame-x.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
+             vira carrossel: arrasto nativo, setas do teclado e marcadores do
+             script. A primeira é a capa — se ela faltar, o caso volta para a
+             moldura de espera. -->
+        <div class="case__shots">
+          <img class="case__shot" src="/img/casos/ame-x.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        </div>
         <span class="media__client">Ame Digital × X (Twitter)</span>
         <figcaption class="media__hint" data-en="Awaiting the case screenshot">Aguardando print do case</figcaption>
       </figure>
     </div>
     <div class="case__caption">
       <h3 class="case__title" data-en="Ame × X (Twitter)">Ame × X (Twitter)</h3>
-      <p class="case__metric" data-en="28.3M impressions">28,3M impressões</p>
-      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-03-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+      <div class="case__reveal">
+        <p class="case__metric" data-en="28.3M impressions">28,3M impressões</p>
+        <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-03-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+      </div>
     </div>
   </div>
 
@@ -1798,15 +1932,23 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-corning">
-        <img src="/img/casos/corning.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
+             vira carrossel: arrasto nativo, setas do teclado e marcadores do
+             script. A primeira é a capa — se ela faltar, o caso volta para a
+             moldura de espera. -->
+        <div class="case__shots">
+          <img class="case__shot" src="/img/casos/corning.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+        </div>
         <span class="media__client">Corning CALA Summit</span>
         <figcaption class="media__hint" data-en="Awaiting event photos">Aguardando fotos do evento</figcaption>
       </figure>
     </div>
     <div class="case__caption">
       <h3 class="case__title" data-en="Corning CALA Channel Summit">Corning CALA Channel Summit</h3>
-      <p class="case__metric" data-en="4 editions — Panama, Cartagena, Lima, Santiago">4 edições — Panamá, Cartagena, Lima, Santiago</p>
-      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-04-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+      <div class="case__reveal">
+        <p class="case__metric" data-en="4 editions — Panama, Cartagena, Lima, Santiago">4 edições — Panamá, Cartagena, Lima, Santiago</p>
+        <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-04-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
+      </div>
     </div>
   </div>
 
@@ -2093,6 +2235,8 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     });
   });
   var current = null;
+  /* cada galeria registra aqui como reescrever suas legendas ao trocar de idioma */
+  var galleries = [];
 
   function setMeta(name, value, attr) {
     var el = document.head.querySelector('[' + (attr || 'name') + '="' + name + '"]');
@@ -2139,6 +2283,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     document.querySelectorAll('.lang-toggle button').forEach(function (btn) {
       btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang));
     });
+    galleries.forEach(function (relabel) { relabel(lang); });
   }
 
   function langFromLocation() {
@@ -2434,12 +2579,89 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       .onfinish = function () { panel.hidden = true; panel.style.overflow = ''; };
   }
   document.querySelectorAll('.case__toggle').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var panel = document.getElementById(btn.getAttribute('aria-controls'));
-      if (!panel) return;
+    var panel = document.getElementById(btn.getAttribute('aria-controls'));
+    if (!panel) return;
+    var card = btn.closest('.case');
+    var cover = card && card.querySelector('.case__cover');
+
+    function toggle() {
       var open = btn.getAttribute('aria-expanded') === 'true';
       btn.setAttribute('aria-expanded', String(!open));
+      if (card) card.classList.toggle('is-open', !open);
       if (open) collapsePanel(panel); else expandPanel(panel);
+    }
+
+    btn.addEventListener('click', toggle);
+    /* no toque não existe hover: a capa inteira abre e fecha o caso */
+    if (cover) cover.addEventListener('click', function (event) {
+      if (event.target.closest('button, a, input, label')) return;
+      toggle();
+    });
+  });
+  /* só com o script de pé a capa vira área clicável (o CSS lê esta classe) */
+  if (document.querySelector('.case__toggle')) document.documentElement.classList.add('js-cases');
+
+  /* ─── Casos: faixa de imagens ─────────────────────────────────────
+     Com uma imagem a faixa é só a capa. Com duas ou mais o arrasto já
+     funciona sozinho (scroll-snap, sem script); aqui entram os
+     marcadores, o foco e as setas do teclado. Enquanto nenhum caso tem
+     mais de uma imagem, este bloco não faz nada.
+     ───────────────────────────────────────────────────────────────── */
+  var GALLERY_WORDS = {
+    pt: { group: 'Imagens do caso', shot: 'Imagem ' },
+    en: { group: 'Case images', shot: 'Image ' }
+  };
+
+  document.querySelectorAll('.case__shots').forEach(function (track) {
+    var shots = track.querySelectorAll('.case__shot');
+    if (shots.length < 2) return;
+
+    var words = GALLERY_WORDS[current] || GALLERY_WORDS.pt;
+    track.setAttribute('role', 'group');
+    track.setAttribute('tabindex', '0');
+    track.setAttribute('aria-label', words.group);
+
+    function at() { return Math.round(track.scrollLeft / Math.max(1, track.clientWidth)); }
+    function go(i) {
+      var left = track.clientWidth * Math.max(0, Math.min(shots.length - 1, i));
+      if (track.scrollTo) track.scrollTo({ left: left, behavior: motionOK ? 'smooth' : 'auto' });
+      else track.scrollLeft = left;
+    }
+
+    var dots = document.createElement('div');
+    dots.className = 'case__dots';
+    var marks = Array.prototype.map.call(shots, function (shot, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-label', words.shot + (i + 1));
+      b.setAttribute('aria-current', String(i === 0));
+      b.addEventListener('click', function () { go(i); });
+      dots.appendChild(b);
+      return b;
+    });
+    track.closest('.case__cover').appendChild(dots);
+
+    var tick = false;
+    track.addEventListener('scroll', function () {
+      if (tick) return;
+      tick = true;
+      window.requestAnimationFrame(function () {
+        tick = false;
+        var i = at();
+        marks.forEach(function (b, k) { b.setAttribute('aria-current', String(k === i)); });
+      });
+    }, { passive: true });
+
+    track.addEventListener('keydown', function (event) {
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      event.preventDefault();
+      go(at() + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+
+    galleries.push(function (lang) {
+      var w = GALLERY_WORDS[lang] || GALLERY_WORDS.pt;
+      track.setAttribute('aria-label', w.group);
+      marks.forEach(function (b, k) { b.setAttribute('aria-label', w.shot + (k + 1)); });
     });
   });
 

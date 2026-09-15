@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Amaral &amp; Silva — Brand strategy &amp; systems engineering</title>
+<title>CASA MARTECH — Brand strategy &amp; systems engineering</title>
 <meta name="description" content="A duo that builds a brand and the technology behind it from the ground up: strategy, research and go-to-market alongside custom systems, dashboards, automation and applied AI.">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0B0D12">
@@ -16,20 +16,20 @@
 <link rel="alternate" hreflang="x-default" href="https://amaralesilva.vercel.app/">
 
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Amaral &amp; Silva">
+<meta property="og:site_name" content="CASA MARTECH">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="pt_BR">
 <meta property="og:url" content="https://amaralesilva.vercel.app/en">
-<meta property="og:title" content="Amaral &amp; Silva — Brand strategy &amp; systems engineering">
-<meta property="og:description" content="Brands that stand out. Systems that sustain them. Brand strategy and systems engineering at the same table.">
+<meta property="og:title" content="CASA MARTECH — Brand strategy &amp; systems engineering">
+<meta property="og:description" content="Brands that stand out. Systems that don't fail. Brand strategy and systems engineering at the same table.">
 <meta property="og:image" content="https://amaralesilva.vercel.app/og-en.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Amaral &amp; Silva — Brands that stand out. Systems that sustain them.">
+<meta property="og:image:alt" content="CASA MARTECH — Brands that stand out. Systems that don't fail.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://amaralesilva.vercel.app/og-en.png">
-<meta name="twitter:title" content="Amaral &amp; Silva — Brand strategy &amp; systems engineering">
-<meta name="twitter:description" content="Brands that stand out. Systems that sustain them. Brand strategy and systems engineering at the same table.">
+<meta name="twitter:title" content="CASA MARTECH — Brand strategy &amp; systems engineering">
+<meta name="twitter:description" content="Brands that stand out. Systems that don't fail. Brand strategy and systems engineering at the same table.">
 
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 
@@ -70,7 +70,7 @@
 @font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/plex-mono-medium-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 
 /* ═══════════════════════════════════════════════════════════════════
-   AMARAL & SILVA — tokens
+   CASA MARTECH — tokens
    Fundo quase preto, tinta creme, ocre para marca, azul para tecnologia.
    Zero arredondamento, zero sombra: a hierarquia vem das réguas de 1px.
    ═══════════════════════════════════════════════════════════════════ */
@@ -684,17 +684,34 @@ button {
 /* Card: capa (foto ou moldura tracejada) com chips, título, métrica e
    botão; os detalhes ficam recolhidos abaixo. */
 .case {
+  --case-rule: var(--ochre);
   border: 1px solid var(--line-strong);
   background: var(--bg-card);
+  transition: border-color 0.35s ease, transform 0.4s ease;
 }
+/* O caso conjunto leva a régua nas duas cores; os demais, no ocre. */
+.case--featured { --case-rule: linear-gradient(90deg, var(--ochre), var(--blue)); }
+.case:hover, .case:focus-within, .case.is-open { border-color: var(--ink-soft); }
+
 .case__cover {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 560px;
-  padding: 28px 32px 32px;
+  min-height: 460px;
+  padding: 26px 30px 30px;
   overflow: hidden;
 }
+/* Sem foto, a capa vira prancha de desenho: malha de 1px no lugar de um
+   retângulo vazio, enquanto o material dos casos não chega. */
+.case__cover:not(.case__cover--photo) {
+  background:
+    repeating-linear-gradient(90deg, rgba(58, 65, 80, 0.18) 0 1px, transparent 1px 48px),
+    repeating-linear-gradient(0deg,  rgba(58, 65, 80, 0.18) 0 1px, transparent 1px 48px),
+    var(--bg-deep);
+}
+/* A mão no cursor só aparece com o script de pé, que é quem atende o
+   toque na capa inteira. */
+.js-cases .case__cover { cursor: pointer; }
 .case__chips {
   position: relative;
   z-index: 2;
@@ -750,12 +767,14 @@ button {
   color: var(--ink-soft);
 }
 
-/* Com foto: a imagem cobre a capa inteira, com degradê para a legenda. */
+/* Com foto: a imagem cobre a capa inteira. Em repouso o degradê é curto —
+   quem manda é a imagem; o resto acende no hover e no foco. */
 .case__cover--photo .case__media {
   position: absolute;
   inset: 0;
   margin: 0;
   z-index: 0;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 .case__cover--photo .case__media .media {
   border: 0;
@@ -763,19 +782,68 @@ button {
   width: 100%;
   height: 100%;
 }
-.case__cover--photo .case__media img { width: 100%; height: 100%; object-fit: cover; }
 .case__cover--photo .case__media .media__hint,
 .case__cover--photo .case__media .media__client { display: none; }
-.case__media .media img { display: none; }
-.case__cover--photo .case__media .media img { display: block; }
+
+/* Faixa de imagens: com uma só é a capa; com duas ou mais vira carrossel de
+   arrasto nativo (scroll-snap), e o script acrescenta marcadores e teclado. */
+.case__shots { display: none; }
+.case__cover--photo .case__shots {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.case__cover--photo .case__shots::-webkit-scrollbar { display: none; }
+.case__shot {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  scroll-snap-align: center;
+}
+.case__dots {
+  position: absolute;
+  z-index: 3;
+  right: 30px;
+  bottom: 32px;
+  display: flex;
+  gap: 8px;
+}
+.case__dots button {
+  width: 22px;
+  height: 3px;
+  background: rgba(241, 238, 230, 0.35);
+  transition: background 0.3s ease;
+}
+.case__dots button[aria-current="true"] { background: var(--ink); }
+
 .case__cover--photo::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(180deg, rgba(11, 13, 18, 0.25) 0%, rgba(11, 13, 18, 0.05) 35%, rgba(11, 13, 18, 0.92) 78%, var(--bg-card) 100%);
+  background: linear-gradient(180deg, rgba(11, 13, 18, 0.32) 0%, rgba(11, 13, 18, 0.04) 32%, rgba(11, 13, 18, 0.56) 74%, rgba(11, 13, 18, 0.94) 100%);
   pointer-events: none;
 }
+/* Camada que só acende no hover/foco, para o texto revelado ler bem. */
+.case__cover--photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  background: linear-gradient(180deg, rgba(11, 13, 18, 0) 22%, rgba(11, 13, 18, 0.5) 66%, rgba(11, 13, 18, 0.93) 100%);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.case:hover .case__cover--photo::before,
+.case:focus-within .case__cover--photo::before,
+.case.is-open .case__cover--photo::before { opacity: 1; }
 
 .case__caption {
   position: relative;
@@ -788,15 +856,26 @@ button {
   font-weight: 500;
   line-height: 1.15;
 }
+/* Régua de 1px que corre sob o título quando o card acende. */
+.case__title::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 1px;
+  margin-top: 16px;
+  background: var(--case-rule);
+  transform-origin: left;
+  transition: transform 0.45s ease;
+}
 .case__metric {
-  margin-top: 12px;
+  margin-top: 14px;
   font-family: var(--mono);
   font-size: 15px;
   color: var(--ochre);
 }
 .case__metric--blue { color: var(--blue); }
 .case__toggle {
-  margin-top: 22px;
+  margin-top: 20px;
   font-family: var(--mono);
   font-size: 15px;
   color: var(--ink);
@@ -805,6 +884,34 @@ button {
   padding: 14px 20px;
 }
 .case__toggle:hover { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+
+/* Repouso limpo só onde há mouse e há foto: no toque falta o estado
+   intermediário que revelaria o botão, e sem foto não há imagem para ser
+   protagonista — nos dois casos métrica e botão ficam sempre à vista. */
+@media (hover: hover) and (pointer: fine) {
+  .case__cover--photo .case__reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .case__cover--photo .case__title::after { transform: scaleX(0); }
+  .case:hover, .case.is-open { transform: translateY(-3px); }
+  .case:hover .case__cover--photo .case__reveal,
+  .case:focus-within .case__cover--photo .case__reveal,
+  .case.is-open .case__cover--photo .case__reveal { opacity: 1; transform: none; }
+  .case:hover .case__cover--photo .case__title::after,
+  .case:focus-within .case__cover--photo .case__title::after,
+  .case.is-open .case__cover--photo .case__title::after { transform: none; }
+  .case:hover .case__cover--photo .case__media { transform: scale(1.045); }
+  .more-card__media img { transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1); }
+  .more-card:hover .more-card__media img { transform: scale(1.05); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .case:hover, .case.is-open { transform: none; }
+  .case:hover .case__cover--photo .case__media,
+  .more-card:hover .more-card__media img { transform: none; }
+}
+
 .case__toggle .is-close { display: none; }
 .case__toggle[aria-expanded="true"] .is-open { display: none; }
 .case__toggle[aria-expanded="true"] .is-close { display: inline; }
@@ -1244,13 +1351,13 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .cases { grid-template-columns: repeat(2, 1fr); }
   /* O caso conjunto abre a grade em largura total. */
   .case--featured { grid-column: 1 / -1; }
-  .case--featured .case__cover { min-height: 480px; }
+  .case--featured .case__cover { min-height: 540px; }
   .case--featured .case__caption { max-width: 640px; }
 }
 
 @media (min-width: 1024px) {
   .rule-grid--3 { grid-template-columns: repeat(3, 1fr); }
-  .more .rule-grid--3 { grid-template-columns: repeat(4, 1fr); }
+  .more .rule-grid--3 { grid-template-columns: repeat(3, 1fr); }
   .more-card__body { padding: 22px 22px 28px; }
   .more-card__title { font-size: 21px; }
   .more-card__text { font-size: 15px; }
@@ -1303,7 +1410,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .pull-quote::before { left: 28px; top: 28px; font-size: 44px; }
   .symptom { padding: 36px 28px; }
   .proof__list { font-size: 22px; gap: 64px; }
-  .case__cover { min-height: 520px; padding: 22px 24px 26px; }
+  .case__cover { min-height: 420px; padding: 22px 24px 26px; }
   .case__chip { font-size: 12px; padding: 7px 12px; }
   .case__title { font-size: 26px; }
   .case__details { padding: 26px 24px 30px; }
@@ -1324,7 +1431,10 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .hero__title em { background: none; color: var(--ochre); -webkit-text-fill-color: currentColor; }
   .hero__net, .wa-float, .site-header, .marquee, .lead, .skip-link { display: none !important; }
   .case__details[hidden] { display: block; }
-  .case__toggle { display: none; }
+  .case__toggle, .case__dots { display: none; }
+  .case__reveal { opacity: 1 !important; transform: none !important; }
+  .case__title::after { transform: none !important; }
+  .case__cover:not(.case__cover--photo) { background: none; }
   a { color: inherit; }
 }
 </style>
@@ -1338,7 +1448,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   <div class="container site-header__bar">
     <div class="brand-group">
       <span class="brand-dots" aria-hidden="true"><i></i><i></i></span>
-      <a class="brandmark" href="#topo">Amaral &amp; Silva</a>
+      <a class="brandmark" href="#topo">CASA MARTECH</a>
       <div class="lang-toggle" role="group" aria-label="Language / Idioma">
         <button type="button" data-lang="pt" aria-pressed="false" lang="pt-BR">PT</button>
         <span class="lang-toggle__sep" aria-hidden="true">/</span>
@@ -1368,7 +1478,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
     <div class="hero__body">
       <div class="hero__main">
-        <h1 class="hero__title" data-en="Brands that stand out. &lt;em&gt;Systems&lt;/em&gt; that sustain them." data-pt="Marcas que se destacam. &lt;em&gt;Sistemas&lt;/em&gt; que sustentam.">Brands that stand out. <em>Systems</em> that sustain them.</h1>
+        <h1 class="hero__title" data-en="Brands that stand out. &lt;em&gt;Systems&lt;/em&gt; that don't fail." data-pt="Marcas que se destacam. &lt;em&gt;Sistemas&lt;/em&gt; que não falham.">Brands that stand out. <em>Systems</em> that don't fail.</h1>
 
         <p class="hero__lede" data-en="A duo — brand strategy and software engineering — building a brand and the technology behind it from the ground up." data-pt="Uma dupla — estratégia de marca e engenharia de software — construindo, do zero, a marca e a tecnologia por trás dela.">A duo — brand strategy and software engineering — building a brand and the technology behind it from the ground up.</p>
 
@@ -1397,26 +1507,24 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
   <div class="proof">
     <div class="container">
-      <span class="proof__label" data-en="Passed through these hands" data-pt="Já passaram por essas mãos">Passed through these hands</span>
+      <span class="proof__label" data-en="We've made history with..." data-pt="Já fizemos história com...">We've made history with...</span>
     </div>
     <div class="marquee" tabindex="0" role="group" aria-label="Clients served; focusing pauses the scrolling" data-en-aria-label="Clients served; focusing pauses the scrolling" data-pt-aria-label="Clientes atendidos; o foco pausa a rolagem">
       <div class="marquee__track">
         <!-- Logos: /img/logos/<slug>.svg (monocromático; o CSS pinta de creme). Sem o arquivo, fica o nome em texto. -->
         <ul class="proof__list">
           <li><img src="/img/logos/corning.svg" alt="Corning" onerror="this.remove()"><span>Corning</span></li>
-          <li><img src="/img/logos/americanas.svg" alt="Americanas S/A" onerror="this.remove()"><span>Americanas S/A</span></li>
+          <li><img src="/img/logos/ame.svg" alt="Ame Digital" onerror="this.remove()"><span>Ame Digital</span></li>
           <li><img src="/img/logos/quintoandar.svg" alt="QuintoAndar" onerror="this.remove()"><span>QuintoAndar</span></li>
           <li><img src="/img/logos/mediaportal.svg" alt="Media Portal" onerror="this.remove()"><span>Media Portal</span></li>
-          <li><img src="/img/logos/tvcultura.svg" alt="TV Cultura" onerror="this.remove()"><span>TV Cultura</span></li>
           <li><img src="/img/logos/informa.svg" alt="Informa Markets" onerror="this.remove()"><span>Informa Markets</span></li>
           <li><img src="/img/logos/gipsyy.svg" alt="Gipsyy" onerror="this.remove()"><span>Gipsyy</span></li>
         </ul>
         <ul class="proof__list" aria-hidden="true">
           <li><img src="/img/logos/corning.svg" alt="Corning" onerror="this.remove()"><span>Corning</span></li>
-          <li><img src="/img/logos/americanas.svg" alt="Americanas S/A" onerror="this.remove()"><span>Americanas S/A</span></li>
+          <li><img src="/img/logos/ame.svg" alt="Ame Digital" onerror="this.remove()"><span>Ame Digital</span></li>
           <li><img src="/img/logos/quintoandar.svg" alt="QuintoAndar" onerror="this.remove()"><span>QuintoAndar</span></li>
           <li><img src="/img/logos/mediaportal.svg" alt="Media Portal" onerror="this.remove()"><span>Media Portal</span></li>
-          <li><img src="/img/logos/tvcultura.svg" alt="TV Cultura" onerror="this.remove()"><span>TV Cultura</span></li>
           <li><img src="/img/logos/informa.svg" alt="Informa Markets" onerror="this.remove()"><span>Informa Markets</span></li>
           <li><img src="/img/logos/gipsyy.svg" alt="Gipsyy" onerror="this.remove()"><span>Gipsyy</span></li>
         </ul>
@@ -1482,8 +1590,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
           <li data-en="Applied AI" data-pt="IA aplicada">Applied AI</li>
         </ul>
       </article>
-
-      <blockquote class="pull-quote reveal" data-en="“A brand without a system doesn't scale. A system without a brand doesn't convince.”" data-pt="“Uma marca sem sistema não escala. Um sistema sem marca não convence.”">“A brand without a system doesn't scale. A system without a brand doesn't convince.”</blockquote>
     </div>
   </div>
 </section>
@@ -1619,15 +1725,23 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-mediaportal">
-        <img src="/img/casos/mediaportal.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')">
+        <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
+             vira carrossel: arrasto nativo, setas do teclado e marcadores do
+             script. A primeira é a capa — se ela faltar, o caso volta para a
+             moldura de espera. -->
+        <div class="case__shots">
+          <img class="case__shot" src="/img/casos/mediaportal.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')">
+        </div>
         <span class="media__client">Media Portal Soluções</span>
         <figcaption class="media__hint" data-en="Awaiting the real site screenshot" data-pt="Aguardando print real do site">Awaiting the real site screenshot</figcaption>
       </figure>
     </div>
     <div class="case__caption">
       <h3 class="case__title" data-en="Media Portal — Digital repositioning" data-pt="Media Portal — Reposicionamento digital">Media Portal — Digital repositioning</h3>
-      <p class="case__metric" data-en="18+ years of operation · full redesign" data-pt="18+ anos de operação · redesign completo">18+ years of operation · full redesign</p>
-      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-01-details"><span class="is-open" data-en="See details ↓" data-pt="Ver detalhes ↓">See details ↓</span><span class="is-close" data-en="Close ↑" data-pt="Fechar ↑">Close ↑</span></button>
+      <div class="case__reveal">
+        <p class="case__metric" data-en="18+ years of operation · full redesign" data-pt="18+ anos de operação · redesign completo">18+ years of operation · full redesign</p>
+        <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-01-details"><span class="is-open" data-en="See details ↓" data-pt="Ver detalhes ↓">See details ↓</span><span class="is-close" data-en="Close ↑" data-pt="Fechar ↑">Close ↑</span></button>
+      </div>
     </div>
   </div>
 
@@ -1680,15 +1794,23 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-mindminers">
-        <img src="/img/casos/mindminers.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')">
+        <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
+             vira carrossel: arrasto nativo, setas do teclado e marcadores do
+             script. A primeira é a capa — se ela faltar, o caso volta para a
+             moldura de espera. -->
+        <div class="case__shots">
+          <img class="case__shot" src="/img/casos/mindminers.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')">
+        </div>
         <span class="media__client">Ame Digital × MindMiners</span>
         <figcaption class="media__hint" data-en="Awaiting the case screenshot" data-pt="Aguardando print do case">Awaiting the case screenshot</figcaption>
       </figure>
     </div>
     <div class="case__caption">
       <h3 class="case__title" data-en="Ame × MindMiners" data-pt="Ame × MindMiners">Ame × MindMiners</h3>
-      <p class="case__metric" data-en="360° brand view" data-pt="360° de visão de marca">360° brand view</p>
-      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-02-details"><span class="is-open" data-en="See details ↓" data-pt="Ver detalhes ↓">See details ↓</span><span class="is-close" data-en="Close ↑" data-pt="Fechar ↑">Close ↑</span></button>
+      <div class="case__reveal">
+        <p class="case__metric" data-en="360° brand view" data-pt="360° de visão de marca">360° brand view</p>
+        <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-02-details"><span class="is-open" data-en="See details ↓" data-pt="Ver detalhes ↓">See details ↓</span><span class="is-close" data-en="Close ↑" data-pt="Fechar ↑">Close ↑</span></button>
+      </div>
     </div>
   </div>
 
@@ -1741,15 +1863,23 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-x">
-        <img src="/img/casos/ame-x.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')">
+        <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
+             vira carrossel: arrasto nativo, setas do teclado e marcadores do
+             script. A primeira é a capa — se ela faltar, o caso volta para a
+             moldura de espera. -->
+        <div class="case__shots">
+          <img class="case__shot" src="/img/casos/ame-x.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')">
+        </div>
         <span class="media__client">Ame Digital × X (Twitter)</span>
         <figcaption class="media__hint" data-en="Awaiting the case screenshot" data-pt="Aguardando print do case">Awaiting the case screenshot</figcaption>
       </figure>
     </div>
     <div class="case__caption">
       <h3 class="case__title" data-en="Ame × X (Twitter)" data-pt="Ame × X (Twitter)">Ame × X (Twitter)</h3>
-      <p class="case__metric" data-en="28.3M impressions" data-pt="28,3M impressões">28.3M impressions</p>
-      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-03-details"><span class="is-open" data-en="See details ↓" data-pt="Ver detalhes ↓">See details ↓</span><span class="is-close" data-en="Close ↑" data-pt="Fechar ↑">Close ↑</span></button>
+      <div class="case__reveal">
+        <p class="case__metric" data-en="28.3M impressions" data-pt="28,3M impressões">28.3M impressions</p>
+        <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-03-details"><span class="is-open" data-en="See details ↓" data-pt="Ver detalhes ↓">See details ↓</span><span class="is-close" data-en="Close ↑" data-pt="Fechar ↑">Close ↑</span></button>
+      </div>
     </div>
   </div>
 
@@ -1802,15 +1932,23 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-corning">
-        <img src="/img/casos/corning.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')">
+        <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
+             vira carrossel: arrasto nativo, setas do teclado e marcadores do
+             script. A primeira é a capa — se ela faltar, o caso volta para a
+             moldura de espera. -->
+        <div class="case__shots">
+          <img class="case__shot" src="/img/casos/corning.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')">
+        </div>
         <span class="media__client">Corning CALA Summit</span>
         <figcaption class="media__hint" data-en="Awaiting event photos" data-pt="Aguardando fotos do evento">Awaiting event photos</figcaption>
       </figure>
     </div>
     <div class="case__caption">
-      <h3 class="case__title" data-en="Corning CALA Summit" data-pt="Corning CALA Summit">Corning CALA Channel Summit</h3>
-      <p class="case__metric" data-en="4 editions — Panama, Cartagena, Lima, Santiago" data-pt="4 edições — Panamá, Cartagena, Lima, Santiago">4 editions — Panama, Cartagena, Lima, Santiago</p>
-      <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-04-details"><span class="is-open" data-en="See details ↓" data-pt="Ver detalhes ↓">See details ↓</span><span class="is-close" data-en="Close ↑" data-pt="Fechar ↑">Close ↑</span></button>
+      <h3 class="case__title" data-en="Corning CALA Channel Summit" data-pt="Corning CALA Channel Summit">Corning CALA Channel Summit</h3>
+      <div class="case__reveal">
+        <p class="case__metric" data-en="4 editions — Panama, Cartagena, Lima, Santiago" data-pt="4 edições — Panamá, Cartagena, Lima, Santiago">4 editions — Panama, Cartagena, Lima, Santiago</p>
+        <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-04-details"><span class="is-open" data-en="See details ↓" data-pt="Ver detalhes ↓">See details ↓</span><span class="is-close" data-en="Close ↑" data-pt="Fechar ↑">Close ↑</span></button>
+      </div>
     </div>
   </div>
 
@@ -2023,7 +2161,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 <!-- ═══════════════════════════════════════════════ FOOTER -->
 <footer class="site-footer">
   <div class="container site-footer__inner">
-    <span>© 2026 Amaral &amp; Silva</span>
+    <span>© 2026 CASA MARTECH</span>
     <span data-en="Brand strategy &amp; systems engineering · PT-BR / EN" data-pt="Estratégia de marca &amp;amp; engenharia de sistemas · PT-BR / EN">Brand strategy &amp; systems engineering · PT-BR / EN</span>
   </div>
 </footer>
@@ -2032,7 +2170,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
-  "name": "Amaral & Silva",
+  "name": "CASA MARTECH",
   "url": "https://amaralesilva.vercel.app/en",
   "description": "Brand strategy and systems engineering: branding, research and go-to-market alongside custom systems, dashboards, automation and applied AI.",
   "areaServed": "BR",
@@ -2077,22 +2215,22 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     pt: {
       htmlLang: 'pt-BR',
       ogLocale: 'pt_BR',
-      title: 'Amaral & Silva — Estratégia de marca & engenharia de sistemas',
+      title: 'CASA MARTECH — Estratégia de marca & engenharia de sistemas',
       description: 'Uma dupla que constrói, do zero, a marca e a tecnologia por trás dela: estratégia, pesquisa e go-to-market ao lado de sistemas sob medida, dashboards, automações e IA aplicada.',
       canonical: 'https://amaralesilva.vercel.app/',
       ogImage: 'https://amaralesilva.vercel.app/og.png',
-      ogImageAlt: 'Amaral & Silva — Marcas que se destacam. Sistemas que sustentam.',
+      ogImageAlt: 'CASA MARTECH — Marcas que se destacam. Sistemas que não falham.',
       navLabel: 'Navegação principal',
       langLabel: 'Idioma / Language'
     },
     en: {
       htmlLang: 'en',
       ogLocale: 'en_US',
-      title: 'Amaral & Silva — Brand strategy & systems engineering',
+      title: 'CASA MARTECH — Brand strategy & systems engineering',
       description: 'A duo that builds a brand and the technology behind it from the ground up: strategy, research and go-to-market alongside custom systems, dashboards, automation and applied AI.',
       canonical: 'https://amaralesilva.vercel.app/en',
       ogImage: 'https://amaralesilva.vercel.app/og-en.png',
-      ogImageAlt: 'Amaral & Silva — Brands that stand out. Systems that sustain them.',
+      ogImageAlt: "CASA MARTECH — Brands that stand out. Systems that don't fail.",
       navLabel: 'Main navigation',
       langLabel: 'Language / Idioma'
     }
@@ -2112,6 +2250,8 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     });
   });
   var current = null;
+  /* cada galeria registra aqui como reescrever suas legendas ao trocar de idioma */
+  var galleries = [];
 
   function setMeta(name, value, attr) {
     var el = document.head.querySelector('[' + (attr || 'name') + '="' + name + '"]');
@@ -2158,6 +2298,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     document.querySelectorAll('.lang-toggle button').forEach(function (btn) {
       btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang));
     });
+    galleries.forEach(function (relabel) { relabel(lang); });
   }
 
   function langFromLocation() {
@@ -2396,8 +2537,8 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       if (missing.length) { form[missing[0][0]].focus(); return; }
 
       var linhas = en
-        ? ['Hi, I came from the Amaral & Silva site.', 'Name: ' + nome, empresa ? 'Company: ' + empresa : '', 'Contact: ' + contato, 'Need: ' + precisa, mensagem]
-        : ['Olá, vim pelo site da Amaral & Silva.', 'Nome: ' + nome, empresa ? 'Empresa: ' + empresa : '', 'Contato: ' + contato, 'Preciso de: ' + precisa, mensagem];
+        ? ['Hi, I came from the CASA MARTECH site.', 'Name: ' + nome, empresa ? 'Company: ' + empresa : '', 'Contact: ' + contato, 'Need: ' + precisa, mensagem]
+        : ['Olá, vim pelo site da CASA MARTECH.', 'Nome: ' + nome, empresa ? 'Empresa: ' + empresa : '', 'Contato: ' + contato, 'Preciso de: ' + precisa, mensagem];
       var texto = linhas.filter(Boolean).join('\n');
       window.open('https://wa.me/5511999773471?text=' + encodeURIComponent(texto), '_blank', 'noopener');
 
@@ -2453,12 +2594,89 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       .onfinish = function () { panel.hidden = true; panel.style.overflow = ''; };
   }
   document.querySelectorAll('.case__toggle').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var panel = document.getElementById(btn.getAttribute('aria-controls'));
-      if (!panel) return;
+    var panel = document.getElementById(btn.getAttribute('aria-controls'));
+    if (!panel) return;
+    var card = btn.closest('.case');
+    var cover = card && card.querySelector('.case__cover');
+
+    function toggle() {
       var open = btn.getAttribute('aria-expanded') === 'true';
       btn.setAttribute('aria-expanded', String(!open));
+      if (card) card.classList.toggle('is-open', !open);
       if (open) collapsePanel(panel); else expandPanel(panel);
+    }
+
+    btn.addEventListener('click', toggle);
+    /* no toque não existe hover: a capa inteira abre e fecha o caso */
+    if (cover) cover.addEventListener('click', function (event) {
+      if (event.target.closest('button, a, input, label')) return;
+      toggle();
+    });
+  });
+  /* só com o script de pé a capa vira área clicável (o CSS lê esta classe) */
+  if (document.querySelector('.case__toggle')) document.documentElement.classList.add('js-cases');
+
+  /* ─── Casos: faixa de imagens ─────────────────────────────────────
+     Com uma imagem a faixa é só a capa. Com duas ou mais o arrasto já
+     funciona sozinho (scroll-snap, sem script); aqui entram os
+     marcadores, o foco e as setas do teclado. Enquanto nenhum caso tem
+     mais de uma imagem, este bloco não faz nada.
+     ───────────────────────────────────────────────────────────────── */
+  var GALLERY_WORDS = {
+    pt: { group: 'Imagens do caso', shot: 'Imagem ' },
+    en: { group: 'Case images', shot: 'Image ' }
+  };
+
+  document.querySelectorAll('.case__shots').forEach(function (track) {
+    var shots = track.querySelectorAll('.case__shot');
+    if (shots.length < 2) return;
+
+    var words = GALLERY_WORDS[current] || GALLERY_WORDS.pt;
+    track.setAttribute('role', 'group');
+    track.setAttribute('tabindex', '0');
+    track.setAttribute('aria-label', words.group);
+
+    function at() { return Math.round(track.scrollLeft / Math.max(1, track.clientWidth)); }
+    function go(i) {
+      var left = track.clientWidth * Math.max(0, Math.min(shots.length - 1, i));
+      if (track.scrollTo) track.scrollTo({ left: left, behavior: motionOK ? 'smooth' : 'auto' });
+      else track.scrollLeft = left;
+    }
+
+    var dots = document.createElement('div');
+    dots.className = 'case__dots';
+    var marks = Array.prototype.map.call(shots, function (shot, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-label', words.shot + (i + 1));
+      b.setAttribute('aria-current', String(i === 0));
+      b.addEventListener('click', function () { go(i); });
+      dots.appendChild(b);
+      return b;
+    });
+    track.closest('.case__cover').appendChild(dots);
+
+    var tick = false;
+    track.addEventListener('scroll', function () {
+      if (tick) return;
+      tick = true;
+      window.requestAnimationFrame(function () {
+        tick = false;
+        var i = at();
+        marks.forEach(function (b, k) { b.setAttribute('aria-current', String(k === i)); });
+      });
+    }, { passive: true });
+
+    track.addEventListener('keydown', function (event) {
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      event.preventDefault();
+      go(at() + (event.key === 'ArrowRight' ? 1 : -1));
+    });
+
+    galleries.push(function (lang) {
+      var w = GALLERY_WORDS[lang] || GALLERY_WORDS.pt;
+      track.setAttribute('aria-label', w.group);
+      marks.forEach(function (b, k) { b.setAttribute('aria-label', w.shot + (k + 1)); });
     });
   });
 
