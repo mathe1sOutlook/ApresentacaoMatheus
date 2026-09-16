@@ -2,15 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://amaralesilva.vercel.app/</loc>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://amaralesilva.vercel.app/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://amaralesilva.vercel.app/en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://amaralesilva.vercel.app/"/>
+    <loc>https://casamartech.vercel.app/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://casamartech.vercel.app/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://casamartech.vercel.app/en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://casamartech.vercel.app/"/>
   </url>
   <url>
-    <loc>https://amaralesilva.vercel.app/en</loc>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://amaralesilva.vercel.app/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://amaralesilva.vercel.app/en"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://amaralesilva.vercel.app/"/>
+    <loc>https://casamartech.vercel.app/en</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://casamartech.vercel.app/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://casamartech.vercel.app/en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://casamartech.vercel.app/"/>
   </url>
 </urlset>

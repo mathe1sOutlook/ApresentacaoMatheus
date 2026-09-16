@@ -2,8 +2,12 @@
 
 One-pager bilíngue (PT-BR / EN) da **CASA MARTECH** — a dupla **Bruno Amaral**
 (marca e estratégia) e **Matheus Silva** (tecnologia e dados). Publicado em
-<https://amaralesilva.vercel.app>: o endereço é herança do nome antigo e
-segue valendo como URL técnica até o domínio próprio ser decidido.
+<https://casamartech.vercel.app> até a dupla ter domínio próprio.
+
+O endereço anterior, `amaralesilva.vercel.app`, continua anexado ao projeto na
+Vercel e abrindo o site — é o que segura os QR já impressos e os links que
+circularam. O canônico, o sitemap, o Open Graph, o JSON-LD e os QR novos
+apontam para `casamartech.vercel.app`.
 
 Implementa o handoff *Reestruturação de branding* na versão escura — fundo
 quase preto, tinta creme, ocre para marca, azul para tecnologia, Fraunces +
@@ -18,8 +22,9 @@ A prova social roda em marquee.
 ```
 index.html      site completo (marcação + <style> + <script>, sem build)
 en/index.html   versão inglesa pré-renderizada (gerada, ver "Idiomas")
-scripts/        build-en.mjs (gera en/index.html) e build-og.mjs (gera as duas
-                imagens de compartilhamento) — só desenvolvimento
+scripts/        build-en.mjs (gera en/index.html), build-og.mjs (gera as duas
+                imagens de compartilhamento) e build-qr.py (gera os dois QR) —
+                só desenvolvimento
 favicon.svg     a casa do hero em traço: telhado ocre, paredes azuis, sem texto
 og.png, og-en.png  imagem de compartilhamento (1200×630) em PT e EN, geradas por
                 scripts/build-og.mjs com as fontes e os tokens do site
@@ -27,7 +32,8 @@ fonts/          woff2 (latin + latin-ext): Fraunces, Inter e IBM Plex Mono para 
                 site; Space Grotesk para a proposta do CRM; Barlow e Barlow
                 Condensed para a proposta da 2JEM
 img/qr.svg      QR do site para a caixa "uso físico"; img/qr-print.svg é a
-                versão preto-no-branco para cartão, crachá e proposta
+                versão preto-no-branco para cartão, crachá e proposta. Os dois
+                são gerados por scripts/build-qr.py
 robots.txt      libera o site, bloqueia as propostas e o /admin
 sitemap.xml     / e /en com hreflang
 vercel.json     rewrites (/en, /admin, propostas), noindex das propostas e do
@@ -66,6 +72,18 @@ junto.**
 Para editar uma frase, mude os dois lados: o texto no HTML (PT) e o `data-en`
 (EN). Se um dia o site virar Next.js, esses pares alimentam direto os
 dicionários do `next-intl`.
+
+## QR code
+
+`img/qr.svg` (creme sobre quase preto, para a tela) e `img/qr-print.svg` (preto
+no branco, para papel) são **gerados**: `pip install segno && python3
+scripts/build-qr.py`. Os dois codificam
+`https://casamartech.vercel.app/?utm_source=qr`, em 33 módulos com correção de
+erro Q — o mesmo tamanho de sempre, então a caixa de 120px do contato não muda.
+
+Trocar o endereço é trocar a constante `SITE` no script e rodar de novo. O que
+já foi impresso aponta para o endereço anterior e continua funcionando enquanto
+ele estiver anexado ao projeto na Vercel.
 
 ## Imagens de compartilhamento
 
@@ -130,11 +148,13 @@ No painel do Supabase, em *Authentication → URL Configuration* do projeto
 `mApps`, adicionar às **Redirect URLs**:
 
 ```
+https://casamartech.vercel.app/admin
 https://amaralesilva.vercel.app/admin
 ```
 
-Sem isso o retorno do login Google não volta para o painel. (O provider
-Google já está ativo no projeto.)
+Sem isso o retorno do login Google não volta para o painel — o `/admin` usa
+`location.origin`, então **todo endereço pelo qual o painel é aberto precisa
+estar nessa lista**. (O provider Google já está ativo no projeto.)
 
 ## Pendências
 
