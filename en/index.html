@@ -326,18 +326,28 @@ button {
 }
 .lang-toggle__sep { color: var(--line-strong); }
 .lang-toggle button {
-  padding: 3px 4px;
+  position: relative;
+  padding: 3px 5px 5px;
   font-family: var(--mono);
   font-size: 12px;
   letter-spacing: 0.08em;
   color: var(--ink-soft);
-  border-bottom: 1px solid transparent;
+  border-radius: var(--r-chip);
+}
+/* Barra do idioma ativo: régua com ponta redonda, não um traço cortado a 90°. */
+.lang-toggle button::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: transparent;
 }
 .lang-toggle button:hover { color: var(--ink); }
-.lang-toggle button[aria-pressed="true"] {
-  color: var(--ink);
-  border-bottom-color: var(--ink);
-}
+.lang-toggle button[aria-pressed="true"] { color: var(--ink); }
+.lang-toggle button[aria-pressed="true"]::after { background: var(--ink); }
 
 .btn-ghost {
   flex: none;
@@ -510,20 +520,6 @@ button {
   .marquee__track { display: block; width: auto; }
   .proof__list[aria-hidden="true"] { display: none; }
   .proof__list { flex-wrap: wrap; white-space: normal; gap: 12px 40px; padding: 0 var(--gutter); max-width: var(--container); margin: 0 auto; }
-}
-
-.hero__note {
-  background: var(--bg);
-  border-top: 1px solid var(--line);
-  padding: 18px 0 20px;
-  font-family: var(--mono);
-  font-size: 12.5px;
-  line-height: 1.6;
-  color: var(--ink-soft);
-}
-.hero__note .container {
-  display: block;
-  border-left: 2px solid var(--ochre);
 }
 
 /* ─── Dossiê 01 · A dupla ────────────────────────────────────────── */
@@ -920,7 +916,8 @@ button {
 .case__dots button {
   width: 22px;
   height: 3px;
-  border-radius: 2px;
+  /* pontas redondas: o marcador é uma régua macia, não um retângulo */
+  border-radius: 999px;
   background: rgba(241, 238, 230, 0.35);
   transition: background 0.3s ease;
 }
@@ -1434,19 +1431,15 @@ button {
 .field__input::placeholder { color: transparent; }
 textarea.field__input { min-height: 120px; resize: vertical; }
 .field--select { position: relative; }
-.field--select::after {
-  content: "";
-  position: absolute;
-  right: 16px;
-  bottom: 25px;
-  width: 8px;
-  height: 8px;
-  border-right: 1px solid var(--ink-soft);
-  border-bottom: 1px solid var(--ink-soft);
-  transform: rotate(45deg);
-  pointer-events: none;
+/* A seta é traço com ponta e junta redondas, como o traço do favicon —
+   antes eram duas bordas em ângulo reto. */
+select.field__input {
+  padding-right: 38px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1.2 1.6 6 6.4 10.8 1.6' stroke='%23A6A39B' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
 }
-select.field__input { padding-right: 38px; cursor: pointer; }
 select.field__input option { background: var(--bg-card); color: var(--ink); }
 .lead__submit {
   display: block;
@@ -1725,8 +1718,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       </div>
     </div>
   </div>
-
-  <p class="hero__note"><span class="container" data-en="PT-BR / EN — experience in international markets (Latin America, USA)." data-pt="PT-BR / EN — experiência em mercados internacionais (América Latina, EUA).">PT-BR / EN — experience in international markets (Latin America, USA).</span></p>
 </section>
 
 <!-- ═══════════════════════════════════════════════ DOSSIÊ 01 · A DUPLA -->
