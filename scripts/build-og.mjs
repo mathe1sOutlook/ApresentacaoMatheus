@@ -20,7 +20,7 @@ const FONTS = {
 };
 
 // O endereço técnico atual. Quando a CASA MARTECH tiver domínio próprio, muda aqui.
-const SITE = 'amaralesilva.vercel.app';
+const SITE = 'casamartech.vercel.app';
 
 const CARDS = {
   'og.png': {

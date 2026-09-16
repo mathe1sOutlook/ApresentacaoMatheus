@@ -7,8 +7,10 @@ um hábito genérico, **este arquivo vence**.
 
 Site institucional da **CASA MARTECH** — a dupla **Bruno Amaral** (marca e
 estratégia) e **Matheus Silva** (tecnologia e dados). No ar em
-<https://amaralesilva.vercel.app> enquanto o domínio próprio não é decidido; o
-endereço é herança do nome antigo e continua valendo como URL técnica. HTML
+<https://casamartech.vercel.app> enquanto o domínio próprio não é decidido.
+O endereço anterior, `amaralesilva.vercel.app`, segue anexado ao projeto na
+Vercel e continua abrindo o site — é o que mantém de pé os QR já impressos e os
+links que circularam. HTML
 estático servido direto pela Vercel, sem build e sem dependências. A estrutura
 de pastas e as decisões técnicas estão no `README.md` — leia-o antes de mexer.
 

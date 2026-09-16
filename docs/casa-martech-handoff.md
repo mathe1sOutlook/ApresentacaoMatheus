@@ -435,9 +435,12 @@ controlada da geometria. Nenhum texto do site mudou.
 
 ## 18. Pendências
 
-- [ ] confirmar domínio Casa Martech — enquanto não houver, ficam valendo as
-      URLs `amaralesilva.vercel.app` no canonical, no sitemap, no robots, no QR
-      e nos dois geradores; é uma troca de string em cada lugar;
+- [ ] confirmar domínio próprio da Casa Martech — hoje o site responde em
+      `casamartech.vercel.app` (rodada 5). Quando houver domínio de verdade, os
+      lugares que mudam são: canonical e hreflang, Open Graph e Twitter, o
+      JSON-LD, o objeto META do script, `sitemap.xml`, `robots.txt`, a constante
+      `SITE` de `build-og.mjs` e `build-qr.py`, e a lista de Redirect URLs do
+      Supabase Auth;
 - [ ] confirmar e-mail oficial;
 - [ ] receber foto definitiva do Bruno;
 - [ ] decidir quais cases técnicos do Matheus entram;
