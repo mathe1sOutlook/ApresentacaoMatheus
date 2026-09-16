@@ -72,7 +72,8 @@
 /* ═══════════════════════════════════════════════════════════════════
    CASA MARTECH — tokens
    Fundo quase preto, tinta creme, ocre para marca, azul para tecnologia.
-   Zero arredondamento, zero sombra: a hierarquia vem das réguas de 1px.
+   Superfícies com raio pequeno, linhas técnicas retas, zero sombra: a
+   hierarquia continua vindo das réguas de 1px.
    ═══════════════════════════════════════════════════════════════════ */
 :root {
   --bg:          #0B0D12;
@@ -94,6 +95,13 @@
   --container: 1180px;
   --gutter:    32px;
   --header-h:  68px;
+
+  /* O que é superfície de conteúdo ganha um raio pequeno; o que é linha
+     técnica — trilhos, nós, conectores, réguas — continua reto. É essa
+     divisão que mantém a precisão e tira a rigidez. */
+  --r-surface: 10px;
+  --r-control: 8px;
+  --r-chip:    6px;
 
   color-scheme: dark;
 }
@@ -200,6 +208,10 @@ button {
   background: var(--line);
   border: 1px solid var(--line);
   grid-template-columns: 1fr;
+  /* o raio fica na caixa e o recorte segura as células: por dentro as
+     réguas continuam retas, de ponta a ponta */
+  border-radius: var(--r-surface);
+  overflow: hidden;
 }
 .rule-grid > * { background: var(--bg-card); }
 
@@ -333,6 +345,7 @@ button {
   font-size: 12.5px;
   letter-spacing: 0.04em;
   border: 1px solid var(--ink);
+  border-radius: var(--r-control);
   padding: 11px 18px;
   color: var(--ink);
   white-space: nowrap;
@@ -408,6 +421,7 @@ button {
   letter-spacing: 0.03em;
   padding: 18px 40px;
   border: 1px solid var(--ink);
+  border-radius: var(--r-control);
   color: var(--ink);
   text-align: center;
 }
@@ -591,7 +605,7 @@ button {
   list-style: none;
   padding: 0;
 }
-.chips li { border: 1px solid var(--line-strong); padding: 10px 16px; }
+.chips li { border: 1px solid var(--line-strong); border-radius: var(--r-chip); padding: 10px 16px; }
 
 .pull-quote {
   grid-column: 1 / -1;
@@ -770,6 +784,8 @@ button {
   --case-rule: var(--ochre);
   border: 1px solid var(--line-strong);
   background: var(--bg-card);
+  border-radius: var(--r-surface);
+  overflow: hidden;
   transition: border-color 0.35s ease, transform 0.4s ease;
 }
 /* O caso conjunto leva a régua nas duas cores; os demais, no ocre. */
@@ -784,9 +800,12 @@ button {
   padding: 26px 30px 30px;
   overflow: hidden;
 }
-/* Sem foto, a capa vira prancha de desenho: malha de 1px no lugar de um
-   retângulo vazio, enquanto o material dos casos não chega. */
-.case__cover:not(.case__cover--photo) {
+/* Sem foto, a superfície vira prancha de desenho: malha de 1px no lugar de um
+   retângulo vazio, enquanto o material não chega. Vale para a capa do caso e
+   para a imagem dos projetos menores — é o que faz os dois lerem como a mesma
+   família mesmo tendo profundidades de conteúdo diferentes. */
+.case__cover:not(.case__cover--photo),
+.more-card__media.is-empty {
   background:
     repeating-linear-gradient(90deg, rgba(58, 65, 80, 0.18) 0 1px, transparent 1px 48px),
     repeating-linear-gradient(0deg,  rgba(58, 65, 80, 0.18) 0 1px, transparent 1px 48px),
@@ -810,6 +829,7 @@ button {
   text-transform: uppercase;
   color: var(--ink);
   border: 1px solid var(--ink-soft);
+  border-radius: var(--r-chip);
   background: rgba(11, 13, 18, 0.72);
   padding: 8px 14px;
   white-space: nowrap;
@@ -900,6 +920,7 @@ button {
 .case__dots button {
   width: 22px;
   height: 3px;
+  border-radius: 2px;
   background: rgba(241, 238, 230, 0.35);
   transition: background 0.3s ease;
 }
@@ -963,6 +984,7 @@ button {
   font-size: 15px;
   color: var(--ink);
   border: 1px solid var(--ink-soft);
+  border-radius: var(--r-control);
   background: rgba(11, 13, 18, 0.72);
   padding: 14px 20px;
 }
@@ -1041,6 +1063,8 @@ button {
 .ficha {
   margin-top: 28px;
   border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  overflow: hidden;
   background: var(--bg-deep);
   display: grid;
   grid-template-columns: 1fr;
@@ -1080,13 +1104,14 @@ button {
   font-size: 11px;
   color: var(--ink-soft);
 }
-.ficha__tags li { border: 1px solid var(--line-strong); padding: 4px 8px; }
+.ficha__tags li { border: 1px solid var(--line-strong); border-radius: var(--r-chip); padding: 4px 8px; }
 
 /* Moldura de imagem — estado vazio enquanto os apoios visuais não chegam. */
 .media {
   position: relative;
   margin: 0;
   border: 1px dashed var(--line-strong);
+  border-radius: var(--r-control);
   background: var(--bg-deep);
   min-height: 300px;
   display: flex;
@@ -1158,6 +1183,14 @@ button {
   font-size: 24px;
   font-weight: 600;
   margin-top: 12px;
+}
+.more-card__title::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 1px;
+  margin-top: 12px;
+  background: var(--ochre);
 }
 .more-card__text {
   margin-top: 10px;
@@ -1315,6 +1348,8 @@ button {
   height: 120px;
   margin: 0;
   border: 1px solid var(--line-strong);
+  border-radius: var(--r-surface);
+  overflow: hidden;
   background: var(--ink);
   display: flex;
   align-items: center;
@@ -1348,6 +1383,7 @@ button {
 /* Formulário — abre o WhatsApp com a mensagem montada. */
 .lead {
   border: 1px solid var(--line-strong);
+  border-radius: var(--r-surface);
   background: var(--bg-card);
   padding: 36px 32px 32px;
 }
@@ -1375,17 +1411,18 @@ button {
   font: inherit;
   font-size: 18px;
   color: var(--ink);
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid rgba(166, 163, 155, 0.55);
-  border-radius: 0;
-  padding: 12px 0 14px;
+  background: rgba(11, 13, 18, 0.4);
+  border: 1px solid rgba(166, 163, 155, 0.34);
+  border-radius: var(--r-control);
+  padding: 13px 14px;
+  transition: border-color 0.25s ease, background 0.25s ease;
   -webkit-appearance: none;
   appearance: none;
 }
-.field__input:focus { border-bottom-color: var(--ink); }
-.field__input:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; }
-.field__input[aria-invalid="true"] { border-bottom-color: #E07A6A; }
+.field__input:hover { border-color: rgba(166, 163, 155, 0.6); }
+.field__input:focus { border-color: var(--ink); background: rgba(11, 13, 18, 0.62); }
+.field__input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.field__input[aria-invalid="true"] { border-color: #E07A6A; }
 .field__error {
   display: block;
   margin-top: 8px;
@@ -1400,8 +1437,8 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 .field--select::after {
   content: "";
   position: absolute;
-  right: 6px;
-  bottom: 22px;
+  right: 16px;
+  bottom: 25px;
   width: 8px;
   height: 8px;
   border-right: 1px solid var(--ink-soft);
@@ -1409,7 +1446,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   transform: rotate(45deg);
   pointer-events: none;
 }
-select.field__input { padding-right: 28px; cursor: pointer; }
+select.field__input { padding-right: 38px; cursor: pointer; }
 select.field__input option { background: var(--bg-card); color: var(--ink); }
 .lead__submit {
   display: block;
@@ -1421,6 +1458,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   background: var(--ink);
   color: var(--bg);
   border: 1px solid var(--ink);
+  border-radius: var(--r-control);
   text-align: center;
 }
 .lead__submit:hover { background: var(--ochre); border-color: var(--ochre); }
@@ -2159,7 +2197,14 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 </article>
 </div>
 
-    <!-- Outros projetos ─────────────────────────────────────────── -->
+    <!-- Outros projetos ───────────────────────────────────────────
+         Três trabalhos aprovados que ainda não têm problema / solução / valor
+         escritos — por isso ficam aqui, com uma linha cada, e não na grade de
+         casos. Para promover um deles quando o conteúdo chegar: mover o
+         <article> para dentro de .cases, trocar more-card por case, dar à capa
+         a estrutura .case__cover > .case__media > .media > .case__shots, e
+         acrescentar o painel .case__details com id próprio e o botão
+         .case__toggle apontando para ele. Nada de inventar o descritivo. -->
     <div class="more">
       <p class="more__label" data-en="Other selected projects" data-pt="Outros projetos selecionados">Other selected projects</p>
       <div class="rule-grid rule-grid--3">
@@ -2259,15 +2304,18 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
       <div class="contact__links">
         <a href="https://wa.me/5511999773471?text=Hi%2C%20I%20saw%20the%20portfolio%20and%20would%20like%20to%20talk%20about%20a%20project." data-en-href="https://wa.me/5511999773471?text=Hi%2C%20I%20saw%20the%20portfolio%20and%20would%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener" data-en="WhatsApp — talk now" data-pt="WhatsApp — falar agora" data-pt-href="https://wa.me/5511999773471?text=Ol%C3%A1%2C%20vi%20o%20portf%C3%B3lio%20e%20quero%20conversar%20sobre%20um%20projeto.">WhatsApp — talk now</a>
-        <!-- Provisório e combinado: enquanto o domínio amaralesilva.com não estiver ativo, o contato é o do Bruno. -->
+        <!-- Provisório e combinado: enquanto a CASA MARTECH não tiver domínio e e-mail
+             próprios, o contato é o do Bruno. O telefone do JSON-LD acompanha este. -->
         <a href="mailto:bamaralpenha@gmail.com">bamaralpenha@gmail.com</a>
         <span class="contact__note" data-en="São Paulo · projects run remotely across Brazil and abroad" data-pt="São Paulo · projetos conduzidos remotamente no Brasil e fora">São Paulo · projects run remotely across Brazil and abroad</span>
       </div>
 
       <div class="qr">
-        <!-- /img/qr.svg aponta para o site (utm_source=qr). Para impressão use /img/qr-print.svg (preto no branco). -->
+        <!-- /img/qr.svg aponta para o endereço atual do site (utm_source=qr); quando o
+             domínio da CASA MARTECH existir, é aqui e nos dois SVGs que ele entra.
+             Para impressão use /img/qr-print.svg (preto no branco). -->
         <figure class="qr__box">
-          <img src="/img/qr.svg" alt="QR code for amaralesilva.vercel.app" data-en-alt="QR code for amaralesilva.vercel.app" onerror="this.parentNode.classList.add('is-empty')" data-pt-alt="QR code para amaralesilva.vercel.app">
+          <img src="/img/qr.svg" alt="QR code for the CASA MARTECH site" data-en-alt="QR code for the CASA MARTECH site" onerror="this.parentNode.classList.add('is-empty')" data-pt-alt="QR code do site da CASA MARTECH">
           <figcaption data-en="QR code&lt;br&gt;physical&lt;br&gt;materials" data-pt="QR code&lt;br&gt;materiais&lt;br&gt;físicos">QR code<br>physical<br>materials</figcaption>
         </figure>
         <div>
@@ -2350,7 +2398,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     "addressLocality": "São Paulo",
     "addressCountry": "BR"
   },
-  "telephone": "+55-11-96904-1800",
+  "telephone": "+55-11-99977-3471",
   "member": [
     {
       "@type": "Person",
@@ -2526,11 +2574,11 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     /* só onde existe coluna livre à direita do título: abaixo disso o
        contorno cruzaria o texto, e leitura vem antes do motivo */
     if (!HOUSE || w < 1080 || h < 620) return [];
-    var width = Math.min(w * 0.26, 340);
+    var width = Math.min(w * 0.24, 310);
     var wall = width * 0.62;          /* altura da parede */
     var roof = width * 0.34;          /* altura do telhado */
-    var cx = w * 0.78;
-    var top = Math.max(h * 0.07, 48);
+    var cx = w * 0.80;
+    var top = Math.max(h * 0.055, 44);
     var left = cx - width / 2, right = cx + width / 2;
     var eave = top + roof, base = eave + wall;
     /* cumeeira, beiral direito, base direita, base esquerda, beiral esquerdo */
@@ -2611,10 +2659,13 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
        desenho técnico. Nunca uma casa literal — é uma sugestão. */
     var house = st.house;
     if (house.length) {
-      ctx.strokeStyle = colors.blue;
       for (var e = 0; e < HOUSE_EDGES.length; e++) {
         var a = pts[house[HOUSE_EDGES[e][0]]], b = pts[house[HOUSE_EDGES[e][1]]];
         var eave = e === HOUSE_EDGES.length - 1;
+        /* as duas águas do telhado em ocre, o resto em azul: a casa fala a
+           mesma dualidade do site, em vez de virar um ícone imobiliário */
+        var roof = HOUSE_EDGES[e][0] === 0 || HOUSE_EDGES[e][1] === 0;
+        ctx.strokeStyle = roof ? colors.ochre : colors.blue;
         /* tracejado de linha de construção: é o que separa o contorno do
            resto da malha sem precisar gritar mais alto que ela */
         ctx.setLineDash(eave ? [2, 7] : [7, 6]);

@@ -408,9 +408,36 @@ tudo é comportamento, ritmo e desenho, seção por seção, em commits separado
   IntersectionObserver e sem `prefers-reduced-motion`.
 - **O hero é reversível numa linha:** `HOUSE = false`.
 
-## 17. Pendências
+## 17. Rodada 4 — implementada
 
-- [ ] confirmar domínio Casa Martech;
+Limpeza da identidade antiga, cartões de compartilhamento e uma suavização
+controlada da geometria. Nenhum texto do site mudou.
+
+| Frente | O que entrou |
+|---|---|
+| Favicon | O `&` de Amaral & Silva sai. Entra a mesma casa que o circuito do hero sugere, em traço: telhado ocre, paredes azuis, sem texto, viva a 16px. |
+| Schema | O JSON-LD anunciava +55-11-96904-1800 (número antigo do Matheus) enquanto a tela mostra o WhatsApp do Bruno. Os dois passam a dizer 99977-3471, no site e no gerador do `/en`. |
+| QR | O `alt` e o `aria-label` dos dois SVGs soletravam "amaralesilva.vercel.app". Passam a nomear o site da CASA MARTECH; o endereço que o código carrega não muda. |
+| Open Graph | `og.png` e `og-en.png` eram Amaral & Silva com uma tagline que não existe mais ("Sistemas que sustentam"). Refeitos com o nome e a tagline aprovada, e agora **gerados** por `scripts/build-og.mjs`. |
+| Geometria | Três tokens de raio — 10px superfícies, 8px controles, 6px etiquetas. Arredondam cards, grades, formulário, campos, botões, ficha, chips, moldura e QR. **Não** arredondam trilhos, nós, réguas de seção nem o desenho do hero. |
+| Campos | O campo sublinhado não tem canto para arredondar: virou caixa de borda hairline sobre fundo quase preto. |
+| Casos × projetos | A separação continua (conteúdo diferente, peso diferente), mas os três projetos menores passam a usar a mesma prancha de desenho e a mesma régua ocre dos casos. O caminho para promover um deles a caso completo está documentado no HTML. |
+| Hero | As duas águas do telhado passam a ser ocre e o resto do contorno segue azul — a casa fala a dualidade do site. Encolheu e subiu, para folgar do ledger entre 1100 e 1920px. `HOUSE = false` continua desligando. |
+
+### Resíduos de "amaralesilva" mantidos de propósito
+
+- **URLs** — canonical, hreflang, Open Graph, Twitter, JSON-LD, sitemap, robots,
+  QR e os dois geradores. É onde o site está publicado; domínio não se inventa.
+- **Tabelas `amaralesilva_*`** do Supabase — renomear exige migração.
+- **Bruno Amaral e Matheus Silva** — nomes das pessoas, não da marca. Aparecem
+  no `meta author`, nos cards da dupla, no `member` do Schema e na citação do
+  case da MindMiners, que é conteúdo aprovado.
+
+## 18. Pendências
+
+- [ ] confirmar domínio Casa Martech — enquanto não houver, ficam valendo as
+      URLs `amaralesilva.vercel.app` no canonical, no sitemap, no robots, no QR
+      e nos dois geradores; é uma troca de string em cada lugar;
 - [ ] confirmar e-mail oficial;
 - [ ] receber foto definitiva do Bruno;
 - [ ] decidir quais cases técnicos do Matheus entram;
@@ -428,7 +455,7 @@ tudo é comportamento, ritmo e desenho, seção por seção, em commits separado
 
 ---
 
-## 18. Regra para futuras rodadas
+## 19. Regra para futuras rodadas
 
 Sempre que houver novo feedback:
 

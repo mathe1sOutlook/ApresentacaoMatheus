@@ -28,7 +28,7 @@ const META_EN = {
     areaServed: 'BR',
     availableLanguage: ['pt-BR', 'en'],
     address: { '@type': 'PostalAddress', addressLocality: 'São Paulo', addressCountry: 'BR' },
-    telephone: '+55-11-96904-1800',
+    telephone: '+55-11-99977-3471',
     member: [
       { '@type': 'Person', name: 'Bruno Amaral', jobTitle: 'Marketing Strategist & Branding Consultant' },
       { '@type': 'Person', name: 'Matheus Silva', jobTitle: 'Civil Engineer, MSc in Structures & Full-Stack Developer' },
