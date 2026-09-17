@@ -238,6 +238,26 @@ button {
 .nav-toggle:hover { background: var(--ink); color: var(--paper); }
 .nav-toggle__ico { display: inline-flex; flex-direction: column; gap: 3px; }
 .nav-toggle__ico span { display: block; width: 14px; height: 1px; background: currentColor; }
+/* Ponto ocre no botão do menu: avisa que chegou lead novo sem precisar
+   abrir a gaveta, que é onde a contagem fica por extenso. */
+.nav-toggle__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ochre);
+  flex: none;
+}
+.nav-toggle:hover .nav-toggle__dot { background: var(--ochre-soft); }
+.nav-count {
+  margin-left: 8px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  line-height: 1;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--ochre);
+  color: var(--paper);
+}
 
 /* ─── Menu (gaveta) ──────────────────────────────────────────────── */
 .backdrop {
@@ -737,6 +757,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
         <button type="button" class="nav-toggle" data-action="openDrawer" aria-expanded="false" aria-controls="drawer" aria-label="Abrir menu">
           <span class="nav-toggle__ico" aria-hidden="true"><span></span><span></span><span></span></span>
           Menu
+          <span class="nav-toggle__dot" id="nav-dot" hidden aria-hidden="true"></span>
         </button>
       </div>
     </div>
@@ -754,7 +775,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
       <nav class="drawer__nav" id="drawer-nav">
         <a href="#/dashboard" data-route="dashboard">Dashboard</a>
         <a href="#/crm" data-route="crm">CRM · Propostas</a>
-        <a href="#/leads" data-route="leads">Leads do site</a>
+        <a href="#/leads" data-route="leads">Leads do site<span class="nav-count" id="nav-leads-count" hidden></span></a>
         <a href="#/clientes" data-route="clientes">Clientes</a>
         <a href="#/financeiro" data-route="financeiro">Financeiro</a>
         <a href="#/agenda" data-route="agenda">Agenda</a>
@@ -1015,6 +1036,65 @@ async function fetchAll() {
   state.members = members.data; state.leads = leads.data;
 }
 
+/* ═══ Releitura automática ═════════════════════════════════════════
+   O painel lia o banco no login e só voltava a ler depois de uma
+   mutação ou do "↻ Atualizar dados" da gaveta. Deixado aberto numa aba,
+   mostrava para sempre a foto do momento em que entrou — foi assim que
+   um lead recém-chegado do site não apareceu na tela de Leads.
+
+   Agora relê sozinho: quando a aba volta ao foco e a cada minuto com
+   ela à vista. É silencioso, exceto quando chega lead novo, que é a
+   única coisa que aparece aqui sem alguém ter clicado.
+   ───────────────────────────────────────────────────────────────────── */
+const AUTO_MS     = 60000;  /* de quanto em quanto tempo, com a aba à vista */
+const AUTO_MIN_MS = 15000;  /* piso entre duas leituras, para não martelar */
+let autoLast = 0, autoBusy = false;
+
+const novosLeads = (ls) => ls.filter((l) => l.status === 'novo').length;
+
+function paintLeadSignal() {
+  const novos = novosLeads(state.leads);
+  const cnt = $('#nav-leads-count');
+  if (cnt) { cnt.hidden = !novos; cnt.textContent = novos; }
+  const dot = $('#nav-dot');
+  if (dot) dot.hidden = !novos;
+  const tog = $('.nav-toggle');
+  if (tog) tog.setAttribute('aria-label', novos
+    ? 'Abrir menu — ' + novos + ' lead' + (novos === 1 ? ' novo' : 's novos')
+    : 'Abrir menu');
+}
+
+/* Não relê por cima de quem está no meio de alguma coisa: modal aberto
+   ou cursor dentro de um campo. */
+function autoBusyUI() {
+  const m = $('#modal');
+  if (m && m.classList.contains('on')) return true;
+  const a = document.activeElement;
+  return !!(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
+}
+
+async function autoRefresh() {
+  if (autoBusy || !state.me || autoBusyUI()) return;
+  if (Date.now() - autoLast < AUTO_MIN_MS) return;
+  autoBusy = true;
+  const antes = novosLeads(state.leads);
+  try {
+    await fetchAll();
+    autoLast = Date.now();
+    renderPreservingForm();
+    const chegaram = novosLeads(state.leads) - antes;
+    if (chegaram > 0) toast(chegaram === 1 ? 'Chegou 1 lead novo pelo site.' : 'Chegaram ' + chegaram + ' leads novos pelo site.');
+  } catch (e) {
+    /* silencioso de propósito: rede oscilou, a próxima passada resolve */
+  } finally {
+    autoBusy = false;
+  }
+}
+
+document.addEventListener('visibilitychange', () => { if (!document.hidden) autoRefresh(); });
+window.addEventListener('focus', autoRefresh);
+setInterval(() => { if (!document.hidden) autoRefresh(); }, AUTO_MS);
+
 /* Mutações em fila: cliques rápidos rodam em série, cada um lendo o estado
    já atualizado pelo anterior; o re-render preserva texto digitado no
    formulário do projeto (que é montado a partir do banco). */
@@ -1092,6 +1172,7 @@ function renderApp() {
   const fn = VIEWS[route.name] || VIEWS.dashboard;
   $('#view').innerHTML = fn(route);
   $$('#drawer-nav a').forEach((a) => a.classList.toggle('on', a.dataset.route === route.name));
+  paintLeadSignal();
   $('#topbar-user').textContent = firstName(state.me.name);
   $('#drawer-user').textContent = state.me.email;
   afterRender(route);
