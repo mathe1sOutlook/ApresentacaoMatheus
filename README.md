@@ -11,7 +11,9 @@ apontam para `casamartech.vercel.app`.
 
 Implementa o handoff *Reestruturação de branding* na versão escura — fundo
 quase preto, tinta creme, ocre para marca, azul para tecnologia, Fraunces +
-Inter + IBM Plex Mono, zero arredondamento e réguas de 1px como estrutura. O
+Inter + IBM Plex Mono, superfícies arredondadas sobre réguas de 1px — o que é
+cartão, botão ou campo tem canto macio; o que é linha técnica (trilhos, nós,
+conectores) continua reto. O
 hero traz uma constelação em canvas (ocre à esquerda, azul à direita) com
 semente fixa, que flutua devagar e reage ao cursor; as seções entram com um
 fade curto ao rolar. Os dois efeitos desligam com `prefers-reduced-motion`.
