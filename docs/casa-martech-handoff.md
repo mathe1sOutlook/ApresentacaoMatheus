@@ -32,7 +32,7 @@ Substituir futuramente “Amaral & Silva” pelo novo nome nos pontos públicos 
 
 ### Tagline aprovada
 
-> **Marcas que se destacam. Sistemas que não falham.**
+> **Marcas que se destacam. Tecnologia que sustenta.**
 
 ### Manifesto recebido
 
@@ -113,7 +113,7 @@ O mockup completo mais recente também foi considerado **muito carregado**. A in
 
 Tagline aprovada:
 
-> **Marcas que se destacam. Sistemas que não falham.**
+> **Marcas que se destacam. Tecnologia que sustenta.**
 
 ### Exploração ainda em definição
 
