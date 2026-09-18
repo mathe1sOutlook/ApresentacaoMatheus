@@ -412,6 +412,13 @@ button {
   -webkit-text-fill-color: transparent;
 }
 
+/* MAR · TEC — o nome da casa está dentro das duas palavras que a definem.
+   Ocre no lado da marca, azul no da tecnologia: a mesma dualidade dos dois
+   pontos do cabeçalho, dos trilhos e do telhado do hero. Só em português;
+   em inglês "Brands" e "technology" não formam o nome. */
+.mar { color: var(--ochre); }
+.tec { color: var(--blue); }
+
 .hero__lede {
   margin-top: 28px;
   max-width: 46ch;
@@ -1616,6 +1623,8 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .js-reveal .steps::before { transform: none !important; }
   .js-reveal .fronts__node { opacity: 1 !important; }
   .hero__title em { background: none; color: var(--ochre); -webkit-text-fill-color: currentColor; }
+  /* o trocadilho MAR·TEC é de tela: no papel as duas cores não têm contraste */
+  .mar, .tec { color: inherit; }
   .hero__net, .wa-float, .site-header, .marquee, .lead, .skip-link { display: none !important; }
   .case__details[hidden] { display: block; }
   .case__toggle, .case__dots { display: none; }
@@ -1665,9 +1674,9 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
     <div class="hero__body">
       <div class="hero__main">
-        <h1 class="hero__title" data-en="Brands that stand out. <em>Systems</em> that don't fail.">Marcas que se destacam. <em>Sistemas</em> que não falham.</h1>
+        <h1 class="hero__title" data-en="Brands that stand out. <em>Systems</em> that don't fail."><span class="mar">Mar</span>cas que se destacam. <em>Sistemas</em> que não falham.</h1>
 
-        <p class="hero__lede" data-en="A duo — brand strategy and software engineering — building a brand and the technology behind it from the ground up.">Uma dupla — estratégia de marca e engenharia de software — construindo, do zero, a marca e a tecnologia por trás dela.</p>
+        <p class="hero__lede" data-en="A duo — brand strategy and software engineering — building a brand and the technology behind it from the ground up.">Uma dupla — estratégia de marca e engenharia de software — construindo, do zero, a <span class="mar">mar</span>ca e a <span class="tec">tec</span>nologia por trás dela.</p>
 
         <div class="hero__actions">
           <a href="#contato" class="btn btn--primary" data-en="Talk to us">Falar com a gente</a>
