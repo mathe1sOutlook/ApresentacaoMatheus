@@ -386,14 +386,7 @@ button {
   opacity: 0.6;
 }
 
-.hero__body {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 56px;
-  align-items: flex-end;
-  margin-top: 26px;
-}
-.hero__main { flex: 1 1 560px; }
+.hero__body { margin-top: 26px; max-width: 46ch; }
 
 .hero__title {
   font-family: var(--serif);
@@ -438,26 +431,6 @@ button {
 .btn--primary { background: var(--ink); color: var(--bg); }
 .btn--primary:hover { background: var(--ochre); border-color: var(--ochre); color: var(--bg); }
 .btn--outline:hover { background: var(--ink); color: var(--bg); }
-
-.ledger {
-  flex: 0 1 340px;
-  font-family: var(--mono);
-  font-size: 14px;
-  color: var(--ink-soft);
-  border-left: 1px solid var(--line-strong);
-  padding-left: 24px;
-  margin: 0;
-}
-.ledger dt, .ledger dd { margin: 0; }
-.ledger__row {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px 0;
-  border-bottom: 1px dashed var(--line);
-}
-.ledger__row:last-child { border-bottom: 0; }
-.ledger__row b { color: var(--ink); font-weight: 600; }
 
 /* Prova social — faixa em marquee, sangrando as bordas do container. */
 .proof {
@@ -1571,20 +1544,10 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .site-header .btn-ghost { display: none; }
 }
 
-@media (max-width: 899px) {
-  .hero__body { gap: 40px; }
-  .ledger {
-    flex: 1 1 100%;
-    border-left: 1px solid var(--line-strong);
-    padding: 4px 0 4px 20px;
-  }
-}
-
 @media (max-width: 599px) {
   :root { --gutter: 20px; }
   .section { padding: 72px 0; }
   .hero { padding: 88px 0 0; }
-  .hero__body { gap: 44px; }
   .person { padding: 36px 28px; }
   .person__head { grid-template-columns: 80px 1fr; gap: 20px; }
   .avatar { width: 80px; height: 80px; }
@@ -1664,31 +1627,14 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     <p class="eyebrow" data-en="Brand strategy &nbsp;×&nbsp; Systems engineering">Estratégia de marca &nbsp;×&nbsp; Engenharia de sistemas</p>
 
     <div class="hero__body">
-      <div class="hero__main">
-        <h1 class="hero__title" data-en="Brands that stand out. Technology that holds them up."><span class="mar">Mar</span>cas que se destacam. <span class="tec">Tec</span>nologia que sustenta.</h1>
+      <h1 class="hero__title" data-en="Brands that stand out. Technology that holds them up."><span class="mar">Mar</span>cas que se destacam. <span class="tec">Tec</span>nologia que sustenta.</h1>
 
-        <p class="hero__lede" data-en="A duo — brand strategy and software engineering — building a brand and the technology behind it from the ground up.">Uma dupla — estratégia de marca e engenharia de software — construindo, do zero, a marca e a tecnologia por trás dela.</p>
+      <p class="hero__lede" data-en="A duo — brand strategy and software engineering — building a brand and the technology behind it from the ground up.">Uma dupla — estratégia de marca e engenharia de software — construindo, do zero, a marca e a tecnologia por trás dela.</p>
 
-        <div class="hero__actions">
-          <a href="#contato" class="btn btn--primary" data-en="Talk to us">Falar com a gente</a>
-          <a href="#cases" class="btn btn--outline" data-en="See project cases">Ver casos de projeto</a>
-        </div>
+      <div class="hero__actions">
+        <a href="#contato" class="btn btn--primary" data-en="Talk to us">Falar com a gente</a>
+        <a href="#cases" class="btn btn--outline" data-en="See project cases">Ver casos de projeto</a>
       </div>
-
-      <dl class="ledger">
-        <div class="ledger__row">
-          <dt data-en="Track record">Trajetória</dt>
-          <dd><b>15+ <span data-en="years">anos</span></b></dd>
-        </div>
-        <div class="ledger__row">
-          <dt data-en="Sectors">Setores</dt>
-          <dd><b>B2B · B2C · <span data-en="Media">Mídia</span></b></dd>
-        </div>
-        <div class="ledger__row">
-          <dt data-en="Languages">Idiomas</dt>
-          <dd><b>PT-BR · English</b></dd>
-        </div>
-      </dl>
     </div>
   </div>
 
