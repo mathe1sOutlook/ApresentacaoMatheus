@@ -740,17 +740,28 @@ button {
 }
 
 /* ─── Casos ──────────────────────────────────────────────────────── */
+/* Carrossel horizontal: arrasto nativo (scroll-snap), o mesmo idioma da
+   faixa de imagens de cada caso, uma escala acima. Sem script já rola por
+   arrasto; o script acrescenta só o avanço automático (mais abaixo). */
 .cases {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
   gap: 24px;
-  align-items: start;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.cases::-webkit-scrollbar { display: none; }
+.cases:focus-visible { outline-offset: -2px; }
 
 /* Card: capa (foto ou moldura tracejada) com chips, título, métrica e
-   botão; os detalhes ficam recolhidos abaixo. */
+   botão; os detalhes ficam recolhidos abaixo. Largura fixa e fluida — a
+   mesma régua em qualquer tela, sem breakpoint por card. */
 .case {
   --case-rule: var(--ochre);
+  flex: 0 0 clamp(280px, 82vw, 440px);
+  scroll-snap-align: start;
   border: 1px solid var(--line-strong);
   background: var(--bg-card);
   border-radius: var(--r-surface);
@@ -1486,19 +1497,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .front + .front { margin-top: 28px; }
 }
 
-@media (min-width: 900px) {
-  .cases { grid-template-columns: repeat(2, 1fr); }
-  /* O caso conjunto abre a grade em largura total. */
-  .case--featured { grid-column: 1 / -1; }
-  .case--featured .case__cover { min-height: 540px; }
-  .case--featured .case__caption { max-width: 640px; }
-  /* Com o conjunto ocupando a primeira linha sozinho, um número par de casos
-     deixa o último órfão: ele abre a linha em vez de deixar metade vazia. */
-  .case:last-child:nth-child(even) { grid-column: 1 / -1; }
-  .case:last-child:nth-child(even) .case__cover { min-height: 400px; }
-  .case:last-child:nth-child(even) .case__caption { max-width: 640px; }
-}
-
 @media (min-width: 1024px) {
   .rule-grid--3 { grid-template-columns: repeat(3, 1fr); }
   /* Três colunas: o degrau é progressivo e o pé da seção fica irregular. */
@@ -1580,6 +1578,10 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   /* o trocadilho MAR·TEC é de tela: no papel as duas cores não têm contraste */
   .mar, .tec { color: inherit; }
   .hero__net, .wa-float, .site-header, .marquee, .lead, .skip-link { display: none !important; }
+  /* o carrossel é de tela; no papel os casos voltam a empilhar, um por linha */
+  .cases { display: block; overflow: visible; }
+  .case { flex: none; scroll-snap-align: none; }
+  .case + .case { margin-top: 24px; }
   .case__details[hidden] { display: block; }
   .case__toggle, .case__dots { display: none; }
   .case__reveal { opacity: 1 !important; transform: none !important; }
@@ -1852,7 +1854,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       <p class="section-intro" data-en="Tap “see details” to open the problem, the solution and the value delivered." data-pt="Toque em “ver detalhes” pra abrir problema, solução e valor entregue.">Tap “see details” to open the problem, the solution and the value delivered.</p>
     </div>
 
-    <div class="cases">
+    <div class="cases" tabindex="0" role="group" aria-label="Project cases; focusing pauses the auto-advance" data-en-aria-label="Project cases; focusing pauses the auto-advance" data-pt-aria-label="Casos de projeto; o foco pausa o avanço automático">
 <!-- Caso 01 ─────────────────────────────────────────────────── -->
     <article class="case case--featured reveal">
   <!-- Foto de capa: /img/casos/mediaportal.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
@@ -2910,6 +2912,64 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       marks.forEach(function (b, k) { b.setAttribute('aria-label', w.shot + (k + 1)); });
     });
   });
+
+  /* ─── Casos: avanço automático ─────────────────────────────────────
+     A fileira já arrasta sozinha (scroll-snap, o mesmo arrasto da faixa
+     de imagens acima); aqui entra só o avanço automático. Começa quando
+     a fileira aparece na tela — não fica adiantando um carrossel que
+     ninguém está vendo — e pausa no toque, no foco e enquanto um caso
+     está aberto, pro avanço não puxar o card debaixo de quem está lendo.
+     ───────────────────────────────────────────────────────────────── */
+  var casesRail = document.querySelector('.cases');
+  var caseCards = casesRail ? Array.prototype.slice.call(casesRail.querySelectorAll('.case')) : [];
+  if (casesRail && motionOK && caseCards.length > 1) {
+    var casesHold = false, casesTimer = null;
+
+    function cardScrollLeft(c) {
+      return c.getBoundingClientRect().left - casesRail.getBoundingClientRect().left + casesRail.scrollLeft;
+    }
+    function nearestIndex() {
+      var best = 0, dist = Infinity;
+      caseCards.forEach(function (c, i) {
+        var d = Math.abs(cardScrollLeft(c) - casesRail.scrollLeft);
+        if (d < dist) { dist = d; best = i; }
+      });
+      return best;
+    }
+    function advance() {
+      if (casesHold || document.hidden || casesRail.querySelector('.case.is-open')) return;
+      var max = casesRail.scrollWidth - casesRail.clientWidth;
+      /* Perto do fim, o card final pode não caber numa posição alcançável
+         (não sobra fileira pra rolar até alinhá-lo à esquerda) — em vez de
+         perseguir um alvo que o navegador vai sempre recortar, volta ao
+         início; o card final já apareceu de relance no passo anterior. */
+      if (casesRail.scrollLeft >= max - 2) {
+        casesRail.scrollTo({ left: 0, behavior: 'smooth' });
+        return;
+      }
+      var next = (nearestIndex() + 1) % caseCards.length;
+      casesRail.scrollTo({ left: Math.min(cardScrollLeft(caseCards[next]), max), behavior: 'smooth' });
+    }
+    function startCases() { if (!casesTimer) casesTimer = setInterval(advance, 5500); }
+    function stopCases() { clearInterval(casesTimer); casesTimer = null; }
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) startCases(); else stopCases();
+      }, { threshold: 0.15 }).observe(casesRail);
+    } else {
+      startCases();
+    }
+
+    casesRail.addEventListener('pointerenter', function () { casesHold = true; });
+    casesRail.addEventListener('pointerleave', function () { casesHold = false; });
+    casesRail.addEventListener('pointerdown', function () { casesHold = true; });
+    ['pointerup', 'pointercancel'].forEach(function (ev) {
+      casesRail.addEventListener(ev, function () { casesHold = false; });
+    });
+    casesRail.addEventListener('focusin', function () { casesHold = true; });
+    casesRail.addEventListener('focusout', function () { casesHold = false; });
+  }
 
   /* ─── Header recolhe ao descer, volta ao subir ────────────────── */
   var header = document.querySelector('.site-header');
