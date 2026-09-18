@@ -133,6 +133,14 @@ Reúne:
 - **Leads do site** — o que chegou pelo formulário público, com situação
   (novo, em contato, convertido, descartado) e conversão em cliente.
 
+O painel **relê o banco sozinho**: quando a aba volta ao foco e a cada minuto
+com ela à vista, respeitando um piso de 15s entre leituras e se segurando
+enquanto há modal aberto ou cursor dentro de um campo. Antes ele só lia no
+login, depois de uma alteração e no "↻ Atualizar dados" da gaveta — deixado
+aberto, mostrava para sempre a foto do momento em que entrou. Quando chega lead
+novo, o botão **Menu** acende um ponto ocre, o item *Leads do site* mostra a
+contagem e um aviso passa na tela.
+
 ### Backend
 
 Supabase (projeto compartilhado `mApps`, ref `wsgjbzsdewzplsnpfvdf`), tabelas
