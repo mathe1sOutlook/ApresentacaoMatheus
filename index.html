@@ -96,12 +96,14 @@
   --gutter:    32px;
   --header-h:  68px;
 
-  /* O que é superfície de conteúdo ganha um raio pequeno; o que é linha
-     técnica — trilhos, nós, conectores, réguas — continua reto. É essa
-     divisão que mantém a precisão e tira a rigidez. */
-  --r-surface: 10px;
-  --r-control: 8px;
-  --r-chip:    6px;
+  /* O que é superfície de conteúdo é arredondado; o que é linha técnica —
+     trilhos, nós, conectores, réguas — continua reto. É essa divisão que
+     mantém a precisão e tira a rigidez.
+     O teto é o controle, não o card: acima disto o botão e o campo viram
+     pílula, e aí a interface deixa de ser desta casa. */
+  --r-surface: 18px;
+  --r-control: 14px;
+  --r-chip:    10px;
 
   color-scheme: dark;
 }
