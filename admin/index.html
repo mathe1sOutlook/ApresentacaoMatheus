@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
-<title>Admin — Amaral &amp; Silva</title>
+<title>Admin — CASA MARTECH</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -182,11 +182,22 @@ button {
   text-align: center;
 }
 .gate__brand {
-  font-family: var(--serif);
-  font-size: 28px;
-  margin: 14px 0 4px;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.1em;
+  margin: 16px 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
-.gate__brand .amp { color: var(--ochre); font-style: italic; }
+/* Os mesmos dois pontos do cabeçalho do site: ocre para marca, azul para
+   tecnologia. Substituem o "&" ocre, que era da identidade anterior. */
+.brand-dots { display: inline-flex; gap: 5px; flex: none; }
+.brand-dots i { width: 6px; height: 6px; border-radius: 50%; display: block; }
+.brand-dots i:first-child { background: var(--ochre); }
+.brand-dots i:last-child  { background: var(--blue); }
 .gate__note { color: var(--ink-soft); font-size: 13.5px; margin: 14px 0 28px; }
 .gate__foot { margin-top: 26px; border-top: 1px solid var(--line); padding-top: 16px; }
 
@@ -208,10 +219,10 @@ button {
   min-height: var(--header-h);
 }
 .brandmark {
-  font-family: var(--serif);
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   white-space: nowrap;
   color: var(--ink);
   display: flex;
@@ -219,7 +230,7 @@ button {
   gap: 10px;
 }
 .brandmark:hover { color: var(--ink); }
-.brandmark .amp { color: var(--ochre); font-style: italic; }
+.brandmark .brand-dots { align-self: center; }
 .topbar__right { display: flex; align-items: center; gap: 16px; }
 .topbar__user { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
 
@@ -723,7 +734,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   <div class="gate">
     <div class="gate__card">
       <p class="eyebrow">Painel interno</p>
-      <p class="gate__brand">Amaral <span class="amp">&amp;</span> Silva</p>
+      <p class="gate__brand"><span class="brand-dots" aria-hidden="true"><i></i><i></i></span>CASA MARTECH</p>
       <p class="gate__note">CRM, financeiro, agenda e tarefas da dupla.<br />Acesso somente para contas autorizadas.</p>
       <button type="button" class="btn-solid" data-action="signIn">Entrar com Google</button>
       <div class="gate__foot"><a class="btn-link" href="/">← Voltar ao site</a></div>
@@ -736,7 +747,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   <div class="gate">
     <div class="gate__card">
       <p class="eyebrow">Acesso restrito</p>
-      <p class="gate__brand">Amaral <span class="amp">&amp;</span> Silva</p>
+      <p class="gate__brand"><span class="brand-dots" aria-hidden="true"><i></i><i></i></span>CASA MARTECH</p>
       <p class="gate__note">A conta <b class="mono" id="denied-email"></b> não está na lista de membros deste painel. Peça a um membro para cadastrar seu e-mail em <span class="mono">Equipe</span>.</p>
       <button type="button" class="btn-ghost" data-action="signOut">Sair e trocar de conta</button>
       <div class="gate__foot"><a class="btn-link" href="/">← Voltar ao site</a></div>
@@ -749,7 +760,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 
   <header class="topbar">
     <div class="container topbar__bar">
-      <a class="brandmark" href="#/dashboard">Amaral <span class="amp">&amp;</span> Silva
+      <a class="brandmark" href="#/dashboard"><span class="brand-dots" aria-hidden="true"><i></i><i></i></span>CASA MARTECH
         <span class="label label--ochre">Admin</span>
       </a>
       <div class="topbar__right">
