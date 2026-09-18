@@ -26,15 +26,15 @@ const CARDS = {
   'og.png': {
     lang: 'pt-BR',
     eyebrow: 'ESTRATÉGIA DE MARCA &nbsp;×&nbsp; ENGENHARIA DE SISTEMAS',
-    l1: 'Marcas que se destacam.',
-    l2: '<em>Sistemas</em> que não falham.',
+    l1: '<span class="mar">Mar</span>cas que se destacam.',
+    l2: '<span class="tec">Tec</span>nologia que sustenta.',
     foot: 'Marca e tecnologia na mesma mesa, do zero',
   },
   'og-en.png': {
     lang: 'en',
     eyebrow: 'BRAND STRATEGY &nbsp;×&nbsp; SYSTEMS ENGINEERING',
     l1: 'Brands that stand out.',
-    l2: "<em>Systems</em> that don't fail.",
+    l2: 'Technology that holds them up.',
     foot: 'Brand and technology at the same table, from zero',
   },
 };
@@ -56,7 +56,7 @@ canvas{position:absolute;inset:0;opacity:.6}
 .mid{margin-top:auto}
 .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:16px;letter-spacing:.18em;color:var(--ink-soft)}
 h1{font-family:'Fraunces',serif;font-weight:400;font-size:70px;line-height:1.07;letter-spacing:-.015em;margin-top:26px}
-h1 em{font-style:italic;background:linear-gradient(90deg,var(--ochre) 0%,#B4A283 50%,var(--blue) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+h1 .mar{color:var(--ochre)}h1 .tec{color:var(--blue)}
 .foot{margin-top:38px;display:flex;justify-content:space-between;align-items:flex-end;font-family:'IBM Plex Mono',monospace;font-size:17px;color:var(--ink-soft)}
 .rail{position:absolute;left:72px;right:72px;bottom:118px;height:2px;background:linear-gradient(90deg,var(--ochre) 0%,#B4A283 50%,var(--blue) 100%);opacity:.5}
 </style></head><body>
