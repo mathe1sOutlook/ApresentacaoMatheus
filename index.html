@@ -754,6 +754,10 @@ button {
 }
 .cases::-webkit-scrollbar { display: none; }
 .cases:focus-visible { outline-offset: -2px; }
+/* Com um caso aberto, os vizinhos param de esticar até a altura dele — senão
+   a capa de cada um cresceria junto, com a foto ocupando um card de mil
+   pixels. O script marca a fileira; sem script nada abre. */
+.cases.has-open { align-items: flex-start; }
 
 /* Card: capa (foto ou moldura tracejada) com chips, título, métrica e
    botão; os detalhes ficam recolhidos abaixo. Largura fixa e fluida — a
@@ -762,6 +766,8 @@ button {
   --case-rule: var(--ochre);
   flex: 0 0 clamp(280px, 82vw, 440px);
   scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--line-strong);
   background: var(--bg-card);
   border-radius: var(--r-surface);
@@ -776,6 +782,9 @@ button {
   position: relative;
   display: flex;
   flex-direction: column;
+  /* preenche o card: na fileira os cards têm a mesma altura, e uma foto não
+     pode parar antes do fim dele */
+  flex: 1 0 auto;
   min-height: 460px;
   padding: 26px 30px 30px;
   overflow: hidden;
@@ -867,6 +876,24 @@ button {
 }
 .case__cover--photo .case__media .media__hint,
 .case__cover--photo .case__media .media__client { display: none; }
+
+/* Peça de campanha (banner, anúncio): não é fotografia, é criação — fica
+   montada na prancha, na proporção em que foi feita, em vez de cobrir a
+   capa. Cobrindo, um banner de 3,7:1 numa capa quase quadrada mostraria um
+   terço de si; contido, viraria uma tira perdida. Montado como peça, com a
+   prancha à vista, é o que faz sentido para material de mídia. */
+.case__cover--piece .case__shots { display: block; }
+.case__cover--piece .case__media .media {
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-chip);
+  overflow: hidden;
+  background: var(--bg-deep);
+}
+.case__cover--piece .case__shot { display: block; width: 100%; height: auto; }
+.case__cover--piece .media__hint,
+.case__cover--piece .media__client { display: none; }
 
 /* Faixa de imagens: com uma só é a capa; com duas ou mais vira carrossel de
    arrasto nativo (scroll-snap), e o script acrescenta marcadores e teclado. */
@@ -1137,6 +1164,8 @@ button {
   height: 100%;
   object-fit: cover;
 }
+/* O cartaz do AMWC é retrato numa caixa 2:1: mostra o alto — título e olhar. */
+[data-slot="more-amwc"] img { object-position: 50% 5%; }
 .more-card__media .media { display: none; }
 .more-card__media.is-empty img { display: none; }
 .more-card__media.is-empty .media {
@@ -1584,7 +1613,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .case + .case { margin-top: 24px; }
   .case__details[hidden] { display: block; }
   .case__toggle, .case__dots { display: none; }
-  .case__reveal { opacity: 1 !important; transform: none !important; }
+  .case__reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   .case__title::after { transform: none !important; }
   .case__cover:not(.case__cover--photo) { background: none; }
   a { color: inherit; }
@@ -1939,7 +1968,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="/img/casos/mindminers.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+          <img class="case__shot" src="/img/casos/mindminers.jpg" alt="Cinco jovens sentados num banco de praça, rindo enquanto olham o celular" data-en-alt="Five young people on a park bench, laughing at their phones" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
         </div>
         <span class="media__client">Ame Digital × MindMiners</span>
         <figcaption class="media__hint" data-en="Awaiting the case screenshot">Aguardando print do case</figcaption>
@@ -1995,8 +2024,8 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
     <!-- Caso 03 ─────────────────────────────────────────────────── -->
     <article class="case reveal">
-  <!-- Foto de capa: /img/casos/ame-x.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
-  <div class="case__cover case__cover--photo">
+  <!-- Peça de campanha: /img/casos/ame-x.jpg, montada na prancha na proporção original (case__cover--piece) em vez de cobrir a capa. Sem o arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--piece">
     <div class="case__chips">
       <span class="case__chip"><span data-en="Case">Caso</span> 03</span>
       <span class="case__chip" data-en="Validated case · X">Case validado · X</span>
@@ -2008,7 +2037,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="/img/casos/ame-x.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+          <img class="case__shot" src="/img/casos/ame-x.jpg" alt="Banner da Ame para a Cashback Friday: peça seu Cartão Ame e ganhe até 100% de cashback" data-en-alt="Ame's Cashback Friday banner: get your Ame card and earn up to 100% cashback" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" />
         </div>
         <span class="media__client">Ame Digital × X (Twitter)</span>
         <figcaption class="media__hint" data-en="Awaiting the case screenshot">Aguardando print do case</figcaption>
@@ -2077,7 +2106,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="/img/casos/corning.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+          <img class="case__shot" src="/img/casos/corning.jpg" alt="Participantes do Corning CALA Channel Summit reunidos na proa de um barco, de chapéu panamá, acenando para a câmera" data-en-alt="Corning CALA Channel Summit attendees gathered on the bow of a boat, in Panama hats, waving at the camera" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
         </div>
         <span class="media__client">Corning CALA Summit</span>
         <figcaption class="media__hint" data-en="Awaiting event photos">Aguardando fotos do evento</figcaption>
@@ -2146,7 +2175,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
         <article class="more-card reveal">
           <!-- Imagem: /img/projetos/amwc.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-amwc">
-            <img src="/img/projetos/amwc.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <img src="/img/projetos/amwc.jpg" alt="Cartaz do AMWC Brazil 2024 — Aesthetic Medicine World Congress, São Paulo, 20 a 22 de junho" data-en-alt="AMWC Brazil 2024 poster — Aesthetic Medicine World Congress, São Paulo, June 20–22" onerror="this.parentNode.classList.add('is-empty')" />
             <figure class="media">
               <span class="media__client">AMWC Brazil 2024</span>
               <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
@@ -2162,7 +2191,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
         <article class="more-card reveal">
           <!-- Imagem: /img/projetos/ame-tom-de-voz.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-ame-tom-de-voz">
-            <img src="/img/projetos/ame-tom-de-voz.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')" />
+            <img src="/img/projetos/ame-tom-de-voz.jpg" alt="Peças da Ame: o banner “Pra pagar e muito mais, Ame” e a grade de serviços do super app" data-en-alt="Ame pieces: the “Pra pagar e muito mais, Ame” banner and the super app’s service grid" onerror="this.parentNode.classList.add('is-empty')" />
             <figure class="media">
               <span class="media__client">Ame Digital</span>
               <figcaption class="media__hint" data-en="Screenshot pending">Screenshot pendente</figcaption>
@@ -2821,6 +2850,8 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       var open = btn.getAttribute('aria-expanded') === 'true';
       btn.setAttribute('aria-expanded', String(!open));
       if (card) card.classList.toggle('is-open', !open);
+      var rail = card && card.closest('.cases');
+      if (rail) rail.classList.toggle('has-open', !!rail.querySelector('.case.is-open'));
       if (open) collapsePanel(panel); else expandPanel(panel);
     }
 
