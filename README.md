@@ -173,7 +173,12 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   existe, a moldura tracejada "foto aqui" aparece no lugar.
 - **Logos da faixa "já fizemos história com..."** — `/img/logos/<slug>.svg`
   (corning, ame, quintoandar, mediaportal, informa, gipsyy), monocromáticos; o
-  CSS pinta de creme. Sem o arquivo, fica o nome em texto.
+  CSS pinta de creme. Sem o arquivo, fica o nome em texto. No ar: `corning`
+  (wordmark). **Faltam ame, quintoandar, mediaportal, informa e gipsyy.** O
+  arquivo precisa ter **fundo transparente**: o filtro que pinta de creme
+  (`brightness(0) invert(0.93)`) pinta tudo que não é transparente, então um
+  retângulo de fundo vira um bloco chapado. Serve SVG ou PNG com alpha; se for
+  PNG, trocar a extensão no `src` das duas listas da faixa.
 - **Vercel Web Analytics** — o site já carrega `/_vercel/insights/script.js`;
   só começa a contar depois de ativar *Analytics* no projeto na Vercel.
 - **Imagens dos casos e projetos** — cada card aponta para um arquivo em
