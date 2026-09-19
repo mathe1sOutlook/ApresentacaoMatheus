@@ -446,11 +446,13 @@ controlada da geometria. Nenhum texto do site mudou.
 - [ ] decidir quais cases técnicos do Matheus entram;
 - [ ] receber/selecionar imagens dos cases técnicos do Matheus;
 - [ ] avaliar outras marcas do Matheus para a proof strip;
-- [ ] **incorporar os arquivos de imagem dos cases** — a arquitetura está pronta
-      (`/img/casos/mediaportal|mindminers|ame-x|corning.jpg`,
-      `/img/projetos/amwc|ame-tom-de-voz|gipsyy.jpg`, uma ou várias por caso);
-      falta só salvar os arquivos recebidos com esses nomes. Conferir antes se
-      os dois `amedigitallarge...` são o mesmo material;
+- [x] **incorporar os arquivos de imagem dos cases** — entraram `corning`
+      (foto do barco), `mindminers` (banco de praça), `ame-x` (banner Cashback
+      Friday, montado como peça na prancha), `amwc` (cartaz) e `ame-tom-de-voz`
+      (banner do super app + grade de serviços, recompostos sobre a cor do
+      card). Os dois `amedigitallarge...` não eram o mesmo material — um é o
+      Cashback Friday, o outro o super app — e foram para encaixes diferentes.
+      **Faltam** `mediaportal` (precisa do print real do site) e `gipsyy`;
 - [ ] validar o contorno de casa no hero — está no ar, mas sai com uma linha;
 - [x] prototipar uma alternativa leve para “O que entregamos”, sem bolhas;
 - [x] prototipar cascata de problemas;

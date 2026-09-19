@@ -178,14 +178,23 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   só começa a contar depois de ativar *Analytics* no projeto na Vercel.
 - **Imagens dos casos e projetos** — cada card aponta para um arquivo em
   `/img/casos/` (mediaportal, mindminers, ame-x, corning) e em `/img/projetos/`
-  (amwc, ame-tom-de-voz, gipsyy), todos `.jpg` em paisagem. **Esta lista é a
-  seleção aprovada; não acrescentar nomes sem aprovação** — os cases retirados
-  na rodada 2 não voltam. Basta salvar o arquivo com esse nome; enquanto ele
-  não existe, o `onerror` do `<img>` deixa a capa na moldura de espera sobre
-  uma malha de desenho (as imagens ausentes respondem 404, que é barato).
-  Quando as imagens chegarem, exporte em WebP (ou AVIF) com largura 1600 px
-  para as capas e 800 px para os cards; o nome do arquivo pode manter `.jpg` ou
-  trocar a extensão no HTML.
+  (amwc, ame-tom-de-voz, gipsyy). **Esta lista é a seleção aprovada; não
+  acrescentar nomes sem aprovação** — os cases retirados na rodada 2 não
+  voltam. Já estão no ar: `corning` (foto do barco), `mindminers` (banco de
+  praça), `ame-x` (banner Cashback Friday), `amwc` (cartaz) e `ame-tom-de-voz`
+  (banner do super app + grade de serviços). **Faltam `mediaportal`, que
+  precisa do print real do site, e `gipsyy`.** Basta salvar o arquivo com esse
+  nome; enquanto ele não existe, o `onerror` do `<img>` deixa a capa na
+  moldura de espera sobre uma malha de desenho (as imagens ausentes respondem
+  404, que é barato). O que está no ar é JPEG progressivo, 1600 px de largura
+  nas capas e o tamanho original nos cards; WebP/AVIF fica para quando houver
+  pipeline de imagem.
+  Uma capa de caso tem dois modos. **Foto** (`case__cover--photo`) cobre o
+  card inteiro, com degradê para a legenda ler. **Peça** (`case__cover--piece`)
+  é para banner e anúncio: a imagem fica montada na prancha, na proporção em
+  que foi feita — cobrindo, um banner de 3,7:1 numa capa quase quadrada
+  mostraria um terço de si. O `onerror` de cada `<img>` remove a classe do seu
+  modo, e a capa volta para a moldura de espera.
   Um caso aceita **mais de uma imagem**: é duplicar o `<img class="case__shot">`
   dentro da `<div class="case__shots">`. A partir da segunda, a faixa vira
   carrossel — arrasto nativo por scroll-snap, marcadores e setas do teclado
