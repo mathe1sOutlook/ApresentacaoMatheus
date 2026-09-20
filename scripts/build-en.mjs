@@ -13,22 +13,22 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const src = readFileSync(resolve(root, 'index.html'), 'utf8');
 
 const META_EN = {
-  title: 'Amaral & Silva — Brand strategy & systems engineering',
+  title: 'CASA MARTECH — Brand strategy & systems engineering',
   description: 'A duo that builds a brand and the technology behind it from the ground up: strategy, research and go-to-market alongside custom systems, dashboards, automation and applied AI.',
-  ogDescription: 'Brands that stand out. Systems that sustain them. Brand strategy and systems engineering at the same table.',
-  canonical: 'https://amaralesilva.vercel.app/en',
-  ogImage: 'https://amaralesilva.vercel.app/og-en.png',
-  ogImageAlt: 'Amaral & Silva — Brands that stand out. Systems that sustain them.',
+  ogDescription: "Brands that stand out. Technology that holds them up. Brand strategy and systems engineering at the same table.",
+  canonical: 'https://casamartech.vercel.app/en',
+  ogImage: 'https://casamartech.vercel.app/og-en.png',
+  ogImageAlt: "CASA MARTECH — Brands that stand out. Technology that holds them up.",
   jsonLd: {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
-    name: 'Amaral & Silva',
-    url: 'https://amaralesilva.vercel.app/en',
+    name: 'CASA MARTECH',
+    url: 'https://casamartech.vercel.app/en',
     description: 'Brand strategy and systems engineering: branding, research and go-to-market alongside custom systems, dashboards, automation and applied AI.',
     areaServed: 'BR',
     availableLanguage: ['pt-BR', 'en'],
     address: { '@type': 'PostalAddress', addressLocality: 'São Paulo', addressCountry: 'BR' },
-    telephone: '+55-11-96904-1800',
+    telephone: '+55-11-99977-3471',
     member: [
       { '@type': 'Person', name: 'Bruno Amaral', jobTitle: 'Marketing Strategist & Branding Consultant' },
       { '@type': 'Person', name: 'Matheus Silva', jobTitle: 'Civil Engineer, MSc in Structures & Full-Stack Developer' },

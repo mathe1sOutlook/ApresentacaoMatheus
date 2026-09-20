@@ -25,6 +25,14 @@
       "destination": "/proposta-mediaportal-crm-gkE7aZiV41L2LYkWDqhXLz7l/index.html"
     },
     {
+      "source": "/proposta-2jem-tN8I96nywHcRy0G7ZuSaTzNx",
+      "destination": "/proposta-2jem-tN8I96nywHcRy0G7ZuSaTzNx/index.html"
+    },
+    {
+      "source": "/proposta-2jem-tN8I96nywHcRy0G7ZuSaTzNx/(.*)",
+      "destination": "/proposta-2jem-tN8I96nywHcRy0G7ZuSaTzNx/index.html"
+    },
+    {
       "source": "/admin",
       "destination": "/admin/index.html"
     },
@@ -39,7 +47,7 @@
   ],
   "headers": [
     {
-      "source": "/proposta-mediaportal-(.*)",
+      "source": "/proposta-(.*)",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
       ]

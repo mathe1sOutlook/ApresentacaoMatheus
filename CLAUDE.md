@@ -1,12 +1,16 @@
-# CLAUDE.md — Amaral & Silva
+# CLAUDE.md — CASA MARTECH
 
 Regras para quem trabalha neste repositório. Em conflito entre este arquivo e
 um hábito genérico, **este arquivo vence**.
 
 ## O projeto
 
-Site institucional da dupla **Bruno Amaral** (marca e estratégia) e **Matheus
-Silva** (tecnologia e dados), em <https://amaralesilva.vercel.app>. HTML
+Site institucional da **CASA MARTECH** — a dupla **Bruno Amaral** (marca e
+estratégia) e **Matheus Silva** (tecnologia e dados). No ar em
+<https://casamartech.vercel.app> enquanto o domínio próprio não é decidido.
+O endereço anterior, `amaralesilva.vercel.app`, segue anexado ao projeto na
+Vercel e continua abrindo o site — é o que mantém de pé os QR já impressos e os
+links que circularam. HTML
 estático servido direto pela Vercel, sem build e sem dependências. A estrutura
 de pastas e as decisões técnicas estão no `README.md` — leia-o antes de mexer.
 

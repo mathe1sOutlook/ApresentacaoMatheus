@@ -1,12 +1,19 @@
-# Amaral &amp; Silva — site institucional
+# CASA MARTECH — site institucional
 
-One-pager bilíngue (PT-BR / EN) da dupla **Bruno Amaral** (marca e estratégia) e
-**Matheus Silva** (tecnologia e dados). Publicado em
-<https://amaralesilva.vercel.app>.
+One-pager bilíngue (PT-BR / EN) da **CASA MARTECH** — a dupla **Bruno Amaral**
+(marca e estratégia) e **Matheus Silva** (tecnologia e dados). Publicado em
+<https://casamartech.vercel.app> até a dupla ter domínio próprio.
+
+O endereço anterior, `amaralesilva.vercel.app`, continua anexado ao projeto na
+Vercel e abrindo o site — é o que segura os QR já impressos e os links que
+circularam. O canônico, o sitemap, o Open Graph, o JSON-LD e os QR novos
+apontam para `casamartech.vercel.app`.
 
 Implementa o handoff *Reestruturação de branding* na versão escura — fundo
 quase preto, tinta creme, ocre para marca, azul para tecnologia, Fraunces +
-Inter + IBM Plex Mono, zero arredondamento e réguas de 1px como estrutura. O
+Inter + IBM Plex Mono, superfícies arredondadas sobre réguas de 1px — o que é
+cartão, botão ou campo tem canto macio; o que é linha técnica (trilhos, nós,
+conectores) continua reto. O
 hero traz uma constelação em canvas (ocre à esquerda, azul à direita) com
 semente fixa, que flutua devagar e reage ao cursor; as seções entram com um
 fade curto ao rolar. Os dois efeitos desligam com `prefers-reduced-motion`.
@@ -17,13 +24,18 @@ A prova social roda em marquee.
 ```
 index.html      site completo (marcação + <style> + <script>, sem build)
 en/index.html   versão inglesa pré-renderizada (gerada, ver "Idiomas")
-scripts/        build-en.mjs, gerador do en/index.html (só desenvolvimento)
-favicon.svg     "&" em ocre sobre fundo escuro
-og.png, og-en.png  imagem de compartilhamento (1200×630) em PT e EN
-fonts/          woff2 variáveis (latin + latin-ext): Fraunces, Inter e IBM Plex
-                Mono para o site; Space Grotesk para a proposta do CRM
+scripts/        build-en.mjs (gera en/index.html), build-og.mjs (gera as duas
+                imagens de compartilhamento) e build-qr.py (gera os dois QR) —
+                só desenvolvimento
+favicon.svg     a casa do hero em traço: telhado ocre, paredes azuis, sem texto
+og.png, og-en.png  imagem de compartilhamento (1200×630) em PT e EN, geradas por
+                scripts/build-og.mjs com as fontes e os tokens do site
+fonts/          woff2 (latin + latin-ext): Fraunces, Inter e IBM Plex Mono para o
+                site; Space Grotesk para a proposta do CRM; Barlow e Barlow
+                Condensed para a proposta da 2JEM
 img/qr.svg      QR do site para a caixa "uso físico"; img/qr-print.svg é a
-                versão preto-no-branco para cartão, crachá e proposta
+                versão preto-no-branco para cartão, crachá e proposta. Os dois
+                são gerados por scripts/build-qr.py
 robots.txt      libera o site, bloqueia as propostas e o /admin
 sitemap.xml     / e /en com hreflang
 vercel.json     rewrites (/en, /admin, propostas), noindex das propostas e do
@@ -33,6 +45,8 @@ vercel.json     rewrites (/en, /admin, propostas), noindex das propostas e do
 docs/           material de trabalho interno; não vai para o ar
 proposta-mediaportal-*/   três propostas privadas para a Media Portal, fora do índice
                 (site, contrato e CRM & Inteligência de Dados)
+proposta-2jem-*/          proposta de marca e plataforma digital da 2JEM, no
+                sistema "Verde · Navy" (tokens próprios, tema claro só)
 admin/          painel interno da dupla (CRM, financeiro, agenda, tarefas)
 ```
 
@@ -60,6 +74,26 @@ junto.**
 Para editar uma frase, mude os dois lados: o texto no HTML (PT) e o `data-en`
 (EN). Se um dia o site virar Next.js, esses pares alimentam direto os
 dicionários do `next-intl`.
+
+## QR code
+
+`img/qr.svg` (creme sobre quase preto, para a tela) e `img/qr-print.svg` (preto
+no branco, para papel) são **gerados**: `pip install segno && python3
+scripts/build-qr.py`. Os dois codificam
+`https://casamartech.vercel.app/?utm_source=qr`, em 33 módulos com correção de
+erro Q — o mesmo tamanho de sempre, então a caixa de 120px do contato não muda.
+
+Trocar o endereço é trocar a constante `SITE` no script e rodar de novo. O que
+já foi impresso aponta para o endereço anterior e continua funcionando enquanto
+ele estiver anexado ao projeto na Vercel.
+
+## Imagens de compartilhamento
+
+`og.png` e `og-en.png` são **geradas**, não desenhadas à mão: `node
+scripts/build-og.mjs` monta um cartão de 1200×630 com as fontes embutidas em
+base64, a mesma constelação de semente fixa do hero, o contorno de casa em linha
+de construção e a trilha ocre → azul. Se a tagline, o nome ou o endereço
+mudarem, é o script que muda — e as duas imagens são versionadas junto.
 
 ## Formulário de contato (leads)
 
@@ -101,6 +135,14 @@ Reúne:
 - **Leads do site** — o que chegou pelo formulário público, com situação
   (novo, em contato, convertido, descartado) e conversão em cliente.
 
+O painel **relê o banco sozinho**: quando a aba volta ao foco e a cada minuto
+com ela à vista, respeitando um piso de 15s entre leituras e se segurando
+enquanto há modal aberto ou cursor dentro de um campo. Antes ele só lia no
+login, depois de uma alteração e no "↻ Atualizar dados" da gaveta — deixado
+aberto, mostrava para sempre a foto do momento em que entrou. Quando chega lead
+novo, o botão **Menu** acende um ponto ocre, o item *Leads do site* mostra a
+contagem e um aviso passa na tela.
+
 ### Backend
 
 Supabase (projeto compartilhado `mApps`, ref `wsgjbzsdewzplsnpfvdf`), tabelas
@@ -116,39 +158,62 @@ No painel do Supabase, em *Authentication → URL Configuration* do projeto
 `mApps`, adicionar às **Redirect URLs**:
 
 ```
+https://casamartech.vercel.app/admin
 https://amaralesilva.vercel.app/admin
 ```
 
-Sem isso o retorno do login Google não volta para o painel. (O provider
-Google já está ativo no projeto.)
+Sem isso o retorno do login Google não volta para o painel — o `/admin` usa
+`location.origin`, então **todo endereço pelo qual o painel é aberto precisa
+estar nessa lista**. (O provider Google já está ativo no projeto.)
 
 ## Pendências
 
 - **Fotos da dupla** — os avatares em `#dupla` apontam para `/img/bruno.jpg` e
   `/img/matheus.jpg` (quadradas, 400×400 ou mais). Enquanto o arquivo não
   existe, a moldura tracejada "foto aqui" aparece no lugar.
-- **Logos da faixa "já passaram por essas mãos"** — `/img/logos/<slug>.svg`
-  (corning, americanas, quintoandar, mediaportal, tvcultura, informa, gipsyy),
-  monocromáticos; o CSS pinta de creme. Sem o arquivo, fica o nome em texto.
+- **Logos da faixa "já fizemos história com..."** — `/img/logos/<slug>.svg`
+  (corning, ame, quintoandar, mediaportal, informa, gipsyy), monocromáticos; o
+  CSS pinta de creme. Sem o arquivo, fica o nome em texto. No ar: `corning`
+  (wordmark). **Faltam ame, quintoandar, mediaportal, informa e gipsyy.** O
+  arquivo precisa ter **fundo transparente**: o filtro que pinta de creme
+  (`brightness(0) invert(0.93)`) pinta tudo que não é transparente, então um
+  retângulo de fundo vira um bloco chapado. Serve SVG ou PNG com alpha; se for
+  PNG, trocar a extensão no `src` das duas listas da faixa.
 - **Vercel Web Analytics** — o site já carrega `/_vercel/insights/script.js`;
   só começa a contar depois de ativar *Analytics* no projeto na Vercel.
-- **Imagens dos casos e projetos** — cada card já aponta para um arquivo em
-  `/img/casos/` (mediaportal, mindminers, ame-x, corning, genma) e em
-  `/img/projetos/` (amwc, ame-tom-de-voz, istoe, nog, visionone, gipsyy,
-  fundacalc, flora), todos `.jpg` em paisagem. Basta salvar o arquivo com esse
-  nome; enquanto ele não existe, o `onerror` do `<img>` mostra a moldura
-  tracejada "aguardando" (as imagens ausentes respondem 404, que é barato).
-  Quando as imagens chegarem, exporte em WebP (ou AVIF)
-  com largura 1600 px para as capas e 800 px para os cards; o nome do arquivo
-  pode manter `.jpg` ou trocar a extensão no HTML.
-- **Contato** — enquanto o domínio `amaralesilva.com` não estiver ativo, o
-  canal é o do Bruno: `bamaralpenha@gmail.com` e WhatsApp (11) 99977-3471.
-  O `contato@amaralesilva.com` do design nunca existiu, e o antigo
-  (11) 96904-1800 saiu do site — a dupla atende por um canal só. Quando o
+- **Imagens dos casos e projetos** — cada card aponta para um arquivo em
+  `/img/casos/` (mediaportal, mindminers, ame-x, corning) e em `/img/projetos/`
+  (amwc, ame-tom-de-voz, gipsyy). **Esta lista é a seleção aprovada; não
+  acrescentar nomes sem aprovação** — os cases retirados na rodada 2 não
+  voltam. Já estão no ar: `corning` (foto do barco), `mindminers` (banco de
+  praça), `ame-x` (banner Cashback Friday), `amwc` (cartaz) e `ame-tom-de-voz`
+  (banner do super app + grade de serviços). **Faltam `mediaportal`, que
+  precisa do print real do site, e `gipsyy`.** Basta salvar o arquivo com esse
+  nome; enquanto ele não existe, o `onerror` do `<img>` deixa a capa na
+  moldura de espera sobre uma malha de desenho (as imagens ausentes respondem
+  404, que é barato). O que está no ar é JPEG progressivo, 1600 px de largura
+  nas capas e o tamanho original nos cards; WebP/AVIF fica para quando houver
+  pipeline de imagem.
+  Uma capa de caso tem dois modos. **Foto** (`case__cover--photo`) cobre o
+  card inteiro, com degradê para a legenda ler. **Peça** (`case__cover--piece`)
+  é para banner e anúncio: a imagem fica montada na prancha, na proporção em
+  que foi feita — cobrindo, um banner de 3,7:1 numa capa quase quadrada
+  mostraria um terço de si. O `onerror` de cada `<img>` remove a classe do seu
+  modo, e a capa volta para a moldura de espera.
+  Um caso aceita **mais de uma imagem**: é duplicar o `<img class="case__shot">`
+  dentro da `<div class="case__shots">`. A partir da segunda, a faixa vira
+  carrossel — arrasto nativo por scroll-snap, marcadores e setas do teclado
+  entram sozinhos. A primeira imagem é a capa: se ela faltar, o caso inteiro
+  volta para a moldura de espera.
+- **Contato** — enquanto a CASA MARTECH não tiver domínio e e-mail próprios, o
+  canal é o do Bruno: `bamaralpenha@gmail.com` e WhatsApp (11) 99977-3471 — que
+  é também o telefone do JSON-LD. O `contato@amaralesilva.com` do design nunca
+  existiu, e o antigo (11) 96904-1800 saiu do site e do schema: a dupla atende
+  por um canal só. Quando o
   domínio entrar, é aqui que o endereço muda.
 ## Desvio do design
 
 O ocre e o azul foram clareados para o fundo escuro: `#C9A24E` e `#7A93E6`
 (ambos acima de 6:1 sobre `--bg`, o mínimo WCAG AA para texto pequeno é 4,5:1).
-Os tokens vivem no `:root` de `index.html`; a cor do `&` em `favicon.svg`
-acompanha o ocre.
+Os tokens vivem no `:root` de `index.html`; o `favicon.svg`
+usa as duas cores, ocre no telhado e azul nas paredes.
