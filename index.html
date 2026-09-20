@@ -528,6 +528,14 @@ button {
   white-space: nowrap;
 }
 @keyframes marquee { to { transform: translateX(-50%); } }
+@keyframes symptoms-loop { to { transform: translateX(calc(-50% - 6px)); } }
+@keyframes fronts-timer { from { width: 0; } to { width: 100%; } }
+@keyframes fronts-item { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .symptoms.is-loop { animation: none; }
+  .fronts__tab.is-on i { animation: none; width: 100%; }
+  .fronts__panel, .fronts__panel.is-on li { transition: none; animation: none; }
+}
 /* Sem movimento, a faixa vira lista que quebra linha: todos os nomes aparecem. */
 @media (prefers-reduced-motion: reduce) {
   .marquee { -webkit-mask-image: none; mask-image: none; }
@@ -640,9 +648,9 @@ button {
 }
 
 /* ─── Diagnóstico ──────────────────────────────────────────────────
-   Seis sintomas em cascata, cada um pendurado numa régua de 1px. A cor
-   do índice diz de que lado vem o problema — ocre na marca, azul no
-   sistema —, e eles se alternam: é a tese da casa vista de perto. */
+   Seis sintomas em cascata, cada um pendurado numa régua de 1px. Todos
+   no mesmo ocre: o leitor se reconhece na dor, não na disciplina — a
+   divisão marca/sistema é assunto da casa, não dele. */
 .symptoms {
   display: grid;
   grid-template-columns: 1fr;
@@ -665,8 +673,9 @@ button {
   height: 46px;
   background: var(--symptom-tone, var(--ochre));
 }
-.symptom--brand { --symptom-tone: var(--ochre); }
-.symptom--tech  { --symptom-tone: var(--blue); }
+.symptom--brand, .symptom--tech { --symptom-tone: var(--ochre); }
+/* Cópias feitas pelo carrossel do celular não aparecem na cascata larga. */
+@media (min-width: 640px) { .symptom[aria-hidden="true"] { display: none; } }
 .symptom__index {
   font-family: var(--mono);
   font-size: 14px;
@@ -684,9 +693,124 @@ button {
   color: var(--ink-soft);
   max-width: 34ch;
 }
+.symptom__side {
+  display: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--symptom-tone);
+}
+/* Sinais concretos: como o sintoma aparece no dia a dia. */
+.symptom__signs {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--ink-soft);
+  max-width: 34ch;
+}
+.symptom__signs li { display: flex; gap: 10px; align-items: baseline; }
+.symptom__signs li::before {
+  content: "";
+  flex: none;
+  width: 10px;
+  height: 1px;
+  background: var(--symptom-tone);
+  transform: translateY(-4px);
+}
 /* A entrada vem da esquerda, para ler como cascata e não como fade de grade. */
 .js-reveal .symptom { transform: translate(-14px, 16px); }
 .js-reveal .symptom.is-in { transform: none; }
+
+/* No celular os seis sintomas viram um baralho: cartas altas, uma por vez,
+   deslizando na horizontal. O índice cresce até virar a imagem da carta —
+   é o que se vê antes de ler qualquer palavra. */
+.symptoms__rail { display: none; }
+@media (max-width: 639px) {
+  /* Carrossel infinito: o script duplica as seis cartas e a faixa anda
+     sozinha até -50%, onde a cópia coincide com o original (mesmo truque
+     do marquee de clientes). Toque pausa; sem movimento, vira lista. */
+  .symptoms {
+    display: flex;
+    gap: 12px;
+    width: max-content;
+    margin: 0 calc(-1 * var(--gutter, 24px));
+    padding: 4px 0 8px;
+    will-change: transform;
+  }
+  .symptoms.is-loop {
+    animation: symptoms-loop 42s linear infinite;
+  }
+  .symptoms.is-loop.is-paused { animation-play-state: paused; }
+  .symptoms__wrap { overflow: hidden; }
+  .symptom {
+    flex: 0 0 min(76vw, 340px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 28px;
+    min-height: 360px;
+    margin-left: 0;
+    padding: 22px 22px 24px 22px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-surface);
+    background:
+      radial-gradient(120% 80% at 100% 0%, color-mix(in oklab, var(--symptom-tone) 18%, transparent) 0%, transparent 60%),
+      var(--bg-card);
+    overflow: hidden;
+  }
+  .symptom::before { display: none; }
+  .symptom__index { display: none; }
+  /* Sem número nem rótulo: a carta abre só com um disco luminoso. */
+  .symptom__side { display: flex; align-items: center; gap: 10px; font-size: 0; color: transparent; }
+  .symptom__side::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--symptom-tone);
+    box-shadow: 0 0 14px 3px color-mix(in oklab, var(--symptom-tone) 35%, transparent);
+  }
+  .symptom__signs {
+    margin-top: 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+    max-width: none;
+  }
+  .symptom__title { font-size: 26px; line-height: 1.15; margin-top: auto; }
+  .symptom__text { margin-top: 10px; font-size: 15px; line-height: 1.45; max-width: none; margin-bottom: auto; }
+  /* Cartas fora da tela não podem esperar o observer: já nascem visíveis. */
+  .js-reveal .symptom { opacity: 1; transform: none; transition: none; }
+
+  .symptoms__rail {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+  .symptoms__rail i {
+    flex: 1;
+    height: 1px;
+    background: var(--line-strong);
+    position: relative;
+    overflow: hidden;
+  }
+  .symptoms__rail i::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--ochre), transparent);
+  }
+}
 
 /* ─── Frentes ──────────────────────────────────────────────────────
    As duas frentes penduram no mesmo trilho: uma linha só, ocre numa ponta
@@ -1563,8 +1687,131 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .rule-grid--2 { grid-template-columns: repeat(2, 1fr); }
   .fronts { grid-template-columns: repeat(2, 1fr); }
 }
+@media (min-width: 640px) and (max-width: 767px) {
+  /* Na cascata estreita o sintoma encosta na régua; no celular ele vira
+     carta e usa o padding dela. */
+  .symptom { padding: 2px 4px 26px 18px; }
+}
 @media (max-width: 767px) {
   .front + .front { margin-top: 28px; }
+}
+/* No celular, "O que entregamos" vira duas abas — Marca · Tecnologia —
+   que se revezam sozinhas a cada 6 s. Uma barra fina sob a aba ativa
+   marca o tempo; o toque fixa uma frente e para o relógio. */
+.fronts__tabs { display: none; }
+@media (max-width: 639px) {
+  .fronts { display: none; }
+  .fronts__tabs { display: block; }
+  .fronts__tablist {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .fronts__tab {
+    --front-tone: var(--ochre);
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 0 14px;
+    margin: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
+    color: var(--ink-soft);
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.1;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  .fronts__tab--tech { --front-tone: var(--blue); }
+  .fronts__tab::before {
+    content: "";
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--front-tone);
+    opacity: 0.35;
+    transition: opacity 0.3s ease, box-shadow 0.3s ease;
+  }
+  .fronts__tab::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--line-strong);
+  }
+  .fronts__tab i {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+    width: 0;
+    background: var(--front-tone);
+    z-index: 1;
+  }
+  .fronts__tab.is-on { color: var(--ink); }
+  .fronts__tab.is-on::before {
+    opacity: 1;
+    box-shadow: 0 0 14px 3px color-mix(in oklab, var(--front-tone) 35%, transparent);
+  }
+  .fronts__tab.is-on i { animation: fronts-timer var(--fronts-dwell, 6s) linear forwards; }
+  .fronts__tabs.is-pinned .fronts__tab.is-on i { animation: none; width: 100%; }
+  .fronts__tab:focus-visible { outline: 1px solid var(--front-tone); outline-offset: 4px; }
+
+  .fronts__panels { position: relative; margin-top: 8px; min-height: 340px; }
+  .fronts__panel {
+    --front-tone: var(--ochre);
+    position: absolute;
+    inset: 0 0 auto 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    transform: translateX(18px);
+    pointer-events: none;
+    transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .fronts__panel--tech { --front-tone: var(--blue); transform: translateX(-18px); }
+  .fronts__panel.is-on { position: relative; opacity: 1; transform: none; pointer-events: auto; }
+  .fronts__panel li {
+    padding: 18px 0 18px 22px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .fronts__panel li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 26px;
+    width: 10px;
+    height: 1px;
+    background: var(--front-tone);
+  }
+  .fronts__panel li:last-child { border-bottom: 0; }
+  .fronts__panel h4 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.15;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .fronts__panel p { margin: 6px 0 0; font-size: 15px; line-height: 1.45; color: var(--ink-soft); }
+  /* Entrada em cascata dos itens quando o painel vira o ativo. */
+  .fronts__panel.is-on li { animation: fronts-item 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .fronts__panel.is-on li:nth-child(2) { animation-delay: 0.06s; }
+  .fronts__panel.is-on li:nth-child(3) { animation-delay: 0.12s; }
+  .fronts__panel.is-on li:nth-child(4) { animation-delay: 0.18s; }
 }
 
 @media (min-width: 1024px) {
@@ -1622,7 +1869,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .person__name { font-size: 30px; }
   .pull-quote { padding: 36px 28px 36px 76px; font-size: 22px; }
   .pull-quote::before { left: 28px; top: 28px; font-size: 44px; }
-  .symptom { padding: 2px 4px 26px 18px; }
   .proof__list { font-size: 22px; gap: 64px; }
   .proof__list img { height: 24px; max-width: 112px; }
   .case__cover { min-height: 420px; padding: 22px 24px 26px; }
@@ -1807,39 +2053,72 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       </div>
     </div>
 
-    <!-- A cor de cada índice diz de que lado vem o problema: ocre na marca
-         (01, 03, 06), azul no sistema (02, 04, 05). Eles se alternam. -->
-    <div class="symptoms" data-reveal-step="90">
+    <!-- Os modificadores --brand/--tech ficam só como anotação editorial;
+         visualmente todos os sintomas compartilham o mesmo ocre. -->
+    <div class="symptoms__wrap"><div class="symptoms" data-reveal-step="90">
       <article class="symptom symptom--brand reveal">
         <p class="symptom__index">01</p>
-        <h3 class="symptom__title" data-en="Brand with no narrative">Marca sem narrativa</h3>
-        <p class="symptom__text" data-en="Identity in place, no story that differentiates.">Identidade pronta, sem história que diferencie.</p>
+        <p class="symptom__side" data-en="Brand">Marca</p>
+        <h3 class="symptom__title" data-en="Marketing with no visible return">Marketing sem retorno visível</h3>
+        <p class="symptom__text" data-en="Budget goes out every month; nobody knows which campaign brought whom.">Verba sai todo mês; ninguém sabe qual campanha trouxe quem.</p>
+        <ul class="symptom__signs">
+          <li data-en="Ads, posts and events with no source tracking">Anúncio, post e evento sem rastreio de origem</li>
+          <li data-en="Budget set by gut feeling, year after year">Orçamento decidido no feeling, ano após ano</li>
+        </ul>
       </article>
       <article class="symptom symptom--tech reveal">
         <p class="symptom__index">02</p>
-        <h3 class="symptom__title" data-en="Controls that don't scale">Controles que não escalam</h3>
-        <p class="symptom__text" data-en="Scattered processes, no central system.">Processos espalhados, sem sistema central.</p>
+        <p class="symptom__side" data-en="System">Sistema</p>
+        <h3 class="symptom__title" data-en="Grew — and the chaos grew with it">Cresceu, e o caos cresceu junto</h3>
+        <p class="symptom__text" data-en="More clients, more people — and the same processes as when there were five.">Mais clientes, mais gente — e os mesmos processos de quando eram cinco.</p>
+        <ul class="symptom__signs">
+          <li data-en="Everything depends on the one person who knows where things are">Tudo depende de uma pessoa que sabe onde está cada coisa</li>
+          <li data-en="Every team with its own spreadsheet and its own way">Cada área com a sua planilha e o seu jeito</li>
+        </ul>
       </article>
       <article class="symptom symptom--brand reveal">
         <p class="symptom__index">03</p>
-        <h3 class="symptom__title" data-en="Inconsistent communication">Comunicação inconsistente</h3>
-        <p class="symptom__text" data-en="Tone of voice that changes from channel to channel.">Tom de voz que muda de canal pra canal.</p>
+        <p class="symptom__side" data-en="Brand">Marca</p>
+        <h3 class="symptom__title" data-en="Everyone explains the company differently">Cada um explica a empresa de um jeito</h3>
+        <p class="symptom__text" data-en="The website says one thing, sales another, the post a third.">O site diz uma coisa, o vendedor outra, o post uma terceira.</p>
+        <ul class="symptom__signs">
+          <li data-en="Sales proposal with a different pitch from the website">Proposta comercial com discurso diferente do site</li>
+          <li data-en="Clients can’t say what you actually do">Cliente não sabe dizer o que vocês fazem</li>
+        </ul>
       </article>
       <article class="symptom symptom--tech reveal">
         <p class="symptom__index">04</p>
-        <h3 class="symptom__title" data-en="Data nobody reads">Dados sem leitura</h3>
-        <p class="symptom__text" data-en="Information exists, but nobody decides with it.">Informação existe, mas ninguém decide com ela.</p>
+        <p class="symptom__side" data-en="System">Sistema</p>
+        <h3 class="symptom__title" data-en="Nobody knows the right number">Ninguém sabe o número certo</h3>
+        <p class="symptom__text" data-en="Two spreadsheets, two results — and the report takes days to come out.">Duas planilhas, dois resultados — e o relatório leva dias pra sair.</p>
+        <ul class="symptom__signs">
+          <li data-en="Month-end closing done by hand">Fechamento do mês feito na mão</li>
+          <li data-en="Decisions made before the data arrives">Decisão tomada antes do dado chegar</li>
+        </ul>
       </article>
       <article class="symptom symptom--tech reveal">
         <p class="symptom__index">05</p>
-        <h3 class="symptom__title" data-en="Software that doesn't fit">Software que não encaixa</h3>
-        <p class="symptom__text" data-en="Off-the-shelf tool forcing the company to adapt.">Ferramenta pronta forçando a empresa a se adaptar.</p>
+        <p class="symptom__side" data-en="System">Sistema</p>
+        <h3 class="symptom__title" data-en="Expensive tool the team doesn’t use">Ferramenta cara que o time não usa</h3>
+        <p class="symptom__text" data-en="Licence paid, records half-filled, work back on WhatsApp.">Licença paga, cadastro pela metade, trabalho de volta no WhatsApp.</p>
+        <ul class="symptom__signs">
+          <li data-en="A system that forces the company to adapt to it">Sistema que exige adaptar a empresa a ele</li>
+          <li data-en="Improvised fixes around the official software">Remendos improvisados em volta do software oficial</li>
+        </ul>
       </article>
-      <article class="symptom symptom--brand reveal">
+      <article class="symptom symptom--tech reveal">
         <p class="symptom__index">06</p>
-        <h3 class="symptom__title" data-en="Launch with no strategy">Lançamento sem estratégia</h3>
-        <p class="symptom__text" data-en="Product live with no go-to-market plan.">Produto no ar sem plano de go-to-market.</p>
+        <p class="symptom__side" data-en="System">Sistema</p>
+        <h3 class="symptom__title" data-en="Vendor who delivered and vanished">Fornecedor que entregou e sumiu</h3>
+        <p class="symptom__text" data-en="Project ran late, went live with loose ends, and nobody answers anymore.">Projeto atrasou, foi ao ar com pendências e ninguém mais responde.</p>
+        <ul class="symptom__signs">
+          <li data-en="No maintenance or follow-up after launch">Sem manutenção nem acompanhamento depois do lançamento</li>
+          <li data-en="Deadline promised, deadline blown">Prazo prometido, prazo estourado</li>
+        </ul>
       </article>
+    </div></div>
+    <div class="symptoms__rail" aria-hidden="true">
+      <i></i><span data-en="hold to pause">toque para pausar</span>
     </div>
   </div>
 </section>
@@ -1910,6 +2189,31 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
             <h4 data-en="AI applied to the business">IA aplicada ao negócio</h4>
             <p data-en="Classification and decision support.">Classificação e apoio à decisão.</p>
           </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Versão celular: duas abas que se revezam sozinhas. -->
+    <div class="fronts__tabs">
+      <div class="fronts__tablist" role="tablist">
+        <!-- O rótulo vai num <span> próprio: a troca de idioma reescreve o
+             innerHTML do nó com data-en, e o <i> da barra de tempo não pode
+             ir junto. -->
+        <button class="fronts__tab fronts__tab--brand is-on" role="tab" type="button" aria-selected="true"><span data-en="Brand &amp; Strategy">Marca &amp; Estratégia</span><i aria-hidden="true"></i></button>
+        <button class="fronts__tab fronts__tab--tech" role="tab" type="button" aria-selected="false"><span data-en="Technology &amp; Data">Tecnologia &amp; Dados</span><i aria-hidden="true"></i></button>
+      </div>
+      <div class="fronts__panels">
+        <ul class="fronts__panel fronts__panel--brand is-on" role="tabpanel">
+          <li><h4 data-en="Brand strategy">Estratégia de marca</h4><p data-en="Diagnosis, positioning, roadmap.">Diagnóstico, posicionamento, roadmap.</p></li>
+          <li><h4 data-en="Market research">Pesquisa de mercado</h4><p data-en="Qualitative, quantitative, competitive.">Qualitativa, quantitativa, competitiva.</p></li>
+          <li><h4 data-en="Creative &amp; content">Criação &amp; conteúdo</h4><p data-en="Key visual, copy, tone of voice.">Key visual, copy, tom de voz.</p></li>
+          <li><h4>Go-to-market</h4><p data-en="Launch, activation, measurement.">Lançamento, ativação, mensuração.</p></li>
+        </ul>
+        <ul class="fronts__panel fronts__panel--tech" role="tabpanel">
+          <li><h4 data-en="Custom systems">Sistemas sob medida</h4><p data-en="End-to-end internal platforms.">Plataformas internas ponta a ponta.</p></li>
+          <li><h4 data-en="Dashboards &amp; intelligence">Dashboards &amp; inteligência</h4><p data-en="Dashboards and automatic reports.">Painéis e relatórios automáticos.</p></li>
+          <li><h4 data-en="Automation &amp; integrations">Automações &amp; integrações</h4><p data-en="APIs, ERPs, CRMs connected.">APIs, ERPs, CRMs conectados.</p></li>
+          <li><h4 data-en="AI applied to the business">IA aplicada ao negócio</h4><p data-en="Classification and decision support.">Classificação e apoio à decisão.</p></li>
         </ul>
       </div>
     </div>
@@ -3023,6 +3327,86 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       marquee.addEventListener(ev, function () { marquee.classList.remove('is-paused'); });
     });
   }
+
+  /* Carrossel de sintomas (celular): duplica as cartas para o loop ser
+     contínuo e pausa enquanto o dedo está em cima. Só abaixo de 640px e
+     só se o visitante não pediu menos movimento. */
+  function autoLoop(deck) {
+    if (!deck) return;
+    var mq = window.matchMedia('(max-width: 639px)');
+    var rm = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var cloned = false;
+    function apply() {
+      var on = mq.matches && !rm.matches;
+      if (on && !cloned) {
+        Array.prototype.slice.call(deck.children).forEach(function (c) {
+          var k = c.cloneNode(true);
+          k.classList.add('is-in');
+          k.setAttribute('aria-hidden', 'true');
+          deck.appendChild(k);
+        });
+        cloned = true;
+      }
+      if (on) {
+        deck.querySelectorAll('.symptom').forEach(function (c) { c.classList.add('is-in'); });
+      }
+      deck.classList.toggle('is-loop', on);
+    }
+    apply();
+    mq.addEventListener ? mq.addEventListener('change', apply) : mq.addListener(apply);
+    var pause = function () { deck.classList.add('is-paused'); };
+    var resume = function () { deck.classList.remove('is-paused'); };
+    deck.addEventListener('touchstart', pause, { passive: true });
+    deck.addEventListener('touchend', resume, { passive: true });
+    deck.addEventListener('touchcancel', resume, { passive: true });
+    deck.addEventListener('pointerdown', pause);
+    deck.addEventListener('pointerup', resume);
+    deck.addEventListener('pointerleave', resume);
+  }
+  autoLoop(document.querySelector('.symptoms'));
+
+  /* Abas de entregas (celular): revezam a cada 6 s; o toque fixa uma frente. */
+  (function () {
+    var root = document.querySelector('.fronts__tabs');
+    if (!root) return;
+    var tabs = root.querySelectorAll('.fronts__tab');
+    var panels = root.querySelectorAll('.fronts__panel');
+    var mq = window.matchMedia('(max-width: 639px)');
+    var rm = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var DWELL = 6000;
+    var i = 0, timer = null, pinned = false;
+    function show(n) {
+      i = n;
+      tabs.forEach(function (t, k) {
+        var on = k === n;
+        t.classList.toggle('is-on', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        var bar = t.querySelector('i');
+        if (bar && on) { bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = ''; }
+      });
+      panels.forEach(function (p, k) { p.classList.toggle('is-on', k === n); });
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+    function start() {
+      stop();
+      if (!mq.matches || rm.matches || pinned) return;
+      timer = setInterval(function () { show((i + 1) % tabs.length); }, DWELL);
+    }
+    tabs.forEach(function (t, k) {
+      t.addEventListener('click', function () {
+        pinned = true;
+        root.classList.add('is-pinned');
+        stop();
+        show(k);
+      });
+    });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (e) {
+        if (e[0].isIntersecting) { show(i); start(); } else stop();
+      }, { threshold: 0.3 }).observe(root);
+    } else start();
+    mq.addEventListener ? mq.addEventListener('change', start) : mq.addListener(start);
+  })();
 
 })();
 </script>
