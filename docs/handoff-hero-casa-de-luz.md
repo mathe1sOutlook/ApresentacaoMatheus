@@ -25,7 +25,7 @@ Os arquivos em `design/` são **referências de design em HTML** — um protóti
     vertical `transparent 0 → #000 22% → #000 82% → transparent 100%`
     (`mask-composite: intersect` / `-webkit-mask-composite: source-in`).
   - Atributos: `alt=""`, `aria-hidden="true"`, `decoding="async"`, `fetchpriority="high"`, `width="1072" height="821"`.
-  - A imagem já vem com: fundo remapeado para `#0B0D12`, bordas esmaecidas no arquivo, mobília doméstica removida (mesa de jantar, sofá, estante, vasos — ficaram estação de trabalho, painel de gráficos e escada, leitura de escritório) e **rastros entre cômodos adormecidos** (escurecidos ~62%); só as lâmpadas ficam acesas.
+  - A imagem já vem com: fundo remapeado para `#0B0D12`, bordas esmaecidas no arquivo, mobília doméstica substituída por ambientes corporativos desenhados no mesmo traço da ilustração (linha fina azul-cinza, arestas em ocre, telas em azul): **sala de reunião** no andar de cima à direita (mesa longa, 8 cadeiras, laptops, telefone de conferência), **estações de trabalho** embaixo à direita (bancada, 3 monitores, cadeiras) e **sala de servidores** embaixo à esquerda (2 racks com LEDs, terminal de monitoramento) e **rastros entre cômodos adormecidos** (escurecidos ~62%); só as lâmpadas ficam acesas.
 
   **2. `canvas.hero__pulsos#hero-pulsos`** — camada dos pulsos
   - `position: absolute; pointer-events: none; mix-blend-mode: screen`
@@ -72,7 +72,7 @@ Só estado local do módulo (`P`): `raf`, `last`, `list` (pulsos vivos), `glow` 
 - Breakpoint da arte: 880px.
 
 ## Assets
-- `design/img/hero-casa.jpg` — ilustração base (1072×821). Derivada da imagem gerada em `reference/referencia-original.png` (recorte x≥600, y 80–901; fundo remapeado; mobília apagada; rastros escurecidos; bordas esmaecidas).
+- `design/img/hero-casa.jpg` — ilustração base (1072×821). Derivada da imagem gerada em `reference/referencia-original.png` (recorte x≥600, y 80–901; fundo remapeado; mobília doméstica apagada com a névoa local; rastros escurecidos; ambientes corporativos desenhados por cima; bordas esmaecidas).
 - `design/img/hero-casa-luz.png` — máscara dos rastros: alpha = `((lum − 95)/90)²` da imagem **ainda acesa**, RGB branco. Se a ilustração for regenerada, gere a máscara de novo pelo mesmo critério e retrace as polilinhas das arestas (menor custo pela máscara entre os nós) — sem isso os pulsos saem do rastro.
 - A arte é gerada por IA e tem artefatos de perto; uma versão em resolução maior e já sem móveis domésticos daria um recorte mais limpo.
 

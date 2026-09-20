@@ -102,7 +102,10 @@ ele estiver anexado ao projeto na Vercel.
 A arte do hero são dois arquivos que andam juntos. `img/hero-casa.jpg`
 (1072×821) é a ilustração da casa em corte — fundo já remapeado para `--bg`,
 bordas esmaecidas no próprio arquivo e os rastros entre os cômodos escurecidos,
-só as lâmpadas acesas. `img/hero-casa-luz.png` é a máscara: alpha só onde há
+só as lâmpadas acesas. Os cômodos são ambientes de trabalho, desenhados no
+traço da própria ilustração: sala de reunião no andar de cima à direita,
+estações de trabalho embaixo à direita e sala de servidores embaixo à
+esquerda. `img/hero-casa-luz.png` é a máscara: alpha só onde há
 rastro de luz, e é ela que recorta o `<canvas>` dos pulsos — por isso o brilho
 aparece sobre o caminho e nunca acende a parede ao lado.
 
@@ -244,9 +247,10 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   por um canal só. Quando o
   domínio entrar, é aqui que o endereço muda.
 - **Resolução da casa do hero** — `img/hero-casa.jpg` é arte gerada por IA e
-  tem artefatos quando se olha de perto. Uma versão em resolução maior, já sem
-  a mobília doméstica, daria um recorte mais limpo — e aí a máscara e as
-  arestas se regeneram junto (ver "Hero: a casa de luz").
+  tem artefatos quando se olha de perto; os ambientes corporativos foram
+  desenhados por cima da mobília doméstica original. Uma versão em resolução
+  maior, já nascida como escritório, daria um recorte mais limpo — e aí a
+  máscara e as arestas se regeneram junto (ver "Hero: a casa de luz").
 
 ## Desvio do design
 
