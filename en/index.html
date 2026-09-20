@@ -1081,6 +1081,13 @@ button {
   object-fit: cover;
   scroll-snap-align: center;
 }
+/* Print de site não é fotografia: o assunto não está no meio, está no alto e à
+   esquerda — manchete, logo e menu. A capa muda de proporção entre o desktop
+   (quase quadrada) e o celular (bem mais alta), e o corte centralizado comia
+   justamente a primeira palavra da manchete na tela pequena. Ancorar no alto e
+   à esquerda faz o corte sair de onde não há informação: o rodapé da imagem no
+   desktop, a borda direita no celular. */
+.case__shot--print { object-position: 12% top; }
 .case__dots {
   position: absolute;
   z-index: 3;
@@ -2233,7 +2240,12 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     <div class="cases" tabindex="0" role="group" aria-label="Project cases; focusing pauses the auto-advance" data-en-aria-label="Project cases; focusing pauses the auto-advance" data-pt-aria-label="Casos de projeto; o foco pausa o avanço automático">
 <!-- Caso 01 ─────────────────────────────────────────────────── -->
     <article class="case case--featured reveal">
-  <!-- Foto de capa: /img/casos/mediaportal.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
+  <!-- Foto de capa: /img/casos/mediaportal.jpg — print do site no ar
+       (mediaportal.com.br), 1600×1956, retrato. A proporção fica entre a da
+       capa no desktop e a do celular, e `case__shot--print` ancora o corte no
+       alto e à esquerda: uma paisagem 16:10 perderia metade da largura no
+       `object-fit: cover` e a manchete entraria decepada. Sem o arquivo, a
+       moldura tracejada aparece. -->
   <div class="case__cover case__cover--photo">
     <div class="case__chips">
       <span class="case__chip"><span data-en="Case" data-pt="Caso">Case</span> 01</span>
@@ -2246,7 +2258,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="/img/casos/mediaportal.jpg" alt="" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')">
+          <img class="case__shot case__shot--print" src="/img/casos/mediaportal.jpg" alt="Media Portal website home: headline “Your media's safety starts with managing your archive”, the institutional video beside it and the band of operating numbers" data-en-alt="Media Portal website home: headline “Your media's safety starts with managing your archive”, the institutional video beside it and the band of operating numbers" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Home do site da Media Portal: manchete “A segurança da sua mídia começa na gestão do seu acervo”, vídeo institucional ao lado e a faixa de números da operação">
         </div>
         <span class="media__client">Media Portal Soluções</span>
         <figcaption class="media__hint" data-en="Awaiting the real site screenshot" data-pt="Aguardando print real do site">Awaiting the real site screenshot</figcaption>
