@@ -34,6 +34,9 @@ og.png, og-en.png  imagem de compartilhamento (1200×630) em PT e EN, geradas po
 fonts/          woff2 (latin + latin-ext): Fraunces, Inter e IBM Plex Mono para o
                 site; Space Grotesk para a proposta do CRM; Barlow e Barlow
                 Condensed para a proposta da 2JEM
+img/bruno.jpg, img/matheus.jpg  avatares de #dupla, quadrados de 192×192 (o
+                dobro dos 96px exibidos); o recorte circular é do CSS, e sem o
+                arquivo o onerror deixa a moldura tracejada "foto aqui"
 img/hero-casa.jpg  a casa de luz do hero (1072×821); img/hero-casa-luz.png é a
                 máscara dos rastros, que recorta o canvas dos pulsos (ver
                 "Hero: a casa de luz")
@@ -197,9 +200,6 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
 
 ## Pendências
 
-- **Fotos da dupla** — os avatares em `#dupla` apontam para `/img/bruno.jpg` e
-  `/img/matheus.jpg` (quadradas, 400×400 ou mais). Enquanto o arquivo não
-  existe, a moldura tracejada "foto aqui" aparece no lugar.
 - **Logos da faixa "já fizemos história com..."** — `/img/logos/<slug>.svg`
   (corning, ame, quintoandar, mediaportal, informa, gipsyy), monocromáticos; o
   CSS pinta de creme. Sem o arquivo, fica o nome em texto. No ar: `corning`
