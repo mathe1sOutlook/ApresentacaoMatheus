@@ -501,9 +501,14 @@ button {
 .marquee:focus-visible { outline-offset: -2px; }
 .proof__list li { display: flex; align-items: center; height: 40px; }
 .proof__list img {
-  height: 30px;
+  /* logo largo (wordmark) limita pela largura, logo alto limita pela altura:
+     assim nenhum deles pesa mais que os nomes em texto ao lado */
+  height: 28px;
   width: auto;
-  max-width: 200px;
+  max-width: 132px;
+  /* wordmark largo bate no limite de largura e é centrado na altura;
+     logo mais quadrado usa a altura inteira */
+  object-fit: contain;
   opacity: 0.85;
   /* qualquer logo vira silhueta creme, coerente com a identidade */
   filter: brightness(0) invert(0.93);
@@ -1617,6 +1622,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .pull-quote::before { left: 28px; top: 28px; font-size: 44px; }
   .symptom { padding: 2px 4px 26px 18px; }
   .proof__list { font-size: 22px; gap: 64px; }
+  .proof__list img { height: 24px; max-width: 112px; }
   .case__cover { min-height: 420px; padding: 22px 24px 26px; }
   .case__chip { font-size: 12px; padding: 7px 12px; }
   .case__title { font-size: 26px; }
