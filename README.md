@@ -36,7 +36,10 @@ fonts/          woff2 (latin + latin-ext): Fraunces, Inter e IBM Plex Mono para 
                 Condensed para a proposta da 2JEM
 img/bruno.jpg, img/matheus.jpg  avatares de #dupla, quadrados de 192×192 (o
                 dobro dos 96px exibidos); o recorte circular é do CSS, e sem o
-                arquivo o onerror deixa a moldura tracejada "foto aqui"
+                arquivo o onerror deixa a moldura tracejada "foto aqui". As duas
+                seguem o mesmo tratamento, e foto nova entra assim: preto e
+                branco, fundo cinza-escuro com grão (luminância ~60) e o rosto
+                no mesmo tamanho e lugar do outro avatar
 img/hero-casa.jpg  a casa de luz do hero (1072×821); img/hero-casa-luz.png é a
                 máscara dos rastros, que recorta o canvas dos pulsos (ver
                 "Hero: a casa de luz")
