@@ -14,10 +14,11 @@ quase preto, tinta creme, ocre para marca, azul para tecnologia, Fraunces +
 Inter + IBM Plex Mono, superfícies arredondadas sobre réguas de 1px — o que é
 cartão, botão ou campo tem canto macio; o que é linha técnica (trilhos, nós,
 conectores) continua reto. O
-hero traz uma constelação em canvas (ocre à esquerda, azul à direita) com
-semente fixa, que flutua devagar e reage ao cursor; as seções entram com um
-fade curto ao rolar. Os dois efeitos desligam com `prefers-reduced-motion`.
-A prova social roda em marquee.
+hero traz a casa de luz: a ilustração da casa em corte, à direita, com pulsos
+que viajam pelos rastros entre os cômodos como sinais numa rede. As seções
+entram com um fade curto ao rolar. Os dois efeitos desligam com
+`prefers-reduced-motion` — a casa fica acesa e parada. A prova social roda em
+marquee.
 
 ## Estrutura
 
@@ -33,6 +34,9 @@ og.png, og-en.png  imagem de compartilhamento (1200×630) em PT e EN, geradas po
 fonts/          woff2 (latin + latin-ext): Fraunces, Inter e IBM Plex Mono para o
                 site; Space Grotesk para a proposta do CRM; Barlow e Barlow
                 Condensed para a proposta da 2JEM
+img/hero-casa.jpg  a casa de luz do hero (1072×821); img/hero-casa-luz.png é a
+                máscara dos rastros, que recorta o canvas dos pulsos (ver
+                "Hero: a casa de luz")
 img/qr.svg      QR do site para a caixa "uso físico"; img/qr-print.svg é a
                 versão preto-no-branco para cartão, crachá e proposta. Os dois
                 são gerados por scripts/build-qr.py
@@ -87,11 +91,36 @@ Trocar o endereço é trocar a constante `SITE` no script e rodar de novo. O que
 já foi impresso aponta para o endereço anterior e continua funcionando enquanto
 ele estiver anexado ao projeto na Vercel.
 
+## Hero: a casa de luz
+
+A arte do hero são dois arquivos que andam juntos. `img/hero-casa.jpg`
+(1072×821) é a ilustração da casa em corte — fundo já remapeado para `--bg`,
+bordas esmaecidas no próprio arquivo e os rastros entre os cômodos escurecidos,
+só as lâmpadas acesas. `img/hero-casa-luz.png` é a máscara: alpha só onde há
+rastro de luz, e é ela que recorta o `<canvas>` dos pulsos — por isso o brilho
+aparece sobre o caminho e nunca acende a parede ao lado.
+
+O script mantém um grafo de 12 nós e 12 arestas em coordenadas da imagem, com
+as arestas traçadas sobre os rastros reais da ilustração. Os pulsos nascem no
+hub (60% das vezes) ou num cômodo, escolhem a aresta há mais tempo apagada e
+morrem depois de 1 a 3 saltos. `fitPulsos` encaixa o canvas sobre a área
+desenhada da imagem (contain, canto inferior direito) por
+`offsetWidth`/`offsetLeft`, para o encaixe não escorregar com zoom.
+
+**Trocar a ilustração é trocar as três coisas**: a máscara se gera da mesma
+imagem ainda acesa (`alpha = ((lum − 95)/90)²`, RGB branco) e as polilinhas das
+arestas se retraçam pelo caminho de menor custo pela máscara. Sem isso os
+pulsos saem do rastro. O detalhe está em `docs/handoff-hero-casa-de-luz.md`.
+
+Abaixo de 880px a arte sai — cruzaria o texto — e o script para de desenhar;
+com `prefers-reduced-motion` o canvas sai e a casa fica acesa e parada; na
+impressão as duas camadas saem.
+
 ## Imagens de compartilhamento
 
 `og.png` e `og-en.png` são **geradas**, não desenhadas à mão: `node
 scripts/build-og.mjs` monta um cartão de 1200×630 com as fontes embutidas em
-base64, a mesma constelação de semente fixa do hero, o contorno de casa em linha
+base64, uma constelação de semente fixa, o contorno de casa em linha
 de construção e a trilha ocre → azul. Se a tagline, o nome ou o endereço
 mudarem, é o script que muda — e as duas imagens são versionadas junto.
 
@@ -211,6 +240,11 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   existiu, e o antigo (11) 96904-1800 saiu do site e do schema: a dupla atende
   por um canal só. Quando o
   domínio entrar, é aqui que o endereço muda.
+- **Resolução da casa do hero** — `img/hero-casa.jpg` é arte gerada por IA e
+  tem artefatos quando se olha de perto. Uma versão em resolução maior, já sem
+  a mobília doméstica, daria um recorte mais limpo — e aí a máscara e as
+  arestas se regeneram junto (ver "Hero: a casa de luz").
+
 ## Desvio do design
 
 O ocre e o azul foram clareados para o fundo escuro: `#C9A24E` e `#7A93E6`

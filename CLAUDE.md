@@ -154,6 +154,9 @@ ficar numa pasta servida pela Vercel.
 - `docs/briefing-telas-crm.md` — especificação das três telas do CRM da Media
   Portal: sistema visual, inventário dos controles, o que mudar em cada tela e
   a tabela de números que amarra as três. É o anexo do prompt do Claude Design.
+- `docs/handoff-hero-casa-de-luz.md` — o handoff do hero do site: a ilustração
+  da casa em corte, a máscara dos rastros, o grafo dos pulsos e o critério para
+  regenerar máscara e arestas se a arte mudar.
 - `docs/handoff-telas-crm.md` — o handoff que o Claude Design devolveu, já
   implementado: layout, tokens dos dois temas, conteúdo exato de cada tela e as
   regras de dados que os números precisam respeitar.

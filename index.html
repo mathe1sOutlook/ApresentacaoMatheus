@@ -374,16 +374,50 @@ button {
 }
 .hero > * { position: relative; }
 
-/* Constelação desenhada pelo script em canvas: ocre à esquerda, azul à
-   direita. Flutua devagar e reage ao cursor; fica parada com
-   prefers-reduced-motion. */
-.hero__net {
+/* A casa de luz: ilustração em corte da marca — paredes, telhado e os
+   rastros entre os cômodos. Sentada à direita e no rodapé do hero, com as
+   bordas já esmaecidas no próprio arquivo. Por cima, .hero__pulsos acende
+   só os rastros de luz. */
+.hero__art {
   position: absolute;
-  inset: 0;
-  width: 100%;
+  right: 0;
+  bottom: 0;
   height: 100%;
+  width: auto;
+  max-width: 62%;
+  object-fit: contain;
+  object-position: right bottom;
   pointer-events: none;
-  opacity: 0.6;
+  -webkit-user-select: none;
+  user-select: none;
+  /* máscara em todas as bordas: a ilustração some no fundo, sem retângulo */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 30%, #000 92%, transparent 100%),
+                      linear-gradient(to bottom, transparent 0, #000 22%, #000 82%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0, #000 30%, #000 92%, transparent 100%),
+              linear-gradient(to bottom, transparent 0, #000 22%, #000 82%, transparent 100%);
+  mask-composite: intersect;
+}
+/* Os pulsos: um canvas do tamanho exato da ilustração, mascarado pelo PNG
+   dos rastros de luz — o script desenha brilhos andando pelos caminhos entre
+   os cômodos e a máscara garante que só o rastro acende, nunca o entorno. O
+   script posiciona o canvas sobre a imagem (object-fit: contain, canto
+   inferior direito). */
+.hero__pulsos {
+  position: absolute;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  -webkit-mask-image: url(/img/hero-casa-luz.png);
+  mask-image: url(/img/hero-casa-luz.png);
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
+/* Abaixo de 880px a arte cruzaria o texto: sai, e o script para de desenhar. */
+@media (max-width: 879px) {
+  .hero__art, .hero__pulsos { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__pulsos { display: none; }
 }
 
 .hero__body { margin-top: 26px; max-width: 46ch; }
@@ -1606,7 +1640,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .js-reveal .fronts__node { opacity: 1 !important; }
   /* o trocadilho MAR·TEC é de tela: no papel as duas cores não têm contraste */
   .mar, .tec { color: inherit; }
-  .hero__net, .wa-float, .site-header, .marquee, .lead, .skip-link { display: none !important; }
+  .hero__art, .hero__pulsos, .wa-float, .site-header, .marquee, .lead, .skip-link { display: none !important; }
   /* o carrossel é de tela; no papel os casos voltam a empilhar, um por linha */
   .cases { display: block; overflow: visible; }
   .case { flex: none; scroll-snap-align: none; }
@@ -1652,7 +1686,8 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
 <!-- ═══════════════════════════════════════════════ HERO -->
 <section class="hero" id="topo">
-  <canvas class="hero__net" id="hero-net" aria-hidden="true"></canvas>
+  <img class="hero__art" src="/img/hero-casa.jpg" alt="" aria-hidden="true" decoding="async" fetchpriority="high" width="1072" height="821" />
+  <canvas class="hero__pulsos" id="hero-pulsos" aria-hidden="true"></canvas>
 
   <div class="container">
     <p class="eyebrow" data-en="Brand strategy &nbsp;×&nbsp; Systems engineering">Estratégia de marca &nbsp;×&nbsp; Engenharia de sistemas</p>
@@ -2490,230 +2525,181 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
   window.addEventListener('popstate', function () { applyLang(langFromLocation()); });
 
-  /* ─── Constelação do hero ─────────────────────────────────────────
-     Canvas com semente fixa (mesmo desenho a cada visita): ocre à
-     esquerda, azul à direita. Os nós flutuam devagar, voltam para a
-     posição de origem por uma mola fraca e afastam-se do cursor. Sem
-     movimento com prefers-reduced-motion ou fora da tela.
-     ───────────────────────────────────────────────────────────────── */
-  var net = document.getElementById('hero-net');
+  /* ─── Pulsos entre os cômodos ─────────────────────────────────────
+     Os rastros de luz da ilustração são caminhos. Um grafo em coordenadas
+     da imagem (1072×821) segue cada um deles: o hub no centro da casa, as
+     lâmpadas dos cômodos, a linha do teto. Pulsos nascem no hub (e, às
+     vezes, num cômodo), percorrem a polilinha traçada sobre o rastro e, ao
+     chegar, ou seguem por uma aresta vizinha ou morrem. O canvas é
+     mascarado pelo PNG dos rastros, então o brilho só aparece sobre o
+     caminho — o resto da casa fica adormecido. Sem movimento com
+     prefers-reduced-motion. ─────────────────────────────────────────── */
+  var pulsos = document.getElementById('hero-pulsos');
+  var heroArt = document.querySelector('.hero__art');
+  var heroEl = document.getElementById('topo'), hero = heroEl;
   var motionOK = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var IMG_W = 1072, IMG_H = 821;
 
-  function seeded(seed) {
-    return function () {
-      seed = (seed * 1664525 + 1013904223) % 4294967296;
-      return seed / 4294967296;
-    };
-  }
+  /* nós: lâmpadas e o hub, em px da imagem; arestas: polilinhas traçadas
+     sobre os rastros de luz da própria ilustração (caminho de menor custo
+     pela máscara), então o pulso nunca sai do rastro */
+  var NODES = {
+    hub: [570, 410],
+    mon: [395, 352],
+    topo: [630, 268],
+    teto: [865, 265],
+    lamp: [740, 348],
+    baixoEsq: [395, 525],
+    sala: [700, 480],
+    escada: [572, 456],
+    lampEsqCima: [425, 268],
+    lampHall: [512, 300],
+    lampHallBaixo: [512, 462],
+    lampBaixoDir: [703, 540]
+  };
+  var EDGES = [
+    { a: 'hub', b: 'mon', tone: 'ochre', pts: [[572,410],[524,371],[494,359],[431,356],[413,359],[407,371],[377,371],[377,347],[395,353]] },
+    { a: 'hub', b: 'topo', tone: 'blue', pts: [[572,410],[593,368],[638,323],[632,305],[632,269]] },
+    { a: 'topo', b: 'teto', tone: 'blue', pts: [[632,269],[632,314],[638,320],[644,320],[662,305],[698,287],[731,278],[866,266]] },
+    { a: 'topo', b: 'lamp', tone: 'blue', pts: [[632,269],[632,314],[638,320],[647,317],[656,320],[665,314],[683,311],[716,314],[740,335],[743,341],[740,350]] },
+    { a: 'hub', b: 'baixoEsq', tone: 'ochre', pts: [[572,410],[572,422],[596,446],[614,455],[620,461],[617,464],[572,479],[494,521],[467,530],[401,533],[398,536],[395,527]] },
+    { a: 'hub', b: 'sala', tone: 'blue', pts: [[572,410],[572,422],[605,452],[629,461],[674,467],[701,482]] },
+    { a: 'hub', b: 'escada', tone: 'ochre', pts: [[572,410],[572,458]] },
+    { a: 'hub', b: 'lampEsqCima', tone: 'blue', pts: [[572,410],[542,383],[518,368],[494,359],[443,353],[431,341],[422,317],[422,272],[425,269]] },
+    { a: 'hub', b: 'lampHall', tone: 'blue', pts: [[572,410],[542,383],[515,368],[515,305],[512,302]] },
+    { a: 'hub', b: 'lampHallBaixo', tone: 'blue', pts: [[572,410],[572,422],[596,446],[614,455],[620,461],[617,464],[572,479],[518,509],[515,506],[515,467],[512,464]] },
+    { a: 'sala', b: 'lampBaixoDir', tone: 'blue', pts: [[701,482],[695,482],[671,467],[659,464],[641,467],[653,473],[665,491],[665,509],[674,515],[674,545],[704,542]] },
+    { a: 'mon', b: 'lampEsqCima', tone: 'blue', pts: [[395,353],[383,350],[380,347],[383,344],[410,344],[425,329],[422,317],[422,272],[425,269]] }
+  ];
+  var ADJ = {};
+  EDGES.forEach(function (e, i) {
+    (ADJ[e.a] = ADJ[e.a] || []).push(i); (ADJ[e.b] = ADJ[e.b] || []).push(i);
+    e.cum = [0];
+    for (var k = 1; k < e.pts.length; k++) e.cum.push(e.cum[k - 1] + Math.hypot(e.pts[k][0] - e.pts[k - 1][0], e.pts[k][1] - e.pts[k - 1][1]));
+    e.len = e.cum[e.cum.length - 1];
+    e.last = 0;
+  });
 
-  var netState = { w: 0, h: 0, dpr: 1, pts: [], reach: 0, mouse: null, raf: null, visible: true, last: 0, colors: null, house: [] };
+  var P = { raf: null, last: 0, list: [], glow: {}, spawnAt: 0, box: null, dpr: 1, visible: true, colors: null };
 
-  /* ─── Contorno de casa no circuito ────────────────────────────────
-     Sete âncoras nos vértices de uma casa de desenho técnico entram na
-     mesma física dos outros pontos — mola de volta à origem, repulsão do
-     cursor —, então o contorno respira em vez de ser um desenho colado.
-     As arestas entre elas são traçadas com alpha baixo, em linha de
-     blueprint. Para tirar do ar, basta trocar HOUSE para false.
-     ───────────────────────────────────────────────────────────────── */
-  var HOUSE = true;
-
-  function houseShape(w, h) {
-    /* só onde existe coluna livre à direita do título: abaixo disso o
-       contorno cruzaria o texto, e leitura vem antes do motivo */
-    if (!HOUSE || w < 1080 || h < 620) return [];
-    var width = Math.min(w * 0.24, 310);
-    var wall = width * 0.62;          /* altura da parede */
-    var roof = width * 0.34;          /* altura do telhado */
-    var cx = w * 0.80;
-    var top = Math.max(h * 0.055, 44);
-    var left = cx - width / 2, right = cx + width / 2;
-    var eave = top + roof, base = eave + wall;
-    /* cumeeira, beiral direito, base direita, base esquerda, beiral esquerdo */
-    return [
-      { x: cx,    y: top },
-      { x: right, y: eave },
-      { x: right, y: base },
-      { x: left,  y: base },
-      { x: left,  y: eave }
-    ];
-  }
-  /* o perímetro mais a linha do beiral, que é o que faz ler como desenho */
-  var HOUSE_EDGES = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0], [4, 1]];
-
-  function netColors() {
+  function pulsoColors() {
     var cs = getComputedStyle(document.documentElement);
-    return { ochre: cs.getPropertyValue('--ochre').trim() || '#C9A24E', blue: cs.getPropertyValue('--blue').trim() || '#7A93E6' };
+    return { ochre: cs.getPropertyValue('--ochre').trim() || '#C9A24E', blue: cs.getPropertyValue('--blue').trim() || '#7A93E6', ink: cs.getPropertyValue('--ink').trim() || '#F3EFE7' };
   }
 
-  function buildNet() {
-    if (!net) return;
-    var w = net.clientWidth, h = net.clientHeight;
-    if (!w || !h) return;
+  /* encaixa o canvas exatamente sobre a imagem desenhada (contain, direita/baixo) */
+  function fitPulsos() {
+    if (!pulsos || !heroArt || !heroEl) return;
+    if (getComputedStyle(heroArt).display === 'none') { P.box = null; return; }
+    var aw = heroArt.offsetWidth, ah = heroArt.offsetHeight;
+    var s = Math.min(aw / IMG_W, ah / IMG_H);
+    var w = IMG_W * s, h = IMG_H * s;
+    /* a imagem é contain, ancorada no canto inferior direito da sua caixa */
+    var left = heroArt.offsetLeft + aw - w, top = heroArt.offsetTop + ah - h;
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    if (w === netState.w && h === netState.h && dpr === netState.dpr) return; /* barra de endereço do celular dispara resize à toa */
-    netState.colors = netColors();
-    net.width = Math.round(w * dpr);
-    net.height = Math.round(h * dpr);
-    netState.w = w; netState.h = h; netState.dpr = dpr;
-    netState.reach = Math.min(w, h) * 0.32;
-
-    var rnd = seeded(20260904);
-    var count = Math.max(18, Math.min(42, Math.round(w / 36)));
-    var pts = [];
-    for (var i = 0; i < count; i++) {
-      var x = rnd() * w, y = rnd() * h;
-      pts.push({
-        x: x, y: y, ox: x, oy: y,
-        vx: (rnd() - 0.5) * 0.12, vy: (rnd() - 0.5) * 0.12,
-        tone: x < w * 0.45 ? 'ochre' : 'blue',
-        r: rnd() < 0.35 ? 4 : 2.5
-      });
-    }
-    /* as âncoras da casa são pontos como os outros, só que com origem fixa */
-    var shape = houseShape(w, h);
-    netState.house = shape.map(function (a, i) { return pts.length + i; });
-    shape.forEach(function (a) {
-      pts.push({
-        x: a.x, y: a.y, ox: a.x, oy: a.y, vx: 0, vy: 0,
-        tone: a.x < w * 0.45 ? 'ochre' : 'blue',
-        r: 2, anchor: true
-      });
-    });
-    netState.pts = pts;
-    drawNet();
+    pulsos.style.left = left + 'px'; pulsos.style.top = top + 'px';
+    pulsos.style.width = w + 'px'; pulsos.style.height = h + 'px';
+    pulsos.width = Math.round(w * dpr); pulsos.height = Math.round(h * dpr);
+    P.box = { s: s, w: w, h: h }; P.dpr = dpr; P.colors = pulsoColors();
   }
 
-  function drawNet() {
-    var ctx = net.getContext('2d');
-    var st = netState, pts = st.pts, reach = st.reach, colors = st.colors || netColors();
-    ctx.setTransform(st.dpr, 0, 0, st.dpr, 0, 0);
-    ctx.clearRect(0, 0, st.w, st.h);
-    ctx.lineWidth = 1;
-    for (var i = 0; i < pts.length; i++) {
-      for (var j = i + 1; j < pts.length; j++) {
-        var dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
-        var d = Math.sqrt(dx * dx + dy * dy);
-        if (d >= reach) continue;
-        ctx.globalAlpha = 0.1 + 0.45 * (1 - d / reach);
-        ctx.strokeStyle = pts[i].tone === pts[j].tone ? colors[pts[i].tone] : colors.blue;
-        ctx.beginPath();
-        ctx.moveTo(pts[i].x, pts[i].y);
-        ctx.lineTo(pts[j].x, pts[j].y);
-        ctx.stroke();
-      }
-    }
-    /* O contorno da casa: traço fraco e marcas de canto, como num
-       desenho técnico. Nunca uma casa literal — é uma sugestão. */
-    var house = st.house;
-    if (house.length) {
-      for (var e = 0; e < HOUSE_EDGES.length; e++) {
-        var a = pts[house[HOUSE_EDGES[e][0]]], b = pts[house[HOUSE_EDGES[e][1]]];
-        var eave = e === HOUSE_EDGES.length - 1;
-        /* as duas águas do telhado em ocre, o resto em azul: a casa fala a
-           mesma dualidade do site, em vez de virar um ícone imobiliário */
-        var roof = HOUSE_EDGES[e][0] === 0 || HOUSE_EDGES[e][1] === 0;
-        ctx.strokeStyle = roof ? colors.ochre : colors.blue;
-        /* tracejado de linha de construção: é o que separa o contorno do
-           resto da malha sem precisar gritar mais alto que ela */
-        ctx.setLineDash(eave ? [2, 7] : [7, 6]);
-        ctx.globalAlpha = eave ? 0.26 : 0.44;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
-      }
-      ctx.setLineDash([]);
-      ctx.globalAlpha = 0.6;
-      for (var c = 0; c < house.length; c++) {
-        var v = pts[house[c]];
-        ctx.strokeStyle = colors[v.tone];
-        ctx.beginPath();
-        ctx.moveTo(v.x - 5, v.y);
-        ctx.lineTo(v.x + 5, v.y);
-        ctx.moveTo(v.x, v.y - 5);
-        ctx.lineTo(v.x, v.y + 5);
-        ctx.stroke();
-      }
-    }
-
-    ctx.globalAlpha = 1;
-    for (var k = 0; k < pts.length; k++) {
-      ctx.fillStyle = colors[pts[k].tone];
-      ctx.globalAlpha = pts[k].anchor ? 0.55 : 1;
-      ctx.beginPath();
-      ctx.arc(pts[k].x, pts[k].y, pts[k].r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
+  /* ponto na polilinha a uma fração t do comprimento */
+  function bez(e, t) {
+    var d = Math.min(e.len, Math.max(0, t * e.len)), c = e.cum, k = 1;
+    while (k < c.length - 1 && c[k] < d) k++;
+    var f = (d - c[k - 1]) / ((c[k] - c[k - 1]) || 1), a = e.pts[k - 1], b = e.pts[k];
+    return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
   }
 
-  var coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  /* escolhe a aresta há mais tempo sem pulso (com um pouco de acaso), para
+     a atividade cobrir a casa inteira em vez de insistir nos mesmos caminhos */
+  function spawn(node, avoid, hops, now) {
+    var opts = (ADJ[node] || []).filter(function (i) { return i !== avoid; });
+    if (!opts.length || P.list.length > 10) return;
+    var total = 0, w = opts.map(function (i) { var age = (now - EDGES[i].last) / 1000 + 0.3; total += age * age; return age * age; });
+    var r = Math.random() * total, i = opts[0];
+    for (var k = 0; k < opts.length; k++) { r -= w[k]; if (r <= 0) { i = opts[k]; break; } }
+    var e = EDGES[i]; e.last = now;
+    P.list.push({ e: i, dir: e.a === node ? 1 : -1, t: e.a === node ? 0 : 1, v: 150 + Math.random() * 80, hops: hops });
+  }
 
-  function stepNet(now) {
-    netState.raf = null;
-    var st = netState;
-    /* em telas de toque basta metade dos quadros: menos bateria, mesma sensação */
-    if (coarsePointer && st.last && now - st.last < 30) { st.raf = window.requestAnimationFrame(stepNet); return; }
-    var dt = Math.min(48, now - (st.last || now)) / 16.67; /* em frames de 60fps */
-    st.last = now;
-    var pts = st.pts, m = st.mouse;
-    for (var i = 0; i < pts.length; i++) {
-      var p = pts[i];
-      /* mola fraca de volta à origem + deriva própria; nas âncoras da casa
-         a mola é mais firme, senão o contorno se desmancha */
-      var k = p.anchor ? 0.006 : 0.0006;
-      p.vx += (p.ox - p.x) * k * dt;
-      p.vy += (p.oy - p.y) * k * dt;
-      if (m) {
-        var dx = p.x - m.x, dy = p.y - m.y, d2 = dx * dx + dy * dy, R = 160;
-        if (d2 < R * R && d2 > 1) {
-          var d = Math.sqrt(d2), f = (1 - d / R) * 0.06 * dt;
-          p.vx += dx / d * f;
-          p.vy += dy / d * f;
+  function step(now) {
+    P.raf = null;
+    var dt = Math.min(0.05, (now - (P.last || now)) / 1000);
+    P.last = now;
+    if (P.box) {
+      for (var k in P.glow) P.glow[k] *= Math.pow(0.08, dt);
+      var alive = [];
+      for (var i = 0; i < P.list.length; i++) {
+        var p = P.list[i], e = EDGES[p.e];
+        p.t += p.dir * p.v * dt / e.len;
+        if (p.t > 0 && p.t < 1) { alive.push(p); continue; }
+        var at = p.dir > 0 ? e.b : e.a;
+        P.glow[at] = 1;
+        if (p.hops > 0) {
+          spawn(at, p.e, p.hops - 1, now);
+          if (Math.random() < 0.25) spawn(at, p.e, Math.max(0, p.hops - 2), now);
         }
       }
-      p.vx *= 0.985; p.vy *= 0.985;
-      var sp = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-      if (sp < 0.04 && !p.anchor) { p.vx += (Math.random() - 0.5) * 0.02; p.vy += (Math.random() - 0.5) * 0.02; }
-      if (sp > 0.9) { p.vx *= 0.9 / sp; p.vy *= 0.9 / sp; }
-      p.x += p.vx * dt; p.y += p.vy * dt;
+      P.list = alive;
+      if (now >= P.spawnAt) {
+        /* quase sempre do hub — é ele que distribui; às vezes de um cômodo */
+        var keys = Object.keys(NODES), origem = Math.random() < 0.6 ? 'hub' : keys[Math.floor(Math.random() * keys.length)];
+        spawn(origem, -1, 1 + Math.floor(Math.random() * 3), now);
+        P.glow[origem] = 1;
+        P.spawnAt = now + 500 + Math.random() * 1400;
+      }
+      draw();
     }
-    drawNet();
-    if (st.visible && motionOK) st.raf = window.requestAnimationFrame(stepNet);
+    if (P.visible && motionOK) P.raf = window.requestAnimationFrame(step);
   }
 
-  function startNet() {
-    if (!net || !motionOK || netState.raf || !netState.visible || document.hidden) return;
-    netState.last = 0;
-    netState.raf = window.requestAnimationFrame(stepNet);
-  }
-  function stopNet() {
-    if (netState.raf) { window.cancelAnimationFrame(netState.raf); netState.raf = null; }
+  function draw() {
+    var ctx = pulsos.getContext('2d'), b = P.box, c = P.colors, s = b.s * P.dpr;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, pulsos.width, pulsos.height);
+    ctx.setTransform(s, 0, 0, s, 0, 0);
+    /* nós que acabaram de receber um pulso */
+    for (var k in P.glow) {
+      var g = P.glow[k]; if (g < 0.02) continue;
+      var n = NODES[k], rg = ctx.createRadialGradient(n[0], n[1], 0, n[0], n[1], 34);
+      rg.addColorStop(0, c.ink); rg.addColorStop(0.35, k === 'hub' ? c.ochre : c.blue); rg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.globalAlpha = g; ctx.fillStyle = rg;
+      ctx.beginPath(); ctx.arc(n[0], n[1], 34, 0, Math.PI * 2); ctx.fill();
+    }
+    /* pulsos com cauda */
+    for (var i = 0; i < P.list.length; i++) {
+      var p = P.list[i], e = EDGES[p.e], tone = c[e.tone];
+      for (var q = 6; q >= 0; q--) {
+        var tt = Math.min(1, Math.max(0, p.t - p.dir * q * 0.045)), pt = bez(e, tt);
+        var r = q === 0 ? 26 : 16 * (1 - q / 8);
+        var rg2 = ctx.createRadialGradient(pt[0], pt[1], 0, pt[0], pt[1], r);
+        rg2.addColorStop(0, q === 0 ? c.ink : tone); rg2.addColorStop(0.4, tone); rg2.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.globalAlpha = q === 0 ? 1 : 0.7 * (1 - q / 7);
+        ctx.fillStyle = rg2; ctx.beginPath(); ctx.arc(pt[0], pt[1], r, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
   }
 
-  buildNet();
-  startNet();
-
-  var resizeTimer = null;
-  window.addEventListener('resize', function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(buildNet, 150);
-  });
-  document.addEventListener('visibilitychange', function () { if (document.hidden) stopNet(); else startNet(); });
-
-  var hero = document.getElementById('topo');
-  if (hero && 'IntersectionObserver' in window) {
-    new IntersectionObserver(function (entries) {
-      netState.visible = entries[0].isIntersecting;
-      if (netState.visible) startNet(); else stopNet();
-    }).observe(hero);
+  function startPulsos() {
+    if (!pulsos || !motionOK || P.raf || !P.visible || document.hidden) return;
+    P.last = 0; P.raf = window.requestAnimationFrame(step);
   }
-  if (hero && window.matchMedia('(hover: hover)').matches) {
-    hero.addEventListener('pointermove', function (e) {
-      var r = net.getBoundingClientRect();
-      netState.mouse = { x: e.clientX - r.left, y: e.clientY - r.top };
-    });
-    hero.addEventListener('pointerleave', function () { netState.mouse = null; });
+  function stopPulsos() { if (P.raf) { window.cancelAnimationFrame(P.raf); P.raf = null; } }
+
+  if (pulsos && heroArt) {
+    if (heroArt.complete) fitPulsos(); else heroArt.addEventListener('load', fitPulsos);
+    startPulsos();
+    var fitTimer = null;
+    window.addEventListener('resize', function () { clearTimeout(fitTimer); fitTimer = setTimeout(fitPulsos, 120); });
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stopPulsos(); else startPulsos(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        P.visible = entries[0].isIntersecting;
+        if (P.visible) startPulsos(); else stopPulsos();
+      }).observe(heroEl);
+    }
   }
 
   /* ─── Entrada ao rolar ─────────────────────────────────────────── */
