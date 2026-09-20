@@ -151,6 +151,17 @@ responder ao contato (o campo de contato aceita e-mail ou WhatsApp).
 `#topo` (hero) · `#dupla` · `#diagnostico` · `#servicos` · `#cases` ·
 `#processo` · `#contato`.
 
+Duas delas mudam de forma abaixo de 640px. O `#diagnostico` deixa de ser a
+cascata de seis sintomas pendurados na régua e vira um carrossel: o script
+duplica as seis cartas, a faixa anda sozinha até -50% (onde a cópia coincide
+com o original, o mesmo truque do marquee de clientes) e o toque pausa. O
+`#servicos` troca as duas colunas por duas abas — Marca e Tecnologia — que se
+revezam a cada 6s enquanto a seção está na tela; uma barra fina sob a aba
+ativa marca o tempo, e tocar numa aba fixa aquela frente e para o relógio.
+Nos dois casos, `prefers-reduced-motion` desliga o movimento e deixa o
+conteúdo parado e legível. O detalhe está em
+`docs/handoff-diagnostico-entregas-mobile.md`.
+
 ## Admin (`/admin`)
 
 Painel interno do Matheus e do Bruno, em `admin/index.html` — um SPA estático
@@ -258,3 +269,14 @@ O ocre e o azul foram clareados para o fundo escuro: `#C9A24E` e `#7A93E6`
 (ambos acima de 6:1 sobre `--bg`, o mínimo WCAG AA para texto pequeno é 4,5:1).
 Os tokens vivem no `:root` de `index.html`; o `favicon.svg`
 usa as duas cores, ocre no telhado e azul nas paredes.
+
+No handoff do carrossel de sintomas, a `@media (max-width: 767px)` que dá ao
+sintoma o padding da cascata (`2px 4px 26px 18px`) vinha depois da
+`@media (max-width: 639px)` e vencia nela — a carta do celular ficava com 4px
+de respiro à direita e o texto encostava na borda. Aqui essa regra é
+`(min-width: 640px) and (max-width: 767px)`: a cascata estreita fica como
+estava e a carta usa os 22px que o handoff pede.
+
+Os rótulos das abas de entregas vão num `<span data-en>` dentro do botão, e
+não no próprio botão: a troca de idioma reescreve o `innerHTML` do nó que tem
+`data-en`, e o `<i>` da barra de tempo seria varrido junto.
