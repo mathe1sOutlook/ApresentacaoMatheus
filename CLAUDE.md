@@ -161,4 +161,4 @@ ficar numa pasta servida pela Vercel.
 - Ao editar o `index.html` do site, rodar `node scripts/build-en.mjs` e
   versionar o `en/index.html` junto (ver "Idiomas" no `README.md`).
 - Toda mudança de schema entra em `admin/schema.sql` **e** é aplicada no
-  Supabase — os dois sempre em sincronia.
+  Supabase — os dois sempre em sincronia. 
