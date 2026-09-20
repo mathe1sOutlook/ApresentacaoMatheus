@@ -232,9 +232,9 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   (amwc, ame-tom-de-voz, gipsyy). **Esta lista é a seleção aprovada; não
   acrescentar nomes sem aprovação** — os cases retirados na rodada 2 não
   voltam. Já estão no ar: `corning` (foto do barco), `mindminers` (banco de
-  praça), `ame-x` (banner Cashback Friday), `amwc` (cartaz) e `ame-tom-de-voz`
-  (banner do super app + grade de serviços). **Faltam `mediaportal`, que
-  precisa do print real do site, e `gipsyy`.** Basta salvar o arquivo com esse
+  praça), `ame-x` (banner Cashback Friday), `mediaportal` (print da home do
+  site no ar), `amwc` (cartaz) e `ame-tom-de-voz` (banner do super app + grade
+  de serviços). **Falta `gipsyy`.** Basta salvar o arquivo com esse
   nome; enquanto ele não existe, o `onerror` do `<img>` deixa a capa na
   moldura de espera sobre uma malha de desenho (as imagens ausentes respondem
   404, que é barato). O que está no ar é JPEG progressivo, 1600 px de largura
@@ -246,6 +246,12 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   que foi feita — cobrindo, um banner de 3,7:1 numa capa quase quadrada
   mostraria um terço de si. O `onerror` de cada `<img>` remove a classe do seu
   modo, e a capa volta para a moldura de espera.
+  **Print de site pede enquadramento retrato e âncora no canto**
+  (`case__shot--print`, hoje só no `mediaportal`): a capa é quase quadrada no
+  desktop e bem mais alta no celular, e um print em paisagem perde metade da
+  largura no corte — a manchete entra decepada. O do Media Portal é 1600×1956,
+  a home inteira até a faixa de clientes, com o corte ancorado no alto e à
+  esquerda, que é onde moram logo, menu e manchete.
   Um caso aceita **mais de uma imagem**: é duplicar o `<img class="case__shot">`
   dentro da `<div class="case__shots">`. A partir da segunda, a faixa vira
   carrossel — arrasto nativo por scroll-snap, marcadores e setas do teclado
