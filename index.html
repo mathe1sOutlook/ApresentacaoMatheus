@@ -1745,7 +1745,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     <div class="rule-grid rule-grid--2">
       <article class="person reveal">
         <div class="person__head">
-          <!-- Foto: salvar em /img/bruno.jpg (quadrada, 400×400 ou mais). Sem o arquivo, a moldura "foto aqui" aparece. -->
+          <!-- Foto: salvar em /img/bruno.jpg (quadrada, 192×192 — o dobro dos 96px exibidos; o recorte circular é do CSS). Sem o arquivo, a moldura "foto aqui" aparece. -->
           <figure class="avatar">
             <img src="/img/bruno.jpg" alt="Bruno Amaral" width="96" height="96" onerror="this.parentNode.classList.add('avatar--empty')" />
             <figcaption data-en="Photo here">Foto aqui</figcaption>
@@ -1767,7 +1767,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
       <article class="person reveal">
         <div class="person__head">
-          <!-- Foto: salvar em /img/matheus.jpg (quadrada, 400×400 ou mais). -->
+          <!-- Foto: salvar em /img/matheus.jpg (quadrada, 192×192, como a do Bruno). -->
           <figure class="avatar">
             <img src="/img/matheus.jpg" alt="Matheus Silva" width="96" height="96" onerror="this.parentNode.classList.add('avatar--empty')" />
             <figcaption data-en="Photo here">Foto aqui</figcaption>
