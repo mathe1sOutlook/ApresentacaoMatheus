@@ -39,11 +39,15 @@
 <link rel="preload" href="/fonts/fraunces-italic-latin.woff2" as="font" type="font/woff2" crossorigin="">
 <link rel="preload" href="/fonts/inter-normal-latin.woff2" as="font" type="font/woff2" crossorigin="">
 
-<!-- A classe que arma o fade das seções entra antes da primeira pintura, para
-     nada aparecer e sumir. Sem IntersectionObserver ou com reduced-motion,
-     tudo fica visível desde o início. -->
+<!-- As duas classes entram antes da primeira pintura. .js diz que o script
+     rodou — é ela que autoriza esconder conteúdo (o explorador de entregas
+     fecha sete dos oito painéis; sem script os oito ficam na página).
+     .js-reveal arma o fade das seções, para nada aparecer e sumir; sem
+     IntersectionObserver ou com reduced-motion tudo fica visível desde o
+     início. -->
 <script>
 (function () {
+  document.documentElement.classList.add('js');
   if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.documentElement.classList.add('js-reveal');
   }
@@ -530,10 +534,13 @@ button {
 @keyframes marquee { to { transform: translateX(-50%); } }
 @keyframes symptoms-loop { to { transform: translateX(calc(-50% - 6px)); } }
 @keyframes fronts-timer { from { width: 0; } to { width: 100%; } }
+@keyframes explorer-timer { from { width: 0; } to { width: 100%; } }
+@keyframes explorer-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @keyframes fronts-item { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
   .symptoms.is-loop { animation: none; }
   .fronts__tab.is-on i { animation: none; width: 100%; }
+  .explorer__item::after { display: none; }
   .fronts__panel, .fronts__panel.is-on li { transition: none; animation: none; }
 }
 /* Sem movimento, a faixa vira lista que quebra linha: todos os nomes aparecem. */
@@ -813,95 +820,131 @@ button {
 }
 
 /* ─── Frentes ──────────────────────────────────────────────────────
-   As duas frentes penduram no mesmo trilho: uma linha só, ocre numa ponta
-   e azul na outra, com um nó sobre cada par de itens. É o que diz que
-   marca, marketing, dados e engenharia são um sistema, não dois. */
-.fronts {
+   As oito entregas num explorador: a lista de um lado, uma entrega aberta
+   do outro, com o que ela é na prática e o que o cliente recebe. Ocre para
+   marca, azul para tecnologia — é o que diz que as duas frentes são um
+   sistema só, e não dois cardápios. */
+.explorer { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.explorer__list {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+  background: var(--bg-deep);
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 28px 56px;
+  align-content: start;
 }
-.fronts__rail {
-  grid-column: 1 / -1;
+.explorer__item {
+  all: unset;
   position: relative;
-  height: 2px;
-  margin-bottom: 20px;
-  background: var(--line);
-}
-.fronts__rail::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, var(--ochre) 0%, #B4A283 50%, var(--blue) 100%);
-  transform-origin: left;
-}
-/* Os nós ficam sobre o trilho, um por par de itens de cada frente. */
-.fronts__node {
-  position: absolute;
-  top: -3px;
-  width: 8px;
-  height: 8px;
-  transform: translateX(-50%);
-  background: var(--ochre);
-}
-.fronts__node:nth-of-type(1) { left: 12%; background: var(--ochre); --node-delay: 260ms; }
-.fronts__node:nth-of-type(2) { left: 38%; background: #B99F6C;      --node-delay: 460ms; }
-.fronts__node:nth-of-type(3) { left: 62%; background: #9A99A9;      --node-delay: 660ms; }
-.fronts__node:nth-of-type(4) { left: 88%; background: var(--blue);  --node-delay: 860ms; }
-
-/* Sem script o trilho já está desenhado; com script ele corre ao entrar. */
-.js-reveal .fronts__rail::before { transform: scaleX(0); transition: transform 1.1s cubic-bezier(0.2, 0.7, 0.3, 1); }
-.js-reveal .fronts__rail.is-in::before { transform: none; }
-.js-reveal .fronts__node { opacity: 0; transition: opacity 0.4s ease; transition-delay: var(--node-delay, 0ms); }
-.js-reveal .fronts__rail.is-in .fronts__node { opacity: 1; }
-
-.front__head {
-  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 12px;
   align-items: center;
   gap: 16px;
-  padding-bottom: 18px;
-}
-.front--brand .front__head { border-bottom: 1px solid var(--ochre-soft); }
-.front--tech  .front__head { border-bottom: 1px solid var(--blue-soft); }
-.front__dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex: none;
-}
-.front--brand .front__dot { background: var(--ochre); box-shadow: 0 0 14px 3px var(--ochre-soft); }
-.front--tech  .front__dot { background: var(--blue);  box-shadow: 0 0 14px 3px var(--blue-soft); }
-.front__title {
+  padding: 16px 24px;
   font-family: var(--serif);
-  font-size: 28px;
-  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.25;
+  color: var(--ink-soft);
+  transition: background 0.2s, color 0.2s;
 }
-.front__list { list-style: none; margin: 0; padding: 0; }
-.front__item {
-  position: relative;
-  padding: 24px 0;
-}
-/* Régua que para antes da borda: separa sem fechar o item numa caixa. */
-.front__item::after {
+.explorer__item:hover { background: var(--bg-card); color: var(--ink); }
+.explorer__item.is-active { background: var(--bg-card); color: var(--ink); }
+.explorer__item:focus-visible { outline: 2px solid var(--ochre); outline-offset: -2px; }
+.explorer__num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; }
+.explorer__dot { width: 8px; height: 8px; border-radius: 50%; opacity: 0; transition: opacity 0.2s; }
+.explorer__item.is-active .explorer__dot { opacity: 1; }
+.explorer__item[data-front="b"] .explorer__num { color: var(--ochre); }
+.explorer__item[data-front="b"] .explorer__dot { background: var(--ochre); }
+.explorer__item[data-front="t"] .explorer__num { color: var(--blue); }
+.explorer__item[data-front="t"] .explorer__dot { background: var(--blue); }
+/* Relógio do avanço automático: uma linha ocre→azul cresce no pé do item
+   ativo durante os 3,5 s e some quando o visitante fixa uma entrega. */
+.explorer__item::after {
   content: "";
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 72%;
-  height: 1px;
-  background: var(--line-strong);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--ochre), var(--blue));
+  opacity: 0;
 }
-.front__item:last-child::after { width: 32%; }
-.front__item h4 {
+.explorer__item.is-timing::after { opacity: 1; animation: explorer-timer 3.5s linear forwards; }
+
+.explorer__detail {
+  background: var(--bg-card);
+  padding: 44px 44px 48px;
+  min-height: 420px;
+  display: grid;
+  align-content: start;
+  gap: 40px;
+}
+.explorer__panel { display: grid; gap: 28px; align-content: start; }
+/* Quem fecha os sete painéis é o script (hidden), e só ele: sem script os
+   oito descem em coluna, separados por régua, e a lista — que sem clique
+   não leva a lugar nenhum — sai da frente. */
+.explorer__panel[hidden] { display: none; }
+html:not(.js) .explorer { grid-template-columns: minmax(0, 1fr); }
+html:not(.js) .explorer__list { display: none; }
+html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-top: 1px solid var(--line); }
+/* O painel entra em degraus: rótulo, título, texto, ficha. */
+.js-reveal .explorer__panel.is-active > * { animation: explorer-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.js-reveal .explorer__panel.is-active > :nth-child(2) { animation-delay: 0.06s; }
+.js-reveal .explorer__panel.is-active > :nth-child(3) { animation-delay: 0.12s; }
+.js-reveal .explorer__panel.is-active > :nth-child(4) { animation-delay: 0.18s; }
+
+.explorer__front {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.explorer__front i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.explorer__panel[data-front="b"] .explorer__front { color: var(--ochre); }
+.explorer__panel[data-front="t"] .explorer__front { color: var(--blue); }
+.explorer__title {
   font-family: var(--serif);
-  font-size: 21px;
   font-weight: 600;
+  font-size: clamp(28px, 2.8vw, 38px);
+  line-height: 1.15;
   color: var(--ink);
 }
-.front__item p {
-  margin-top: 8px;
+.explorer__body {
   font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink);
+  max-width: 52ch;
+  text-wrap: pretty;
+}
+.explorer__facts {
+  margin: 0;
+  display: grid;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.explorer__facts > div { display: grid; gap: 6px; }
+.explorer__facts dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--ink-soft);
+}
+.explorer__facts dd { margin: 0; font-size: 16px; line-height: 1.55; color: var(--ink); max-width: 52ch; }
+/* O nome da seção leva o par de cores das duas frentes. */
+#servicos .section-title {
+  background: linear-gradient(120deg, var(--ochre) 0%, var(--ochre) 30%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 
 /* ─── Casos ──────────────────────────────────────────────────────── */
@@ -1705,22 +1748,23 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
 @media (min-width: 768px) {
   .rule-grid--2 { grid-template-columns: repeat(2, 1fr); }
-  .fronts { grid-template-columns: repeat(2, 1fr); }
+}
+/* Estreito demais para lista e painel lado a lado: o painel desce. */
+@media (max-width: 899px) {
+  .explorer { grid-template-columns: minmax(0, 1fr); }
+  .explorer__detail { padding: 32px 24px 36px; min-height: 0; }
 }
 @media (min-width: 640px) and (max-width: 767px) {
   /* Na cascata estreita o sintoma encosta na régua; no celular ele vira
      carta e usa o padding dela. */
   .symptom { padding: 2px 4px 26px 18px; }
 }
-@media (max-width: 767px) {
-  .front + .front { margin-top: 28px; }
-}
 /* No celular, "O que entregamos" vira duas abas — Marca · Tecnologia —
    que se revezam sozinhas a cada 6 s. Uma barra fina sob a aba ativa
    marca o tempo; o toque fixa uma frente e para o relógio. */
 .fronts__tabs { display: none; }
 @media (max-width: 639px) {
-  .fronts { display: none; }
+  .explorer { display: none; }
   .fronts__tabs { display: block; }
   .fronts__tablist {
     display: grid;
@@ -1909,9 +1953,15 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     color-scheme: light;
   }
   .js-reveal .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
-  .js-reveal .fronts__rail::before,
   .js-reveal .steps::before { transform: none !important; }
-  .js-reveal .fronts__node { opacity: 1 !important; }
+  /* no papel não há clique: a lista sai e as oito entregas descem abertas */
+  .explorer { grid-template-columns: 1fr; }
+  .explorer__list { display: none; }
+  .explorer__detail { padding: 0; min-height: 0; gap: 28px; }
+  .explorer__panel[hidden] { display: grid !important; }
+  .explorer__panel + .explorer__panel { padding-top: 28px; border-top: 1px solid var(--line); }
+  /* o gradiente do título é de tela: no papel vira tinta preta */
+  #servicos .section-title { background: none; color: var(--ink); -webkit-text-fill-color: currentColor; }
   /* o trocadilho MAR·TEC é de tela: no papel as duas cores não têm contraste */
   .mar, .tec { color: inherit; }
   .hero__art, .hero__pulsos, .wa-float, .site-header, .marquee, .lead, .skip-link { display: none !important; }
@@ -2152,66 +2202,137 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       <div>
         <h2 class="section-title" data-en="What we deliver." data-pt="O que entregamos.">What we deliver.</h2>
       </div>
+      <p class="section-intro" data-en="Eight deliverables, two crafts. Each one starts in the diagnosis and ends in something the company uses." data-pt="Oito entregas, dois ofícios. Cada uma começa no diagnóstico e termina em algo que a empresa usa.">Eight deliverables, two crafts. Each one starts in the diagnosis and ends in something the company uses.</p>
     </div>
 
-    <div class="fronts">
-      <!-- Um trilho só para as duas frentes, com um nó sobre cada par de
-           itens. É decoração estrutural: fica fora da árvore de acessibilidade. -->
-      <div class="fronts__rail" data-draw="" aria-hidden="true">
-        <span class="fronts__node"></span>
-        <span class="fronts__node"></span>
-        <span class="fronts__node"></span>
-        <span class="fronts__node"></span>
-      </div>
-
-      <div class="front front--brand reveal">
-        <div class="front__head">
-          <span class="front__dot" aria-hidden="true"></span>
-          <h3 class="front__title" data-en="Brand &amp; Strategy" data-pt="Marca &amp;amp; Estratégia">Brand &amp; Strategy</h3>
+    <!-- Explorador das oito entregas: a lista à esquerda abre, uma de cada
+         vez, o painel à direita — o que a entrega é na prática e o que o
+         cliente recebe. Os painéis nascem todos abertos; quem fecha sete
+         deles é o script, para a página não ficar vazia sem JavaScript. -->
+    <div class="explorer rule-grid reveal" data-explorer="">
+      <ul class="explorer__list" role="tablist" aria-orientation="vertical">
+        <li role="presentation">
+          <button class="explorer__item is-active" role="tab" type="button" id="entrega-tab-0" aria-selected="true" aria-controls="entrega-panel-0" data-front="b">
+            <span class="explorer__num" aria-hidden="true">01</span>
+            <span data-en="Brand strategy" data-pt="Estratégia de marca">Brand strategy</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="entrega-tab-1" aria-selected="false" aria-controls="entrega-panel-1" data-front="b">
+            <span class="explorer__num" aria-hidden="true">02</span>
+            <span data-en="Market research" data-pt="Pesquisa de mercado">Market research</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="entrega-tab-2" aria-selected="false" aria-controls="entrega-panel-2" data-front="b">
+            <span class="explorer__num" aria-hidden="true">03</span>
+            <span data-en="Creative &amp; content" data-pt="Criação &amp;amp; conteúdo">Creative &amp; content</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="entrega-tab-3" aria-selected="false" aria-controls="entrega-panel-3" data-front="b">
+            <span class="explorer__num" aria-hidden="true">04</span>
+            <span>Go-to-market</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="entrega-tab-4" aria-selected="false" aria-controls="entrega-panel-4" data-front="t">
+            <span class="explorer__num" aria-hidden="true">05</span>
+            <span data-en="Custom systems &amp; dashboards" data-pt="Sistemas sob medida &amp;amp; dashboards">Custom systems &amp; dashboards</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="entrega-tab-5" aria-selected="false" aria-controls="entrega-panel-5" data-front="t">
+            <span class="explorer__num" aria-hidden="true">06</span>
+            <span data-en="Data analysis" data-pt="Análise de dados">Data analysis</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="entrega-tab-6" aria-selected="false" aria-controls="entrega-panel-6" data-front="t">
+            <span class="explorer__num" aria-hidden="true">07</span>
+            <span data-en="Automation &amp; integrations" data-pt="Automações &amp;amp; integrações">Automation &amp; integrations</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="entrega-tab-7" aria-selected="false" aria-controls="entrega-panel-7" data-front="t">
+            <span class="explorer__num" aria-hidden="true">08</span>
+            <span data-en="AI applied to the business" data-pt="IA aplicada ao negócio">AI applied to the business</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+      </ul>
+      <div class="explorer__detail">
+        <div class="explorer__panel is-active" role="tabpanel" id="entrega-panel-0" aria-labelledby="entrega-tab-0" data-front="b">
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Brand &amp; Strategy" data-pt="Marca &amp;amp; Estratégia">Brand &amp; Strategy</span></span>
+          <h3 class="explorer__title" data-en="Brand strategy" data-pt="Estratégia de marca">Brand strategy</h3>
+          <p class="explorer__body" data-en="We read the company from the inside — who buys, why, what competitors promise — and hand back a clear position and a plan to get there." data-pt="Lemos a empresa por dentro — quem compra, por quê, o que os concorrentes prometem — e devolvemos uma posição clara e um plano para chegar nela.">We read the company from the inside — who buys, why, what competitors promise — and hand back a clear position and a plan to get there.</p>
+          <dl class="explorer__facts">
+            <div><dt data-en="You receive" data-pt="Você recebe">You receive</dt><dd data-en="Diagnosis, positioning and a prioritized roadmap." data-pt="Diagnóstico, posicionamento e roadmap priorizado.">Diagnosis, positioning and a prioritized roadmap.</dd></div>
+          </dl>
         </div>
-        <ul class="front__list">
-          <li class="front__item reveal">
-            <h4 data-en="Brand strategy" data-pt="Estratégia de marca">Brand strategy</h4>
-            <p data-en="Diagnosis, positioning, roadmap." data-pt="Diagnóstico, posicionamento, roadmap.">Diagnosis, positioning, roadmap.</p>
-          </li>
-          <li class="front__item reveal">
-            <h4 data-en="Market research" data-pt="Pesquisa de mercado">Market research</h4>
-            <p data-en="Qualitative, quantitative, competitive." data-pt="Qualitativa, quantitativa, competitiva.">Qualitative, quantitative, competitive.</p>
-          </li>
-          <li class="front__item reveal">
-            <h4 data-en="Creative &amp; content" data-pt="Criação &amp;amp; conteúdo">Creative &amp; content</h4>
-            <p data-en="Key visual, copy, tone of voice." data-pt="Key visual, copy, tom de voz.">Key visual, copy, tone of voice.</p>
-          </li>
-          <li class="front__item reveal">
-            <h4>Go-to-market</h4>
-            <p data-en="Launch, activation, measurement." data-pt="Lançamento, ativação, mensuração.">Launch, activation, measurement.</p>
-          </li>
-        </ul>
-      </div>
-
-      <div class="front front--tech reveal">
-        <div class="front__head">
-          <span class="front__dot" aria-hidden="true"></span>
-          <h3 class="front__title" data-en="Technology &amp; Data" data-pt="Tecnologia &amp;amp; Dados">Technology &amp; Data</h3>
+        <div class="explorer__panel" role="tabpanel" id="entrega-panel-1" aria-labelledby="entrega-tab-1" data-front="b">
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Brand &amp; Strategy" data-pt="Marca &amp;amp; Estratégia">Brand &amp; Strategy</span></span>
+          <h3 class="explorer__title" data-en="Market research" data-pt="Pesquisa de mercado">Market research</h3>
+          <p class="explorer__body" data-en="Interviews, panels and competitive reading to trade opinion for evidence before any expensive decision." data-pt="Entrevistas, painéis e leitura competitiva para trocar opinião por evidência antes de qualquer decisão cara.">Interviews, panels and competitive reading to trade opinion for evidence before any expensive decision.</p>
+          <dl class="explorer__facts">
+            <div><dt data-en="You receive" data-pt="Você recebe">You receive</dt><dd data-en="Report with findings and prioritized recommendations." data-pt="Relatório com achados e recomendações priorizadas.">Report with findings and prioritized recommendations.</dd></div>
+          </dl>
         </div>
-        <ul class="front__list">
-          <li class="front__item reveal">
-            <h4 data-en="Custom systems" data-pt="Sistemas sob medida">Custom systems</h4>
-            <p data-en="End-to-end internal platforms." data-pt="Plataformas internas ponta a ponta.">End-to-end internal platforms.</p>
-          </li>
-          <li class="front__item reveal">
-            <h4 data-en="Dashboards &amp; intelligence" data-pt="Dashboards &amp;amp; inteligência">Dashboards &amp; intelligence</h4>
-            <p data-en="Dashboards and automatic reports." data-pt="Painéis e relatórios automáticos.">Dashboards and automatic reports.</p>
-          </li>
-          <li class="front__item reveal">
-            <h4 data-en="Automation &amp; integrations" data-pt="Automações &amp;amp; integrações">Automation &amp; integrations</h4>
-            <p data-en="APIs, ERPs, CRMs connected." data-pt="APIs, ERPs, CRMs conectados.">APIs, ERPs, CRMs connected.</p>
-          </li>
-          <li class="front__item reveal">
-            <h4 data-en="AI applied to the business" data-pt="IA aplicada ao negócio">AI applied to the business</h4>
-            <p data-en="Classification and decision support." data-pt="Classificação e apoio à decisão.">Classification and decision support.</p>
-          </li>
-        </ul>
+        <div class="explorer__panel" role="tabpanel" id="entrega-panel-2" aria-labelledby="entrega-tab-2" data-front="b">
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Brand &amp; Strategy" data-pt="Marca &amp;amp; Estratégia">Brand &amp; Strategy</span></span>
+          <h3 class="explorer__title" data-en="Creative &amp; content" data-pt="Criação &amp;amp; conteúdo">Creative &amp; content</h3>
+          <p class="explorer__body" data-en="Key visual, copy and tone of voice — what the brand says and how it shows up, at every touchpoint." data-pt="Key visual, copy e tom de voz — o que a marca fala e como aparece, em todos os pontos de contato.">Key visual, copy and tone of voice — what the brand says and how it shows up, at every touchpoint.</p>
+          <dl class="explorer__facts">
+            <div><dt data-en="You receive" data-pt="Você recebe">You receive</dt><dd data-en="Brand kit, content library, voice guide." data-pt="Kit de marca, biblioteca de conteúdo, guia de voz.">Brand kit, content library, voice guide.</dd></div>
+          </dl>
+        </div>
+        <div class="explorer__panel" role="tabpanel" id="entrega-panel-3" aria-labelledby="entrega-tab-3" data-front="b">
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Brand &amp; Strategy" data-pt="Marca &amp;amp; Estratégia">Brand &amp; Strategy</span></span>
+          <h3 class="explorer__title">Go-to-market</h3>
+          <p class="explorer__body" data-en="Launch plan with channels, calendar and targets, with measurement switched on from day one." data-pt="Plano de lançamento com canais, calendário e metas, e a mensuração ligada desde o dia um.">Launch plan with channels, calendar and targets, with measurement switched on from day one.</p>
+          <dl class="explorer__facts">
+            <div><dt data-en="You receive" data-pt="Você recebe">You receive</dt><dd data-en="GTM plan, tracking dashboard." data-pt="Plano de GTM, painel de acompanhamento.">GTM plan, tracking dashboard.</dd></div>
+          </dl>
+        </div>
+        <div class="explorer__panel" role="tabpanel" id="entrega-panel-4" aria-labelledby="entrega-tab-4" data-front="t">
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Technology &amp; Data" data-pt="Tecnologia &amp;amp; Dados">Technology &amp; Data</span></span>
+          <h3 class="explorer__title" data-en="Custom systems &amp; dashboards" data-pt="Sistemas sob medida &amp;amp; dashboards">Custom systems &amp; dashboards</h3>
+          <p class="explorer__body" data-en="An internal platform designed around the company’s real process — records, orders, finance, operations — with data born organized and read in dashboards leadership follows. Built with the people who will use it, not imposed on them." data-pt="Plataforma interna desenhada em cima do processo real da empresa — cadastro, pedido, financeiro, operação — com os dados nascendo já organizados e lidos em painéis que a diretoria acompanha. Feita com quem vai usar, não imposta a quem vai usar.">An internal platform designed around the company’s real process — records, orders, finance, operations — with data born organized and read in dashboards leadership follows. Built with the people who will use it, not imposed on them.</p>
+          <dl class="explorer__facts">
+            <div><dt data-en="You receive" data-pt="Você recebe">You receive</dt><dd data-en="System in production, documented, with training and a database ready for analysis." data-pt="Sistema em produção, documentado, com treinamento e base de dados pronta para análise.">System in production, documented, with training and a database ready for analysis.</dd></div>
+          </dl>
+        </div>
+        <div class="explorer__panel" role="tabpanel" id="entrega-panel-5" aria-labelledby="entrega-tab-5" data-front="t">
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Technology &amp; Data" data-pt="Tecnologia &amp;amp; Dados">Technology &amp; Data</span></span>
+          <h3 class="explorer__title" data-en="Data analysis" data-pt="Análise de dados">Data analysis</h3>
+          <p class="explorer__body" data-en="Beyond dashboards: models that reveal patterns a standard report does not show. Self-organizing maps (SOM) to segment customers and products with no prior categories; prototype-based classification (LVQ) to place each customer in known profiles — risk, default, behavior; and adaptive networks (ART) that learn from data arriving every day without forgetting what they already knew." data-pt="Além de painéis: modelos que revelam padrões que o relatório comum não mostra. Mapas auto-organizáveis (SOM) para segmentar clientes e produtos sem categorias prévias; classificação por protótipos (LVQ) para encaixar cada cliente em perfis já conhecidos — risco, inadimplência, comportamento; e redes adaptativas (ART) que aprendem com dados que chegam todo dia sem esquecer o que já sabiam.">Beyond dashboards: models that reveal patterns a standard report does not show. Self-organizing maps (SOM) to segment customers and products with no prior categories; prototype-based classification (LVQ) to place each customer in known profiles — risk, default, behavior; and adaptive networks (ART) that learn from data arriving every day without forgetting what they already knew.</p>
+          <dl class="explorer__facts">
+            <div><dt data-en="You receive" data-pt="Você recebe">You receive</dt><dd data-en="Live dashboards, customer segmentation and risk profiles that update with the operation." data-pt="Painéis vivos, segmentação de clientes e perfis de risco atualizados com a operação.">Live dashboards, customer segmentation and risk profiles that update with the operation.</dd></div>
+          </dl>
+        </div>
+        <div class="explorer__panel" role="tabpanel" id="entrega-panel-6" aria-labelledby="entrega-tab-6" data-front="t">
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Technology &amp; Data" data-pt="Tecnologia &amp;amp; Dados">Technology &amp; Data</span></span>
+          <h3 class="explorer__title" data-en="Automation &amp; integrations" data-pt="Automações &amp;amp; integrações">Automation &amp; integrations</h3>
+          <p class="explorer__body" data-en="ERP, CRM, spreadsheets and tools talking to each other through APIs and automated routines. Data is typed once and lands where it is needed — no rework, no manual copying, no two versions of the same information." data-pt="ERP, CRM, planilhas e ferramentas falando entre si por APIs e rotinas automáticas. O dado é digitado uma vez e chega onde precisa — sem retrabalho, sem cópia manual, sem duas versões da mesma informação.">ERP, CRM, spreadsheets and tools talking to each other through APIs and automated routines. Data is typed once and lands where it is needed — no rework, no manual copying, no two versions of the same information.</p>
+          <dl class="explorer__facts">
+            <div><dt data-en="You receive" data-pt="Você recebe">You receive</dt><dd data-en="Integrations in production, monitored, with alerts when something stops." data-pt="Integrações em produção, monitoradas, com alerta quando algo para.">Integrations in production, monitored, with alerts when something stops.</dd></div>
+          </dl>
+        </div>
+        <div class="explorer__panel" role="tabpanel" id="entrega-panel-7" aria-labelledby="entrega-tab-7" data-front="t">
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Technology &amp; Data" data-pt="Tecnologia &amp;amp; Dados">Technology &amp; Data</span></span>
+          <h3 class="explorer__title" data-en="AI applied to the business" data-pt="IA aplicada ao negócio">AI applied to the business</h3>
+          <p class="explorer__body" data-en="Forecasting and decisions with models chosen by the problem, not by fashion. Radial basis function networks (RBF) to estimate sales, costs and cash flow from history; incremental learning (ART) for operations whose data changes continuously; and associative memory (Hopfield) to reconstruct incomplete patterns. Always with accuracy measured on your own data — not promises." data-pt="Previsão e decisão com modelos escolhidos pelo problema, não pela moda. Redes de base radial (RBF) para estimar vendas, custos e fluxo de caixa a partir do histórico; aprendizado incremental (ART) para operações cujos dados mudam continuamente; e memória associativa (Hopfield) para reconstruir padrões incompletos. Sempre com métrica de acerto medida na sua base — não promessa.">Forecasting and decisions with models chosen by the problem, not by fashion. Radial basis function networks (RBF) to estimate sales, costs and cash flow from history; incremental learning (ART) for operations whose data changes continuously; and associative memory (Hopfield) to reconstruct incomplete patterns. Always with accuracy measured on your own data — not promises.</p>
+          <dl class="explorer__facts">
+            <div><dt data-en="You receive" data-pt="Você recebe">You receive</dt><dd data-en="Model in use in the operation, continuously evaluated, with an accuracy report." data-pt="Modelo em uso na operação, com avaliação contínua e relatório de acerto.">Model in use in the operation, continuously evaluated, with an accuracy report.</dd></div>
+          </dl>
+        </div>
       </div>
     </div>
 
@@ -2232,10 +2353,10 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
           <li><h4>Go-to-market</h4><p data-en="Launch, activation, measurement." data-pt="Lançamento, ativação, mensuração.">Launch, activation, measurement.</p></li>
         </ul>
         <ul class="fronts__panel fronts__panel--tech" role="tabpanel">
-          <li><h4 data-en="Custom systems" data-pt="Sistemas sob medida">Custom systems</h4><p data-en="End-to-end internal platforms." data-pt="Plataformas internas ponta a ponta.">End-to-end internal platforms.</p></li>
-          <li><h4 data-en="Dashboards &amp; intelligence" data-pt="Dashboards &amp;amp; inteligência">Dashboards &amp; intelligence</h4><p data-en="Dashboards and automatic reports." data-pt="Painéis e relatórios automáticos.">Dashboards and automatic reports.</p></li>
-          <li><h4 data-en="Automation &amp; integrations" data-pt="Automações &amp;amp; integrações">Automation &amp; integrations</h4><p data-en="APIs, ERPs, CRMs connected." data-pt="APIs, ERPs, CRMs conectados.">APIs, ERPs, CRMs connected.</p></li>
-          <li><h4 data-en="AI applied to the business" data-pt="IA aplicada ao negócio">AI applied to the business</h4><p data-en="Classification and decision support." data-pt="Classificação e apoio à decisão.">Classification and decision support.</p></li>
+          <li><h4 data-en="Custom systems &amp; dashboards" data-pt="Sistemas sob medida &amp;amp; dashboards">Custom systems &amp; dashboards</h4><p data-en="Platform built on your real process, data born organized." data-pt="Plataforma em cima do processo real, dado já organizado.">Platform built on your real process, data born organized.</p></li>
+          <li><h4 data-en="Data analysis" data-pt="Análise de dados">Data analysis</h4><p data-en="Dashboards, segmentation (SOM), risk profiles (LVQ), continuous learning (ART)." data-pt="Painéis, segmentação (SOM), perfis de risco (LVQ), aprendizado contínuo (ART).">Dashboards, segmentation (SOM), risk profiles (LVQ), continuous learning (ART).</p></li>
+          <li><h4 data-en="Automation &amp; integrations" data-pt="Automações &amp;amp; integrações">Automation &amp; integrations</h4><p data-en="ERP, CRM and tools talking through APIs; data typed once." data-pt="ERP, CRM e ferramentas ligados por APIs; dado digitado uma vez.">ERP, CRM and tools talking through APIs; data typed once.</p></li>
+          <li><h4 data-en="AI applied to the business" data-pt="IA aplicada ao negócio">AI applied to the business</h4><p data-en="Forecasting (RBF), incremental learning (ART), pattern recovery (Hopfield)." data-pt="Previsão (RBF), aprendizado incremental (ART), recuperação de padrões (Hopfield).">Forecasting (RBF), incremental learning (ART), pattern recovery (Hopfield).</p></li>
         </ul>
       </div>
     </div>
@@ -3057,6 +3178,82 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       }).observe(heroEl);
     }
   }
+
+  /* ─── "O que entregamos": explorador ──────────────────────────────
+     Fecha sete das oito entregas (o HTML entrega as oito abertas) e passa
+     a revezá-las a cada 3,5 s, com uma barra de tempo no item ativo. O
+     clique ou as setas fixam uma entrega e param o relógio; o mouse sobre
+     o painel segura enquanto estiver lá. Fora da tela, com a aba oculta
+     ou com reduced-motion o relógio não corre — a troca por clique
+     continua funcionando. */
+  (function () {
+    var root = document.querySelector('[data-explorer]');
+    if (!root) return;
+    var rm = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var tabs = Array.prototype.slice.call(root.querySelectorAll('.explorer__item'));
+    var panels = Array.prototype.slice.call(root.querySelectorAll('.explorer__panel'));
+    if (tabs.length !== panels.length || !tabs.length) return;
+    var DWELL = 3500, cur = 0, timer = null, pinned = false, hover = false, visible = false;
+    function running() { return !pinned && !hover && visible && !rm.matches; }
+    function show(i, focus) {
+      cur = i;
+      tabs.forEach(function (t, k) {
+        var on = k === i;
+        t.classList.toggle('is-active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+        t.classList.remove('is-timing');
+      });
+      panels.forEach(function (p, k) {
+        var on = k === i;
+        p.hidden = !on;
+        p.classList.remove('is-active');
+        /* reinicia a animação de entrada: sem o reflow o navegador não
+           reconhece que a classe saiu e voltou */
+        if (on) { void p.offsetWidth; p.classList.add('is-active'); }
+      });
+      if (focus) tabs[i].focus();
+      if (running()) { void tabs[i].offsetWidth; tabs[i].classList.add('is-timing'); }
+    }
+    function stop() {
+      clearTimeout(timer);
+      timer = null;
+      tabs.forEach(function (t) { t.classList.remove('is-timing'); });
+    }
+    function start() {
+      stop();
+      if (!running()) return;
+      void tabs[cur].offsetWidth;
+      tabs[cur].classList.add('is-timing');
+      timer = setTimeout(function step() {
+        show((cur + 1) % tabs.length);
+        timer = setTimeout(step, DWELL);
+      }, DWELL);
+    }
+    function pin(i, focus) { pinned = true; stop(); show(i, focus); }
+    tabs.forEach(function (t, k) {
+      t.addEventListener('click', function () { pin(k); });
+      t.addEventListener('keydown', function (e) {
+        if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+        e.preventDefault();
+        pin((k + (e.key === 'ArrowDown' ? 1 : tabs.length - 1)) % tabs.length, true);
+      });
+    });
+    var detail = root.querySelector('.explorer__detail');
+    detail.addEventListener('pointerenter', function () { hover = true; stop(); });
+    detail.addEventListener('pointerleave', function () { hover = false; start(); });
+    show(0);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        visible = entries[0].isIntersecting;
+        if (visible) start(); else stop();
+      }, { threshold: 0.3 }).observe(root);
+    } else {
+      visible = true;
+      start();
+    }
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
+  })();
 
   /* ─── Entrada ao rolar ─────────────────────────────────────────── */
   if (document.documentElement.classList.contains('js-reveal')) {
