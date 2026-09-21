@@ -232,10 +232,10 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   (amwc, ame-tom-de-voz, gipsyy). **Esta lista é a seleção aprovada; não
   acrescentar nomes sem aprovação** — os cases retirados na rodada 2 não
   voltam. Já estão no ar: `corning` (foto do barco), `mindminers` (banco de
-  praça), `ame-x` (banner Cashback Friday), `mediaportal` (print da home do
-  site no ar), `amwc` (cartaz) e `ame-tom-de-voz` (banner do super app + grade
-  de serviços). **Falta `gipsyy`.** Basta salvar o arquivo com esse
-  nome; enquanto ele não existe, o `onerror` do `<img>` deixa a capa na
+  praça), `ame-x` (banner Cashback Friday), `mediaportal` (a home do site
+  desfocada com o logo por cima), `amwc` (cartaz) e `ame-tom-de-voz` (banner do
+  super app + grade de serviços). **Falta `gipsyy`.** Basta salvar o arquivo
+  com esse nome; enquanto ele não existe, o `onerror` do `<img>` deixa a capa na
   moldura de espera sobre uma malha de desenho (as imagens ausentes respondem
   404, que é barato). O que está no ar é JPEG progressivo, 1600 px de largura
   nas capas e o tamanho original nos cards; WebP/AVIF fica para quando houver
@@ -246,12 +246,22 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   que foi feita — cobrindo, um banner de 3,7:1 numa capa quase quadrada
   mostraria um terço de si. O `onerror` de cada `<img>` remove a classe do seu
   modo, e a capa volta para a moldura de espera.
-  **Print de site pede enquadramento retrato e âncora no canto**
-  (`case__shot--print`, hoje só no `mediaportal`): a capa é quase quadrada no
-  desktop e bem mais alta no celular, e um print em paisagem perde metade da
-  largura no corte — a manchete entra decepada. O do Media Portal é 1600×1956,
-  a home inteira até a faixa de clientes, com o corte ancorado no alto e à
-  esquerda, que é onde moram logo, menu e manchete.
+  **Print de site não entra legível.** O do Media Portal entrou, e a manchete
+  do site disputava a leitura com o título do caso — quem passava lia o texto
+  errado. A capa de hoje é o mesmo print virado textura: desfocado, escurecido
+  e com o logo oficial da marca por cima, que é o que se quer comunicar.
+  Também resolve o corte, porque uma textura não tem onde ser decepada — a
+  capa é quase quadrada no desktop e bem mais alta no celular.
+  A receita, para refazer se o site mudar: print da home em 1440px de largura
+  (só a primeira dobra), desfoque gaussiano de ~28px sobre 1600px, altas luzes
+  comprimidas (o painel branco do vídeo vira brilho, não bloco), sombra radial
+  atrás do logo, véu escurecendo o terço de baixo — é lá que caem título,
+  métrica e botão — e o logo branco da marca a 31% da largura, centrado a 32%
+  da altura. Resultado: 1600×1956, retrato.
+  **Peça de campanha ganha o próprio fundo** (`case__fundo`): o mesmo arquivo
+  entra atrás, ampliado e desfocado, para a cor da peça tomar o cartão inteiro.
+  A prancha vazia em volta de um banner era espaço morto, e uma segunda imagem
+  só para preencher seria peso a mais para baixar. No papel ele some.
   Um caso aceita **mais de uma imagem**: é duplicar o `<img class="case__shot">`
   dentro da `<div class="case__shots">`. A partir da segunda, a faixa vira
   carrossel — arrasto nativo por scroll-snap, marcadores e setas do teclado
