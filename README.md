@@ -146,6 +146,14 @@ também converte o lead em cliente com um clique. Um campo-isca (`website`)
 barra robôs simples, e o formulário avisa que os dados servem só para
 responder ao contato (o campo de contato aceita e-mail ou WhatsApp).
 
+"O que você precisa" são quatro pílulas (`<input type="radio">` com a caixa
+desenhada no `<label>`), e não uma caixa de seleção: a escolha fica à vista,
+e o disco toma a cor da frente — ocre em marca, azul em sistema, os dois no
+par. Nenhuma vem marcada, para o que chegar ser escolha de quem escreveu;
+sem marcação a linha não entra na mensagem do WhatsApp e o lead grava
+`nao-sei`, que é o default da coluna `need` (ela é `not null`, então o valor
+nunca pode ir vazio).
+
 ## Seções
 
 `#topo` (hero) · `#dupla` · `#diagnostico` · `#servicos` · `#cases` ·
@@ -161,6 +169,28 @@ entrega e para o relógio. Quem esconde sete dos oito painéis é o script: no
 HTML os oito nascem abertos, então sem JavaScript — e no papel — a seção
 desce em coluna, com a lista fora do caminho. O detalhe está em
 `docs/handoff-explorador-entregas.md`.
+
+O `#cases` é uma fileira de quatro capas que rola na horizontal. Abrir um
+caso abre os quatro: eles correm lado a lado, e um card aberto sozinho
+deixava os vizinhos como capas mudas. Aberto, o card inverte as proporções —
+a capa cede altura (460px → 236px, e a peça de campanha do Caso 03 sai,
+ficando o fundo desfocado), a barra do topo encolhe para 52px e o painel de
+texto para de crescer na altura da janela, rolando por dentro em vez de
+empurrar a página. O teto é medido pelo script (`--case-panel-max`: a janela
+menos a barra do topo, menos a capa encolhida) e refeito a cada resize; ao
+abrir, a fileira sobe para o alto da tela. No papel o teto e a rolagem não
+valem: o texto de cada caso sai inteiro.
+
+A capa aberta tem altura **fixa**, não mínima: com `min-height`, a de título
+longo (Corning quebra o título e a métrica em duas linhas) ficava mais alta
+que as outras e desalinhava os painéis da fileira. Pelo mesmo motivo os cards
+entram prontos neste modo — o fade de `.reveal` foi feito para a seção
+descendo, e de lado o card que aparece chega translúcido e três pixels acima
+dos vizinhos. O passo do carrossel (`scroll-snap`) também sai, e abaixo da
+fileira aparece uma barra de rolagem desenhada (`.cases__bar`): a nativa está
+escondida no desenho normal e, em parte dos sistemas, é sobreposta e não
+aparece. O script sincroniza a alça com o scroll; arrastá-la, ou clicar no
+trilho, move a fileira.
 
 O `#diagnostico` é um baralho: os seis sintomas em cartas altas que deslizam
 na horizontal, em qualquer largura. O script duplica as seis, a faixa sangra
