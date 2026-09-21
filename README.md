@@ -18,7 +18,7 @@ hero traz a casa de luz: a ilustração da casa em corte, à direita, com pulsos
 que viajam pelos rastros entre os cômodos como sinais numa rede. As seções
 entram com um fade curto ao rolar. Os dois efeitos desligam com
 `prefers-reduced-motion` — a casa fica acesa e parada. A prova social roda em
-marquee.
+marquee, e passar o mouse por cima não a interrompe.
 
 ## Estrutura
 
@@ -135,24 +135,41 @@ mudarem, é o script que muda — e as duas imagens são versionadas junto.
 
 ## Formulário de contato (leads)
 
-O "Iniciar conversa" em `#contato` faz duas coisas ao enviar: abre o WhatsApp
-com a mensagem montada e grava o lead na tabela `amaralesilva_leads` do
-Supabase (projeto `mApps`), via REST com a chave publicável. A política RLS
-permite ao papel anônimo apenas INSERT com `source = 'site'` e
-`status = 'novo'`, e só nas colunas que o formulário preenche; um trigger
+O "Iniciar conversa" em `#contato` grava o lead na tabela
+`amaralesilva_leads` do Supabase (projeto `mApps`), via REST com a chave
+publicável, e responde na própria página — **Enviar não abre mais o
+WhatsApp**. Deu certo, entra a faixa "Recebemos. Respondemos em até 1 dia
+útil" e o formulário se limpa; falhou (rede fora, 4xx/5xx — `fetch` não
+reclama de status, quem recusa é o nosso `res.ok`), entra a faixa de erro
+apontando o WhatsApp e o e-mail, e o que foi digitado fica onde está. As
+duas faixas são `role="status"`, para leitor de tela anunciar.
+
+Quem prefere falar na hora tem o segundo botão, "Falar no WhatsApp": é um
+`<a>` de verdade, com a saudação já no `href` — sem JavaScript ele abre
+assim mesmo —, e o script substitui pelo que estiver preenchido no momento
+do clique, sem exigir campo nenhum. Ele não grava lead: quem grava é o
+Enviar.
+
+A política RLS permite ao papel anônimo apenas INSERT com `source = 'site'`
+e `status = 'novo'`, e só nas colunas que o formulário preenche; um trigger
 limita a uma linha por requisição e a 30 leads por 10 minutos. Leitura e
 edição só para membros, pela tela **Leads do site** do painel `/admin`, que
 também converte o lead em cliente com um clique. Um campo-isca (`website`)
-barra robôs simples, e o formulário avisa que os dados servem só para
-responder ao contato (o campo de contato aceita e-mail ou WhatsApp).
+barra robôs simples, e o campo de contato aceita e-mail ou WhatsApp. A nota
+sobre os dados ("guardamos sua mensagem para responder a este contato") saiu
+do pé do formulário e mora num "i" com tooltip embaixo dos botões: o texto
+fica no documento o tempo todo — só a opacidade some —, então
+`aria-describedby` e leitor de tela continuam chegando nele, e a bolha abre
+no mouse, no foco e no toque.
 
-"O que você precisa" são quatro pílulas (`<input type="radio">` com a caixa
-desenhada no `<label>`), e não uma caixa de seleção: a escolha fica à vista,
-e o disco toma a cor da frente — ocre em marca, azul em sistema, os dois no
-par. Nenhuma vem marcada, para o que chegar ser escolha de quem escreveu;
-sem marcação a linha não entra na mensagem do WhatsApp e o lead grava
-`nao-sei`, que é o default da coluna `need` (ela é `not null`, então o valor
-nunca pode ir vazio).
+"O que você precisa" são duas pílulas — as duas frentes da casa —, e não uma
+caixa de seleção: `<input type="checkbox">` com a caixa desenhada no
+`<label>`, o disco de cada uma na cor da sua frente (ocre em marca, azul em
+sistema). Elas **somam**: as duas marcadas gravam `ambos`, e nenhuma marcada
+grava `nao-sei` — os quatro valores da coluna `need` continuam os mesmos,
+derivados no envio. Nada vem marcado de saída, para o que chegar ser escolha
+de quem escreveu; sem marcação a linha não entra na mensagem do WhatsApp. O
+lead nunca vai vazio: `need` é `not null` com `check` nos quatro valores.
 
 ## Seções
 
@@ -192,15 +209,22 @@ escondida no desenho normal e, em parte dos sistemas, é sobreposta e não
 aparece. O script sincroniza a alça com o scroll; arrastá-la, ou clicar no
 trilho, move a fileira.
 
-O `#diagnostico` é um baralho: os seis sintomas em cartas altas que deslizam
-na horizontal, em qualquer largura. O script duplica as seis, a faixa sangra
-a largura da tela e anda sozinha a 50px/s (72 abaixo de 900px) até -50%, onde
-a cópia coincide com o original — o mesmo truque do marquee de clientes. O
-arrasto e a roda horizontal somam ao deslocamento, e soltando ela segue
-andando. Quem liga o carrossel é a classe `is-loop`, que só o script põe na
-faixa e no wrap: sem JavaScript, com `prefers-reduced-motion` e no papel as
-seis cartas viram grade, e nenhuma fica escondida atrás de um movimento que
-não vai acontecer.
+O `#diagnostico` é uma lista, e o que separa um sintoma do outro é uma régua
+de 1px. De 1000px em diante ela se parte em duas colunas, com o fio vertical
+correndo no meio; entre 700 e 999px volta a ser uma coluna só e quem se parte
+é cada sintoma — título à esquerda, frase e sinais à direita; abaixo disso
+cada sintoma ocupa a largura inteira. O número e a disciplina (`--brand`,
+`--tech`) seguem no HTML como anotação editorial, escondidos no CSS: quem lê
+se reconhece na dor, não na arrumação da casa. Nada aqui depende de script.
+
+A faixa de clientes não para no mouse. Quem quiser olhar um nome de perto
+arrasta a faixa ou gira a roda na horizontal; ao soltar, ela retoma do ponto
+onde ficou e o embalo do gesto se apaga em cerca de um segundo. O passo é o
+mesmo do `@keyframes` — uma cópia inteira a cada 40s —, só que medido em
+pixels, porque com a classe `is-loop` quem escreve o `transform` passa a ser
+o script. Sem JavaScript, ou com `prefers-reduced-motion`, o CSS continua
+mandando. Só o foco de teclado pausa: é o jeito de ler a faixa parada, e é
+o que a `aria-label` do grupo promete.
 
 Abaixo de 640px o `#servicos` troca o explorador por duas abas — Marca e
 Tecnologia — que se revezam a cada 6s enquanto a seção está na tela; uma
@@ -331,13 +355,6 @@ O ocre e o azul foram clareados para o fundo escuro: `#C9A24E` e `#7A93E6`
 (ambos acima de 6:1 sobre `--bg`, o mínimo WCAG AA para texto pequeno é 4,5:1).
 Os tokens vivem no `:root` de `index.html`; o `favicon.svg`
 usa as duas cores, ocre no telhado e azul nas paredes.
-
-No handoff do carrossel de sintomas, a `@media (max-width: 767px)` que dá ao
-sintoma o padding da cascata (`2px 4px 26px 18px`) vinha depois da
-`@media (max-width: 639px)` e vencia nela — a carta do celular ficava com 4px
-de respiro à direita e o texto encostava na borda. Aqui essa regra é
-`(min-width: 640px) and (max-width: 767px)`: a cascata estreita fica como
-estava e a carta usa os 22px que o handoff pede.
 
 Os rótulos das abas de entregas vão num `<span data-en>` dentro do botão, e
 não no próprio botão: a troca de idioma reescreve o `innerHTML` do nó que tem
