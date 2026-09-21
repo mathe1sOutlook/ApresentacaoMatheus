@@ -1,5 +1,13 @@
 # Handoff: Diagnóstico + Entregas — versão celular (< 640px)
 
+> **Parcialmente superado.** O que este documento diz sobre o `#diagnostico`
+> valia quando o carrossel era só do celular e o desktop tinha a cascata de
+> réguas. Numa sessão posterior do Claude Design o carrossel passou a valer em
+> **qualquer largura** (arrasto, roda horizontal, 50/72 px/s), e a cascata
+> saiu. O que continua valendo aqui: o conteúdo dos seis sintomas e as abas de
+> `#servicos` no celular. A forma atual das duas seções está no `README.md` e,
+> para o explorador de entregas, em `handoff-explorador-entregas.md`.
+
 ## Overview
 Sessão de revisão das seções **"Sua operação se reconhece aqui?"** (`#diagnostico`, sintomas) e **"O que entregamos."** (`#servicos`, frentes) do site Amaral & Silva. Objetivo: no celular as duas seções eram blocos de texto longos e cansativos. Agora:
 

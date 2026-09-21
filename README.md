@@ -162,16 +162,21 @@ HTML os oito nascem abertos, então sem JavaScript — e no papel — a seção
 desce em coluna, com a lista fora do caminho. O detalhe está em
 `docs/handoff-explorador-entregas.md`.
 
-Duas seções mudam de forma abaixo de 640px. O `#diagnostico` deixa de ser a
-cascata de seis sintomas pendurados na régua e vira um carrossel: o script
-duplica as seis cartas, a faixa anda sozinha até -50% (onde a cópia coincide
-com o original, o mesmo truque do marquee de clientes) e o toque pausa. O
-`#servicos` troca o explorador por duas abas — Marca e Tecnologia — que se
-revezam a cada 6s enquanto a seção está na tela; uma barra fina sob a aba
-ativa marca o tempo, e tocar numa aba fixa aquela frente e para o relógio.
-Nos dois casos, `prefers-reduced-motion` desliga o movimento e deixa o
-conteúdo parado e legível. O detalhe está em
-`docs/handoff-diagnostico-entregas-mobile.md`.
+O `#diagnostico` é um baralho: os seis sintomas em cartas altas que deslizam
+na horizontal, em qualquer largura. O script duplica as seis, a faixa sangra
+a largura da tela e anda sozinha a 50px/s (72 abaixo de 900px) até -50%, onde
+a cópia coincide com o original — o mesmo truque do marquee de clientes. O
+arrasto e a roda horizontal somam ao deslocamento, e soltando ela segue
+andando. Quem liga o carrossel é a classe `is-loop`, que só o script põe na
+faixa e no wrap: sem JavaScript, com `prefers-reduced-motion` e no papel as
+seis cartas viram grade, e nenhuma fica escondida atrás de um movimento que
+não vai acontecer.
+
+Abaixo de 640px o `#servicos` troca o explorador por duas abas — Marca e
+Tecnologia — que se revezam a cada 6s enquanto a seção está na tela; uma
+barra fina sob a aba ativa marca o tempo, e tocar numa aba fixa aquela frente
+e para o relógio. Com `prefers-reduced-motion` nada disso anima. O detalhe
+está em `docs/handoff-diagnostico-entregas-mobile.md`.
 
 ## Admin (`/admin`)
 
