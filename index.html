@@ -1059,6 +1059,26 @@ button {
 .case__cover--piece .case__shot { display: block; width: 100%; height: auto; }
 .case__cover--piece .media__hint,
 .case__cover--piece .media__client { display: none; }
+/* O fundo da peça: o MESMO arquivo, ampliado e desfocado atrás dela. A prancha
+   vazia em volta de um banner era espaço morto no cartão; a própria arte
+   desfocada enche a capa sem trazer segunda imagem para baixar. O `inset`
+   negativo é o que impede a borda clara que o desfoque deixaria na moldura. */
+.case__fundo {
+  position: absolute;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  /* o max-width: 100% global travaria a largura em 100% da capa e deixaria
+     uma tira da malha à mostra na direita */
+  max-width: none;
+  object-fit: cover;
+  filter: blur(34px) saturate(1.5) brightness(0.52);
+  z-index: 0;
+}
+/* A peça descola do fundo: sem sombra, arte e desfoque encostam e viram borrão. */
+.case__cover--piece .case__media .media {
+  box-shadow: 0 26px 60px rgba(4, 6, 12, 0.55);
+}
 
 /* Faixa de imagens: com uma só é a capa; com duas ou mais vira carrossel de
    arrasto nativo (scroll-snap), e o script acrescenta marcadores e teclado. */
@@ -1081,13 +1101,6 @@ button {
   object-fit: cover;
   scroll-snap-align: center;
 }
-/* Print de site não é fotografia: o assunto não está no meio, está no alto e à
-   esquerda — manchete, logo e menu. A capa muda de proporção entre o desktop
-   (quase quadrada) e o celular (bem mais alta), e o corte centralizado comia
-   justamente a primeira palavra da manchete na tela pequena. Ancorar no alto e
-   à esquerda faz o corte sair de onde não há informação: o rodapé da imagem no
-   desktop, a borda direita no celular. */
-.case__shot--print { object-position: 12% top; }
 .case__dots {
   position: absolute;
   z-index: 3;
@@ -1911,6 +1924,8 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .case__reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   .case__title::after { transform: none !important; }
   .case__cover:not(.case__cover--photo) { background: none; }
+  /* o fundo desfocado é efeito de tela: no papel seria um borrão de tinta */
+  .case__fundo { display: none !important; }
   a { color: inherit; }
 }
 </style>
@@ -2234,22 +2249,21 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       <div>
         <h2 class="section-title" data-en="Proof, not promise.">Prova, não promessa.</h2>
       </div>
-      <p class="section-intro" data-en="Tap “see details” to open the problem, the solution and the value delivered.">Toque em “ver detalhes” pra abrir problema, solução e valor entregue.</p>
     </div>
 
     <div class="cases" tabindex="0" role="group" aria-label="Casos de projeto; o foco pausa o avanço automático" data-en-aria-label="Project cases; focusing pauses the auto-advance">
 <!-- Caso 01 ─────────────────────────────────────────────────── -->
     <article class="case case--featured reveal">
-  <!-- Foto de capa: /img/casos/mediaportal.jpg — print do site no ar
-       (mediaportal.com.br), 1600×1956, retrato. A proporção fica entre a da
-       capa no desktop e a do celular, e `case__shot--print` ancora o corte no
-       alto e à esquerda: uma paisagem 16:10 perderia metade da largura no
-       `object-fit: cover` e a manchete entraria decepada. Sem o arquivo, a
+  <!-- Capa: /img/casos/mediaportal.jpg, 1600×1956. É o print da home no ar
+       (mediaportal.com.br) desfocado, com o logo oficial por cima — a receita
+       está no README. O print legível roubava a leitura: a manchete do site
+       disputava com o título do caso, e quem passava lia o texto errado. Como
+       textura, ele continua dizendo "site escuro, azul, com vídeo" sem pedir
+       leitura, e o corte do cartão não tem onde errar. Sem o arquivo, a
        moldura tracejada aparece. -->
   <div class="case__cover case__cover--photo">
     <div class="case__chips">
       <span class="case__chip"><span data-en="Case">Caso</span> 01</span>
-      <span class="case__chip" data-en="Joint">Conjunto</span>
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-mediaportal">
@@ -2258,14 +2272,14 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot case__shot--print" src="/img/casos/mediaportal.jpg" alt="Home do site da Media Portal: manchete “A segurança da sua mídia começa na gestão do seu acervo”, vídeo institucional ao lado e a faixa de números da operação" data-en-alt="Media Portal website home: headline “Your media's safety starts with managing your archive”, the institutional video beside it and the band of operating numbers" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
+          <img class="case__shot" src="/img/casos/mediaportal.jpg" alt="Logo da Media Portal sobre a home do site, desfocada" data-en-alt="Media Portal logo over the blurred website home" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" />
         </div>
         <span class="media__client">Media Portal Soluções</span>
         <figcaption class="media__hint" data-en="Awaiting the real site screenshot">Aguardando print real do site</figcaption>
       </figure>
     </div>
     <div class="case__caption">
-      <h3 class="case__title" data-en="Media Portal — Digital repositioning">Media Portal — Reposicionamento digital</h3>
+      <h3 class="case__title" data-en="Digital repositioning">Reposicionamento digital</h3>
       <div class="case__reveal">
         <p class="case__metric" data-en="18+ years of operation · full redesign">18+ anos de operação · redesign completo</p>
         <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-01-details"><span class="is-open" data-en="See details ↓">Ver detalhes ↓</span><span class="is-close" data-en="Close ↑">Fechar ↑</span></button>
@@ -2318,7 +2332,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   <div class="case__cover case__cover--photo">
     <div class="case__chips">
       <span class="case__chip"><span data-en="Case">Caso</span> 02</span>
-      <span class="case__chip" data-en="Research">Pesquisa</span>
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-mindminers">
@@ -2383,11 +2396,16 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
     <!-- Caso 03 ─────────────────────────────────────────────────── -->
     <article class="case reveal">
-  <!-- Peça de campanha: /img/casos/ame-x.jpg, montada na prancha na proporção original (case__cover--piece) em vez de cobrir a capa. Sem o arquivo, a moldura tracejada aparece. -->
+  <!-- Peça de campanha: /img/casos/ame-x.jpg, montada na prancha na proporção
+       original (case__cover--piece) em vez de cobrir a capa — um banner de
+       3,7:1 cobrindo mostraria um terço de si. O que enche o resto do cartão é
+       o mesmo arquivo atrás, ampliado e desfocado (case__fundo): a cor da peça
+       toma a capa inteira e a arte continua inteira. Sem o arquivo, a moldura
+       tracejada aparece. -->
   <div class="case__cover case__cover--piece">
+    <img class="case__fundo" src="/img/casos/ame-x.jpg" alt="" aria-hidden="true" onerror="this.remove()" />
     <div class="case__chips">
       <span class="case__chip"><span data-en="Case">Caso</span> 03</span>
-      <span class="case__chip" data-en="Validated case · X">Case validado · X</span>
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-x">
@@ -2456,7 +2474,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   <div class="case__cover case__cover--photo">
     <div class="case__chips">
       <span class="case__chip"><span data-en="Case">Caso</span> 04</span>
-      <span class="case__chip" data-en="Fortune 500">Fortune 500</span>
     </div>
     <div class="case__media">
       <figure class="media" data-slot="case-corning">
