@@ -160,6 +160,10 @@ ficar numa pasta servida pela Vercel.
 - `docs/handoff-telas-crm.md` — o handoff que o Claude Design devolveu, já
   implementado: layout, tokens dos dois temas, conteúdo exato de cada tela e as
   regras de dados que os números precisam respeitar.
+- `docs/handoff-explorador-entregas.md` — o handoff do `#servicos`: o
+  explorador das oito entregas (lista + painel), o conteúdo de cada uma, o
+  avanço automático e o que a implementação mudou em relação ao que o Claude
+  Design devolveu.
 - `docs/handoff-diagnostico-entregas-mobile.md` — o handoff da versão celular
   do `#diagnostico` (carrossel de sintomas) e do `#servicos` (abas que se
   revezam): copy dos seis sintomas, medidas das cartas, timings e o

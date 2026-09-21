@@ -151,11 +151,22 @@ responder ao contato (o campo de contato aceita e-mail ou WhatsApp).
 `#topo` (hero) · `#dupla` · `#diagnostico` · `#servicos` · `#cases` ·
 `#processo` · `#contato`.
 
-Duas delas mudam de forma abaixo de 640px. O `#diagnostico` deixa de ser a
+O `#servicos` é um explorador: as oito entregas em lista de um lado, uma
+aberta de cada vez do outro, com o que ela é na prática e o que o cliente
+recebe. Ocre numera as quatro de marca, azul as quatro de tecnologia. A
+entrega aberta troca sozinha a cada 3,5s enquanto a seção está na tela e a
+aba do navegador está visível; uma linha ocre→azul cresce no pé do item ativo
+marcando o tempo, o mouse sobre o painel segura e o clique (ou ↑↓) fixa uma
+entrega e para o relógio. Quem esconde sete dos oito painéis é o script: no
+HTML os oito nascem abertos, então sem JavaScript — e no papel — a seção
+desce em coluna, com a lista fora do caminho. O detalhe está em
+`docs/handoff-explorador-entregas.md`.
+
+Duas seções mudam de forma abaixo de 640px. O `#diagnostico` deixa de ser a
 cascata de seis sintomas pendurados na régua e vira um carrossel: o script
 duplica as seis cartas, a faixa anda sozinha até -50% (onde a cópia coincide
 com o original, o mesmo truque do marquee de clientes) e o toque pausa. O
-`#servicos` troca as duas colunas por duas abas — Marca e Tecnologia — que se
+`#servicos` troca o explorador por duas abas — Marca e Tecnologia — que se
 revezam a cada 6s enquanto a seção está na tela; uma barra fina sob a aba
 ativa marca o tempo, e tocar numa aba fixa aquela frente e para o relógio.
 Nos dois casos, `prefers-reduced-motion` desliga o movimento e deixa o
