@@ -451,27 +451,6 @@ button {
   color: var(--ink-soft);
 }
 
-.hero__actions {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 40px;
-}
-
-.btn {
-  font-family: var(--mono);
-  font-size: 14px;
-  letter-spacing: 0.03em;
-  padding: 18px 40px;
-  border: 1px solid var(--ink);
-  border-radius: var(--r-control);
-  color: var(--ink);
-  text-align: center;
-}
-.btn--primary { background: var(--ink); color: var(--bg); }
-.btn--primary:hover { background: var(--ochre); border-color: var(--ochre); color: var(--bg); }
-.btn--outline:hover { background: var(--ink); color: var(--bg); }
-
 /* Prova social — faixa em marquee, sangrando as bordas do container. */
 .proof {
   margin-top: 80px;
@@ -907,6 +886,7 @@ html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-to
   overflow: hidden;
   transition: border-color 0.35s ease, transform 0.4s ease;
 }
+.case__cover { transition: min-height 0.38s cubic-bezier(0.2, 0.7, 0.3, 1); }
 /* O caso conjunto leva a régua nas duas cores; os demais, no ocre. */
 .case--featured { --case-rule: linear-gradient(90deg, var(--ochre), var(--blue)); }
 .case:hover, .case:focus-within, .case.is-open { border-color: var(--ink-soft); }
@@ -936,27 +916,6 @@ html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-to
 /* A mão no cursor só aparece com o script de pé, que é quem atende o
    toque na capa inteira. */
 .js-cases .case__cover { cursor: pointer; }
-.case__chips {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 12px;
-}
-.case__chip {
-  font-family: var(--mono);
-  font-size: 13px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink);
-  border: 1px solid var(--ink-soft);
-  border-radius: var(--r-chip);
-  background: rgba(11, 13, 18, 0.72);
-  padding: 8px 14px;
-  white-space: nowrap;
-}
-
 /* Sem foto: a moldura fica centralizada na capa. */
 .case__media {
   position: relative;
@@ -1187,6 +1146,79 @@ html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-to
   padding: 32px 32px 36px;
 }
 .case__details[hidden] { display: none; }
+/* Modo leitura: abrir um caso abre os quatro, porque na fileira eles correm
+   lado a lado e um card aberto sozinho deixava os vizinhos como capas mudas.
+   Aberto, o card inverte as proporções — a capa cede altura para o texto, e
+   o painel para de crescer na altura da janela e rola por dentro, em vez de
+   empurrar a página para baixo. */
+.cases { --case-cover-open: 236px; }
+/* Altura fixa, não mínima: com min-height a capa de título longo (Corning
+   quebra em duas linhas, e a métrica também) ficava mais alta que as outras
+   e desalinhava os painéis da fileira. Junto, título e métrica descem um
+   degrau — a capa virou faixa. */
+.cases.has-open .case__cover { height: var(--case-cover-open); min-height: 0; }
+.cases.has-open .case__title { font-size: 26px; }
+.cases.has-open .case__metric { font-size: 13px; margin-top: 12px; }
+.cases.has-open .case__toggle { margin-top: 16px; }
+/* No modo leitura os cards entram prontos. O fade de entrada foi feito para
+   a seção descendo; de lado, o card que aparece na fileira chega translúcido
+   e três pixels acima dos vizinhos, com os painéis já alinhados ao lado. */
+.js-reveal .cases.has-open .case { opacity: 1; transform: none; transition: border-color 0.35s ease; }
+/* No modo leitura o passo do carrossel atrapalha: a fileira passa a correr
+   livre, e o arrasto da barra não fica preso ao card seguinte. */
+.cases.has-open { scroll-snap-type: none; }
+.cases.has-open .case { scroll-snap-align: none; }
+/* Barra da fileira, desenhada: a nativa está escondida no desenho normal e,
+   em parte dos sistemas, é sobreposta e não aparece. Esta acompanha o scroll
+   e arrasta, e só existe com os casos abertos. */
+.cases__bar { display: none; }
+.cases.has-open + .cases__bar {
+  display: block;
+  position: relative;
+  height: 10px;
+  margin-top: 14px;
+  border-radius: 999px;
+  background: var(--line);
+  cursor: pointer;
+  touch-action: none;
+}
+.cases__bar i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 30%;
+  border-radius: 999px;
+  background: var(--line-strong);
+  transition: background 0.2s ease;
+}
+.cases__bar:hover i, .cases__bar.is-dragging i { background: var(--ink-soft); }
+/* A peça de campanha ocupa a capa com a altura dela e não caberia na faixa:
+   no modo leitura ela sai e fica o fundo desfocado, que é a cor da peça. */
+.cases.has-open .case__cover--piece .case__media { display: none; }
+/* Com a capa reduzida, o título passa a cair em cima da foto: o véu que já
+   acende no hover fecha mais, e a imagem vira textura atrás do texto. */
+.cases.has-open .case__cover--photo::before {
+  background: linear-gradient(180deg, rgba(11, 13, 18, 0.62) 0%, rgba(11, 13, 18, 0.78) 55%, rgba(11, 13, 18, 0.95) 100%);
+}
+.cases.has-open .case__details {
+  max-height: var(--case-panel-max, 56vh);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.cases.has-open .case__details::-webkit-scrollbar { width: 10px; }
+.cases.has-open .case__details::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border: 3px solid var(--bg-card);
+  border-radius: 999px;
+}
+.cases.has-open .case__details::-webkit-scrollbar-track { background: transparent; }
+/* A barra do topo encolhe junto: no modo leitura o que interessa na tela é
+   o texto do caso. */
+html.has-case-open { --header-h: 52px; }
+.site-header__bar { transition: min-height 0.32s ease; }
+
 .case__client {
   font-family: var(--mono);
   font-size: 11px;
@@ -1595,17 +1627,58 @@ html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-to
 .field__error[hidden] { display: none; }
 .field__input::placeholder { color: transparent; }
 textarea.field__input { min-height: 120px; resize: vertical; }
-.field--select { position: relative; }
-/* A seta é traço com ponta e junta redondas, como o traço do favicon —
-   antes eram duas bordas em ângulo reto. */
-select.field__input {
-  padding-right: 38px;
-  cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1.2 1.6 6 6.4 10.8 1.6' stroke='%23A6A39B' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
+/* "O que você precisa": quatro pílulas em vez de uma caixa de seleção. A
+   escolha fica à vista (e o que a casa faz, junto com ela), em vez de
+   escondida atrás de um clique. O disco toma a cor da frente — ocre para
+   marca, azul para sistema, os dois quando é o par. */
+.field--choice { border: 0; padding: 0; min-width: 0; }
+.field--choice .field__label { margin-bottom: 10px; padding: 0; }
+.choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.choice { --choice-tone: var(--ink-soft); display: inline-flex; }
+.choice--brand { --choice-tone: var(--ochre); }
+.choice--tech { --choice-tone: var(--blue); }
+.choice input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
-select.field__input option { background: var(--bg-card); color: var(--ink); }
+.choice__box {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  font-size: 16px;
+  color: var(--ink-soft);
+  border: 1px solid rgba(166, 163, 155, 0.34);
+  border-radius: var(--r-chip);
+  background: rgba(11, 13, 18, 0.4);
+  cursor: pointer;
+  transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+}
+.choice__box i {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid rgba(166, 163, 155, 0.5);
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+/* O par leva as duas cores no mesmo disco. */
+.choice--both input:checked + .choice__box i { background: linear-gradient(120deg, var(--ochre), var(--blue)); }
+.choice:hover .choice__box { border-color: rgba(166, 163, 155, 0.6); color: var(--ink); }
+.choice input:focus-visible + .choice__box { outline: 2px solid var(--blue); outline-offset: 2px; }
+.choice input:checked + .choice__box {
+  color: var(--ink);
+  border-color: var(--choice-tone);
+  background: rgba(11, 13, 18, 0.62);
+}
+.choice input:checked + .choice__box i {
+  background: var(--choice-tone);
+  border-color: var(--choice-tone);
+  box-shadow: 0 0 12px 2px color-mix(in oklab, var(--choice-tone) 35%, transparent);
+}
 .lead__submit {
   display: block;
   width: 100%;
@@ -1852,7 +1925,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .proof__list { font-size: 22px; gap: 64px; }
   .proof__list img { height: 24px; max-width: 112px; }
   .case__cover { min-height: 420px; padding: 22px 24px 26px; }
-  .case__chip { font-size: 12px; padding: 7px 12px; }
   .case__title { font-size: 26px; }
   .case__details { padding: 26px 24px 30px; }
   .proof { margin-top: 56px; }
@@ -1902,6 +1974,13 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   .case { flex: none; scroll-snap-align: none; }
   .case + .case { margin-top: 24px; }
   .case__details[hidden] { display: block; }
+  /* o teto da janela e a rolagem por dentro são de tela: no papel o texto
+     do caso sai inteiro */
+  .cases.has-open .case__details { max-height: none; overflow: visible; }
+  .cases.has-open .case__cover--piece .case__media { display: flex; }
+  .cases.has-open .case__cover { height: auto; }
+  /* a barra é para a mão, e no papel não há mão */
+  .cases__bar { display: none !important; }
   .case__toggle, .case__dots { display: none; }
   .case__reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   .case__title::after { transform: none !important; }
@@ -1954,11 +2033,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       <h1 class="hero__title" data-en="Brands that stand out. Technology that holds them up."><span class="mar">Mar</span>cas que se destacam. <span class="tec">Tec</span>nologia que sustenta.</h1>
 
       <p class="hero__lede" data-en="A duo — brand strategy and software engineering — building a brand and the technology behind it from the ground up.">Uma dupla — estratégia de marca e engenharia de software — construindo, do zero, a marca e a tecnologia por trás dela.</p>
-
-      <div class="hero__actions">
-        <a href="#contato" class="btn btn--primary" data-en="Talk to us">Falar com a gente</a>
-        <a href="#cases" class="btn btn--outline" data-en="See project cases">Ver casos de projeto</a>
-      </div>
     </div>
   </div>
 
@@ -2312,9 +2386,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
        leitura, e o corte do cartão não tem onde errar. Sem o arquivo, a
        moldura tracejada aparece. -->
   <div class="case__cover case__cover--photo">
-    <div class="case__chips">
-      <span class="case__chip"><span data-en="Case">Caso</span> 01</span>
-    </div>
     <div class="case__media">
       <figure class="media" data-slot="case-mediaportal">
         <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
@@ -2380,9 +2451,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     <article class="case reveal">
   <!-- Foto de capa: /img/casos/mindminers.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
   <div class="case__cover case__cover--photo">
-    <div class="case__chips">
-      <span class="case__chip"><span data-en="Case">Caso</span> 02</span>
-    </div>
     <div class="case__media">
       <figure class="media" data-slot="case-mindminers">
         <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
@@ -2454,9 +2522,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
        tracejada aparece. -->
   <div class="case__cover case__cover--piece">
     <img class="case__fundo" src="/img/casos/ame-x.jpg" alt="" aria-hidden="true" onerror="this.remove()" />
-    <div class="case__chips">
-      <span class="case__chip"><span data-en="Case">Caso</span> 03</span>
-    </div>
     <div class="case__media">
       <figure class="media" data-slot="case-x">
         <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
@@ -2522,9 +2587,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     <article class="case reveal">
   <!-- Foto de capa: /img/casos/corning.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
   <div class="case__cover case__cover--photo">
-    <div class="case__chips">
-      <span class="case__chip"><span data-en="Case">Caso</span> 04</span>
-    </div>
     <div class="case__media">
       <figure class="media" data-slot="case-corning">
         <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
@@ -2586,6 +2648,9 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   </div>
 </article>
 </div>
+    <!-- Barra da fileira: só aparece com os casos abertos, e quem a move é o
+         script — sem ele o modo leitura não existe. -->
+    <div class="cases__bar" aria-hidden="true"><i></i></div>
 
     <!-- Outros projetos ───────────────────────────────────────────
          Três trabalhos aprovados que ainda não têm problema / solução / valor
@@ -2735,15 +2800,30 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
         <span class="field__label">Website</span>
         <input class="field__input" type="text" name="website" tabindex="-1" autocomplete="off" />
       </label>
-      <label class="field field--select">
-        <span class="field__label" data-en="What you need">O que você precisa</span>
-        <select class="field__input" name="precisa">
-          <option value="marca" data-en="Brand &amp; branding">Marca &amp; branding</option>
-          <option value="sistema" data-en="System &amp; technology">Sistema &amp; tecnologia</option>
-          <option value="ambos" data-en="Both">As duas coisas</option>
-          <option value="nao-sei" data-en="Not sure yet">Ainda não sei</option>
-        </select>
-      </label>
+      <!-- Nenhuma marcada de saída: o que vier é escolha de quem escreveu.
+           Sem escolha, o lead entra como "ainda não sei" (o default da
+           coluna) e a linha não vai no WhatsApp. -->
+      <fieldset class="field field--choice">
+        <legend class="field__label" data-en="What you need">O que você precisa</legend>
+        <div class="choices">
+          <label class="choice choice--brand">
+            <input type="radio" name="precisa" value="marca" />
+            <span class="choice__box"><i aria-hidden="true"></i><span data-en="Brand &amp; branding">Marca &amp; branding</span></span>
+          </label>
+          <label class="choice choice--tech">
+            <input type="radio" name="precisa" value="sistema" />
+            <span class="choice__box"><i aria-hidden="true"></i><span data-en="System &amp; technology">Sistema &amp; tecnologia</span></span>
+          </label>
+          <label class="choice choice--both">
+            <input type="radio" name="precisa" value="ambos" />
+            <span class="choice__box"><i aria-hidden="true"></i><span data-en="Both">As duas coisas</span></span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="precisa" value="nao-sei" />
+            <span class="choice__box"><i aria-hidden="true"></i><span data-en="Not sure yet">Ainda não sei</span></span>
+          </label>
+        </div>
+      </fieldset>
       <label class="field">
         <span class="field__label" data-en="Message">Mensagem</span>
         <textarea class="field__input" name="mensagem" rows="4"></textarea>
@@ -3226,7 +3306,8 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       var nome = form.nome.value.trim();
       var empresa = form.empresa.value.trim();
       var contato = form.contato.value.trim();
-      var precisa = form.precisa.options[form.precisa.selectedIndex].textContent.trim();
+      var marcada = form.querySelector('input[name="precisa"]:checked');
+      var precisa = marcada ? marcada.parentNode.textContent.trim() : '';
       var mensagem = form.mensagem.value.trim();
       var missing = [['nome', nome], ['contato', contato]].filter(function (f) { return !f[1]; });
       [['nome', nome], ['contato', contato]].forEach(function (f) {
@@ -3237,8 +3318,8 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       if (missing.length) { form[missing[0][0]].focus(); return; }
 
       var linhas = en
-        ? ['Hi, I came from the CASA MARTECH site.', 'Name: ' + nome, empresa ? 'Company: ' + empresa : '', 'Contact: ' + contato, 'Need: ' + precisa, mensagem]
-        : ['Olá, vim pelo site da CASA MARTECH.', 'Nome: ' + nome, empresa ? 'Empresa: ' + empresa : '', 'Contato: ' + contato, 'Preciso de: ' + precisa, mensagem];
+        ? ['Hi, I came from the CASA MARTECH site.', 'Name: ' + nome, empresa ? 'Company: ' + empresa : '', 'Contact: ' + contato, precisa ? 'Need: ' + precisa : '', mensagem]
+        : ['Olá, vim pelo site da CASA MARTECH.', 'Nome: ' + nome, empresa ? 'Empresa: ' + empresa : '', 'Contato: ' + contato, precisa ? 'Preciso de: ' + precisa : '', mensagem];
       var texto = linhas.filter(Boolean).join('\n');
       window.open('https://wa.me/5511999773471?text=' + encodeURIComponent(texto), '_blank', 'noopener');
 
@@ -3249,7 +3330,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
         name: nome.slice(0, 120),
         company: empresa ? empresa.slice(0, 120) : null,
         contact: contato.slice(0, 160),
-        need: form.precisa.value,
+        need: form.precisa.value || 'nao-sei',
         message: mensagem ? mensagem.slice(0, 2000) : null,
         lang: en ? 'en' : 'pt',
         source: 'site'
@@ -3262,7 +3343,12 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     });
   }
 
-  /* ─── Casos: abrir / fechar detalhes com altura animada ───────── */
+  /* ─── Casos: abrir / fechar detalhes com altura animada ─────────
+     Abrir um caso abre os quatro: eles correm lado a lado na mesma fileira,
+     e um card aberto sozinho deixava os vizinhos como capas mudas. No modo
+     aberto a capa cede altura (CSS) e o painel para de crescer na altura da
+     janela, rolando por dentro — quem manda no limite é --case-panel-max,
+     medido aqui e refeito a cada resize. */
   function settlePanel(panel) {
     if (panel.getAnimations) panel.getAnimations().forEach(function (a) { a.cancel(); });
   }
@@ -3273,12 +3359,18 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
       full: { height: h + 'px', paddingTop: cs.paddingTop, paddingBottom: cs.paddingBottom, borderTopWidth: cs.borderTopWidth, opacity: 1 }
     };
   }
+  /* Altura de chegada: o conteúdo, ou o teto da janela se ele passar dali. */
+  function panelTarget(panel) {
+    var max = parseFloat(getComputedStyle(panel).maxHeight);
+    var h = panel.scrollHeight;
+    return max > 0 && isFinite(max) ? Math.min(h, max) : h;
+  }
   function expandPanel(panel) {
     var from = panel.hidden ? 0 : panel.getBoundingClientRect().height;
     settlePanel(panel);
     panel.hidden = false;
     if (!motionOK || !panel.animate) return;
-    var f = panelFrames(panel, panel.scrollHeight);
+    var f = panelFrames(panel, panelTarget(panel));
     var start = from ? { height: from + 'px', opacity: 1 } : f.zero;
     panel.style.overflow = 'hidden';
     panel.animate([start, f.full], { duration: 380, easing: 'ease' })
@@ -3293,23 +3385,90 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     panel.animate([{ height: from + 'px', paddingTop: f.full.paddingTop, paddingBottom: f.full.paddingBottom, borderTopWidth: f.full.borderTopWidth, opacity: 1 }, f.zero], { duration: 300, easing: 'ease' })
       .onfinish = function () { panel.hidden = true; panel.style.overflow = ''; };
   }
-  document.querySelectorAll('.case__toggle').forEach(function (btn) {
-    var panel = document.getElementById(btn.getAttribute('aria-controls'));
-    if (!panel) return;
+
+  var casesRail = document.querySelector('.cases');
+  var caseToggles = Array.prototype.slice.call(document.querySelectorAll('.case__toggle'));
+
+  function headerHeight() {
+    return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 0;
+  }
+  /* O teto do painel: a janela menos a barra do topo, menos a capa encolhida
+     (o valor-alvo do CSS, não o medido — a capa ainda está em transição). */
+  function sizePanels() {
+    if (!casesRail || !casesRail.classList.contains('has-open')) return;
+    var cover = parseFloat(getComputedStyle(casesRail).getPropertyValue('--case-cover-open')) || 200;
+    /* 76 = respiro + a barra de rolagem da fileira, que só existe aqui */
+    var max = Math.max(240, Math.round(window.innerHeight - headerHeight() - cover - 76));
+    casesRail.style.setProperty('--case-panel-max', max + 'px');
+  }
+  window.addEventListener('resize', sizePanels);
+
+  function setCasesOpen(open) {
+    if (casesRail) casesRail.classList.toggle('has-open', open);
+    document.documentElement.classList.toggle('has-case-open', open);
+    /* o teto entra antes da animação: é ele que diz onde ela termina */
+    if (open) { sizePanels(); syncCasesBar(); }
+    caseToggles.forEach(function (btn) {
+      var panel = document.getElementById(btn.getAttribute('aria-controls'));
+      var card = btn.closest('.case');
+      btn.setAttribute('aria-expanded', String(open));
+      if (card) card.classList.toggle('is-open', open);
+      if (!panel) return;
+      if (open) expandPanel(panel); else collapsePanel(panel);
+    });
+    /* abrindo, a fileira sobe para o alto da tela: é o card que passa a ser
+       a página, e não faz sentido ler o texto pela metade de baixo */
+    if (open && casesRail) {
+      var top = casesRail.getBoundingClientRect().top + window.pageYOffset - headerHeight() - 16;
+      window.scrollTo({ top: Math.max(0, Math.round(top)), behavior: motionOK ? 'smooth' : 'auto' });
+    }
+  }
+
+  /* A barra desenhada: acompanha o scroll da fileira, e arrastá-la (ou
+     clicar no trilho) move a fileira. */
+  var casesBar = document.querySelector('.cases__bar');
+  var casesThumb = casesBar && casesBar.querySelector('i');
+  function syncCasesBar() {
+    if (!casesBar || !casesRail) return;
+    var vis = casesRail.clientWidth, total = casesRail.scrollWidth;
+    var ratio = total > 0 ? Math.min(1, vis / total) : 1;
+    var span = total - vis;
+    var pos = span > 0 ? casesRail.scrollLeft / span : 0;
+    casesThumb.style.width = (ratio * 100).toFixed(2) + '%';
+    casesThumb.style.left = (pos * (1 - ratio) * 100).toFixed(2) + '%';
+  }
+  if (casesBar && casesRail) {
+    var barGrab = null;
+    function barTo(clientX) {
+      var track = casesBar.getBoundingClientRect();
+      var thumbW = casesThumb.getBoundingClientRect().width;
+      var free = track.width - thumbW;
+      var p = free > 0 ? Math.min(1, Math.max(0, (clientX - track.left - barGrab) / free)) : 0;
+      casesRail.scrollLeft = p * (casesRail.scrollWidth - casesRail.clientWidth);
+    }
+    casesRail.addEventListener('scroll', syncCasesBar, { passive: true });
+    window.addEventListener('resize', syncCasesBar);
+    casesBar.addEventListener('pointerdown', function (e) {
+      var thumb = casesThumb.getBoundingClientRect();
+      /* pegou o cursor: arrasta dali. Clicou no trilho: o cursor passa a ser
+         o meio da alça, e ela pula para lá */
+      barGrab = e.clientX >= thumb.left && e.clientX <= thumb.right ? e.clientX - thumb.left : thumb.width / 2;
+      casesBar.classList.add('is-dragging');
+      casesBar.setPointerCapture && casesBar.setPointerCapture(e.pointerId);
+      barTo(e.clientX);
+    });
+    casesBar.addEventListener('pointermove', function (e) { if (barGrab !== null) barTo(e.clientX); });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (ev) {
+      casesBar.addEventListener(ev, function () { barGrab = null; casesBar.classList.remove('is-dragging'); });
+    });
+  }
+
+  caseToggles.forEach(function (btn) {
     var card = btn.closest('.case');
     var cover = card && card.querySelector('.case__cover');
-
-    function toggle() {
-      var open = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!open));
-      if (card) card.classList.toggle('is-open', !open);
-      var rail = card && card.closest('.cases');
-      if (rail) rail.classList.toggle('has-open', !!rail.querySelector('.case.is-open'));
-      if (open) collapsePanel(panel); else expandPanel(panel);
-    }
-
+    function toggle() { setCasesOpen(btn.getAttribute('aria-expanded') !== 'true'); }
     btn.addEventListener('click', toggle);
-    /* no toque não existe hover: a capa inteira abre e fecha o caso */
+    /* no toque não existe hover: a capa inteira abre e fecha os casos */
     if (cover) cover.addEventListener('click', function (event) {
       if (event.target.closest('button, a, input, label')) return;
       toggle();
