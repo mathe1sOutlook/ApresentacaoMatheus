@@ -532,13 +532,11 @@ button {
   white-space: nowrap;
 }
 @keyframes marquee { to { transform: translateX(-50%); } }
-@keyframes symptoms-loop { to { transform: translateX(calc(-50% - 6px)); } }
 @keyframes fronts-timer { from { width: 0; } to { width: 100%; } }
 @keyframes explorer-timer { from { width: 0; } to { width: 100%; } }
 @keyframes explorer-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @keyframes fronts-item { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
-  .symptoms.is-loop { animation: none; }
   .fronts__tab.is-on i { animation: none; width: 100%; }
   .explorer__item::after { display: none; }
   .fronts__panel, .fronts__panel.is-on li { transition: none; animation: none; }
@@ -655,70 +653,84 @@ button {
 }
 
 /* ─── Diagnóstico ──────────────────────────────────────────────────
-   Seis sintomas em cascata, cada um pendurado numa régua de 1px. Todos
-   no mesmo ocre: o leitor se reconhece na dor, não na disciplina — a
-   divisão marca/sistema é assunto da casa, não dele. */
+   Seis sintomas como um baralho: cartas altas deslizando na horizontal,
+   em loop infinito, em qualquer largura. O script duplica as seis cartas e
+   a faixa anda sozinha; a roda horizontal e o arrasto somam ao
+   deslocamento, e soltando ela segue andando.
+
+   Quem liga o carrossel é a classe .is-loop, que só o script põe — na faixa
+   e no wrap. Sem ela (sem JavaScript, ou com reduced-motion) as cartas são
+   uma grade que quebra linha: as seis ficam na página, nenhuma escondida
+   atrás de um movimento que não vai acontecer. */
+.symptoms { --symptom-tone: var(--ochre); }
+.symptom--brand, .symptom--tech { --symptom-tone: var(--ochre); }
 .symptoms {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 4px;
-  /* cada régua tem a altura do seu próprio texto: o pé da seção fica irregular */
-  align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 12px;
 }
+.symptoms.is-loop {
+  display: flex;
+  width: max-content;
+  padding: 4px 0 8px;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  will-change: transform;
+}
+.symptoms.is-loop.is-dragging { cursor: grabbing; }
+/* A faixa sangra a largura toda da tela: as cartas entram e saem pela borda
+   da janela, não pela borda da coluna de texto. */
+.symptoms__wrap.is-loop {
+  overflow: hidden;
+  margin: 0 calc(50% - 50vw);
+  padding: 0 var(--gutter, 24px);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+#diagnostico { overflow-x: clip; }
 .symptom {
-  position: relative;
-  padding: 4px 24px 28px 22px;
-  border-left: 1px solid var(--line-strong);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+  min-height: 360px;
+  padding: 22px 22px 24px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-surface);
+  background:
+    radial-gradient(120% 80% at 100% 0%, color-mix(in oklab, var(--symptom-tone) 18%, transparent) 0%, transparent 60%),
+    var(--bg-card);
+  overflow: hidden;
 }
-/* Trecho de régua na cor da disciplina, no alto de cada item. */
-.symptom::before {
-  content: "";
-  position: absolute;
-  left: -1px;
-  top: 0;
-  width: 1px;
-  height: 46px;
-  background: var(--symptom-tone, var(--ochre));
-}
-.symptom--brand, .symptom--tech { --symptom-tone: var(--ochre); }
-/* Cópias feitas pelo carrossel do celular não aparecem na cascata larga. */
-@media (min-width: 640px) { .symptom[aria-hidden="true"] { display: none; } }
-.symptom__index {
-  font-family: var(--mono);
-  font-size: 14px;
-  color: var(--symptom-tone, var(--ink-soft));
-}
+.symptoms.is-loop .symptom { flex: 0 0 min(76vw, 340px); }
+/* Sem número nem rótulo: a carta abre direto no título. */
+.symptom__index, .symptom__side { display: none; }
 .symptom__title {
   font-family: var(--serif);
-  font-size: 24px;
   font-weight: 600;
-  margin-top: 18px;
+  font-size: 26px;
+  line-height: 1.15;
+  margin-top: auto;
 }
 .symptom__text {
-  margin-top: 12px;
-  font-size: 16px;
+  margin-top: 10px;
+  margin-bottom: auto;
+  font-size: 15px;
+  line-height: 1.45;
   color: var(--ink-soft);
-  max-width: 34ch;
-}
-.symptom__side {
-  display: none;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--symptom-tone);
 }
 /* Sinais concretos: como o sintoma aparece no dia a dia. */
 .symptom__signs {
   list-style: none;
-  margin: 14px 0 0;
-  padding: 0;
+  margin: 0;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--line);
   display: flex;
   flex-direction: column;
   gap: 6px;
   font-size: 14px;
   color: var(--ink-soft);
-  max-width: 34ch;
 }
 .symptom__signs li { display: flex; gap: 10px; align-items: baseline; }
 .symptom__signs li::before {
@@ -729,95 +741,8 @@ button {
   background: var(--symptom-tone);
   transform: translateY(-4px);
 }
-/* A entrada vem da esquerda, para ler como cascata e não como fade de grade. */
-.js-reveal .symptom { transform: translate(-14px, 16px); }
-.js-reveal .symptom.is-in { transform: none; }
-
-/* No celular os seis sintomas viram um baralho: cartas altas, uma por vez,
-   deslizando na horizontal. O índice cresce até virar a imagem da carta —
-   é o que se vê antes de ler qualquer palavra. */
-.symptoms__rail { display: none; }
-@media (max-width: 639px) {
-  /* Carrossel infinito: o script duplica as seis cartas e a faixa anda
-     sozinha até -50%, onde a cópia coincide com o original (mesmo truque
-     do marquee de clientes). Toque pausa; sem movimento, vira lista. */
-  .symptoms {
-    display: flex;
-    gap: 12px;
-    width: max-content;
-    margin: 0 calc(-1 * var(--gutter, 24px));
-    padding: 4px 0 8px;
-    will-change: transform;
-  }
-  .symptoms.is-loop {
-    animation: symptoms-loop 42s linear infinite;
-  }
-  .symptoms.is-loop.is-paused { animation-play-state: paused; }
-  .symptoms__wrap { overflow: hidden; }
-  .symptom {
-    flex: 0 0 min(76vw, 340px);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 28px;
-    min-height: 360px;
-    margin-left: 0;
-    padding: 22px 22px 24px 22px;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--r-surface);
-    background:
-      radial-gradient(120% 80% at 100% 0%, color-mix(in oklab, var(--symptom-tone) 18%, transparent) 0%, transparent 60%),
-      var(--bg-card);
-    overflow: hidden;
-  }
-  .symptom::before { display: none; }
-  .symptom__index { display: none; }
-  /* Sem número nem rótulo: a carta abre só com um disco luminoso. */
-  .symptom__side { display: flex; align-items: center; gap: 10px; font-size: 0; color: transparent; }
-  .symptom__side::before {
-    content: "";
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--symptom-tone);
-    box-shadow: 0 0 14px 3px color-mix(in oklab, var(--symptom-tone) 35%, transparent);
-  }
-  .symptom__signs {
-    margin-top: 0;
-    padding-top: 16px;
-    border-top: 1px solid var(--line);
-    font-size: 14px;
-    max-width: none;
-  }
-  .symptom__title { font-size: 26px; line-height: 1.15; margin-top: auto; }
-  .symptom__text { margin-top: 10px; font-size: 15px; line-height: 1.45; max-width: none; margin-bottom: auto; }
-  /* Cartas fora da tela não podem esperar o observer: já nascem visíveis. */
-  .js-reveal .symptom { opacity: 1; transform: none; transition: none; }
-
-  .symptoms__rail {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-top: 14px;
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    color: var(--ink-soft);
-  }
-  .symptoms__rail i {
-    flex: 1;
-    height: 1px;
-    background: var(--line-strong);
-    position: relative;
-    overflow: hidden;
-  }
-  .symptoms__rail i::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, var(--ochre), transparent);
-  }
-}
+/* Cartas fora da tela não podem esperar o observer: já nascem visíveis. */
+.js-reveal .symptom { opacity: 1; transform: none; transition: none; }
 
 /* ─── Frentes ──────────────────────────────────────────────────────
    As oito entregas num explorador: a lista de um lado, uma entrega aberta
@@ -1736,9 +1661,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
    ═══════════════════════════════════════════════════════════════════ */
 @media (min-width: 640px) {
   .rule-grid--3 { grid-template-columns: repeat(2, 1fr); }
-  /* Duas colunas: o degrau alterna par/ímpar. */
-  .symptoms { grid-template-columns: repeat(2, 1fr); gap: 8px 40px; }
-  .symptom:nth-child(even) { margin-top: 36px; }
   .step {
     grid-template-columns: 96px 1fr;
     gap: 14px 24px;
@@ -1749,15 +1671,14 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 @media (min-width: 768px) {
   .rule-grid--2 { grid-template-columns: repeat(2, 1fr); }
 }
+/* Tela larga: a carta do carrossel ganha corpo. */
+@media (min-width: 900px) {
+  .symptoms.is-loop .symptom { flex-basis: 380px; }
+}
 /* Estreito demais para lista e painel lado a lado: o painel desce. */
 @media (max-width: 899px) {
   .explorer { grid-template-columns: minmax(0, 1fr); }
   .explorer__detail { padding: 32px 24px 36px; min-height: 0; }
-}
-@media (min-width: 640px) and (max-width: 767px) {
-  /* Na cascata estreita o sintoma encosta na régua; no celular ele vira
-     carta e usa o padding dela. */
-  .symptom { padding: 2px 4px 26px 18px; }
 }
 /* No celular, "O que entregamos" vira duas abas — Marca · Tecnologia —
    que se revezam sozinhas a cada 6 s. Uma barra fina sob a aba ativa
@@ -1880,11 +1801,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
 
 @media (min-width: 1024px) {
   .rule-grid--3 { grid-template-columns: repeat(3, 1fr); }
-  /* Três colunas: o degrau é progressivo e o pé da seção fica irregular. */
-  .symptoms { grid-template-columns: repeat(3, 1fr); gap: 16px 48px; }
-  .symptom:nth-child(even) { margin-top: 0; }
-  .symptom:nth-child(3n + 2) { margin-top: 34px; }
-  .symptom:nth-child(3n + 3) { margin-top: 68px; }
   .more .rule-grid--3 { grid-template-columns: repeat(3, 1fr); }
   .more-card__body { padding: 22px 22px 28px; }
   .more-card__title { font-size: 21px; }
@@ -1965,6 +1881,22 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
   /* o trocadilho MAR·TEC é de tela: no papel as duas cores não têm contraste */
   .mar, .tec { color: inherit; }
   .hero__art, .hero__pulsos, .wa-float, .site-header, .marquee, .lead, .skip-link { display: none !important; }
+  /* a faixa de sintomas é de tela: no papel as seis cartas viram grade */
+  .symptoms, .symptoms.is-loop {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    width: auto !important;
+    transform: none !important;
+  }
+  .symptoms__wrap, .symptoms__wrap.is-loop {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+  .symptom { min-height: 0; break-inside: avoid; }
+  .symptom[aria-hidden="true"] { display: none !important; }
   /* o carrossel é de tela; no papel os casos voltam a empilhar, um por linha */
   .cases { display: block; overflow: visible; }
   .case { flex: none; scroll-snap-align: none; }
@@ -2142,7 +2074,7 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
         <p class="symptom__index">02</p>
         <p class="symptom__side" data-en="System">Sistema</p>
         <h3 class="symptom__title" data-en="Grew — and the chaos grew with it">Cresceu, e o caos cresceu junto</h3>
-        <p class="symptom__text" data-en="More clients, more people — and the same processes as when there were five.">Mais clientes, mais gente — e os mesmos processos de quando eram cinco.</p>
+        <p class="symptom__text" data-en="More clients, more people — and the same processes as when the team was small.">Mais clientes, mais gente — e os mesmos processos de quando o time era pequeno.</p>
         <ul class="symptom__signs">
           <li data-en="Everything depends on the one person who knows where things are">Tudo depende de uma pessoa que sabe onde está cada coisa</li>
           <li data-en="Every team with its own spreadsheet and its own way">Cada área com a sua planilha e o seu jeito</li>
@@ -2189,9 +2121,6 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
         </ul>
       </article>
     </div></div>
-    <div class="symptoms__rail" aria-hidden="true">
-      <i></i><span data-en="hold to pause">toque para pausar</span>
-    </div>
   </div>
 </section>
 
@@ -3554,43 +3483,81 @@ select.field__input option { background: var(--bg-card); color: var(--ink); }
     });
   }
 
-  /* Carrossel de sintomas (celular): duplica as cartas para o loop ser
-     contínuo e pausa enquanto o dedo está em cima. Só abaixo de 640px e
-     só se o visitante não pediu menos movimento. */
+  /* Carrossel de sintomas: duplica as cartas para o loop ser contínuo e
+     anda sozinho em qualquer largura. A roda horizontal e o arrasto somam
+     ao deslocamento; soltando, a faixa segue andando. Com reduced-motion
+     nada disso liga, e o CSS deixa as seis cartas em grade. */
   function autoLoop(deck) {
     if (!deck) return;
-    var mq = window.matchMedia('(max-width: 639px)');
-    var rm = window.matchMedia('(prefers-reduced-motion: reduce)');
-    var cloned = false;
-    function apply() {
-      var on = mq.matches && !rm.matches;
-      if (on && !cloned) {
-        Array.prototype.slice.call(deck.children).forEach(function (c) {
-          var k = c.cloneNode(true);
-          k.classList.add('is-in');
-          k.setAttribute('aria-hidden', 'true');
-          deck.appendChild(k);
-        });
-        cloned = true;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var wrapEl = deck.parentNode;
+    /* Duplica as cartas: a faixa anda até metade da largura e volta ao zero,
+       onde a cópia coincide com o original. */
+    Array.prototype.slice.call(deck.children).forEach(function (c) {
+      var k = c.cloneNode(true);
+      k.classList.add('is-in');
+      k.setAttribute('aria-hidden', 'true');
+      deck.appendChild(k);
+    });
+    deck.querySelectorAll('.symptom').forEach(function (c) { c.classList.add('is-in'); });
+    deck.classList.add('is-loop');
+    wrapEl.classList.add('is-loop');
+
+    var x = 0, half = 0, last = 0, vel = 0, dragging = false, startX = 0, startOff = 0, moved = 0;
+    var SPEED = window.innerWidth >= 900 ? 50 : 72; // px/s
+    function measure() { half = deck.scrollWidth / 2; }
+    function wrap() { if (half) { x = ((x % half) + half) % half; } }
+    function paint() { deck.style.transform = 'translateX(' + (-x) + 'px)'; }
+    function tick(t) {
+      var dt = Math.min((t - last) / 1000, 0.05); last = t;
+      if (!dragging) {
+        x += SPEED * dt + vel * dt;
+        vel *= Math.pow(0.001, dt); // a inércia do arrasto some em ~1s
       }
-      if (on) {
-        deck.querySelectorAll('.symptom').forEach(function (c) { c.classList.add('is-in'); });
-      }
-      deck.classList.toggle('is-loop', on);
+      wrap(); paint();
+      requestAnimationFrame(tick);
     }
-    apply();
-    mq.addEventListener ? mq.addEventListener('change', apply) : mq.addListener(apply);
-    var pause = function () { deck.classList.add('is-paused'); };
-    var resume = function () { deck.classList.remove('is-paused'); };
-    deck.addEventListener('touchstart', pause, { passive: true });
-    deck.addEventListener('touchend', resume, { passive: true });
-    deck.addEventListener('touchcancel', resume, { passive: true });
-    deck.addEventListener('pointerdown', pause);
-    deck.addEventListener('pointerup', resume);
-    deck.addEventListener('pointerleave', resume);
+    measure();
+    window.addEventListener('resize', measure);
+    requestAnimationFrame(function (t) { last = t; requestAnimationFrame(tick); });
+
+    /* Roda e trackpad: o gesto horizontal anda a faixa; o vertical continua
+       rolando a página. */
+    wrapEl.addEventListener('wheel', function (e) {
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+      e.preventDefault();
+      x += e.deltaX; wrap(); paint();
+    }, { passive: false });
+    wrapEl.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      dragging = true; moved = 0; startX = e.clientX; startOff = x; vel = 0;
+      deck.classList.add('is-dragging');
+      wrapEl.setPointerCapture && wrapEl.setPointerCapture(e.pointerId);
+    });
+    var lastPX = 0, lastPT = 0;
+    wrapEl.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      var dx = e.clientX - startX;
+      moved = Math.max(moved, Math.abs(dx));
+      x = startOff - dx; wrap(); paint();
+      var now = performance.now();
+      if (lastPT) vel = -(e.clientX - lastPX) / Math.max((now - lastPT) / 1000, 0.001) * 0.6;
+      lastPX = e.clientX; lastPT = now;
+    });
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false; lastPT = 0;
+      deck.classList.remove('is-dragging');
+    }
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (ev) {
+      wrapEl.addEventListener(ev, endDrag);
+    });
+    /* Um arrasto não vira clique dentro da carta. */
+    wrapEl.addEventListener('click', function (e) {
+      if (moved > 6) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
   }
   autoLoop(document.querySelector('.symptoms'));
-
   /* Abas de entregas (celular): revezam a cada 6 s; o toque fixa uma frente. */
   (function () {
     var root = document.querySelector('.fronts__tabs');
