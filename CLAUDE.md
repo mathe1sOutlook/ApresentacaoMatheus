@@ -167,7 +167,10 @@ ficar numa pasta servida pela Vercel.
 - `docs/handoff-diagnostico-entregas-mobile.md` — o handoff da versão celular
   do `#diagnostico` (carrossel de sintomas) e do `#servicos` (abas que se
   revezam): copy dos seis sintomas, medidas das cartas, timings e o
-  comportamento dos dois scripts.
+  comportamento dos dois scripts. A parte do `#diagnostico` está superada.
+- `docs/handoff-diagnostico-lista.md` — o handoff que trocou o carrossel de
+  sintomas pela lista estática em duas colunas: medidas, tipografia e os três
+  pontos de quebra.
 
 ## Convenções gerais
 
