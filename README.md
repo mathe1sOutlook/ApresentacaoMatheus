@@ -142,10 +142,15 @@ faixa vazia ao lado do conteúdo; em tela estreita, encosta na borda da janela.
 O do `#contato` é o único que foge da margem — fica sob o texto da coluna
 esquerda, para nunca passar atrás do formulário.
 
-O movimento é deriva mais respiração, não pulso: cada foco tem fase,
-velocidade e deriva próprias, fixas por semente, e a respiração é uma curva em
-S de 23 a 36 segundos que varia o brilho entre 65% e 100% do máximo — a luz
-nunca apaga. A casa do hero continua alimentando: quando um pulso chega à
+O movimento é deriva mais respiração, não pulso. A deriva é a soma de duas
+senoides por eixo, com períodos entre 41 s e 144 s que não se dividem uns pelos
+outros: o foco atravessa a margem e volta por um caminho que não se repete,
+devagar o bastante para nunca puxar o olho. O lado de fora leva amplitude
+cheia; o de dentro, menos da metade — a luz passeia pela margem sem subir no
+texto. O raio ainda incha e murcha num ciclo próprio, mais lento que a
+respiração, para o foco não ter a forma de um círculo fixo. A respiração é uma
+curva em S de 23 a 36 segundos que varia o brilho entre 65% e 100% do máximo —
+a luz nunca apaga. A casa do hero continua alimentando: quando um pulso chega à
 escada ou ao canto inferior esquerdo, `window.__trail.emit()` acende o foco
 mais próximo do centro da janela, e esse brilho decai sozinho.
 

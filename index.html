@@ -3365,6 +3365,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
     var T = { pools: [], raf: null, last: 0, geoAt: 0, sig: '', W: 0, H: 0, dpr: 1, colors: null, emitAt: 0 };
     var SECTIONS = ['dupla', 'diagnostico', 'servicos', 'cases', 'processo', 'contato'];
     var TONES = { dupla: 'ochre', diagnostico: 'ochre', servicos: 'blue', cases: 'ochre', processo: 'blue', contato: 'blue' };
+    var TAU = Math.PI * 2;
     function rnd(seed) { var x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); }
     function geo() {
       var sy = window.scrollY, cont = document.querySelector('#dupla .container');
@@ -3391,7 +3392,22 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       SECTIONS.forEach(function (id, si) {
         var r = rects[si], sp = SPOTS[id]; if (!r || !sp) return;
         var top = r.top + sy, h = r.height, tone = TONES[id], seed = si * 53;
-        T.pools.push({ x: sp.fx * T.W, y: top + h * sp.fy, r: Math.min(T.W, 1100) * sp.k, tone: tone, ph: rnd(seed) * 6.283, sp: 0.05 + rnd(seed + 1) * 0.03, drift: 18 + rnd(seed + 2) * 12, glow: (old[T.pools.length] || {}).glow || 0 });
+        /* a rota de cada foco: amplitude proporcional à janela e à altura da
+           seção, e cinco períodos entre 41 s e 144 s que não se dividem uns
+           pelos outros — a soma deles não repete o mesmo caminho no tempo em
+           que alguém fica na página. */
+        var ax = Math.max(70, Math.min(T.W * 0.17, 300)), ay = Math.max(70, Math.min(h * 0.13, 240));
+        T.pools.push({
+          x: sp.fx * T.W, y: top + h * sp.fy, r: Math.min(T.W, 1100) * sp.k, tone: tone,
+          side: sp.fx < 0.5 ? -1 : 1, ax: ax, ay: ay,
+          ph: rnd(seed) * 6.283, sp: 0.05 + rnd(seed + 1) * 0.03,
+          w1: TAU / (76 + rnd(seed + 2) * 44), p1: rnd(seed + 3) * TAU,
+          w2: TAU / (41 + rnd(seed + 4) * 22), p2: rnd(seed + 5) * TAU,
+          w3: TAU / (92 + rnd(seed + 6) * 52), p3: rnd(seed + 7) * TAU,
+          w4: TAU / (49 + rnd(seed + 8) * 26), p4: rnd(seed + 9) * TAU,
+          w5: TAU / (63 + rnd(seed + 10) * 37), p5: rnd(seed + 11) * TAU,
+          glow: (old[T.pools.length] || {}).glow || 0
+        });
       });
     }
     function fit() {
@@ -3426,13 +3442,21 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       ctx.translate(0, -sy);
       for (var i = 0; i < T.pools.length; i++) {
         var p = T.pools[i];
-        if (p.y + p.r < sy || p.y - p.r > sy + H) continue;
-        var x = p.x + Math.cos(t * p.sp + p.ph) * p.drift, y = p.y + Math.sin(t * p.sp * 0.8 + p.ph) * p.drift * 0.7;
+        /* deriva: duas senoides de períodos diferentes por eixo, somadas. O
+           foco atravessa boa parte da margem, sempre devagar e sem repetir a
+           volta. O lado de fora leva amplitude cheia; o de dentro, menos da
+           metade — a luz passeia, mas não sobe no texto. */
+        var nx = 0.62 * Math.sin(t * p.w1 + p.p1) + 0.38 * Math.sin(t * p.w2 + p.p2);
+        var ny = 0.62 * Math.cos(t * p.w3 + p.p3) + 0.38 * Math.sin(t * p.w4 + p.p4);
+        var x = p.x + nx * p.ax * (0.72 + 0.28 * Math.tanh(p.side * nx * 2)), y = p.y + ny * p.ay;
         /* respiração: curva suave em S (seno elevado), sem picos — entre
-           ~65% e 100% do brilho, raio quase fixo */
+           ~65% e 100% do brilho. O raio ainda ganha um inchaço próprio, mais
+           lento que a respiração, que tira do foco a forma de círculo fixo. */
         var w = Math.sin(t * p.sp * 2 * Math.PI * 0.55 + p.ph);
         var br = 0.5 + 0.5 * (w * w * w * 0.35 + w * 0.65);
-        var a = 0.20 * (0.65 + 0.35 * br) + 0.16 * p.glow, R = p.r * (0.97 + 0.05 * br + 0.08 * p.glow);
+        var a = 0.20 * (0.65 + 0.35 * br) + 0.16 * p.glow;
+        var R = p.r * (0.97 + 0.05 * br + 0.08 * p.glow) * (1 + 0.09 * Math.sin(t * p.w5 + p.p5));
+        if (y + R < sy || y - R > sy + H) continue;
         var rg = ctx.createRadialGradient(x, y, 0, x, y, R);
         rg.addColorStop(0, c[p.tone]); rg.addColorStop(0.3, c[p.tone]); rg.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.globalAlpha = a; ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill();
