@@ -426,11 +426,9 @@ button {
   .hero__pulsos { display: none; }
 }
 
-/* Rastro pela página: canvas fixo, do tamanho da janela, que continua a luz
-   da casa pelo resto do site — desce pelo piso, corre pela linha que fecha
-   cada seção e segue por um trilho na margem esquerda, acendendo um núcleo
-   ao lado do título de cada assunto. Blend screen: só clareia, nunca cobre.
-   O desfoque leve é o que dá o ar de luz de fundo. */
+/* Focos de luz pela página: canvas fixo, do tamanho da janela, com poucas
+   manchas grandes e desfocadas nas margens, que derivam devagar. Tira o
+   preto chapado do fundo sem desenhar nada. Blend screen: só clareia. */
 .trail {
   position: fixed;
   inset: 0;
@@ -439,8 +437,7 @@ button {
   pointer-events: none;
   z-index: 1;
   mix-blend-mode: screen;
-  /* acrílico: o desfoque engrossa a luz e apaga o traço fino do desenho */
-  filter: blur(3px) saturate(1.15);
+  filter: blur(40px) saturate(1.1);
 }
 @media (prefers-reduced-motion: reduce) { .trail { display: none; } }
 
@@ -2316,7 +2313,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       </ul>
       <div class="explorer__detail">
         <div class="explorer__panel diag__panel is-active" role="tabpanel" id="diag-panel-0" aria-labelledby="diag-tab-0" data-front="b">
-          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><path d="M40 30 H22 V64" stroke-dasharray="2 4" opacity="0.7"/><path d="M22 64 L25 70 L20 74" opacity="0.7"/><path d="M22 86 V116 H40" stroke-dasharray="2 4" opacity="0.25"/><line x1="22" y1="73" x2="40" y2="73" stroke-dasharray="2 4" opacity="0.7"/><rect x="40" y="12" width="36" height="36" rx="8" fill="rgba(201,162,78,0.12)"/><rect x="40" y="55" width="36" height="36" rx="8" fill="rgba(201,162,78,0.10)"/><rect x="46" y="100" width="36" height="36" rx="8" fill="rgba(201,162,78,0.04)" opacity="0.5" transform="rotate(8 64 118)"/><circle cx="58" cy="30" r="6"/><line x1="52" y1="73" x2="64" y2="73"/><line x1="52" y1="79" x2="64" y2="79"/><line x1="52" y1="67" x2="60" y2="67"/><path d="M56 112h16a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-8l-5 4v-4h-3a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3z" opacity="0.5" transform="rotate(8 64 118)"/><path d="M90 40 L150 24 M90 60 L150 44 M90 80 L150 64" opacity="0.25"/></g></svg>
+          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="12" y="76" width="14" height="42" fill="rgba(201,162,78,0.4)" stroke="#E8C97A"/><rect x="32" y="62" width="14" height="56" fill="rgba(201,162,78,0.4)" stroke="#E8C97A"/><rect x="52" y="46" width="14" height="72" fill="rgba(201,162,78,0.4)" stroke="#E8C97A"/><path d="M80 32v92" opacity="0.35" stroke-dasharray="2 4"/><rect x="94" y="70" width="14" height="48" stroke-dasharray="2 3" opacity="0.5"/><rect x="114" y="54" width="14" height="64" stroke-dasharray="2 3" opacity="0.5"/><rect x="134" y="84" width="14" height="34" stroke-dasharray="2 3" opacity="0.5"/><path d="M8 118h144" opacity="0.6"/></g><g font-family="IBM Plex Mono, monospace" font-size="14" fill="#E8C97A"><text x="96" y="62">?</text><text x="116" y="46">?</text><text x="136" y="76">?</text></g><g font-family="IBM Plex Mono, monospace" font-size="8" letter-spacing="1.2" fill="#A6A39B"><text x="12" y="134" fill="#E8C97A" data-en="INVESTED">INVESTIDO</text><text x="94" y="134" opacity="0.7" data-en="RETURNED">RETORNO</text></g></svg>
           <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Marketing">Marketing</span></span>
           <p class="diag__text" data-en="Spend goes out every month, yet it is hard to tell which actions actually generate opportunities and sales.">O investimento acontece todos os meses, mas é difícil identificar quais ações realmente geram oportunidades e vendas.</p>
           <ul class="diag__signs">
@@ -2325,7 +2322,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
           </ul>
         </div>
         <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-1" aria-labelledby="diag-tab-1" data-front="t">
-          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="72" y="8" width="70" height="84" rx="6" fill="rgba(201,162,78,0.05)" opacity="0.5"/><rect x="52" y="24" width="70" height="84" rx="6" fill="rgba(201,162,78,0.08)" opacity="0.75"/><rect x="26" y="46" width="70" height="84" rx="6" fill="rgba(201,162,78,0.12)" transform="rotate(-7 61 88)"/><line x1="40" y1="66" x2="86" y2="60" opacity="0.6"/><line x1="40" y1="78" x2="76" y2="74" opacity="0.4"/><line x1="40" y1="90" x2="104" y2="84" opacity="0.4"/><line x1="104" y1="84" x2="118" y2="83" opacity="0.2" stroke-dasharray="2 3"/></g></svg>
+          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="8" y="8" width="144" height="60" rx="4" fill="rgba(201,162,78,0.07)"/><g fill="#C9A24E" stroke="none"><circle cx="22" cy="22" r="3.2"/><circle cx="40" cy="20" r="3.2"/><circle cx="58" cy="24" r="3.2"/><circle cx="76" cy="20" r="3.2"/><circle cx="94" cy="24" r="3.2"/><circle cx="112" cy="20" r="3.2"/><circle cx="130" cy="24" r="3.2"/><circle cx="30" cy="38" r="3.2"/><circle cx="48" cy="40" r="3.2"/><circle cx="66" cy="38" r="3.2"/><circle cx="84" cy="42" r="3.2"/><circle cx="102" cy="38" r="3.2"/><circle cx="120" cy="42" r="3.2"/><circle cx="138" cy="38" r="3.2"/><circle cx="40" cy="56" r="3.2"/><circle cx="58" cy="58" r="3.2"/><circle cx="102" cy="58" r="3.2"/><circle cx="120" cy="56" r="3.2"/><circle cx="80" cy="60" r="3.2" fill="#E8C97A"/></g><path d="M8 68h60M92 68h60" stroke="#E8C97A" stroke-width="1.4"/><path d="M68 68v60M92 68v60" stroke="#E8C97A"/><circle cx="80" cy="82" r="3.2" fill="#C9A24E" stroke="none" opacity="0.8"/><circle cx="80" cy="102" r="3.2" fill="#C9A24E" stroke="none" opacity="0.5"/><circle cx="80" cy="122" r="3.2" fill="#C9A24E" stroke="none" opacity="0.25"/><path d="M14 90h40M14 100h30M14 110h36" stroke-dasharray="2 4" opacity="0.3"/><path d="M106 90h40M106 100h32M106 110h38" stroke-dasharray="2 4" opacity="0.3"/></g></svg>
           <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Processes">Processos</span></span>
           <p class="diag__text" data-en="More clients, more people and more demands — with processes still running as they did when the company was smaller.">Mais clientes, mais pessoas e mais demandas — com processos que continuam funcionando como quando a empresa era menor.</p>
           <ul class="diag__signs">
@@ -2334,7 +2331,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
           </ul>
         </div>
         <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-2" aria-labelledby="diag-tab-2" data-front="b">
-          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><path d="M64 16h60a10 10 0 0 1 10 10v28a10 10 0 0 1-10 10H92l-14 12v-12H64a10 10 0 0 1-10-10V26a10 10 0 0 1 10-10z" fill="rgba(201,162,78,0.10)"/><path d="M28 62h58a9 9 0 0 1 9 9v24a9 9 0 0 1-9 9H60v12L46 104H28a9 9 0 0 1-9-9V71a9 9 0 0 1 9-9z" fill="rgba(201,162,78,0.16)"/><circle cx="46" cy="83" r="2.5" fill="#C9A24E"/><circle cx="57" cy="83" r="2.5" fill="#C9A24E"/><circle cx="68" cy="83" r="2.5" fill="#C9A24E"/><line x1="72" y1="34" x2="118" y2="34" opacity="0.5"/><line x1="72" y1="46" x2="104" y2="46" opacity="0.35"/></g></svg>
+          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><path d="M8 14a6 6 0 0 1 6-6h34a6 6 0 0 1 6 6v24a6 6 0 0 1-6 6H26l-8 8v-8h-4a6 6 0 0 1-6-6z" fill="rgba(201,162,78,0.12)"/><path d="M16 20h26M16 27h18M16 34h22" stroke="#E8C97A" opacity="0.8"/><path d="M57 14a6 6 0 0 1 6-6h34a6 6 0 0 1 6 6v24a6 6 0 0 1-6 6H80l-8 8v-8h-9a6 6 0 0 1-6-6z" fill="rgba(201,162,78,0.12)"/><path d="M64 22q5-6 10 0t10 0 10 0M64 34q5-6 10 0t10 0 10 0" stroke="#E8C97A" opacity="0.8"/><path d="M106 14a6 6 0 0 1 6-6h34a6 6 0 0 1 6 6v24a6 6 0 0 1-6 6h-6l-8 8v-8h-20a6 6 0 0 1-6-6z" fill="rgba(201,162,78,0.12)"/><path d="M114 24l5-6 5 6 5-6 5 6 5-6 5 6M114 34l5-4 5 4 5-4 5 4" stroke="#E8C97A" opacity="0.8"/><path d="M30 54v20q0 8 8 8h34M80 54v28M130 54v20q0 8-8 8H88" stroke-dasharray="2 4" opacity="0.5"/><path d="M80 82v10" opacity="0.6"/><circle cx="80" cy="104" r="11" fill="rgba(201,162,78,0.08)"/><path d="M62 134c0-10 8-16 18-16s18 6 18 16" fill="rgba(201,162,78,0.08)"/></g><text x="76" y="109" font-family="IBM Plex Mono, monospace" font-size="13" fill="#E8C97A">?</text></svg>
           <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Communication">Comunicação</span></span>
           <p class="diag__text" data-en="Website, sales team and communications present the company in ways that are not always aligned.">Site, equipe comercial e comunicação apresentam a empresa de formas que nem sempre estão alinhadas.</p>
           <ul class="diag__signs">
@@ -2343,7 +2340,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
           </ul>
         </div>
         <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-3" aria-labelledby="diag-tab-3" data-front="t">
-          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><!-- pilha de papéis ao fundo, torta --><rect x="86" y="10" width="58" height="72" rx="3" fill="rgba(201,162,78,0.04)" opacity="0.5" transform="rotate(9 115 46)"/><rect x="82" y="14" width="58" height="72" rx="3" fill="rgba(201,162,78,0.06)" opacity="0.7" transform="rotate(4 111 50)"/><rect x="78" y="18" width="58" height="72" rx="3" fill="rgba(201,162,78,0.10)"/><!-- rascunho: linhas de texto, uma riscada --><line x1="86" y1="30" x2="118" y2="30" opacity="0.6"/><line x1="86" y1="38" x2="128" y2="38" opacity="0.4"/><line x1="86" y1="46" x2="110" y2="46" opacity="0.4"/><path d="M84 45 L112 47" opacity="0.8"/><line x1="86" y1="54" x2="124" y2="54" opacity="0.4"/><!-- mini gráfico de linha no papel, com um pico fora --><path d="M86 78 L96 72 L104 76 L112 62 L120 74 L128 68" opacity="0.7"/><!-- planilha rasgada à esquerda --><path d="M10 40 H66 V86 L60 82 L54 88 L48 82 L42 88 L36 82 L30 88 L24 82 L18 88 L10 84 Z" fill="rgba(201,162,78,0.12)"/><line x1="10" y1="52" x2="66" y2="52" opacity="0.6"/><line x1="10" y1="64" x2="66" y2="64" opacity="0.5"/><line x1="10" y1="76" x2="66" y2="76" opacity="0.4"/><line x1="29" y1="40" x2="29" y2="86" opacity="0.5"/><line x1="48" y1="40" x2="48" y2="86" opacity="0.5"/><!-- papel amassado embaixo: contorno irregular --><path d="M32 104 L46 96 L62 100 L74 94 L84 104 L80 118 L88 128 L72 132 L58 126 L44 132 L34 122 L26 114 Z" fill="rgba(201,162,78,0.08)" opacity="0.9"/><path d="M46 96 L52 112 L40 120 M74 94 L66 108 L80 118 M52 112 L66 108" opacity="0.4"/><!-- bloquinho de notas à direita embaixo --><rect x="102" y="98" width="44" height="34" rx="3" fill="rgba(201,162,78,0.14)" transform="rotate(-6 124 115)"/><line x1="108" y1="108" x2="130" y2="106" opacity="0.5" transform="rotate(-6 124 115)"/></g><!-- números soltos, cada um numa fonte de dado diferente --><g font-family="IBM Plex Mono, monospace" fill="#E8C97A"><text x="14" y="62" font-size="9" opacity="0.9">128</text><text x="33" y="74" font-size="9" opacity="0.7">131</text><text x="52" y="62" font-size="9" opacity="0.8">119</text><text x="124" y="124" font-size="13" transform="rotate(-6 124 115)" text-anchor="middle">1.7k</text><text x="100" y="50" font-size="10" opacity="0.7" transform="rotate(-14 100 50)">?</text><text x="58" y="116" font-size="8" opacity="0.6" transform="rotate(12 58 116)">142</text></g><g font-family="IBM Plex Mono, monospace" font-size="12" fill="#C9A24E" opacity="0.8"><text x="72" y="48" text-anchor="middle">≠</text><text x="96" y="94" text-anchor="middle">≠</text></g></svg>
+          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="8" y="26" width="40" height="84" rx="4" fill="rgba(201,162,78,0.08)"/><path d="M14 34h20" opacity="0.6"/><rect x="14" y="66" width="8" height="36" fill="rgba(201,162,78,0.25)"/><rect x="24" y="80" width="8" height="22" fill="rgba(201,162,78,0.25)"/><rect x="34" y="52" width="8" height="50" fill="rgba(201,162,78,0.5)" stroke="#E8C97A"/><rect x="60" y="26" width="40" height="84" rx="4" fill="rgba(201,162,78,0.08)"/><path d="M66 34h20" opacity="0.6"/><rect x="66" y="66" width="8" height="36" fill="rgba(201,162,78,0.25)"/><rect x="76" y="80" width="8" height="22" fill="rgba(201,162,78,0.25)"/><rect x="86" y="74" width="8" height="28" fill="rgba(201,162,78,0.5)" stroke="#E8C97A"/><rect x="112" y="26" width="40" height="84" rx="4" fill="rgba(201,162,78,0.08)"/><path d="M118 34h20" opacity="0.6"/><rect x="118" y="66" width="8" height="36" fill="rgba(201,162,78,0.25)"/><rect x="128" y="80" width="8" height="22" fill="rgba(201,162,78,0.25)"/><rect x="138" y="40" width="8" height="62" fill="rgba(201,162,78,0.5)" stroke="#E8C97A"/><path d="M14 102h28M66 102h28M118 102h28" opacity="0.6"/></g><g font-family="IBM Plex Mono, monospace" font-size="14" fill="#E8C97A"><text x="49" y="72">≠</text><text x="101" y="72">≠</text></g><g font-family="IBM Plex Mono, monospace" font-size="8" letter-spacing="1.2" fill="#A6A39B" opacity="0.8"><text x="8" y="130" data-en="SAME INDICATOR">MESMO INDICADOR</text><text x="112" y="130" data-en="3 SOURCES">3 FONTES</text></g></svg>
           <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Data">Dados</span></span>
           <p class="diag__text" data-en="Different sources show different results, making analysis slow and unreliable.">Fontes diferentes apresentam resultados diferentes, tornando a análise lenta e pouco confiável.</p>
           <ul class="diag__signs">
@@ -2352,7 +2349,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
           </ul>
         </div>
         <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-4" aria-labelledby="diag-tab-4" data-front="t">
-          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="12" y="14" width="92" height="74" rx="6" fill="rgba(201,162,78,0.07)"/><line x1="12" y1="28" x2="104" y2="28" opacity="0.6"/><circle cx="20" cy="21" r="1.6" fill="#C9A24E" stroke="none"/><circle cx="26" cy="21" r="1.6" fill="#C9A24E" stroke="none" opacity="0.6"/><circle cx="32" cy="21" r="1.6" fill="#C9A24E" stroke="none" opacity="0.35"/><rect x="20" y="36" width="22" height="18" rx="2" fill="rgba(201,162,78,0.4)"/><rect x="47" y="36" width="22" height="18" rx="2" stroke-dasharray="2 3" opacity="0.35"/><rect x="74" y="36" width="22" height="18" rx="2" stroke-dasharray="2 3" opacity="0.35"/><rect x="20" y="60" width="22" height="18" rx="2" stroke-dasharray="2 3" opacity="0.35"/><rect x="47" y="60" width="22" height="18" rx="2" stroke-dasharray="2 3" opacity="0.35"/><rect x="74" y="60" width="22" height="18" rx="2" stroke-dasharray="2 3" opacity="0.35"/><path d="M31 54 V98 Q31 106 39 106 H112" stroke-dasharray="2 4" opacity="0.7"/><path d="M112 106 H150" stroke-dasharray="2 4" opacity="0.7"/><rect x="112" y="60" width="36" height="30" rx="3" fill="rgba(201,162,78,0.16)"/><line x1="112" y1="70" x2="148" y2="70" opacity="0.7"/><line x1="112" y1="80" x2="148" y2="80" opacity="0.7"/><line x1="124" y1="60" x2="124" y2="90" opacity="0.7"/><line x1="136" y1="60" x2="136" y2="90" opacity="0.7"/><path d="M130 90 V106" stroke-dasharray="2 4" opacity="0.7"/><path d="M116 116h26a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4h-12l-6 5v-5h-8a4 4 0 0 1-4-4v-8a4 4 0 0 1 4-4z" fill="rgba(201,162,78,0.16)"/></g></svg>
+          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="34" y="8" width="118" height="72" rx="6" fill="rgba(201,162,78,0.07)"/><path d="M34 22h118" opacity="0.6"/><circle cx="42" cy="15" r="1.6" fill="#C9A24E" stroke="none"/><circle cx="48" cy="15" r="1.6" fill="#C9A24E" stroke="none" opacity="0.6"/><rect x="44" y="30" width="30" height="20" rx="2" fill="rgba(201,162,78,0.45)" stroke="#E8C97A"/><rect x="80" y="30" width="30" height="20" rx="2" stroke-dasharray="2 3" opacity="0.35"/><rect x="116" y="30" width="28" height="20" rx="2" stroke-dasharray="2 3" opacity="0.35"/><rect x="44" y="54" width="30" height="20" rx="2" stroke-dasharray="2 3" opacity="0.35"/><rect x="80" y="54" width="30" height="20" rx="2" stroke-dasharray="2 3" opacity="0.35"/><rect x="116" y="54" width="28" height="20" rx="2" stroke-dasharray="2 3" opacity="0.35"/><path d="M6 40h38" stroke="#E8C97A" stroke-width="1.4"/><path d="M6 40v60q0 10 10 10h34" stroke="#E8C97A" stroke-dasharray="3 4"/><path d="M46 106l4 4-4 4" stroke="#E8C97A"/><rect x="58" y="94" width="42" height="32" rx="3" fill="rgba(201,162,78,0.16)"/><path d="M58 104h42M58 115h42M72 94v32M86 94v32" opacity="0.6"/><path d="M100 110h10" stroke="#E8C97A" stroke-dasharray="3 4"/><path d="M116 96h30a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6h-14l-8 6v-6h-8a6 6 0 0 1-6-6v-14a6 6 0 0 1 6-6z" fill="rgba(201,162,78,0.16)"/><path d="M122 107h20M122 114h12" opacity="0.6"/></g></svg>
           <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Technology">Tecnologia</span></span>
           <p class="diag__text" data-en="The company invests in tools, but the operation still depends on parallel processes and manual controls.">A empresa investe em ferramentas, mas a operação continua dependendo de processos paralelos e controles manuais.</p>
           <ul class="diag__signs">
@@ -2361,7 +2358,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
           </ul>
         </div>
         <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-5" aria-labelledby="diag-tab-5" data-front="t">
-          <svg class="pain__art pain__art--timeline" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><line x1="30" y1="26" x2="30" y2="42" opacity="0.7"/><path d="M30 42 L33 50 L27 54" opacity="0.7"/><path d="M28 70 L31 65 L26 62" opacity="0.35"/><line x1="30" y1="70" x2="30" y2="87" stroke-dasharray="2 5" opacity="0.3"/><line x1="30" y1="93" x2="30" y2="119" stroke-dasharray="2 5" opacity="0.3"/><circle cx="30" cy="26" r="9" fill="rgba(201,162,78,0.2)"/><circle cx="30" cy="26" r="3.5" fill="#E8C97A" stroke="none"/><circle cx="30" cy="58" r="3" fill="#0F1218" opacity="0.6"/><circle cx="30" cy="90" r="3" fill="#0F1218" opacity="0.6"/><circle cx="30" cy="122" r="3" fill="#0F1218" opacity="0.6"/></g><g font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.2" fill="#A6A39B"><text x="52" y="29" fill="#E8C97A" data-en="DELIVERY">ENTREGA</text><text x="52" y="61" opacity="0.7" data-en="EVOLUTION">EVOLUÇÃO</text><text x="52" y="93" opacity="0.7" data-en="ADJUSTMENTS">AJUSTES</text><text x="52" y="125" opacity="0.7" data-en="RESULTS">RESULTADOS</text></g></svg>
+          <svg class="pain__art pain__art--timeline" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><path d="M8 112h144" opacity="0.4"/><path d="M8 112C30 110 48 96 68 60" stroke="#E8C97A" stroke-width="1.6"/><circle cx="8" cy="112" r="3" fill="#C9A24E" stroke="none"/><circle cx="34" cy="104" r="3" fill="#C9A24E" stroke="none"/><circle cx="54" cy="86" r="3" fill="#C9A24E" stroke="none"/><circle cx="68" cy="60" r="4.5" fill="#E8C97A" stroke="none"/><path d="M68 60V22" stroke="#E8C97A"/><path d="M68 22h30l-7 9 7 9H68z" fill="rgba(201,162,78,0.3)" stroke="#E8C97A"/><path d="M68 60c14 0 26 4 38 12" stroke-dasharray="3 4" opacity="0.6"/><path d="M106 72c12 8 22 18 30 30" stroke-dasharray="2 5" opacity="0.3"/><circle cx="106" cy="72" r="3" opacity="0.6"/><circle cx="128" cy="90" r="3" opacity="0.35"/><path d="M96 112v-10M116 112v-8" opacity="0.4"/><circle cx="96" cy="98" r="3" fill="rgba(201,162,78,0.25)" opacity="0.7"/><circle cx="116" cy="100" r="3" fill="rgba(201,162,78,0.25)" opacity="0.7"/></g><g font-family="IBM Plex Mono, monospace" font-size="8" letter-spacing="1.2" fill="#A6A39B"><text x="8" y="130" fill="#E8C97A" data-en="DELIVERY">ENTREGA</text><text x="88" y="130" opacity="0.6" data-en="LOOSE ENDS">PENDÊNCIAS</text></g></svg>
           <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Continuity">Continuidade</span></span>
           <p class="diag__text" data-en="The solution goes live, but improvements, adjustments and follow-up stop happening after delivery.">A solução entra em produção, mas evoluções, ajustes e acompanhamento deixam de acontecer depois da entrega.</p>
           <ul class="diag__signs">
@@ -3355,42 +3352,20 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   }
 
 
-  /* ─── Rede pela página ────────────────────────────────────────────
-     A luz da casa não para no hero: vira uma rede de neurônios nas
-     margens laterais do site. Cada seção recebe nós nos dois lados do
-     conteúdo (posições fixas por semente, para não pularem), um núcleo ao
-     lado do título e dois nós na linha que a fecha; cada nó liga-se por
-     curvas aos vizinhos mais próximos. Impulsos rápidos nascem no piso da
-     casa (quando um pulso do hero chega à escada) e, de vez em quando, em
-     qualquer nó; ao chegar, o nó dispara, fica um instante refratário e
-     retransmite para um ou dois vizinhos. Canvas fixo, blend screen; sem
-     movimento com reduced-motion. */
+  /* ─── Focos de luz pela página ─────────────────────────────────
+     Poucas manchas de luz grandes e desfocadas, uma ou duas por seção,
+     na margem fora do conteúdo. Cada uma deriva devagar em torno da sua
+     posição e respira; quando um pulso do hero chega à escada, a mancha
+     mais próxima da tela ganha um brilho suave que se apaga. Canvas
+     fixo, blend screen; sem movimento com reduced-motion. */
   (function () {
     var cv = document.getElementById('trail');
     if (!cv || !motionOK || !heroEl) return;
     var ctx = cv.getContext('2d');
-    var T = { nodes: [], edges: [], out: [], list: [], glow: [], fired: [], raf: null, last: 0, geoAt: 0, sig: '', spawnAt: 0, emitAt: 0, W: 0, H: 0, dpr: 1, colors: null };
+    var T = { pools: [], raf: null, last: 0, geoAt: 0, sig: '', W: 0, H: 0, dpr: 1, colors: null, emitAt: 0 };
     var SECTIONS = ['dupla', 'diagnostico', 'servicos', 'cases', 'processo', 'contato'];
     var TONES = { dupla: 'ochre', diagnostico: 'ochre', servicos: 'blue', cases: 'ochre', processo: 'blue', contato: 'blue' };
     function rnd(seed) { var x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); }
-
-    /* z: profundidade (0 = lá dentro, 1 = à frente da parede). Fixa por nó. */
-    function node(x, y, tone, kind) { var i = T.nodes.length; T.nodes.push({ x: x, y: y, tone: tone, kind: kind, z: kind === 'core' ? 0.9 : kind === 'src' ? 1 : 0.15 + rnd(i * 3.3 + x * 0.01) * 0.85 }); return i; }
-    function edge(a, b, seed) {
-      var A = T.nodes[a], B = T.nodes[b], dx = B.x - A.x, dy = B.y - A.y, L = Math.hypot(dx, dy) || 1;
-      /* curvatura sempre visível: nunca menos de ~18% do comprimento, sinal ao acaso */
-      var bend = (0.1 + rnd(seed) * 0.16) * L * (rnd(seed + 5) < 0.5 ? -1 : 1);
-      var cx = (A.x + B.x) / 2 - dy / L * bend, cy = (A.y + B.y) / 2 + dx / L * bend;
-      var e = { a: a, b: b, cx: cx, cy: cy, len: 0 }, px = A.x, py = A.y;
-      for (var k = 1; k <= 8; k++) { var p = bez(e, k / 8); e.len += Math.hypot(p[0] - px, p[1] - py); px = p[0]; py = p[1]; }
-      e.len = Math.max(1, e.len);
-      T.edges.push(e); var i = T.edges.length - 1;
-      (T.out[a] = T.out[a] || []).push(i); (T.out[b] = T.out[b] || []).push(i);
-    }
-    function bez(e, t) {
-      var A = T.nodes[e.a], B = T.nodes[e.b], u = 1 - t;
-      return [u * u * A.x + 2 * u * t * e.cx + t * t * B.x, u * u * A.y + 2 * u * t * e.cy + t * t * B.y];
-    }
     function geo() {
       var sy = window.scrollY, cont = document.querySelector('#dupla .container');
       if (!cont) return;
@@ -3399,65 +3374,25 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       var rects = SECTIONS.map(function (id) { var s = document.getElementById(id); return s ? s.getBoundingClientRect() : null; });
       var sig = T.W + '|' + rects.map(function (r) { return r ? Math.round(r.top + sy) + ':' + Math.round(r.height) : ''; }).join(',');
       if (sig === T.sig) return; T.sig = sig;
-      T.nodes = []; T.edges = []; T.out = []; T.list = [];
-      /* faixas laterais: a margem fora do conteúdo; em tela estreita, uma
-         tira fina junto à borda */
+      var old = T.pools; T.pools = [];
       var wide = cl >= 72;
-      var L0 = wide ? 18 : 6, L1 = wide ? cl - 28 : 34, R0 = wide ? crr + 28 : T.W - 34, R1 = wide ? T.W - 18 : T.W - 6;
-      var hr = heroEl.getBoundingClientRect(), src;
-      if (P.box && heroArt && getComputedStyle(heroArt).display !== 'none') {
-        var ar = heroArt.getBoundingClientRect(), b = P.box;
-        src = node(ar.right - b.w + 572 * b.s, ar.bottom + sy - b.h + 690 * b.s, 'ochre', 'src');
-      } else {
-        src = node((R0 + R1) / 2, hr.bottom + sy - 60, 'ochre', 'src');
-      }
+      /* um foco por seção, em posição escolhida: sempre no vazio — a
+         margem fora do conteúdo ou o espaço entre blocos — nunca atrás de
+         um cartão. fx: fração entre borda esquerda (0) e direita (1) da
+         janela; fy: fração da altura da seção. */
+      var SPOTS = {
+        dupla:       { fx: wide ? cl / T.W * 0.5 : 0.02, fy: 0.72, k: 0.42 },   /* margem esquerda, sob o texto de intro */
+        diagnostico: { fx: 1 - (wide ? (T.W - crr) / T.W * 0.5 : 0.02), fy: 0.22, k: 0.46 }, /* margem direita, altura do título */
+        servicos:    { fx: wide ? cl / T.W * 0.5 : 0.02, fy: 0.55, k: 0.42 },
+        cases:       { fx: 1 - (wide ? (T.W - crr) / T.W * 0.5 : 0.02), fy: 0.55, k: 0.48 }, /* margem direita, entre cases e outros projetos */
+        processo:    { fx: wide ? cl / T.W * 0.5 : 0.02, fy: 0.5, k: 0.4 },
+        contato:     { fx: wide ? (cl + (crr - cl) * 0.2) / T.W : 0.25, fy: 0.72, k: 0.4 } /* vazio sob o texto da coluna esquerda */
+      };
       SECTIONS.forEach(function (id, si) {
-        var r = rects[si]; if (!r) return;
-        var s = document.getElementById(id), tone = TONES[id];
-        var top = r.top + sy, h = r.height;
-        var t = s.querySelector('.section-title, .contact__title');
-        if (t) { var tr = t.getBoundingClientRect(); node(wide ? cl - 34 : 16, tr.top + sy + Math.min(tr.height, 64) / 2, tone, 'core'); }
-        var n = Math.max(1, Math.min(2, Math.round(h / 480)));
-        for (var k = 0; k < n; k++) {
-          var seed = si * 97 + k * 13;
-          node(L0 + rnd(seed) * (L1 - L0), top + h * (0.08 + 0.84 * (k + rnd(seed + 1)) / n), tone, 'n');
-          node(R0 + rnd(seed + 2) * (R1 - R0), top + h * (0.08 + 0.84 * (k + rnd(seed + 3)) / n), tone, 'n');
-        }
+        var r = rects[si], sp = SPOTS[id]; if (!r || !sp) return;
+        var top = r.top + sy, h = r.height, tone = TONES[id], seed = si * 53;
+        T.pools.push({ x: sp.fx * T.W, y: top + h * sp.fy, r: Math.min(T.W, 1100) * sp.k, tone: tone, ph: rnd(seed) * 6.283, sp: 0.05 + rnd(seed + 1) * 0.03, drift: 18 + rnd(seed + 2) * 12, glow: (old[T.pools.length] || {}).glow || 0 });
       });
-      /* ligações em fluxo: cada nó liga-se a 1–2 vizinhos abaixo (o mais
-         próximo e um mais distante), nunca fechando triângulos — sem nós de
-         emaranhado; a rede desce como fios, não como teia */
-      var N = T.nodes.length, seen = {}, deg = [], nb = [];
-      var mid = T.W / 2;
-      for (var i0 = 0; i0 < N; i0++) { deg.push(0); nb.push({}); }
-      function link(a, b, seed) {
-        var key = Math.min(a, b) + '-' + Math.max(a, b); if (seen[key]) return false;
-        for (var k in nb[a]) if (nb[b][k]) return false; /* triângulo */
-        seen[key] = 1; nb[a][b] = 1; nb[b][a] = 1; deg[a]++; deg[b]++; edge(a, b, seed); return true;
-      }
-      var order = []; for (var o = 0; o < N; o++) order.push(o);
-      order.sort(function (p, q) { return T.nodes[p].y - T.nodes[q].y; });
-      for (var oi = 0; oi < N; oi++) {
-        var i = order[oi], A = T.nodes[i], side = A.x < mid, cand = [];
-        for (var j = 0; j < N; j++) {
-          if (j === i) continue; var B = T.nodes[j];
-          if (B.y <= A.y + 40) continue;
-          if ((B.x < mid) !== side && A.kind !== 'src') continue;
-          if (deg[j] >= 2) continue;
-          var d = Math.hypot(A.x - B.x, A.y - B.y); if (d > 700) continue;
-          cand.push([d, j]);
-        }
-        if (!cand.length) continue;
-        cand.sort(function (p, q) { return p[0] - q[0]; });
-        var want = A.kind === 'src' ? 2 : (rnd(i * 7) < 0.25 ? 2 : 1), got = 0;
-        for (var c = 0; c < cand.length && got < want && deg[i] < 2; c++) {
-          /* o segundo fio pula alguns vizinhos: abre a malha */
-          if (got === 1 && c < 2) continue;
-          if (link(i, cand[c][1], i * 31 + cand[c][1])) got++;
-        }
-      }
-      T.glow = []; T.fired = [];
-      for (var g = 0; g < N; g++) { T.glow.push(0); T.fired.push(0); }
     }
     function fit() {
       T.W = window.innerWidth; T.H = window.innerHeight;
@@ -3465,26 +3400,14 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       cv.width = Math.round(T.W * T.dpr); cv.height = Math.round(T.H * T.dpr);
       T.colors = pulsoColors(); T.sig = ''; geo();
     }
-    function push(ei, from) {
-      if (T.list.length >= 5) return;
-      var e = T.edges[ei]; if (!e) return;
-      T.list.push({ e: ei, dir: e.a === from ? 1 : -1, t: e.a === from ? 0 : 1, v: 340 + Math.random() * 200, hops: 0 });
-    }
-    /* o nó dispara: acende, fica refratário e retransmite para 1–2 vizinhos */
-    function fire(n, fromEdge, now, hops) {
-      if (now - T.fired[n] < 700) return;
-      T.fired[n] = now; T.glow[n] = 1;
-      if (hops > 5) return;
-      var outs = (T.out[n] || []).filter(function (i) { return i !== fromEdge; });
-      if (!outs.length) return;
-      outs.sort(function () { return Math.random() - 0.5; });
-      var k = 1;
-      for (var i = 0; i < Math.min(k, outs.length); i++) { push(outs[i], n); T.list[T.list.length - 1].hops = hops + 1; }
-    }
+    /* a escada da casa acendeu: a mancha mais próxima do meio da tela respira mais forte */
     function emit() {
       var now = performance.now();
-      if (!T.edges.length || now - T.emitAt < 900) return;
-      T.emitAt = now; T.fired[0] = 0; fire(0, -1, now, 0);
+      if (!T.pools.length || now - T.emitAt < 1500) return;
+      T.emitAt = now;
+      var mid = window.scrollY + T.H / 2, best = null, bd = 1e9;
+      for (var i = 0; i < T.pools.length; i++) { var d = Math.abs(T.pools[i].y - mid); if (d < bd) { bd = d; best = T.pools[i]; } }
+      if (best) best.glow = 1;
     }
     window.__trail = { emit: emit };
 
@@ -3492,82 +3415,27 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       T.raf = null;
       var dt = Math.min(0.05, (now - (T.last || now)) / 1000); T.last = now;
       if (now - T.geoAt > 500) { geo(); T.geoAt = now; }
-      for (var g = 0; g < T.glow.length; g++) T.glow[g] *= Math.pow(0.12, dt);
-      var alive = [];
-      for (var i = 0; i < T.list.length; i++) {
-        var p = T.list[i], e = T.edges[p.e]; if (!e) continue;
-        p.t += p.dir * p.v * dt / e.len;
-        if (p.t > 0 && p.t < 1) { alive.push(p); continue; }
-        fire(p.dir > 0 ? e.b : e.a, p.e, now, p.hops);
-      }
-      T.list = alive;
-      /* disparo espontâneo: um nó que está na tela acorda sozinho */
-      if (now >= T.spawnAt && T.nodes.length) {
-        var sy = window.scrollY, vis = [];
-        for (var n = 1; n < T.nodes.length; n++) { var y = T.nodes[n].y - sy; if (y > 0 && y < T.H) vis.push(n); }
-        if (vis.length) fire(vis[Math.floor(Math.random() * vis.length)], -1, now, 2);
-        T.spawnAt = now + 4000 + Math.random() * 5000;
-      }
+      for (var i = 0; i < T.pools.length; i++) T.pools[i].glow *= Math.pow(0.45, dt);
       draw(now);
       if (!document.hidden) T.raf = window.requestAnimationFrame(step);
     }
-
-    function bloom(x, y, r, color, a) {
-      var rg = ctx.createRadialGradient(x, y, 0, x, y, r);
-      rg.addColorStop(0, color); rg.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.globalAlpha = a; ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
-    }
     function draw(now) {
-      var sy = window.scrollY, c = T.colors, H = T.H;
+      var sy = window.scrollY, c = T.colors, H = T.H, t = now / 1000;
       ctx.setTransform(T.dpr, 0, 0, T.dpr, 0, 0);
       ctx.clearRect(0, 0, T.W, H);
       ctx.translate(0, -sy);
-      var lo = sy - 200, hi = sy + H + 200;
-      /* as ligações, fracas como as linhas do site */
-      ctx.globalAlpha = 1;
-      for (var i = 0; i < T.edges.length; i++) {
-        var e = T.edges[i], A = T.nodes[e.a], B = T.nodes[e.b];
-        if (Math.max(A.y, B.y, e.cy) < lo || Math.min(A.y, B.y, e.cy) > hi) continue;
-        var ez = (A.z + B.z) / 2;
-        ctx.lineWidth = 0.8 + ez * 1.4; ctx.strokeStyle = 'rgba(241,238,230,' + (0.035 + ez * 0.09).toFixed(3) + ')';
-        ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.quadraticCurveTo(e.cx, e.cy, B.x, B.y); ctx.stroke();
-      }
-      /* nós: um ponto; o núcleo do título respira; quem disparou acende */
-      for (var n = 0; n < T.nodes.length; n++) {
-        var N = T.nodes[n]; if (N.y < lo || N.y > hi) continue;
-        var tone = c[N.tone], g = T.glow[n] || 0;
-        var zs = 0.4 + N.z * 0.9;
-        if (N.kind === 'n' || N.kind === 'join') {
-          /* lá dentro: mancha larga e fraca; à frente: ponto nítido */
-          bloom(N.x, N.y, 26 * (1.6 - N.z), tone, 0.05 + 0.05 * (1 - N.z));
-          bloom(N.x, N.y, 4 * zs, c.ink, 0.2 + 0.45 * N.z);
-        }
-        if (N.kind === 'core') {
-          var br = 0.5 + 0.5 * Math.sin(now / 1500 + n * 1.7);
-          bloom(N.x, N.y, 40, tone, 0.08 + 0.06 * br);
-          bloom(N.x, N.y, 4.5, c.ink, 0.55 + 0.25 * br);
-        }
-        if (g > 0.02) {
-          bloom(N.x, N.y, (N.kind === 'core' ? 190 : 120) * (1.3 - N.z * 0.5), tone, (0.1 + 0.12 * N.z) * g);
-          bloom(N.x, N.y, 48 * zs, tone, (0.3 + 0.35 * N.z) * g);
-          bloom(N.x, N.y, 12 * zs, c.ink, (0.45 + 0.55 * N.z) * g);
-        }
-      }
-      /* impulsos: cabeça pequena, cauda curta, halo desfocado */
-      for (var p = 0; p < T.list.length; p++) {
-        var q = T.list[p], ed = T.edges[q.e]; if (!ed) continue;
-        var tn = c[T.nodes[q.dir > 0 ? ed.b : ed.a].tone], head = bez(ed, q.t);
-        if (head[1] < lo || head[1] > hi) continue;
-        /* a luz vem de dentro e volta para dentro: perto é pequena e viva,
-           longe é uma mancha larga e apagada */
-        var pz = T.nodes[ed.a].z + (T.nodes[ed.b].z - T.nodes[ed.a].z) * q.t, ps = 0.45 + pz * 0.8;
-        bloom(head[0], head[1], 70 * (1.5 - pz * 0.6), tn, 0.08 + 0.16 * pz);
-        for (var s = 6; s >= 1; s--) {
-          var pt = bez(ed, Math.min(1, Math.max(0, q.t - q.dir * s * 12 / ed.len)));
-          bloom(pt[0], pt[1], 12 * ps * (1 - s / 8), tn, (0.25 + 0.5 * pz) * (1 - s / 7));
-        }
-        bloom(head[0], head[1], 18 * ps, tn, 0.35 + 0.6 * pz);
-        bloom(head[0], head[1], 7 * ps, c.ink, 0.4 + 0.6 * pz);
+      for (var i = 0; i < T.pools.length; i++) {
+        var p = T.pools[i];
+        if (p.y + p.r < sy || p.y - p.r > sy + H) continue;
+        var x = p.x + Math.cos(t * p.sp + p.ph) * p.drift, y = p.y + Math.sin(t * p.sp * 0.8 + p.ph) * p.drift * 0.7;
+        /* respiração: curva suave em S (seno elevado), sem picos — entre
+           ~65% e 100% do brilho, raio quase fixo */
+        var w = Math.sin(t * p.sp * 2 * Math.PI * 0.55 + p.ph);
+        var br = 0.5 + 0.5 * (w * w * w * 0.35 + w * 0.65);
+        var a = 0.20 * (0.65 + 0.35 * br) + 0.16 * p.glow, R = p.r * (0.97 + 0.05 * br + 0.08 * p.glow);
+        var rg = ctx.createRadialGradient(x, y, 0, x, y, R);
+        rg.addColorStop(0, c[p.tone]); rg.addColorStop(0.3, c[p.tone]); rg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.globalAlpha = a; ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill();
       }
       ctx.globalAlpha = 1;
     }
@@ -3577,7 +3445,6 @@ textarea.field__input { min-height: 120px; resize: vertical; }
     fit(); start();
     var ft = null;
     window.addEventListener('resize', function () { clearTimeout(ft); ft = setTimeout(fit, 120); });
-    if (heroArt) heroArt.addEventListener('load', function () { setTimeout(function () { T.sig = ''; geo(); }, 50); });
     document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
   })();
 

@@ -173,8 +173,11 @@ ficar numa pasta servida pela Vercel.
   pontos de quebra. Superado pela rodada de setembro.
 - `docs/handoff-rede-e-diagnostico.md` — a rodada de 21–22/09/2026: a rede de
   luz que atravessa a página, a galeria da dupla, o `#diagnostico` refeito como
-  explorador de seis áreas e o QR fora do contato. É o handoff em vigor para
-  essas quatro seções.
+  explorador de seis áreas e o QR fora do contato. A galeria e a estrutura do
+  explorador seguem valendo; a rede de luz e as ilustrações, não.
+- `docs/handoff-focos-e-iconografia.md` — a rodada de 22/09/2026, que trocou a
+  rede de luz por seis focos desfocados e redesenhou as seis ilustrações do
+  diagnóstico. É o handoff em vigor para o fundo e para a iconografia.
 
 ## Convenções gerais
 
