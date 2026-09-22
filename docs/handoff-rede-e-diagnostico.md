@@ -47,15 +47,38 @@ relógio.
 arquivos de QR continuam no repo: são para papel (cartão, crachá, proposta) e
 `scripts/build-qr.py` segue gerando os dois.
 
+## A errata do designer
+
+A primeira versão do pacote chegou sem a sexta ilustração e com a arte por cima
+do fim das linhas de texto. Apontados os dois, veio uma segunda versão com:
+
+- a ilustração de Continuidade reposta — linha do tempo vertical Entrega →
+  Evolução → Ajustes → Resultados, com o fio arrebentando logo depois de
+  "Entrega": as duas pontas soltas, o vão, e daí para baixo só paradas
+  apagadas ligadas por pontilhado;
+- `padding-right` em `.diag__panel .explorer__front, .diag__text` — 180px, 150
+  abaixo de 900 e 0 abaixo de 640 —, reservando a coluna da ilustração para
+  que o texto pare antes dela.
+
+É a versão que está no repo. A ilustração desenhada aqui enquanto a errata não
+chegava foi descartada: a do designer fala a mesma língua do resto da seção
+(mono em caixa alta, no tom de `--ink-soft`).
+
 ## O que a implementação fez além do pacote
 
-**A sexta ilustração não veio.** O painel de Continuidade chegou vazio nos dois
-arquivos, embora o CSS trouxesse a classe `.pain__art--timeline`. Foi desenhada
-aqui, seguindo a descrição do pacote: linha do tempo vertical Entrega →
-Evolução → Ajustes → Resultados, com o fio arrebentando logo depois de
-"Entrega" — toco solto, vão, e daí para baixo só paradas tracejadas ligadas por
-um pontilhado esmaecido. Os rótulos têm `data-en`, então traduzem junto com o
-resto.
+**Os rótulos da linha do tempo não traduziam.** O designer escreveu o texto do
+SVG fixo em cada arquivo — "ENTREGA" no PT, "DELIVERY" no EN. Só que o
+`en/index.html` daqui é **gerado** do PT, então os rótulos sairiam em português
+no inglês, e o botão de idioma não os trocaria. Ganharam `data-en`, como todo
+o resto do site.
+
+**O explorador do diagnóstico sumia no celular.** Abaixo de 640px a regra
+`.explorer { display: none; }` — a que dá lugar às abas de "O que entregamos" —
+apagava também o do diagnóstico, e a seção ficava com título, intro e rodapé e
+nada no meio. O `.explorer--diag { display: grid; }` que o pacote traz não
+vencia: mesma especificidade, e a outra regra vem depois na folha. Passou a ser
+`.explorer:not(.explorer--diag)`, que é onde a intenção mora — quem dá lugar às
+abas é o das entregas.
 
 **`scripts/build-en.mjs` não sabia dos caminhos relativos.** O script copia o
 `index.html` como está, e com os caminhos agora relativos ele gerava um
@@ -71,6 +94,9 @@ quadros na galeria, canvas da rede presente e `window.__trail.emit()`
 respondendo, bloco de QR ausente, Corning em texto. Sem scroll horizontal em
 1440, 1200, 900, 640 e 375px. Sem JavaScript as seis seções continuam
 visíveis. Com `prefers-reduced-motion` o canvas da rede fica `display:none`.
+
+O explorador do diagnóstico foi medido em 900, 640, 480 e 375px: em todas ele
+existe e tem altura, e a 375px as abas das entregas continuam no lugar delas.
 
 Os 404 de console que sobram são antigos e não são desta rodada: os cinco logos
 da faixa, `img/projetos/gipsyy.jpg` e o script de insights, que só existe na
