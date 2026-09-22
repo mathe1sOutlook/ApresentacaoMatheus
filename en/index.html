@@ -1102,6 +1102,11 @@ html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-to
   filter: blur(34px) saturate(1.5) brightness(0.52);
   z-index: 0;
 }
+/* Peça de arte clara — print de interface em tema claro. O 0.52 foi calibrado
+   em banner escuro; sobre um fundo branco ele devolve um cinza médio, e aí o
+   título creme e a métrica ocre caem para 3,7:1 na capa e 1,65:1 no modo
+   leitura, onde a faixa mostra só este fundo. Medido, não estimado. */
+.case__fundo--claro { filter: blur(34px) saturate(1.5) brightness(0.2); }
 /* A peça descola do fundo: sem sombra, arte e desfoque encostam e viram borrão. */
 .case__cover--piece .case__media .media {
   box-shadow: 0 26px 60px rgba(4, 6, 12, 0.55);
@@ -2821,6 +2826,77 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       <div class="ficha__cell">
         <p class="ficha__label" data-en="Method" data-pt="Método">Method</p>
         <ul class="ficha__list" data-en="&lt;li&gt;Regional partner mapping&lt;/li&gt;&lt;li&gt;Agenda built with local business teams&lt;/li&gt;&lt;li&gt;Repeatable format across four countries&lt;/li&gt;&lt;li&gt;Post-event follow-up with sales&lt;/li&gt;" data-pt="&lt;li&gt;Mapeamento de parceiros regionais&lt;/li&gt;&lt;li&gt;Agenda construída com times de negócio locais&lt;/li&gt;&lt;li&gt;Formato replicável em quatro países&lt;/li&gt;&lt;li&gt;Follow-up pós-evento com vendas&lt;/li&gt;"><li>Regional partner mapping</li><li>Agenda built with local business teams</li><li>Repeatable format across four countries</li><li>Post-event follow-up with sales</li></ul>
+      </div>
+    </div>
+  </div>
+</article>
+
+    <!-- Caso 05 ────────────────────────────────────── -->
+    <article class="case reveal">
+  <!-- /img/casos/fundacalc.jpg, 1600×1104: o visor 3D recortado do print,
+       montado na prancha (case__cover--piece) e não cobrindo a capa — um print
+       de tela cobrindo uma capa quase quadrada mostraria só a faixa do meio.
+       O print inteiro foi tentado e não se sustenta: num cartão de 375px uma
+       interface desenhada para 1900 vira cinza, e nem o bloco nem os rótulos
+       se leem. Uma segunda imagem aqui também não resolve — o carrossel só
+       existe no modo foto; no modo peça a .case__shots é block e as imagens
+       empilham. O fundo é o mesmo arquivo ampliado e desfocado; como a
+       interface é clara, ele fica mais claro que o dos outros casos. Sem o
+       arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--piece">
+    <img class="case__fundo case__fundo--claro" src="../img/casos/fundacalc.jpg" alt="" aria-hidden="true" onerror="this.remove()">
+    <div class="case__media">
+      <figure class="media" data-slot="case-fundacalc">
+        <div class="case__shots">
+          <img class="case__shot" src="../img/casos/fundacalc.jpg" alt="The seven-pile cap in 3D, compression struts running from the column down to the pile heads" data-en-alt="The seven-pile cap in 3D, compression struts running from the column down to the pile heads" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="O bloco sobre sete estacas em 3D, com as bielas de compressão descendo do pilar até as cabeças das estacas">
+        </div>
+        <span class="media__client">FundaCalc</span>
+        <figcaption class="media__hint" data-en="Awaiting the case screenshot" data-pt="Aguardando print do case">Awaiting the case screenshot</figcaption>
+      </figure>
+    </div>
+    <div class="case__caption">
+      <h3 class="case__title">FundaCalc</h3>
+      <div class="case__reveal">
+        <p class="case__metric" data-en="Six methods, one pile cap" data-pt="Seis métodos sobre o mesmo bloco">Six methods, one pile cap</p>
+        <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-05-details"><span class="is-open" data-en="See details ↓" data-pt="Ver detalhes ↓">See details ↓</span><span class="is-close" data-en="Close ↑" data-pt="Fechar ↑">Close ↑</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="case__details" id="case-05-details" hidden="">
+    <p class="case__client">FundaCalc</p>
+    <span class="case__sector" data-en="Structural engineering · own product · Matheus" data-pt="Engenharia estrutural · produto próprio · Matheus">Structural engineering · own product · Matheus</span>
+    <div>
+      <div class="case__block">
+        <p class="label label--ochre" data-en="Problem" data-pt="Problema">Problem</p>
+        <p data-en="Pile caps get designed in spreadsheets. Each office has its own, built around the method the lead engineer learned, and what comes back is a number without the path that produced it. Switching methods means switching spreadsheets; checking the work means redoing it by hand. And none of it shows how the column load actually travels down to each pile." data-pt="Bloco sobre estacas se dimensiona em planilha. Cada escritório tem a sua, montada em torno do método que o engenheiro-chefe aprendeu, e o que ela devolve é um número sem o caminho que levou até ele. Trocar de método é trocar de planilha; conferir é refazer à mão. E nada ali mostra como a carga do pilar desce até cada estaca.">Pile caps get designed in spreadsheets. Each office has its own, built around the method the lead engineer learned, and what comes back is a number without the path that produced it. Switching methods means switching spreadsheets; checking the work means redoing it by hand. And none of it shows how the column load actually travels down to each pile.</p>
+      </div>
+      <div class="case__block">
+        <p class="label label--blue" data-en="Solution" data-pt="Solução">Solution</p>
+        <p data-en="Software that designs the same pile cap by six methods — Blévot, Fusco A and B, MBT, Oliveira, Santos 2023 — and puts the six side by side. The struts come from discretising the column section, become a space truss and are solved by finite elements; the cap, the piles and the compression paths show up in 3D in the browser before any number does. The envelope of forces from the structural analysis software goes in; the designed cap and its calculation record in Excel come out." data-pt="Um software que dimensiona o mesmo bloco por seis métodos — Blévot, Fusco A e B, MBT, Oliveira, Santos 2023 — e põe os seis lado a lado. As bielas saem de uma discretização da seção do pilar, viram uma treliça espacial e são resolvidas por elementos finitos; o bloco, as estacas e os caminhos de compressão aparecem em 3D no navegador antes de qualquer número. Entra o envelope de esforços do software de análise estrutural, sai o bloco dimensionado com a memória de cálculo em Excel.">Software that designs the same pile cap by six methods — Blévot, Fusco A and B, MBT, Oliveira, Santos 2023 — and puts the six side by side. The struts come from discretising the column section, become a space truss and are solved by finite elements; the cap, the piles and the compression paths show up in 3D in the browser before any number does. The envelope of forces from the structural analysis software goes in; the designed cap and its calculation record in Excel come out.</p>
+      </div>
+      <div class="case__value">
+        <p class="label" data-en="Value delivered" data-pt="Valor entregue">Value delivered</p>
+        <p data-en="The calculation stopped being a black box: the engineer sees the truss each method assumes, compares what each one demands in reinforcement, and chooses on criteria instead of habit. The same engine covers the geotechnical side — capacity, settlement, p-y curves — and the column under biaxial bending." data-pt="O cálculo deixou de ser caixa-preta: o engenheiro vê a treliça que cada método assume, compara o que cada um exige de armadura e escolhe por critério, não por hábito. A mesma base cobre o lado geotécnico — capacidade, recalque, curvas p-y — e o pilar em flexão composta oblíqua.">The calculation stopped being a black box: the engineer sees the truss each method assumes, compares what each one demands in reinforcement, and chooses on criteria instead of habit. The same engine covers the geotechnical side — capacity, settlement, p-y curves — and the column under biaxial bending.</p>
+      </div>
+    </div>
+
+    <div class="ficha">
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Deliverables" data-pt="Entregáveis">Deliverables</p>
+        <ul class="ficha__tags"><li data-en="Calculation engine" data-pt="Motor de cálculo">Calculation engine</li><li data-en="3D view" data-pt="Visualização 3D">3D view</li><li data-en="Finite elements" data-pt="Elementos finitos">Finite elements</li><li data-en="Geotechnics" data-pt="Geotecnia">Geotechnics</li><li data-en="Excel export" data-pt="Exportação Excel">Excel export</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Numbers" data-pt="Números">Numbers</p>
+        <ul class="ficha__list">
+          <li><b>6</b> <span data-en="design methods over one geometry" data-pt="métodos de dimensionamento sobre a mesma geometria">design methods over one geometry</span></li>
+          <li><b>11</b> <span data-en="pile layouts, from 2 to 7 piles" data-pt="arranjos de estaca, de 2 a 7 estacas">pile layouts, from 2 to 7 piles</span></li>
+          <li><b data-en="12k" data-pt="12 mil">12k</b> <span data-en="lines in the calculation engine alone" data-pt="linhas só no motor de cálculo">lines in the calculation engine alone</span></li>
+        </ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Method" data-pt="Método">Method</p>
+        <ul class="ficha__list" data-en="&lt;li&gt;Born as a Python notebook&lt;/li&gt;&lt;li&gt;Then a .NET MAUI desktop app&lt;/li&gt;&lt;li&gt;Rewritten for the web: Next.js, Three.js, Supabase&lt;/li&gt;&lt;li&gt;Strut-and-tie space truss solved by finite elements&lt;/li&gt;&lt;li&gt;Column section by Green's theorem, algorithm by algorithm from a 2004 thesis&lt;/li&gt;" data-pt="&lt;li&gt;Nasceu em notebook Python&lt;/li&gt;&lt;li&gt;Virou aplicativo desktop em .NET MAUI&lt;/li&gt;&lt;li&gt;Reescrito para a web: Next.js, Three.js, Supabase&lt;/li&gt;&lt;li&gt;Treliça espacial biela–tirante resolvida por elementos finitos&lt;/li&gt;&lt;li&gt;Seção do pilar pelo Teorema de Green, algoritmo a algoritmo de uma tese de 2004&lt;/li&gt;"><li>Born as a Python notebook</li><li>Then a .NET MAUI desktop app</li><li>Rewritten for the web: Next.js, Three.js, Supabase</li><li>Strut-and-tie space truss solved by finite elements</li><li>Column section by Green's theorem, algorithm by algorithm from a 2004 thesis</li></ul>
       </div>
     </div>
   </div>
