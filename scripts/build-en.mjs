@@ -78,6 +78,13 @@ const html = await page.evaluate((META) => {
 }, META_EN);
 
 await browser.close();
+
+// A página EN mora em /en, um nível abaixo da raiz: os caminhos relativos do PT
+// (img/…, fonts/…) precisam do ../ para chegar às mesmas pastas.
+const htmlEn = html
+  .replace(/((?:src|href)=")(img|fonts)\//g, '$1../$2/')
+  .replace(/(url\((['"]?))(img|fonts)\//g, '$1../$3/');
+
 mkdirSync(resolve(root, 'en'), { recursive: true });
-writeFileSync(resolve(root, 'en', 'index.html'), '<!-- GERADO por scripts/build-en.mjs a partir de index.html — não edite à mão. -->\n' + html);
-console.log('en/index.html gerado:', html.length, 'bytes');
+writeFileSync(resolve(root, 'en', 'index.html'), '<!-- GERADO por scripts/build-en.mjs a partir de index.html — não edite à mão. -->\n' + htmlEn);
+console.log('en/index.html gerado:', htmlEn.length, 'bytes');

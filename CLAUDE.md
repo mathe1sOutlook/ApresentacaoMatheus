@@ -170,7 +170,11 @@ ficar numa pasta servida pela Vercel.
   comportamento dos dois scripts. A parte do `#diagnostico` está superada.
 - `docs/handoff-diagnostico-lista.md` — o handoff que trocou o carrossel de
   sintomas pela lista estática em duas colunas: medidas, tipografia e os três
-  pontos de quebra.
+  pontos de quebra. Superado pela rodada de setembro.
+- `docs/handoff-rede-e-diagnostico.md` — a rodada de 21–22/09/2026: a rede de
+  luz que atravessa a página, a galeria da dupla, o `#diagnostico` refeito como
+  explorador de seis áreas e o QR fora do contato. É o handoff em vigor para
+  essas quatro seções.
 
 ## Convenções gerais
 

@@ -43,9 +43,9 @@ img/bruno.jpg, img/matheus.jpg  avatares de #dupla, quadrados de 192×192 (o
 img/hero-casa.jpg  a casa de luz do hero (1072×821); img/hero-casa-luz.png é a
                 máscara dos rastros, que recorta o canvas dos pulsos (ver
                 "Hero: a casa de luz")
-img/qr.svg      QR do site para a caixa "uso físico"; img/qr-print.svg é a
-                versão preto-no-branco para cartão, crachá e proposta. Os dois
-                são gerados por scripts/build-qr.py
+img/qr.svg      QR do site em creme sobre escuro; img/qr-print.svg é a
+                versão preto-no-branco. Os dois são para papel — cartão,
+                crachá, proposta — e saem de scripts/build-qr.py
 robots.txt      libera o site, bloqueia as propostas e o /admin
 sitemap.xml     / e /en com hreflang
 vercel.json     rewrites (/en, /admin, propostas), noindex das propostas e do
@@ -79,7 +79,8 @@ o `<head>`, o conteúdo e o JSON-LD já em inglês, porque robôs de
 compartilhamento e buscadores não executam JS. O PT de cada nó fica guardado
 em `data-pt`, e o script continua trocando de idioma sem recarregar.
 **Sempre que editar o `index.html`, rode o script e versione o `en/index.html`
-junto.**
+junto.** Como `/en` fica um nível abaixo da raiz, o script prefixa `../` nos
+caminhos de `img/` e `fonts/` ao gerar — o PT os escreve relativos à raiz.
 
 Para editar uma frase, mude os dois lados: o texto no HTML (PT) e o `data-en`
 (EN). Se um dia o site virar Next.js, esses pares alimentam direto os
@@ -91,7 +92,8 @@ dicionários do `next-intl`.
 no branco, para papel) são **gerados**: `pip install segno && python3
 scripts/build-qr.py`. Os dois codificam
 `https://casamartech.vercel.app/?utm_source=qr`, em 33 módulos com correção de
-erro Q — o mesmo tamanho de sempre, então a caixa de 120px do contato não muda.
+erro Q. A caixa "uso físico" saiu do contato; os dois arquivos ficam porque o
+impresso continua usando.
 
 Trocar o endereço é trocar a constante `SITE` no script e rodar de novo. O que
 já foi impresso aponta para o endereço anterior e continua funcionando enquanto
@@ -124,6 +126,28 @@ pulsos saem do rastro. O detalhe está em `docs/handoff-hero-casa-de-luz.md`.
 Abaixo de 880px a arte sai — cruzaria o texto — e o script para de desenhar;
 com `prefers-reduced-motion` o canvas sai e a casa fica acesa e parada; na
 impressão as duas camadas saem.
+
+## Rede de luz pela página
+
+O `<canvas id="trail">` fica fixo atrás de tudo (`z-index: 1`, abaixo do
+header) e desenha a mesma luz do hero correndo pela página inteira: nós nas
+faixas laterais, um núcleo por título de seção, e arestas curvas ligando cada
+nó a um vizinho abaixo. O `filter: blur(3px)` é o acrílico — engrossa a luz e
+apaga o traço fino, para a rede nunca competir com o texto.
+
+Os nós se recalculam a cada 500ms, mas só se reconstroem quando a assinatura
+da página muda (largura da janela, topo e altura das seções); as posições vêm
+de uma semente, então a rede é a mesma a cada carregamento. Cada nó tem uma
+profundidade `z` que decide espessura, brilho e tamanho — longe é mancha larga
+e fraca, perto é ponto vivo. Impulsos correm as arestas a 340–540px/s, no
+máximo cinco por vez, retransmitindo por até cinco saltos.
+
+A fonte da rede é o piso da casa do hero: quando um pulso da ilustração chega
+à escada ou ao canto inferior esquerdo, o script do hero chama
+`window.__trail.emit()` e a rede acende a partir dali. Sem a ilustração (abaixo
+de 880px) a fonte vira um ponto na margem direita, logo acima do fim do hero.
+O desenho para com a aba escondida, e com `prefers-reduced-motion` o canvas
+sai inteiro.
 
 ## Imagens de compartilhamento
 
@@ -209,13 +233,20 @@ escondida no desenho normal e, em parte dos sistemas, é sobreposta e não
 aparece. O script sincroniza a alça com o scroll; arrastá-la, ou clicar no
 trilho, move a fileira.
 
-O `#diagnostico` é uma lista, e o que separa um sintoma do outro é uma régua
-de 1px. De 1000px em diante ela se parte em duas colunas, com o fio vertical
-correndo no meio; entre 700 e 999px volta a ser uma coluna só e quem se parte
-é cada sintoma — título à esquerda, frase e sinais à direita; abaixo disso
-cada sintoma ocupa a largura inteira. O número e a disciplina (`--brand`,
-`--tech`) seguem no HTML como anotação editorial, escondidos no CSS: quem lê
-se reconhece na dor, não na arrumação da casa. Nada aqui depende de script.
+O `#diagnostico` é o mesmo explorador, em outra medida: seis áreas em lista
+(Marketing, Processos, Comunicação, Dados, Tecnologia, Continuidade) e, do
+outro lado, a frase da área com dois sinais concretos e uma ilustração em
+traço no canto. O painel entra em dois tempos — rótulo e frase primeiro, os
+sinais 1,5s depois —, e cada área fica 7s no ar (`data-dwell="7000"`, contra
+os 3,5s das entregas). Abaixo de 640px ele continua explorador, diferente das
+entregas; o que muda é o painel descer para baixo da lista. Cada ilustração
+carrega uma ruptura que traduz a dor — a de Continuidade é a linha do tempo
+que arrebenta logo depois de "Entrega". O detalhe está em
+`docs/handoff-rede-e-diagnostico.md`.
+
+O `#dupla` é uma galeria: o texto à esquerda e, à direita, dois quadros
+pendurados com avatar, nome, cargo, bio e chips. Um quadro por ofício, e a
+borda ocre é o que os pendura.
 
 A faixa de clientes não para no mouse. Quem quiser olhar um nome de perto
 arrasta a faixa ou gira a roda na horizontal; ao soltar, ela retoma do ponto
@@ -289,8 +320,9 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
 
 - **Logos da faixa "já fizemos história com..."** — `/img/logos/<slug>.svg`
   (corning, ame, quintoandar, mediaportal, informa, gipsyy), monocromáticos; o
-  CSS pinta de creme. Sem o arquivo, fica o nome em texto. No ar: `corning`
-  (wordmark). **Faltam ame, quintoandar, mediaportal, informa e gipsyy.** O
+  CSS pinta de creme. Sem o arquivo, fica o nome em texto — que é como os
+  **seis** estão hoje: o `corning.svg`, único que existia, saiu na rodada de
+  setembro e a faixa ficou toda na mesma serifa. O
   arquivo precisa ter **fundo transparente**: o filtro que pinta de creme
   (`brightness(0) invert(0.93)`) pinta tudo que não é transparente, então um
   retângulo de fundo vira um bloco chapado. Serve SVG ou PNG com alpha; se for
