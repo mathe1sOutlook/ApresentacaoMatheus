@@ -478,36 +478,22 @@ button {
   border-radius: 3px;
   background:
     linear-gradient(180deg, #13171F, #0F1218 55%) padding-box,
-    repeating-linear-gradient(103deg,
-      rgba(255, 255, 255, 0.0132) 0px,
-      rgba(0, 0, 0, 0.03) 3px,
-      rgba(255, 255, 255, 0.0072) 8px,
-      rgba(0, 0, 0, 0.033) 13px,
-      rgba(255, 255, 255, 0.0108) 19px,
-      rgba(0, 0, 0, 0.024) 26px,
-      rgba(255, 255, 255, 0.0132) 31px) border-box,
-    conic-gradient(from 45deg,
-      #0a0a0d 0 25%,
-      #050507 0 50%,
-      #15151a 0 75%,
-      #202026 0 100%) border-box;
+    linear-gradient(#0C0C0F, #0C0C0F) border-box;
   box-shadow:
     /* rebaixo: fio dourado, corte preto e a sombra que a moldura joga
-       sobre a arte — mais forte em cima e à esquerda, de onde vem a luz */
+       sobre a arte */
     inset 0 0 0 1px rgba(201, 162, 78, 0.26),
     inset 0 0 0 2px rgba(0, 0, 0, 0.92),
     inset 0 5px 10px -3px rgba(0, 0, 0, 0.85),
-    inset 4px 0 9px -5px rgba(0, 0, 0, 0.7),
-    /* as quatro arestas da madeira: as de cima e da esquerda pegam luz,
-       as de baixo e da direita são o corte contra a parede */
-    0 -1px 0 rgba(255, 255, 255, 0.07),
-    -1px 0 0 rgba(255, 255, 255, 0.04),
-    1px 0 0 rgba(0, 0, 0, 0.9),
-    0 1px 0 rgba(0, 0, 0, 0.9),
+    /* as quatro arestas da madeira, só para a moldura ter fim contra a
+       parede — sem gradiente por dentro, que lia como reflexo */
+    0 0 0 1px rgba(0, 0, 0, 0.9),
+    0 -1px 0 rgba(255, 255, 255, 0.045),
     /* o peso de um quadro pendurado: contato curto e sombra longa */
     0 10px 20px -14px rgba(0, 0, 0, 0.9),
     0 44px 60px -34px rgba(0, 0, 0, 0.95);
 }
+
 
 .plaque__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
 .plaque .avatar { width: 120px; height: 120px; border-color: rgba(201, 162, 78, 0.45); box-shadow: 0 0 0 5px #0F1218, 0 0 0 6px rgba(201, 162, 78, 0.16); }
