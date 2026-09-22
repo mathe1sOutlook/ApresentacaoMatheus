@@ -246,13 +246,15 @@ que arrebenta logo depois de "Entrega". O detalhe está em
 
 O `#dupla` é uma galeria: o texto à esquerda e, à direita, dois quadros
 pendurados com avatar, nome, cargo, bio e chips — um por ofício. A moldura é
-de madeira preta, e quem corta os cantos em meia-esquadria é um
-`conic-gradient` girado 45°: os quatro setores se encontram nas diagonais, que
-é onde a mitra cai. A luz vem de cima e da esquerda, então o sarrafo de cima é
-o mais claro e o de baixo o mais escuro, e as quatro arestas externas repetem
-isso em 1px. Por dentro, o fio dourado do rebaixo e a sombra que a moldura
-joga sobre a arte. No papel tudo isso vira um fio de 1px: preto chapado de
-20px come tinta e briga com o tema claro da impressão.
+madeira preta fosca, **uniforme**: a borda de 20px é transparente e serve só
+para reservar a área, com o fundo da arte pintado no `padding-box` e a madeira
+no `border-box`. Houve uma versão com os quatro sarrafos em tons diferentes e
+meia-esquadria por `conic-gradient` — desenhava o canto certo, mas o degradê
+lia como reflexo numa moldura que devia ser fosca, e saiu. O que dá relevo
+agora é só o que acontece nas bordas: o fio dourado do rebaixo, a sombra que a
+moldura joga sobre a arte e 1px de aresta contra a parede. No papel tudo isso
+vira um fio de 1px — preto chapado de 20px come tinta e briga com o tema claro
+da impressão.
 
 A faixa de clientes não para no mouse. Quem quiser olhar um nome de perto
 arrasta a faixa ou gira a roda na horizontal; ao soltar, ela retoma do ponto
