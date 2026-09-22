@@ -127,27 +127,34 @@ Abaixo de 880px a arte sai — cruzaria o texto — e o script para de desenhar;
 com `prefers-reduced-motion` o canvas sai e a casa fica acesa e parada; na
 impressão as duas camadas saem.
 
-## Rede de luz pela página
+## Focos de luz pela página
 
 O `<canvas id="trail">` fica fixo atrás de tudo (`z-index: 1`, abaixo do
-header) e desenha a mesma luz do hero correndo pela página inteira: nós nas
-faixas laterais, um núcleo por título de seção, e arestas curvas ligando cada
-nó a um vizinho abaixo. O `filter: blur(3px)` é o acrílico — engrossa a luz e
-apaga o traço fino, para a rede nunca competir com o texto.
+header) e desenha seis manchas de luz — uma por seção, nas margens laterais,
+ocre nas ímpares e azul nas pares. Quem faz a mancha é o `filter: blur(40px)`:
+o canvas desenha um gradiente radial simples e o desfoque cuida do resto. O
+`mix-blend-mode: screen` garante que a luz só clareia, nunca escurece o que
+está atrás.
 
-Os nós se recalculam a cada 500ms, mas só se reconstroem quando a assinatura
-da página muda (largura da janela, topo e altura das seções); as posições vêm
-de uma semente, então a rede é a mesma a cada carregamento. Cada nó tem uma
-profundidade `z` que decide espessura, brilho e tamanho — longe é mancha larga
-e fraca, perto é ponto vivo. Impulsos correm as arestas a 340–540px/s, no
-máximo cinco por vez, retransmitindo por até cinco saltos.
+A geometria se recalcula a cada 500ms e no resize, e cada foco se ancora nas
+bordas internas do `.container`: com margem lateral real (≥72px) ele cai na
+faixa vazia ao lado do conteúdo; em tela estreita, encosta na borda da janela.
+O do `#contato` é o único que foge da margem — fica sob o texto da coluna
+esquerda, para nunca passar atrás do formulário.
 
-A fonte da rede é o piso da casa do hero: quando um pulso da ilustração chega
-à escada ou ao canto inferior esquerdo, o script do hero chama
-`window.__trail.emit()` e a rede acende a partir dali. Sem a ilustração (abaixo
-de 880px) a fonte vira um ponto na margem direita, logo acima do fim do hero.
-O desenho para com a aba escondida, e com `prefers-reduced-motion` o canvas
-sai inteiro.
+O movimento é deriva mais respiração, não pulso: cada foco tem fase,
+velocidade e deriva próprias, fixas por semente, e a respiração é uma curva em
+S de 23 a 36 segundos que varia o brilho entre 65% e 100% do máximo — a luz
+nunca apaga. A casa do hero continua alimentando: quando um pulso chega à
+escada ou ao canto inferior esquerdo, `window.__trail.emit()` acende o foco
+mais próximo do centro da janela, e esse brilho decai sozinho.
+
+Só desenha os focos cujo círculo cruza a janela, para com a aba escondida, e
+com `prefers-reduced-motion` o canvas sai inteiro.
+
+Antes daqui havia uma rede de nós, arestas e impulsos correndo a página. Ela
+desenhava bem, mas disputava a leitura com o texto; os focos dizem a mesma
+coisa sem pedir atenção.
 
 ## Imagens de compartilhamento
 
@@ -240,9 +247,10 @@ traço no canto. O painel entra em dois tempos — rótulo e frase primeiro, os
 sinais 1,5s depois —, e cada área fica 7s no ar (`data-dwell="7000"`, contra
 os 3,5s das entregas). Abaixo de 640px ele continua explorador, diferente das
 entregas; o que muda é o painel descer para baixo da lista. Cada ilustração
-carrega uma ruptura que traduz a dor — a de Continuidade é a linha do tempo
-que arrebenta logo depois de "Entrega". O detalhe está em
-`docs/handoff-rede-e-diagnostico.md`.
+carrega uma metáfora própria e um ponto de ruptura visível — a de Continuidade
+é a curva que sobe firme até a bandeira "Entrega" e depois vira pontilhado que
+se apaga, com os marcos seguintes vazios. O detalhe está em
+`docs/handoff-focos-e-iconografia.md`.
 
 O `#dupla` é uma galeria: o texto à esquerda e, à direita, dois quadros
 pendurados com avatar, nome, cargo, bio e chips — um por ofício. A moldura é
