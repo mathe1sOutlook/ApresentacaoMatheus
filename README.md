@@ -351,13 +351,14 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
 - **Vercel Web Analytics** — o site já carrega `/_vercel/insights/script.js`;
   só começa a contar depois de ativar *Analytics* no projeto na Vercel.
 - **Imagens dos casos e projetos** — cada card aponta para um arquivo em
-  `/img/casos/` (mediaportal, mindminers, ame-x, corning, fundacalc) e em
+  `/img/casos/` (mediaportal, mindminers, ame-x, corning, fundacalc,
+  fundacalc-spt) e em
   `/img/projetos/` (amwc, ame-tom-de-voz, gipsyy). **Esta lista é a seleção
   aprovada; não acrescentar nomes sem aprovação** — os cases retirados na
   rodada 2 não voltam. Já estão no ar: `corning` (foto do barco), `mindminers`
   (banco de praça), `ame-x` (banner Cashback Friday), `mediaportal` (a home do
-  site desfocada com o logo por cima), `fundacalc` (o visor 3D do software,
-  recortado do print), `amwc` (cartaz) e `ame-tom-de-voz` (banner do
+  site desfocada com o logo por cima), `fundacalc` e `fundacalc-spt` (a
+  treliça em 3D e o perfil de sondagem, recortados dos prints), `amwc` (cartaz) e `ame-tom-de-voz` (banner do
   super app + grade de serviços). **Falta `gipsyy`.** Basta salvar o arquivo
   com esse nome; enquanto ele não existe, o `onerror` do `<img>` deixa a capa na
   moldura de espera sobre uma malha de desenho (as imagens ausentes respondem
@@ -393,10 +394,14 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   236px mostra só esse fundo. Com a variante, 7,8:1 e 5,4:1.
   **Print de interface não entra inteiro.** Tentamos: num cartão de 375px, uma
   tela desenhada para 1900 vira cinza e nem o desenho nem os rótulos se leem. O
-  que entra é o recorte da parte que fala sozinha — no FundaCalc, o visor 3D com
-  o bloco, as estacas e as bielas. E o carrossel não salva um print: ele só
-  existe no modo foto; no modo peça a `.case__shots` é `block` e as imagens
-  empilham, esticando o cartão.
+  que entra é o recorte da parte que fala sozinha, que aí é reconhecível sem ser
+  lida — no FundaCalc, a treliça do bloco em 3D e o perfil de sondagem.
+  O carrossel passou a valer também no modo peça (era `block`, e duas peças se
+  empilhavam, esticando o cartão e empurrando o título para fora). **As peças de
+  um mesmo caso precisam ter a mesma proporção**: cada uma mantém a altura que
+  lhe cabe, então a faixa assume a da mais alta e as outras ficam com sobra. As
+  duas do FundaCalc são 1320×600. Os marcadores, que no modo foto ficam no
+  rodapé da capa, sobem para o topo — embaixo é onde começa o título.
   Um caso aceita **mais de uma imagem**: é duplicar o `<img class="case__shot">`
   dentro da `<div class="case__shots">`. A partir da segunda, a faixa vira
   carrossel — arrasto nativo por scroll-snap, marcadores e setas do teclado
