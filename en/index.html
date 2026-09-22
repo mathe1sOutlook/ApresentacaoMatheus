@@ -1074,12 +1074,12 @@ html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-to
    capa. Cobrindo, um banner de 3,7:1 numa capa quase quadrada mostraria um
    terço de si; contido, viraria uma tira perdida. Montado como peça, com a
    prancha à vista, é o que faz sentido para material de mídia. */
-/* A faixa de imagens tambem corre no modo peca. Antes era `block`, e um caso
-   de duas pecas as empilhava: o cartao esticava e o titulo saia da moldura. O
-   passo do script e o clientWidth da faixa, entao basta ela rolar na
-   horizontal com snap. As pecas de um mesmo caso precisam ter a MESMA
-   proporcao — em `height: auto` a faixa assume a altura da mais alta e as
-   outras sobram espaco. */
+/* A faixa de imagens também corre no modo peça. Antes era `block`, e um caso
+   de duas peças as empilhava: o cartão esticava e o título saía da moldura. O
+   passo do script é o clientWidth da faixa, então basta ela rolar na
+   horizontal com snap. As peças de um mesmo caso precisam ter a MESMA
+   proporção — em `height: auto` a faixa assume a altura da mais alta e as
+   outras sobram espaço. */
 .case__cover--piece .case__shots {
   display: flex;
   align-items: center;
@@ -1100,8 +1100,8 @@ html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-to
   background: var(--bg-deep);
 }
 .case__cover--piece .case__shot { display: block; flex: 0 0 100%; width: 100%; height: auto; object-fit: contain; }
-/* Os marcadores ficam no canto da capa, que no modo peca e onde o titulo
-   comeca. Aqui eles sobem para o canto da propria peca. */
+/* Os marcadores ficam no canto da capa, que no modo peça é onde o título
+   começa. Aqui eles sobem para o canto da própria peça. */
 .case__cover--piece .case__dots { bottom: auto; top: 30px; }
 .case__cover--piece .media__hint,
 .case__cover--piece .media__client { display: none; }
@@ -1121,11 +1121,25 @@ html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-to
   filter: blur(34px) saturate(1.5) brightness(0.52);
   z-index: 0;
 }
-/* Peça de arte clara — print de interface em tema claro. O 0.52 foi calibrado
-   em banner escuro; sobre um fundo branco ele devolve um cinza médio, e aí o
-   título creme e a métrica ocre caem para 3,7:1 na capa e 1,65:1 no modo
-   leitura, onde a faixa mostra só este fundo. Medido, não estimado. */
-.case__fundo--claro { filter: blur(34px) saturate(1.5) brightness(0.2); }
+/* Peça de arte clara — print de interface em tema claro. O fundo desfocado
+   fica claro, e é esse o ponto: ele é a cor da peça, como em qualquer caso.
+   Só que aí o título creme e a métrica ocre não leem sobre ele — 3,7:1 na capa
+   e 1,65:1 no modo leitura, onde a faixa mostra só este fundo. A saída não é
+   apagar a cor com menos brilho: é o véu que o modo foto já usa para a legenda
+   ler sobre a fotografia, aqui começando abaixo da peça para não escurecê-la. */
+.case__cover--claro::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(11, 13, 18, 0) 50%, rgba(11, 13, 18, 0.62) 72%, rgba(11, 13, 18, 0.94) 100%);
+  pointer-events: none;
+}
+/* No modo leitura a peça sai e a faixa mostra só o fundo: o véu fecha por
+   inteiro, como no modo foto. */
+.cases.has-open .case__cover--claro::after {
+  background: linear-gradient(180deg, rgba(11, 13, 18, 0.62) 0%, rgba(11, 13, 18, 0.78) 55%, rgba(11, 13, 18, 0.95) 100%);
+}
 /* A peça descola do fundo: sem sombra, arte e desfoque encostam e viram borrão. */
 .case__cover--piece .case__media .media {
   box-shadow: 0 26px 60px rgba(4, 6, 12, 0.55);
@@ -2859,11 +2873,13 @@ textarea.field__input { min-height: 120px; resize: vertical; }
        curvas de capacidade e recalque. As duas são recorte do print, não a tela
        inteira: num cartão de 375px uma interface desenhada para 1900 vira cinza
        e não se lê nada; recortada na parte que fala sozinha, ela é reconhecível
-       sem ser lida. Proporcão idêntica nas duas, senão a faixa assume a altura
-       da mais alta. O fundo é a primeira ampliada e desfocada, com a variante
-       clara. Sem o primeiro arquivo, a moldura tracejada aparece. -->
-  <div class="case__cover case__cover--piece">
-    <img class="case__fundo case__fundo--claro" src="../img/casos/fundacalc.jpg" alt="" aria-hidden="true" onerror="this.remove()">
+       sem ser lida. Proporção idêntica nas duas, senão a faixa assume a
+       altura da mais alta. O fundo é a primeira ampliada e desfocada, como em
+       toda peça; como a arte é clara, a capa leva `case__cover--claro`, que
+       põe o véu no pé para o título e a métrica lerem sem apagar a cor do
+       fundo. Sem o primeiro arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--piece case__cover--claro">
+    <img class="case__fundo" src="../img/casos/fundacalc.jpg" alt="" aria-hidden="true" onerror="this.remove()">
     <div class="case__media">
       <figure class="media" data-slot="case-fundacalc">
         <div class="case__shots">

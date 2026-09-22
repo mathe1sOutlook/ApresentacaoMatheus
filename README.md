@@ -387,11 +387,16 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   entra atrás, ampliado e desfocado, para a cor da peça tomar o cartão inteiro.
   A prancha vazia em volta de um banner era espaço morto, e uma segunda imagem
   só para preencher seria peso a mais para baixar. No papel ele some.
-  O `brightness(0.52)` do fundo foi calibrado em banner escuro. **Arte clara
-  pede `case__fundo--claro`**, que baixa para `0.2`: o print do FundaCalc é uma
-  interface em tema claro, e desfocada ela devolvia um cinza médio que derrubava
-  a métrica ocre para 3,7:1 na capa e 1,65:1 no modo leitura — onde a faixa de
-  236px mostra só esse fundo. Com a variante, 7,8:1 e 5,4:1.
+  **Arte clara pede `case__cover--claro` na capa.** O fundo desfocado do
+  FundaCalc é uma interface em tema claro, então ele devolve um cinza claro —
+  que é o certo, porque o fundo é a cor da peça. Só que sobre ele o título creme
+  e a métrica ocre ficavam em 3,7:1 na capa e 1,65:1 no modo leitura, onde a
+  faixa de 236px mostra só esse fundo. A primeira saída foi baixar o
+  `brightness` para `0.2`; o fundo virou preto e perdeu a cor. O que vale é o
+  véu — o mesmo recurso que o modo foto usa para a legenda ler sobre a
+  fotografia, aqui começando na metade da capa para não escurecer a peça, e
+  fechando por inteiro no modo leitura, quando a peça sai. Com ele, 6,8:1 e
+  6,9:1, e a cor continua lá.
   **Print de interface não entra inteiro.** Tentamos: num cartão de 375px, uma
   tela desenhada para 1900 vira cinza e nem o desenho nem os rótulos se leem. O
   que entra é o recorte da parte que fala sozinha, que aí é reconhecível sem ser
