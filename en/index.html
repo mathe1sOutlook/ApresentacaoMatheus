@@ -35,9 +35,9 @@
 
 <!-- Fontes auto-hospedadas (OFL): nada sai para o Google Fonts. As duas do
      hero entram em preload; o resto carrega com swap. -->
-<link rel="preload" href="/fonts/fraunces-normal-latin.woff2" as="font" type="font/woff2" crossorigin="">
-<link rel="preload" href="/fonts/fraunces-italic-latin.woff2" as="font" type="font/woff2" crossorigin="">
-<link rel="preload" href="/fonts/inter-normal-latin.woff2" as="font" type="font/woff2" crossorigin="">
+<link rel="preload" href="../fonts/fraunces-normal-latin.woff2" as="font" type="font/woff2" crossorigin="">
+<link rel="preload" href="../fonts/fraunces-italic-latin.woff2" as="font" type="font/woff2" crossorigin="">
+<link rel="preload" href="../fonts/inter-normal-latin.woff2" as="font" type="font/woff2" crossorigin="">
 
 <!-- As duas classes entram antes da primeira pintura. .js diz que o script
      rodou — é ela que autoriza esconder conteúdo (o explorador de entregas
@@ -62,16 +62,16 @@
 /* ═══════════════════════════════════════════════════════════════════
    Fontes (variáveis, subsets latin + latin-ext)
    ═══════════════════════════════════════════════════════════════════ */
-@font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 300 600; font-display: swap; src: url('/fonts/fraunces-normal-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 300 600; font-display: swap; src: url('/fonts/fraunces-normal-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 400; font-display: swap; src: url('/fonts/fraunces-italic-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 400; font-display: swap; src: url('/fonts/fraunces-italic-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400 600; font-display: swap; src: url('/fonts/inter-normal-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400 600; font-display: swap; src: url('/fonts/inter-normal-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/plex-mono-normal-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/plex-mono-normal-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
-@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/plex-mono-medium-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
-@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/plex-mono-medium-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 300 600; font-display: swap; src: url('../fonts/fraunces-normal-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Fraunces'; font-style: normal; font-weight: 300 600; font-display: swap; src: url('../fonts/fraunces-normal-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 400; font-display: swap; src: url('../fonts/fraunces-italic-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Fraunces'; font-style: italic; font-weight: 400; font-display: swap; src: url('../fonts/fraunces-italic-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400 600; font-display: swap; src: url('../fonts/inter-normal-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400 600; font-display: swap; src: url('../fonts/inter-normal-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('../fonts/plex-mono-normal-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('../fonts/plex-mono-normal-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('../fonts/plex-mono-medium-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('../fonts/plex-mono-medium-latin-ext.woff2') format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 
 /* ═══════════════════════════════════════════════════════════════════
    CASA MARTECH — tokens
@@ -223,7 +223,7 @@ button {
 
 /* ─── Seções ─────────────────────────────────────────────────────── */
 .section {
-  padding: 104px 0;
+  padding: 80px 0 88px;
   border-bottom: 1px solid var(--line);
   scroll-margin-top: var(--header-h);
 }
@@ -235,7 +235,7 @@ button {
   gap: 24px 48px;
   align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 48px;
+  margin-bottom: 40px;
 }
 
 .section-title {
@@ -372,7 +372,7 @@ button {
 .hero {
   position: relative;
   overflow: hidden;
-  padding: 128px 0 0;
+  padding: 104px 0 0;
   border-bottom: 1px solid var(--line);
   scroll-margin-top: var(--header-h);
 }
@@ -413,8 +413,8 @@ button {
   position: absolute;
   pointer-events: none;
   mix-blend-mode: screen;
-  -webkit-mask-image: url(/img/hero-casa-luz.png);
-  mask-image: url(/img/hero-casa-luz.png);
+  -webkit-mask-image: url(../img/hero-casa-luz.png);
+  mask-image: url(../img/hero-casa-luz.png);
   -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
 }
@@ -424,6 +424,72 @@ button {
 }
 @media (prefers-reduced-motion: reduce) {
   .hero__pulsos { display: none; }
+}
+
+/* Rastro pela página: canvas fixo, do tamanho da janela, que continua a luz
+   da casa pelo resto do site — desce pelo piso, corre pela linha que fecha
+   cada seção e segue por um trilho na margem esquerda, acendendo um núcleo
+   ao lado do título de cada assunto. Blend screen: só clareia, nunca cobre.
+   O desfoque leve é o que dá o ar de luz de fundo. */
+.trail {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+  /* acrílico: o desfoque engrossa a luz e apaga o traço fino do desenho */
+  filter: blur(3px) saturate(1.15);
+}
+@media (prefers-reduced-motion: reduce) { .trail { display: none; } }
+
+/* "A dupla" é um corredor de galeria dentro da casa: parede escura, uma
+   fita de luz ocre no encontro com o piso (brilha para cima na parede e
+   reflete no chão), e os dois perfis como quadros pendurados, cada um com a
+   sua luz de galeria por cima. Só nesta seção. */
+.gallery { position: relative; overflow: hidden; padding-bottom: 0; }
+.gallery__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+  gap: 48px;
+  align-items: start;
+  padding-bottom: 96px;
+}
+.gallery__title { font-size: clamp(34px, 3.2vw, 46px); line-height: 1.08; letter-spacing: -0.01em; }
+.gallery__text { margin-top: 22px; max-width: 30ch; }
+.gallery__wall {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+/* o quadro: fundo mais escuro que a parede, moldura fina ocre e sombra
+   projetada; a luz de galeria é uma barra acima, com o cone caindo por dentro */
+.plaque {
+  position: relative;
+  padding: 40px 34px 42px;
+  background: linear-gradient(180deg, #13171F, #0F1218 55%);
+  border: 1px solid rgba(201, 162, 78, 0.3);
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 44px 60px -34px rgba(0, 0, 0, 0.95);
+}
+.plaque__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.plaque .avatar { width: 120px; height: 120px; border-color: rgba(201, 162, 78, 0.45); box-shadow: 0 0 0 5px #0F1218, 0 0 0 6px rgba(201, 162, 78, 0.16); }
+.plaque .person__tag { margin: 6px 0 0; text-align: right; max-width: 12ch; line-height: 1.6; }
+.plaque .person__name { margin-top: 30px; font-weight: 400; font-size: clamp(30px, 2.4vw, 36px); }
+.plaque .person__role { margin-top: 12px; line-height: 1.5; }
+.plaque .person__bio { margin-top: 20px; font-size: 16px; }
+.plaque .chips { margin-top: 26px; }
+@media (max-width: 1199px) {
+  .gallery__grid { grid-template-columns: 1fr; gap: 48px; }
+  .gallery__text { max-width: 44ch; }
+}
+@media (max-width: 639px) {
+  .gallery__wall { grid-template-columns: 1fr; gap: 44px; }
+  .plaque { padding: 32px 26px 34px; }
+  .plaque .avatar { width: 96px; height: 96px; }
 }
 
 .hero__body { margin-top: 26px; max-width: 46ch; }
@@ -453,7 +519,7 @@ button {
 
 /* Prova social — faixa em marquee, sangrando as bordas do container. */
 .proof {
-  margin-top: 80px;
+  margin-top: 56px;
   border-top: 1px solid var(--line);
   background: var(--bg-deep);
   padding: 24px 0 26px;
@@ -634,80 +700,106 @@ button {
 }
 
 /* ─── Diagnóstico ──────────────────────────────────────────────────
-   Seis sintomas em lista: duas colunas separadas por fio, cada linha
-   abrindo no título em serifa, com o texto e os sinais embaixo. Sem carta e
-   sem movimento — a lista é a forma, e o que separa um do outro é a régua.
-   Entre 700 e 999px o título vai para a esquerda e o corpo para a direita;
-   de 1000px em diante a lista se parte nas duas colunas. */
-.symptoms { --symptom-tone: var(--ochre); }
-.symptom--brand, .symptom--tech { --symptom-tone: var(--ochre); }
-.symptoms__wrap { margin-top: 8px; border-top: 1px solid var(--line-strong); }
-.symptoms {
-  display: grid;
-  grid-template-columns: 1fr;
-  column-gap: 48px;
+   As seis dores no explorador (a mesma peça de "O que entregamos"): títulos
+   à esquerda, sem numeração; à direita a dor aberta em dois tempos — o texto
+   entra na hora, os sinais concretos chegam 1,5 s depois — para não
+   despejar tudo de uma vez. Ilustração em traço ocre no canto. */
+#diagnostico .eyebrow { color: var(--ochre); margin: 0 0 18px; letter-spacing: 0.22em; }
+#diagnostico .section-title { font-size: clamp(40px, 4.6vw, 66px); line-height: 1.02; letter-spacing: -0.015em; max-width: 12ch; }
+#diagnostico .section-head { align-items: center; }
+.pains__intro {
+  padding-left: 22px;
+  border-left: 1px solid var(--ochre);
+  max-width: 44ch;
+  font-size: 16px;
 }
-.symptom {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 14px 32px;
-  padding: 30px 0 34px;
-  border-bottom: 1px solid var(--line);
-}
-.symptom__head { display: flex; flex-direction: column; gap: 12px; }
-/* Número e disciplina ficam no markup como anotação editorial: quem lê se
-   reconhece na dor, não na arrumação da casa. */
-.symptom__index {
-  display: none;
+.explorer--diag { --dwell: 7s; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.explorer--diag .explorer__item { grid-template-columns: minmax(0, 1fr) 12px; font-size: 19px; padding: 18px 24px; }
+.explorer--diag .explorer__detail { position: relative; min-height: 460px; padding: 44px 44px 48px; }
+.diag__panel { position: relative; gap: 22px; }
+.pain__art { position: absolute; top: -8px; right: -8px; width: 170px; height: 150px; opacity: 0.85; pointer-events: none; }
+.pain__art--timeline { top: 0; }
+.diag__panel .explorer__front, .diag__text, .diag__signs { position: relative; z-index: 1; }
+.diag__panel .explorer__front { margin-top: 6px; }
+.diag__text {
   margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(22px, 2vw, 28px);
+  line-height: 1.3;
+  color: var(--ink);
+  max-width: 26ch;
+  text-wrap: pretty;
+}
+.diag__signs {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 14px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 48ch;
+}
+.diag__signs li { display: flex; gap: 14px; align-items: flex-start; }
+.diag__signs i {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 162, 78, 0.45);
+  background: radial-gradient(circle, var(--ochre) 0 2.5px, transparent 3px);
+}
+/* dois tempos: o que vem do explorador cuida do rótulo e do texto; a lista
+   de sinais espera e entra um a um */
+.js-reveal .explorer--diag .explorer__panel.is-active > .diag__signs { animation: none; }
+.js-reveal .explorer--diag .explorer__panel.is-active .diag__signs li { animation: explorer-in 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: 1.5s; }
+.js-reveal .explorer--diag .explorer__panel.is-active .diag__signs li + li { animation-delay: 1.85s; }
+.js-reveal .explorer--diag .explorer__panel.is-active > .pain__art { animation-delay: 0.1s; }
+.pains__foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px 40px; margin-top: 40px; }
+.pains__keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.pains__keys i { color: var(--ochre); font-style: normal; }
+.pains__cta { margin: 0; display: flex; justify-content: flex-end; }
+.pains__cta a {
+  display: flex;
+  align-items: center;
+  gap: 18px;
   font-family: var(--mono);
   font-size: 12px;
   letter-spacing: 0.16em;
-  color: var(--symptom-tone);
+  text-transform: uppercase;
+  color: var(--ink);
 }
-.symptom__side { display: none; }
-.symptom__title {
-  margin: 0;
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: 26px;
-  line-height: 1.15;
-  text-wrap: balance;
+.pains__cta a i { width: 44px; height: 1px; background: var(--ochre); transition: width 0.3s ease; }
+.pains__cta a b { font-weight: 400; font-size: 18px; line-height: 1; color: var(--ochre); }
+.pains__cta a:hover { color: var(--ochre); }
+.pains__cta a:hover i { width: 64px; }
+@media (max-width: 899px) {
+  .explorer--diag .explorer__detail { min-height: 0; padding: 36px 28px 40px; }
+  .pain__art { width: 140px; height: 124px; top: -4px; right: -4px; opacity: 0.6; }
 }
-.symptom__text { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink); max-width: 48ch; }
-/* Sinais concretos: como o sintoma aparece no dia a dia. */
-.symptom__signs {
-  list-style: none;
-  margin: 4px 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 14px;
-  line-height: 1.45;
-  color: var(--ink-soft);
+@media (max-width: 679px) {
+  .pains__intro { border-left: 0; padding-left: 0; }
+  .pains__cta { justify-content: flex-start; }
 }
-.symptom__signs li { display: flex; gap: 10px; align-items: baseline; }
-.symptom__signs li::before {
-  content: "";
-  flex: none;
-  width: 10px;
-  height: 1px;
-  background: var(--symptom-tone);
-  transform: translateY(-4px);
-}
-@media (min-width: 700px) {
-  .symptom { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; }
-  .symptom__body { display: flex; flex-direction: column; gap: 14px; }
-}
-@media (min-width: 1000px) {
-  .symptoms { grid-template-columns: 1fr 1fr; }
-  .symptom { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 32px 0 36px; }
-  /* o fio vertical entre as duas colunas da lista */
-  .symptom:nth-child(odd) { padding-right: 48px; border-right: 1px solid var(--line); }
-  .symptom__body { display: block; }
-  .symptom__signs { margin-top: 14px; }
+@media (max-width: 639px) {
+  .explorer--diag { display: grid; }
+  .explorer--diag .explorer__item { font-size: 17px; padding: 14px 20px; }
+  .pain__art { width: 110px; height: 96px; opacity: 0.45; }
+  .diag__text { font-size: 21px; max-width: none; }
 }
 
 /* ─── Frentes ──────────────────────────────────────────────────────
@@ -763,7 +855,7 @@ button {
   background: linear-gradient(90deg, var(--ochre), var(--blue));
   opacity: 0;
 }
-.explorer__item.is-timing::after { opacity: 1; animation: explorer-timer 3.5s linear forwards; }
+.explorer__item.is-timing::after { opacity: 1; animation: explorer-timer var(--dwell, 3.5s) linear forwards; }
 
 .explorer__detail {
   background: var(--bg-card);
@@ -1310,7 +1402,7 @@ html.has-case-open { --header-h: 52px; }
 .media img { width: 100%; height: 100%; object-fit: cover; }
 
 /* Outros projetos — imagem no topo, texto embaixo. */
-.more { margin-top: 72px; padding-top: 40px; border-top: 1px solid var(--line-strong); }
+.more { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--line-strong); }
 .more__label {
   font-family: var(--mono);
   font-size: 14px;
@@ -1471,7 +1563,7 @@ html.has-case-open { --header-h: 52px; }
 
 /* ─── Contato + footer ───────────────────────────────────────────── */
 .contact {
-  padding: 96px 0;
+  padding: 80px 0 88px;
   scroll-margin-top: var(--header-h);
 }
 .contact__inner {
@@ -1509,52 +1601,6 @@ html.has-case-open { --header-h: 52px; }
   padding-bottom: 6px;
 }
 .contact__links a:hover { border-bottom-color: var(--ink); color: var(--ochre); }
-
-/* QR para materiais físicos — moldura até o arquivo chegar. */
-.qr {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 24px;
-  align-items: center;
-  margin-top: 40px;
-}
-.qr__box {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  margin: 0;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--r-surface);
-  overflow: hidden;
-  background: var(--ink);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 6px;
-}
-.qr__box img { width: 100%; height: 100%; display: block; }
-.qr__box.is-empty { background: var(--bg-deep); padding: 10px; }
-.qr__box figcaption {
-  display: none;
-  font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.5;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-.qr__box.is-empty { border-style: dashed; }
-.qr__box.is-empty img { display: none; }
-.qr__box.is-empty figcaption { display: block; }
-.qr__label {
-  font-family: var(--mono);
-  font-size: 14px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-.qr__text { margin-top: 8px; font-size: 17px; color: var(--ink-soft); }
 
 /* Formulário — abre o WhatsApp com a mensagem montada. */
 .lead {
@@ -1973,7 +2019,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
    sem soltar a medida de leitura, que é o que segura o tom editorial. */
 @media (min-width: 1600px) {
   :root { --container: 1280px; --gutter: 40px; }
-  .section { padding: 120px 0; }
+  .section { padding: 96px 0 104px; }
 }
 
 /* Abaixo de 1024px o header fica só com marca + idioma + CTA, como no mobile. */
@@ -2001,7 +2047,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 
 @media (max-width: 599px) {
   :root { --gutter: 20px; }
-  .section { padding: 72px 0; }
+  .section { padding: 60px 0 64px; }
   .hero { padding: 88px 0 0; }
   .person { padding: 36px 28px; }
   .person__head { grid-template-columns: 80px 1fr; gap: 20px; }
@@ -2040,7 +2086,6 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   /* o trocadilho MAR·TEC é de tela: no papel as duas cores não têm contraste */
   .mar, .tec { color: inherit; }
   .hero__art, .hero__pulsos, .wa-float, .site-header, .marquee, .lead, .skip-link { display: none !important; }
-  .symptom { break-inside: avoid; }
   /* o carrossel é de tela; no papel os casos voltam a empilhar, um por linha */
   .cases { display: block; overflow: visible; }
   .case { flex: none; scroll-snap-align: none; }
@@ -2095,7 +2140,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 
 <!-- ═══════════════════════════════════════════════ HERO -->
 <section class="hero" id="topo">
-  <img class="hero__art" src="/img/hero-casa.jpg" alt="" aria-hidden="true" decoding="async" fetchpriority="high" width="1072" height="821">
+  <img class="hero__art" src="../img/hero-casa.jpg" alt="" aria-hidden="true" decoding="async" fetchpriority="high" width="1072" height="821">
   <canvas class="hero__pulsos" id="hero-pulsos" aria-hidden="true"></canvas>
 
   <div class="container">
@@ -2116,20 +2161,20 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       <div class="marquee__track">
         <!-- Logos: /img/logos/<slug>.svg (monocromático; o CSS pinta de creme). Sem o arquivo, fica o nome em texto. -->
         <ul class="proof__list">
-          <li><img src="/img/logos/corning.svg" alt="Corning" onerror="this.remove()"><span>Corning</span></li>
-          <li><img src="/img/logos/ame.svg" alt="Ame Digital" onerror="this.remove()"><span>Ame Digital</span></li>
-          <li><img src="/img/logos/quintoandar.svg" alt="QuintoAndar" onerror="this.remove()"><span>QuintoAndar</span></li>
-          <li><img src="/img/logos/mediaportal.svg" alt="Media Portal" onerror="this.remove()"><span>Media Portal</span></li>
-          <li><img src="/img/logos/informa.svg" alt="Informa Markets" onerror="this.remove()"><span>Informa Markets</span></li>
-          <li><img src="/img/logos/gipsyy.svg" alt="Gipsyy" onerror="this.remove()"><span>Gipsyy</span></li>
+          <li><span>Corning</span></li>
+          <li><img src="../img/logos/ame.svg" alt="Ame Digital" onerror="this.remove()"><span>Ame Digital</span></li>
+          <li><img src="../img/logos/quintoandar.svg" alt="QuintoAndar" onerror="this.remove()"><span>QuintoAndar</span></li>
+          <li><img src="../img/logos/mediaportal.svg" alt="Media Portal" onerror="this.remove()"><span>Media Portal</span></li>
+          <li><img src="../img/logos/informa.svg" alt="Informa Markets" onerror="this.remove()"><span>Informa Markets</span></li>
+          <li><img src="../img/logos/gipsyy.svg" alt="Gipsyy" onerror="this.remove()"><span>Gipsyy</span></li>
         </ul>
         <ul class="proof__list" aria-hidden="true">
-          <li><img src="/img/logos/corning.svg" alt="Corning" onerror="this.remove()"><span>Corning</span></li>
-          <li><img src="/img/logos/ame.svg" alt="Ame Digital" onerror="this.remove()"><span>Ame Digital</span></li>
-          <li><img src="/img/logos/quintoandar.svg" alt="QuintoAndar" onerror="this.remove()"><span>QuintoAndar</span></li>
-          <li><img src="/img/logos/mediaportal.svg" alt="Media Portal" onerror="this.remove()"><span>Media Portal</span></li>
-          <li><img src="/img/logos/informa.svg" alt="Informa Markets" onerror="this.remove()"><span>Informa Markets</span></li>
-          <li><img src="/img/logos/gipsyy.svg" alt="Gipsyy" onerror="this.remove()"><span>Gipsyy</span></li>
+          <li><span>Corning</span></li>
+          <li><img src="../img/logos/ame.svg" alt="Ame Digital" onerror="this.remove()"><span>Ame Digital</span></li>
+          <li><img src="../img/logos/quintoandar.svg" alt="QuintoAndar" onerror="this.remove()"><span>QuintoAndar</span></li>
+          <li><img src="../img/logos/mediaportal.svg" alt="Media Portal" onerror="this.remove()"><span>Media Portal</span></li>
+          <li><img src="../img/logos/informa.svg" alt="Informa Markets" onerror="this.remove()"><span>Informa Markets</span></li>
+          <li><img src="../img/logos/gipsyy.svg" alt="Gipsyy" onerror="this.remove()"><span>Gipsyy</span></li>
         </ul>
       </div>
     </div>
@@ -2137,28 +2182,24 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 </section>
 
 <!-- ═══════════════════════════════════════════════ A DUPLA -->
-<section class="section" id="dupla">
-  <div class="container">
-    <div class="section-head reveal">
-      <div>
-        <h2 class="section-title" data-en="One brand, two crafts." data-pt="Uma marca, dois ofícios.">One brand, two crafts.</h2>
-      </div>
-      <p class="section-intro" data-en="Most hire the strategy and the system separately. Here they are born together." data-pt="A maioria contrata separado quem pensa a estratégia e quem constrói o sistema. Aqui nasce junto.">Most hire the strategy and the system separately. Here they are born together.</p>
+<section class="section gallery" id="dupla">
+  <div class="container gallery__grid">
+    <div class="gallery__intro reveal">
+      <h2 class="section-title gallery__title" data-en="One brand, two crafts." data-pt="Uma marca, dois ofícios.">One brand, two crafts.</h2>
+      <p class="section-intro gallery__text" data-en="Most hire the strategy and the system separately. Here they are born together." data-pt="A maioria contrata separado quem pensa a estratégia e quem constrói o sistema. Aqui nasce junto.">Most hire the strategy and the system separately. Here they are born together.</p>
     </div>
 
-    <div class="rule-grid rule-grid--2">
-      <article class="person reveal">
-        <div class="person__head">
-          <!-- Foto: salvar em /img/bruno.jpg (quadrada, 192×192 — o dobro dos 96px exibidos; o recorte circular é do CSS). Sem o arquivo, a moldura "foto aqui" aparece. -->
+    <div class="gallery__wall">
+      <article class="plaque reveal">
+        <div class="plaque__head">
+          <!-- Foto: /img/bruno.jpg (quadrada, 240×240 — o dobro dos 120px exibidos; o recorte circular é do CSS). Sem o arquivo, a moldura "foto aqui" aparece. -->
           <figure class="avatar">
-            <img src="/img/bruno.jpg" alt="Bruno Amaral" width="96" height="96" onerror="this.parentNode.classList.add('avatar--empty')">
+            <img src="../img/bruno.jpg" alt="Bruno Amaral" width="120" height="120" onerror="this.parentNode.classList.add('avatar--empty')">
             <figcaption data-en="Photo here" data-pt="Foto aqui">Photo here</figcaption>
           </figure>
-          <div>
-            <p class="person__tag person__tag--ochre" data-en="Brand &amp; Strategy" data-pt="Marca &amp;amp; Estratégia">Brand &amp; Strategy</p>
-            <h3 class="person__name">Bruno Amaral</h3>
-          </div>
+          <p class="person__tag person__tag--ochre" data-en="Brand &amp; Strategy" data-pt="Marca &amp;amp; Estratégia">Brand &amp; Strategy</p>
         </div>
+        <h3 class="person__name">Bruno Amaral</h3>
         <p class="person__role" data-en="Marketing Strategist &amp; Branding Consultant" data-pt="Estrategista de Marketing &amp;amp; Consultor de Branding">Marketing Strategist &amp; Branding Consultant</p>
         <p class="person__bio" data-en="Corning, Informa Markets, Ame Digital (Americanas S/A), Gipsyy, QuintoAndar — strategic vision, research and creative execution." data-pt="Corning, Informa Markets, Ame Digital (Americanas S/A), Gipsyy, QuintoAndar — visão estratégica, pesquisa e execução criativa.">Corning, Informa Markets, Ame Digital (Americanas S/A), Gipsyy, QuintoAndar — strategic vision, research and creative execution.</p>
         <ul class="chips">
@@ -2169,18 +2210,16 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         </ul>
       </article>
 
-      <article class="person reveal">
-        <div class="person__head">
-          <!-- Foto: salvar em /img/matheus.jpg (quadrada, 192×192, como a do Bruno). -->
+      <article class="plaque reveal">
+        <div class="plaque__head">
+          <!-- Foto: /img/matheus.jpg (quadrada, 240×240, como a do Bruno). -->
           <figure class="avatar">
-            <img src="/img/matheus.jpg" alt="Matheus Silva" width="96" height="96" onerror="this.parentNode.classList.add('avatar--empty')">
+            <img src="../img/matheus.jpg" alt="Matheus Silva" width="120" height="120" onerror="this.parentNode.classList.add('avatar--empty')">
             <figcaption data-en="Photo here" data-pt="Foto aqui">Photo here</figcaption>
           </figure>
-          <div>
-            <p class="person__tag person__tag--blue" data-en="Technology &amp; Data" data-pt="Tecnologia &amp;amp; Dados">Technology &amp; Data</p>
-            <h3 class="person__name">Matheus Silva</h3>
-          </div>
+          <p class="person__tag person__tag--blue" data-en="Technology &amp; Data" data-pt="Tecnologia &amp;amp; Dados">Technology &amp; Data</p>
         </div>
+        <h3 class="person__name">Matheus Silva</h3>
         <p class="person__role" data-en="Civil Eng., MSc in Structures &amp; Full-Stack Dev" data-pt="Eng. Civil, Mestre em Estruturas &amp;amp; Dev Full-Stack">Civil Eng., MSc in Structures &amp; Full-Stack Dev</p>
         <p class="person__bio" data-en="Matheus is a civil engineer and software developer. At Casa Martech, he bridges marketing and technology, turning ideas and strategy into well-structured, secure digital solutions ready to grow." data-pt="Matheus é engenheiro civil e desenvolvedor de software. Na Casa Martech, faz a ponte entre marketing e tecnologia, transformando ideias e estratégias em soluções digitais bem estruturadas, seguras e preparadas para crescer.">Matheus is a civil engineer and software developer. At Casa Martech, he bridges marketing and technology, turning ideas and strategy into well-structured, secure digital solutions ready to grow.</p>
         <ul class="chips">
@@ -2199,98 +2238,116 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   <div class="container">
     <div class="section-head reveal">
       <div>
+        <p class="eyebrow" data-en="Real challenges" data-pt="Desafios reais">Real challenges</p>
         <h2 class="section-title" data-en="Does your operation recognise itself here?" data-pt="Sua operação se reconhece aqui?">Does your operation recognise itself here?</h2>
+      </div>
+      <p class="section-intro pains__intro" data-en="Common situations in companies that want to grow but hit obstacles in practice. If any of these feels familiar, you are not alone." data-pt="Situações comuns em empresas que querem crescer, mas enfrentam obstáculos na prática. Se algum desses cenários parece familiar, você não está sozinho.">Common situations in companies that want to grow but hit obstacles in practice. If any of these feels familiar, you are not alone.</p>
+    </div>
+
+    <!-- Seis dores no explorador: a lista de títulos à esquerda; à direita,
+         a dor aberta em dois tempos — primeiro o que acontece, depois os
+         sinais concretos. Avança sozinho a cada 7 s; o clique fixa. -->
+    <div class="explorer explorer--diag rule-grid reveal" data-explorer="" data-dwell="7000">
+      <ul class="explorer__list" role="tablist" aria-orientation="vertical">
+        <li role="presentation">
+          <button class="explorer__item is-active" role="tab" type="button" id="diag-tab-0" aria-selected="true" aria-controls="diag-panel-0" data-front="b">
+            <span data-en="Marketing with no traceable results" data-pt="Marketing sem rastreabilidade de resultado">Marketing with no traceable results</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="diag-tab-1" aria-selected="false" aria-controls="diag-panel-1" data-front="t">
+            <span data-en="The operation grew, but the processes did not keep up" data-pt="A operação cresceu, mas os processos não acompanharam">The operation grew, but the processes did not keep up</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="diag-tab-2" aria-selected="false" aria-controls="diag-panel-2" data-front="b">
+            <span data-en="The company sends out different messages" data-pt="A empresa comunica mensagens diferentes">The company sends out different messages</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="diag-tab-3" aria-selected="false" aria-controls="diag-panel-3" data-front="t">
+            <span data-en="Scattered data, inconsistent numbers" data-pt="Dados dispersos, números inconsistentes">Scattered data, inconsistent numbers</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="diag-tab-4" aria-selected="false" aria-controls="diag-panel-4" data-front="t">
+            <span data-en="Technology underused by the team" data-pt="Tecnologia subutilizada pela equipe">Technology underused by the team</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="diag-tab-5" aria-selected="false" aria-controls="diag-panel-5" data-front="t">
+            <span data-en="Project delivered with no continuity" data-pt="Projeto entregue sem continuidade">Project delivered with no continuity</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+      </ul>
+      <div class="explorer__detail">
+        <div class="explorer__panel diag__panel is-active" role="tabpanel" id="diag-panel-0" aria-labelledby="diag-tab-0" data-front="b">
+          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><path d="M40 30 H22 V64" stroke-dasharray="2 4" opacity="0.7"></path><path d="M22 64 L25 70 L20 74" opacity="0.7"></path><path d="M22 86 V116 H40" stroke-dasharray="2 4" opacity="0.25"></path><line x1="22" y1="73" x2="40" y2="73" stroke-dasharray="2 4" opacity="0.7"></line><rect x="40" y="12" width="36" height="36" rx="8" fill="rgba(201,162,78,0.12)"></rect><rect x="40" y="55" width="36" height="36" rx="8" fill="rgba(201,162,78,0.10)"></rect><rect x="46" y="100" width="36" height="36" rx="8" fill="rgba(201,162,78,0.04)" opacity="0.5" transform="rotate(8 64 118)"></rect><circle cx="58" cy="30" r="6"></circle><line x1="52" y1="73" x2="64" y2="73"></line><line x1="52" y1="79" x2="64" y2="79"></line><line x1="52" y1="67" x2="60" y2="67"></line><path d="M56 112h16a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-8l-5 4v-4h-3a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3z" opacity="0.5" transform="rotate(8 64 118)"></path><path d="M90 40 L150 24 M90 60 L150 44 M90 80 L150 64" opacity="0.25"></path></g></svg>
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Marketing" data-pt="Marketing">Marketing</span></span>
+          <p class="diag__text" data-en="Spend goes out every month, yet it is hard to tell which actions actually generate opportunities and sales." data-pt="O investimento acontece todos os meses, mas é difícil identificar quais ações realmente geram oportunidades e vendas.">Spend goes out every month, yet it is hard to tell which actions actually generate opportunities and sales.</p>
+          <ul class="diag__signs">
+            <li><i aria-hidden="true"></i><span data-en="Campaigns, content and events with no source tracking" data-pt="Campanhas, conteúdos e eventos sem rastreamento de origem">Campaigns, content and events with no source tracking</span></li>
+            <li><i aria-hidden="true"></i><span data-en="Budget set with little grounding in historical data" data-pt="Orçamento definido com pouca base em dados históricos">Budget set with little grounding in historical data</span></li>
+          </ul>
+        </div>
+        <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-1" aria-labelledby="diag-tab-1" data-front="t">
+          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="72" y="8" width="70" height="84" rx="6" fill="rgba(201,162,78,0.05)" opacity="0.5"></rect><rect x="52" y="24" width="70" height="84" rx="6" fill="rgba(201,162,78,0.08)" opacity="0.75"></rect><rect x="26" y="46" width="70" height="84" rx="6" fill="rgba(201,162,78,0.12)" transform="rotate(-7 61 88)"></rect><line x1="40" y1="66" x2="86" y2="60" opacity="0.6"></line><line x1="40" y1="78" x2="76" y2="74" opacity="0.4"></line><line x1="40" y1="90" x2="104" y2="84" opacity="0.4"></line><line x1="104" y1="84" x2="118" y2="83" opacity="0.2" stroke-dasharray="2 3"></line></g></svg>
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Processes" data-pt="Processos">Processes</span></span>
+          <p class="diag__text" data-en="More clients, more people and more demands — with processes still running as they did when the company was smaller." data-pt="Mais clientes, mais pessoas e mais demandas — com processos que continuam funcionando como quando a empresa era menor.">More clients, more people and more demands — with processes still running as they did when the company was smaller.</p>
+          <ul class="diag__signs">
+            <li><i aria-hidden="true"></i><span data-en="Information concentrated in a few people" data-pt="Informações concentradas em poucas pessoas">Information concentrated in a few people</span></li>
+            <li><i aria-hidden="true"></i><span data-en="Each team runs on its own spreadsheets and methods" data-pt="Cada área opera com suas próprias planilhas e métodos">Each team runs on its own spreadsheets and methods</span></li>
+          </ul>
+        </div>
+        <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-2" aria-labelledby="diag-tab-2" data-front="b">
+          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><path d="M64 16h60a10 10 0 0 1 10 10v28a10 10 0 0 1-10 10H92l-14 12v-12H64a10 10 0 0 1-10-10V26a10 10 0 0 1 10-10z" fill="rgba(201,162,78,0.10)"></path><path d="M28 62h58a9 9 0 0 1 9 9v24a9 9 0 0 1-9 9H60v12L46 104H28a9 9 0 0 1-9-9V71a9 9 0 0 1 9-9z" fill="rgba(201,162,78,0.16)"></path><circle cx="46" cy="83" r="2.5" fill="#C9A24E"></circle><circle cx="57" cy="83" r="2.5" fill="#C9A24E"></circle><circle cx="68" cy="83" r="2.5" fill="#C9A24E"></circle><line x1="72" y1="34" x2="118" y2="34" opacity="0.5"></line><line x1="72" y1="46" x2="104" y2="46" opacity="0.35"></line></g></svg>
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Communication" data-pt="Comunicação">Communication</span></span>
+          <p class="diag__text" data-en="Website, sales team and communications present the company in ways that are not always aligned." data-pt="Site, equipe comercial e comunicação apresentam a empresa de formas que nem sempre estão alinhadas.">Website, sales team and communications present the company in ways that are not always aligned.</p>
+          <ul class="diag__signs">
+            <li><i aria-hidden="true"></i><span data-en="Sales proposals disconnected from the digital positioning" data-pt="Propostas comerciais desconectadas do posicionamento digital">Sales proposals disconnected from the digital positioning</span></li>
+            <li><i aria-hidden="true"></i><span data-en="Clients struggle to clearly understand the offer" data-pt="Dificuldade do cliente em compreender claramente a oferta">Clients struggle to clearly understand the offer</span></li>
+          </ul>
+        </div>
+        <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-3" aria-labelledby="diag-tab-3" data-front="t">
+          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><!-- pilha de papéis ao fundo, torta --><rect x="86" y="10" width="58" height="72" rx="3" fill="rgba(201,162,78,0.04)" opacity="0.5" transform="rotate(9 115 46)"></rect><rect x="82" y="14" width="58" height="72" rx="3" fill="rgba(201,162,78,0.06)" opacity="0.7" transform="rotate(4 111 50)"></rect><rect x="78" y="18" width="58" height="72" rx="3" fill="rgba(201,162,78,0.10)"></rect><!-- rascunho: linhas de texto, uma riscada --><line x1="86" y1="30" x2="118" y2="30" opacity="0.6"></line><line x1="86" y1="38" x2="128" y2="38" opacity="0.4"></line><line x1="86" y1="46" x2="110" y2="46" opacity="0.4"></line><path d="M84 45 L112 47" opacity="0.8"></path><line x1="86" y1="54" x2="124" y2="54" opacity="0.4"></line><!-- mini gráfico de linha no papel, com um pico fora --><path d="M86 78 L96 72 L104 76 L112 62 L120 74 L128 68" opacity="0.7"></path><!-- planilha rasgada à esquerda --><path d="M10 40 H66 V86 L60 82 L54 88 L48 82 L42 88 L36 82 L30 88 L24 82 L18 88 L10 84 Z" fill="rgba(201,162,78,0.12)"></path><line x1="10" y1="52" x2="66" y2="52" opacity="0.6"></line><line x1="10" y1="64" x2="66" y2="64" opacity="0.5"></line><line x1="10" y1="76" x2="66" y2="76" opacity="0.4"></line><line x1="29" y1="40" x2="29" y2="86" opacity="0.5"></line><line x1="48" y1="40" x2="48" y2="86" opacity="0.5"></line><!-- papel amassado embaixo: contorno irregular --><path d="M32 104 L46 96 L62 100 L74 94 L84 104 L80 118 L88 128 L72 132 L58 126 L44 132 L34 122 L26 114 Z" fill="rgba(201,162,78,0.08)" opacity="0.9"></path><path d="M46 96 L52 112 L40 120 M74 94 L66 108 L80 118 M52 112 L66 108" opacity="0.4"></path><!-- bloquinho de notas à direita embaixo --><rect x="102" y="98" width="44" height="34" rx="3" fill="rgba(201,162,78,0.14)" transform="rotate(-6 124 115)"></rect><line x1="108" y1="108" x2="130" y2="106" opacity="0.5" transform="rotate(-6 124 115)"></line></g><!-- números soltos, cada um numa fonte de dado diferente --><g font-family="IBM Plex Mono, monospace" fill="#E8C97A"><text x="14" y="62" font-size="9" opacity="0.9">128</text><text x="33" y="74" font-size="9" opacity="0.7">131</text><text x="52" y="62" font-size="9" opacity="0.8">119</text><text x="124" y="124" font-size="13" transform="rotate(-6 124 115)" text-anchor="middle">1.7k</text><text x="100" y="50" font-size="10" opacity="0.7" transform="rotate(-14 100 50)">?</text><text x="58" y="116" font-size="8" opacity="0.6" transform="rotate(12 58 116)">142</text></g><g font-family="IBM Plex Mono, monospace" font-size="12" fill="#C9A24E" opacity="0.8"><text x="72" y="48" text-anchor="middle">≠</text><text x="96" y="94" text-anchor="middle">≠</text></g></svg>
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Data" data-pt="Dados">Data</span></span>
+          <p class="diag__text" data-en="Different sources show different results, making analysis slow and unreliable." data-pt="Fontes diferentes apresentam resultados diferentes, tornando a análise lenta e pouco confiável.">Different sources show different results, making analysis slow and unreliable.</p>
+          <ul class="diag__signs">
+            <li><i aria-hidden="true"></i><span data-en="Indicators consolidated by hand" data-pt="Consolidação de indicadores feita manualmente">Indicators consolidated by hand</span></li>
+            <li><i aria-hidden="true"></i><span data-en="Decisions made before the information is organised" data-pt="Decisões tomadas antes que a informação esteja organizada">Decisions made before the information is organised</span></li>
+          </ul>
+        </div>
+        <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-4" aria-labelledby="diag-tab-4" data-front="t">
+          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="12" y="14" width="92" height="74" rx="6" fill="rgba(201,162,78,0.07)"></rect><line x1="12" y1="28" x2="104" y2="28" opacity="0.6"></line><circle cx="20" cy="21" r="1.6" fill="#C9A24E" stroke="none"></circle><circle cx="26" cy="21" r="1.6" fill="#C9A24E" stroke="none" opacity="0.6"></circle><circle cx="32" cy="21" r="1.6" fill="#C9A24E" stroke="none" opacity="0.35"></circle><rect x="20" y="36" width="22" height="18" rx="2" fill="rgba(201,162,78,0.4)"></rect><rect x="47" y="36" width="22" height="18" rx="2" stroke-dasharray="2 3" opacity="0.35"></rect><rect x="74" y="36" width="22" height="18" rx="2" stroke-dasharray="2 3" opacity="0.35"></rect><rect x="20" y="60" width="22" height="18" rx="2" stroke-dasharray="2 3" opacity="0.35"></rect><rect x="47" y="60" width="22" height="18" rx="2" stroke-dasharray="2 3" opacity="0.35"></rect><rect x="74" y="60" width="22" height="18" rx="2" stroke-dasharray="2 3" opacity="0.35"></rect><path d="M31 54 V98 Q31 106 39 106 H112" stroke-dasharray="2 4" opacity="0.7"></path><path d="M112 106 H150" stroke-dasharray="2 4" opacity="0.7"></path><rect x="112" y="60" width="36" height="30" rx="3" fill="rgba(201,162,78,0.16)"></rect><line x1="112" y1="70" x2="148" y2="70" opacity="0.7"></line><line x1="112" y1="80" x2="148" y2="80" opacity="0.7"></line><line x1="124" y1="60" x2="124" y2="90" opacity="0.7"></line><line x1="136" y1="60" x2="136" y2="90" opacity="0.7"></line><path d="M130 90 V106" stroke-dasharray="2 4" opacity="0.7"></path><path d="M116 116h26a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4h-12l-6 5v-5h-8a4 4 0 0 1-4-4v-8a4 4 0 0 1 4-4z" fill="rgba(201,162,78,0.16)"></path></g></svg>
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Technology" data-pt="Tecnologia">Technology</span></span>
+          <p class="diag__text" data-en="The company invests in tools, but the operation still depends on parallel processes and manual controls." data-pt="A empresa investe em ferramentas, mas a operação continua dependendo de processos paralelos e controles manuais.">The company invests in tools, but the operation still depends on parallel processes and manual controls.</p>
+          <ul class="diag__signs">
+            <li><i aria-hidden="true"></i><span data-en="Systems that force the operation to adapt to the tool" data-pt="Sistemas que exigem que a operação se adapte à ferramenta">Systems that force the operation to adapt to the tool</span></li>
+            <li><i aria-hidden="true"></i><span data-en="Spreadsheets, messages and side controls to cover limitations" data-pt="Planilhas, mensagens e controles paralelos para suprir limitações">Spreadsheets, messages and side controls to cover limitations</span></li>
+          </ul>
+        </div>
+        <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-5" aria-labelledby="diag-tab-5" data-front="t">
+          <svg class="pain__art pain__art--timeline" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><path d="M26 23 V31" opacity="0.85"></path><path d="M26 31 L20 34 L30 37" opacity="0.85"></path><path d="M21 40 L29 43" opacity="0.35"></path><path d="M26 59 V85" stroke-dasharray="2 4" opacity="0.3"></path><path d="M26 95 V121" stroke-dasharray="2 4" opacity="0.3"></path><circle cx="26" cy="18" r="5" fill="rgba(201,162,78,0.28)"></circle><circle cx="26" cy="54" r="5" stroke-dasharray="2 3" opacity="0.4"></circle><circle cx="26" cy="90" r="5" stroke-dasharray="2 3" opacity="0.34"></circle><circle cx="26" cy="126" r="5" stroke-dasharray="2 3" opacity="0.28"></circle><line x1="33" y1="18" x2="38" y2="18" opacity="0.7"></line><line x1="33" y1="54" x2="38" y2="54" opacity="0.35"></line><line x1="33" y1="90" x2="38" y2="90" opacity="0.3"></line><line x1="33" y1="126" x2="38" y2="126" opacity="0.26"></line></g><g font-family="IBM Plex Mono, monospace" font-size="9" fill="#E8C97A"><text x="44" y="21" opacity="0.9" data-en="Delivery" data-pt="Entrega">Delivery</text><text x="44" y="57" opacity="0.45" data-en="Evolution" data-pt="Evolução">Evolution</text><text x="44" y="93" opacity="0.4" data-en="Adjustments" data-pt="Ajustes">Adjustments</text><text x="44" y="129" opacity="0.35" data-en="Results" data-pt="Resultados">Results</text></g></svg>
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Continuity" data-pt="Continuidade">Continuity</span></span>
+          <p class="diag__text" data-en="The solution goes live, but improvements, adjustments and follow-up stop happening after delivery." data-pt="A solução entra em produção, mas evoluções, ajustes e acompanhamento deixam de acontecer depois da entrega.">The solution goes live, but improvements, adjustments and follow-up stop happening after delivery.</p>
+          <ul class="diag__signs">
+            <li><i aria-hidden="true"></i><span data-en="No maintenance or ongoing follow-up" data-pt="Ausência de manutenção e acompanhamento contínuo">No maintenance or ongoing follow-up</span></li>
+            <li><i aria-hidden="true"></i><span data-en="Loose ends piling up after launch" data-pt="Pendências acumuladas após o lançamento">Loose ends piling up after launch</span></li>
+          </ul>
+        </div>
       </div>
     </div>
 
-    <!-- Os modificadores --brand/--tech ficam só como anotação editorial;
-         visualmente todos os sintomas compartilham o mesmo ocre. -->
-    <div class="symptoms__wrap"><div class="symptoms" data-reveal-step="70">
-      <article class="symptom symptom--brand reveal">
-        <div class="symptom__head">
-          <p class="symptom__index">01</p>
-          <p class="symptom__side" data-en="Brand" data-pt="Marca">Brand</p>
-          <h3 class="symptom__title" data-en="Marketing with no visible return" data-pt="Marketing sem retorno visível">Marketing with no visible return</h3>
-        </div>
-        <div class="symptom__body">
-          <p class="symptom__text" data-en="Budget goes out every month; nobody knows which campaign brought whom." data-pt="Verba sai todo mês; ninguém sabe qual campanha trouxe quem.">Budget goes out every month; nobody knows which campaign brought whom.</p>
-          <ul class="symptom__signs">
-            <li data-en="Ads, posts and events with no source tracking" data-pt="Anúncio, post e evento sem rastreio de origem">Ads, posts and events with no source tracking</li>
-            <li data-en="Budget set by gut feeling, year after year" data-pt="Orçamento decidido no feeling, ano após ano">Budget set by gut feeling, year after year</li>
-          </ul>
-        </div>
-      </article>
-      <article class="symptom symptom--tech reveal">
-        <div class="symptom__head">
-          <p class="symptom__index">02</p>
-          <p class="symptom__side" data-en="System" data-pt="Sistema">System</p>
-          <h3 class="symptom__title" data-en="Grew — and the chaos grew with it" data-pt="Cresceu, e o caos cresceu junto">Grew — and the chaos grew with it</h3>
-        </div>
-        <div class="symptom__body">
-          <p class="symptom__text" data-en="More clients, more people — and the same processes as when the team was small." data-pt="Mais clientes, mais gente — e os mesmos processos de quando o time era pequeno.">More clients, more people — and the same processes as when the team was small.</p>
-          <ul class="symptom__signs">
-            <li data-en="Everything depends on the one person who knows where things are" data-pt="Tudo depende de uma pessoa que sabe onde está cada coisa">Everything depends on the one person who knows where things are</li>
-            <li data-en="Every team with its own spreadsheet and its own way" data-pt="Cada área com a sua planilha e o seu jeito">Every team with its own spreadsheet and its own way</li>
-          </ul>
-        </div>
-      </article>
-      <article class="symptom symptom--brand reveal">
-        <div class="symptom__head">
-          <p class="symptom__index">03</p>
-          <p class="symptom__side" data-en="Brand" data-pt="Marca">Brand</p>
-          <h3 class="symptom__title" data-en="Everyone explains the company differently" data-pt="Cada um explica a empresa de um jeito">Everyone explains the company differently</h3>
-        </div>
-        <div class="symptom__body">
-          <p class="symptom__text" data-en="The website says one thing, sales another, the post a third." data-pt="O site diz uma coisa, o vendedor outra, o post uma terceira.">The website says one thing, sales another, the post a third.</p>
-          <ul class="symptom__signs">
-            <li data-en="Sales proposal with a different pitch from the website" data-pt="Proposta comercial com discurso diferente do site">Sales proposal with a different pitch from the website</li>
-            <li data-en="Clients can’t say what you actually do" data-pt="Cliente não sabe dizer o que vocês fazem">Clients can’t say what you actually do</li>
-          </ul>
-        </div>
-      </article>
-      <article class="symptom symptom--tech reveal">
-        <div class="symptom__head">
-          <p class="symptom__index">04</p>
-          <p class="symptom__side" data-en="System" data-pt="Sistema">System</p>
-          <h3 class="symptom__title" data-en="Nobody knows the right number" data-pt="Ninguém sabe o número certo">Nobody knows the right number</h3>
-        </div>
-        <div class="symptom__body">
-          <p class="symptom__text" data-en="Two spreadsheets, two results — and the report takes days to come out." data-pt="Duas planilhas, dois resultados — e o relatório leva dias pra sair.">Two spreadsheets, two results — and the report takes days to come out.</p>
-          <ul class="symptom__signs">
-            <li data-en="Month-end closing done by hand" data-pt="Fechamento do mês feito na mão">Month-end closing done by hand</li>
-            <li data-en="Decisions made before the data arrives" data-pt="Decisão tomada antes do dado chegar">Decisions made before the data arrives</li>
-          </ul>
-        </div>
-      </article>
-      <article class="symptom symptom--tech reveal">
-        <div class="symptom__head">
-          <p class="symptom__index">05</p>
-          <p class="symptom__side" data-en="System" data-pt="Sistema">System</p>
-          <h3 class="symptom__title" data-en="Expensive tool the team doesn’t use" data-pt="Ferramenta cara que o time não usa">Expensive tool the team doesn’t use</h3>
-        </div>
-        <div class="symptom__body">
-          <p class="symptom__text" data-en="Licence paid, records half-filled, work back on WhatsApp." data-pt="Licença paga, cadastro pela metade, trabalho de volta no WhatsApp.">Licence paid, records half-filled, work back on WhatsApp.</p>
-          <ul class="symptom__signs">
-            <li data-en="A system that forces the company to adapt to it" data-pt="Sistema que exige adaptar a empresa a ele">A system that forces the company to adapt to it</li>
-            <li data-en="Improvised fixes around the official software" data-pt="Remendos improvisados em volta do software oficial">Improvised fixes around the official software</li>
-          </ul>
-        </div>
-      </article>
-      <article class="symptom symptom--tech reveal">
-        <div class="symptom__head">
-          <p class="symptom__index">06</p>
-          <p class="symptom__side" data-en="System" data-pt="Sistema">System</p>
-          <h3 class="symptom__title" data-en="Vendor who delivered and vanished" data-pt="Fornecedor que entregou e sumiu">Vendor who delivered and vanished</h3>
-        </div>
-        <div class="symptom__body">
-          <p class="symptom__text" data-en="Project ran late, went live with loose ends, and nobody answers anymore." data-pt="Projeto atrasou, foi ao ar com pendências e ninguém mais responde.">Project ran late, went live with loose ends, and nobody answers anymore.</p>
-          <ul class="symptom__signs">
-            <li data-en="No maintenance or follow-up after launch" data-pt="Sem manutenção nem acompanhamento depois do lançamento">No maintenance or follow-up after launch</li>
-            <li data-en="Deadline promised, deadline blown" data-pt="Prazo prometido, prazo estourado">Deadline promised, deadline blown</li>
-          </ul>
-        </div>
-      </article>
-    </div></div>
+    <div class="pains__foot reveal">
+      <p class="pains__keys"><span data-en="Strategy" data-pt="Estratégia">Strategy</span><i>•</i><span data-en="Processes" data-pt="Processos">Processes</span><i>•</i><span data-en="Technology" data-pt="Tecnologia">Technology</span><i>•</i><span data-en="Results" data-pt="Resultados">Results</span></p>
+      <p class="pains__cta"><a href="#contato"><i aria-hidden="true"></i><span data-en="Turn challenges into growth" data-pt="Transforme desafios em crescimento">Turn challenges into growth</span><b aria-hidden="true">›</b></a></p>
+    </div>
   </div>
 </section>
 
@@ -2489,7 +2546,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="/img/casos/mediaportal.jpg" alt="Media Portal logo over the blurred website home" data-en-alt="Media Portal logo over the blurred website home" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Logo da Media Portal sobre a home do site, desfocada">
+          <img class="case__shot" src="../img/casos/mediaportal.jpg" alt="Media Portal logo over the blurred website home" data-en-alt="Media Portal logo over the blurred website home" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Logo da Media Portal sobre a home do site, desfocada">
         </div>
         <span class="media__client">Media Portal Soluções</span>
         <figcaption class="media__hint" data-en="Awaiting the real site screenshot" data-pt="Aguardando print real do site">Awaiting the real site screenshot</figcaption>
@@ -2554,7 +2611,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="/img/casos/mindminers.jpg" alt="Five young people on a park bench, laughing at their phones" data-en-alt="Five young people on a park bench, laughing at their phones" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Cinco jovens sentados num banco de praça, rindo enquanto olham o celular">
+          <img class="case__shot" src="../img/casos/mindminers.jpg" alt="Five young people on a park bench, laughing at their phones" data-en-alt="Five young people on a park bench, laughing at their phones" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Cinco jovens sentados num banco de praça, rindo enquanto olham o celular">
         </div>
         <span class="media__client">Ame Digital × MindMiners</span>
         <figcaption class="media__hint" data-en="Awaiting the case screenshot" data-pt="Aguardando print do case">Awaiting the case screenshot</figcaption>
@@ -2617,7 +2674,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
        toma a capa inteira e a arte continua inteira. Sem o arquivo, a moldura
        tracejada aparece. -->
   <div class="case__cover case__cover--piece">
-    <img class="case__fundo" src="/img/casos/ame-x.jpg" alt="" aria-hidden="true" onerror="this.remove()">
+    <img class="case__fundo" src="../img/casos/ame-x.jpg" alt="" aria-hidden="true" onerror="this.remove()">
     <div class="case__media">
       <figure class="media" data-slot="case-x">
         <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
@@ -2625,7 +2682,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="/img/casos/ame-x.jpg" alt="Ame's Cashback Friday banner: get your Ame card and earn up to 100% cashback" data-en-alt="Ame's Cashback Friday banner: get your Ame card and earn up to 100% cashback" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Banner da Ame para a Cashback Friday: peça seu Cartão Ame e ganhe até 100% de cashback">
+          <img class="case__shot" src="../img/casos/ame-x.jpg" alt="Ame's Cashback Friday banner: get your Ame card and earn up to 100% cashback" data-en-alt="Ame's Cashback Friday banner: get your Ame card and earn up to 100% cashback" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Banner da Ame para a Cashback Friday: peça seu Cartão Ame e ganhe até 100% de cashback">
         </div>
         <span class="media__client">Ame Digital × X (Twitter)</span>
         <figcaption class="media__hint" data-en="Awaiting the case screenshot" data-pt="Aguardando print do case">Awaiting the case screenshot</figcaption>
@@ -2690,7 +2747,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="/img/casos/corning.jpg" alt="Corning CALA Channel Summit attendees gathered on the bow of a boat, in Panama hats, waving at the camera" data-en-alt="Corning CALA Channel Summit attendees gathered on the bow of a boat, in Panama hats, waving at the camera" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Participantes do Corning CALA Channel Summit reunidos na proa de um barco, de chapéu panamá, acenando para a câmera">
+          <img class="case__shot" src="../img/casos/corning.jpg" alt="Corning CALA Channel Summit attendees gathered on the bow of a boat, in Panama hats, waving at the camera" data-en-alt="Corning CALA Channel Summit attendees gathered on the bow of a boat, in Panama hats, waving at the camera" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Participantes do Corning CALA Channel Summit reunidos na proa de um barco, de chapéu panamá, acenando para a câmera">
         </div>
         <span class="media__client">Corning CALA Summit</span>
         <figcaption class="media__hint" data-en="Awaiting event photos" data-pt="Aguardando fotos do evento">Awaiting event photos</figcaption>
@@ -2762,7 +2819,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         <article class="more-card reveal">
           <!-- Imagem: /img/projetos/amwc.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-amwc">
-            <img src="/img/projetos/amwc.jpg" alt="AMWC Brazil 2024 poster — Aesthetic Medicine World Congress, São Paulo, June 20–22" data-en-alt="AMWC Brazil 2024 poster — Aesthetic Medicine World Congress, São Paulo, June 20–22" onerror="this.parentNode.classList.add('is-empty')" data-pt-alt="Cartaz do AMWC Brazil 2024 — Aesthetic Medicine World Congress, São Paulo, 20 a 22 de junho">
+            <img src="../img/projetos/amwc.jpg" alt="AMWC Brazil 2024 poster — Aesthetic Medicine World Congress, São Paulo, June 20–22" data-en-alt="AMWC Brazil 2024 poster — Aesthetic Medicine World Congress, São Paulo, June 20–22" onerror="this.parentNode.classList.add('is-empty')" data-pt-alt="Cartaz do AMWC Brazil 2024 — Aesthetic Medicine World Congress, São Paulo, 20 a 22 de junho">
             <figure class="media">
               <span class="media__client">AMWC Brazil 2024</span>
               <figcaption class="media__hint" data-en="Screenshot pending" data-pt="Screenshot pendente">Screenshot pending</figcaption>
@@ -2778,7 +2835,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         <article class="more-card reveal">
           <!-- Imagem: /img/projetos/ame-tom-de-voz.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-ame-tom-de-voz">
-            <img src="/img/projetos/ame-tom-de-voz.jpg" alt="Ame pieces: the “Pra pagar e muito mais, Ame” banner and the super app’s service grid" data-en-alt="Ame pieces: the “Pra pagar e muito mais, Ame” banner and the super app’s service grid" onerror="this.parentNode.classList.add('is-empty')" data-pt-alt="Peças da Ame: o banner “Pra pagar e muito mais, Ame” e a grade de serviços do super app">
+            <img src="../img/projetos/ame-tom-de-voz.jpg" alt="Ame pieces: the “Pra pagar e muito mais, Ame” banner and the super app’s service grid" data-en-alt="Ame pieces: the “Pra pagar e muito mais, Ame” banner and the super app’s service grid" onerror="this.parentNode.classList.add('is-empty')" data-pt-alt="Peças da Ame: o banner “Pra pagar e muito mais, Ame” e a grade de serviços do super app">
             <figure class="media">
               <span class="media__client">Ame Digital</span>
               <figcaption class="media__hint" data-en="Screenshot pending" data-pt="Screenshot pendente">Screenshot pending</figcaption>
@@ -2793,7 +2850,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 <article class="more-card reveal">
           <!-- Imagem: /img/projetos/gipsyy.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-gipsyy">
-            <img src="/img/projetos/gipsyy.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')">
+            <img src="../img/projetos/gipsyy.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')">
             <figure class="media">
               <span class="media__client">Gipsyy</span>
               <figcaption class="media__hint" data-en="Screenshot pending" data-pt="Screenshot pendente">Screenshot pending</figcaption>
@@ -2858,19 +2915,6 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         <a href="mailto:bamaralpenha@gmail.com">bamaralpenha@gmail.com</a>
       </div>
 
-      <div class="qr">
-        <!-- /img/qr.svg aponta para o endereço atual do site (utm_source=qr); quando o
-             domínio da CASA MARTECH existir, é aqui e nos dois SVGs que ele entra.
-             Para impressão use /img/qr-print.svg (preto no branco). -->
-        <figure class="qr__box">
-          <img src="/img/qr.svg" alt="QR code for the CASA MARTECH site" data-en-alt="QR code for the CASA MARTECH site" onerror="this.parentNode.classList.add('is-empty')" data-pt-alt="QR code do site da CASA MARTECH">
-          <figcaption data-en="QR code&lt;br&gt;physical&lt;br&gt;materials" data-pt="QR code&lt;br&gt;materiais&lt;br&gt;físicos">QR code<br>physical<br>materials</figcaption>
-        </figure>
-        <div>
-          <p class="qr__label" data-en="Physical use" data-pt="Uso físico">Physical use</p>
-          <p class="qr__text" data-en="Cards, badges, proposals — points to the site or WhatsApp." data-pt="Cartão, crachás, propostas — aponta pro site ou WhatsApp.">Cards, badges, proposals — points to the site or WhatsApp.</p>
-        </div>
-      </div>
     </div>
 
     <form class="lead reveal" id="lead-form" novalidate="">
@@ -2942,6 +2986,8 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 </section>
 
 </main>
+
+<canvas class="trail" id="trail" aria-hidden="true"></canvas>
 
 <a class="wa-float" id="wa-float" href="https://wa.me/5511999773471?text=Hi%2C%20I%20saw%20the%20portfolio%20and%20would%20like%20to%20talk%20about%20a%20project." data-en-href="https://wa.me/5511999773471?text=Hi%2C%20I%20saw%20the%20portfolio%20and%20would%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener" aria-label="Chat on WhatsApp" data-en-aria-label="Chat on WhatsApp" data-pt-href="https://wa.me/5511999773471?text=Ol%C3%A1%2C%20vi%20o%20portf%C3%B3lio%20e%20quero%20conversar%20sobre%20um%20projeto." data-pt-aria-label="Falar no WhatsApp">
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2m0 1.67c4.54 0 8.24 3.7 8.24 8.24s-3.7 8.24-8.24 8.24c-1.48 0-2.93-.4-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24M8.53 7.33c-.16 0-.43.06-.66.31-.22.25-.87.86-.87 2.07 0 1.22.89 2.39 1 2.56.14.17 1.76 2.67 4.25 3.73.59.27 1.05.42 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.16-.48-.27-.25-.14-1.47-.74-1.69-.82-.23-.08-.37-.12-.56.12-.16.25-.64.81-.78.97-.15.17-.29.19-.53.07-.26-.13-1.06-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.12-.24-.01-.39.11-.5.11-.11.27-.29.37-.44.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.11-.56-1.35-.77-1.84-.2-.48-.4-.42-.56-.43-.14 0-.3-.01-.47-.01"></path></svg>
@@ -3228,6 +3274,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         if (p.t > 0 && p.t < 1) { alive.push(p); continue; }
         var at = p.dir > 0 ? e.b : e.a;
         P.glow[at] = 1;
+        if ((at === 'escada' || at === 'baixoEsq') && window.__trail) window.__trail.emit();
         if (p.hops > 0) {
           spawn(at, p.e, p.hops - 1, now);
           if (Math.random() < 0.25) spawn(at, p.e, Math.max(0, p.hops - 2), now);
@@ -3294,6 +3341,233 @@ textarea.field__input { min-height: 120px; resize: vertical; }
     }
   }
 
+
+  /* ─── Rede pela página ────────────────────────────────────────────
+     A luz da casa não para no hero: vira uma rede de neurônios nas
+     margens laterais do site. Cada seção recebe nós nos dois lados do
+     conteúdo (posições fixas por semente, para não pularem), um núcleo ao
+     lado do título e dois nós na linha que a fecha; cada nó liga-se por
+     curvas aos vizinhos mais próximos. Impulsos rápidos nascem no piso da
+     casa (quando um pulso do hero chega à escada) e, de vez em quando, em
+     qualquer nó; ao chegar, o nó dispara, fica um instante refratário e
+     retransmite para um ou dois vizinhos. Canvas fixo, blend screen; sem
+     movimento com reduced-motion. */
+  (function () {
+    var cv = document.getElementById('trail');
+    if (!cv || !motionOK || !heroEl) return;
+    var ctx = cv.getContext('2d');
+    var T = { nodes: [], edges: [], out: [], list: [], glow: [], fired: [], raf: null, last: 0, geoAt: 0, sig: '', spawnAt: 0, emitAt: 0, W: 0, H: 0, dpr: 1, colors: null };
+    var SECTIONS = ['dupla', 'diagnostico', 'servicos', 'cases', 'processo', 'contato'];
+    var TONES = { dupla: 'ochre', diagnostico: 'ochre', servicos: 'blue', cases: 'ochre', processo: 'blue', contato: 'blue' };
+    function rnd(seed) { var x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); }
+
+    /* z: profundidade (0 = lá dentro, 1 = à frente da parede). Fixa por nó. */
+    function node(x, y, tone, kind) { var i = T.nodes.length; T.nodes.push({ x: x, y: y, tone: tone, kind: kind, z: kind === 'core' ? 0.9 : kind === 'src' ? 1 : 0.15 + rnd(i * 3.3 + x * 0.01) * 0.85 }); return i; }
+    function edge(a, b, seed) {
+      var A = T.nodes[a], B = T.nodes[b], dx = B.x - A.x, dy = B.y - A.y, L = Math.hypot(dx, dy) || 1;
+      /* curvatura sempre visível: nunca menos de ~18% do comprimento, sinal ao acaso */
+      var bend = (0.1 + rnd(seed) * 0.16) * L * (rnd(seed + 5) < 0.5 ? -1 : 1);
+      var cx = (A.x + B.x) / 2 - dy / L * bend, cy = (A.y + B.y) / 2 + dx / L * bend;
+      var e = { a: a, b: b, cx: cx, cy: cy, len: 0 }, px = A.x, py = A.y;
+      for (var k = 1; k <= 8; k++) { var p = bez(e, k / 8); e.len += Math.hypot(p[0] - px, p[1] - py); px = p[0]; py = p[1]; }
+      e.len = Math.max(1, e.len);
+      T.edges.push(e); var i = T.edges.length - 1;
+      (T.out[a] = T.out[a] || []).push(i); (T.out[b] = T.out[b] || []).push(i);
+    }
+    function bez(e, t) {
+      var A = T.nodes[e.a], B = T.nodes[e.b], u = 1 - t;
+      return [u * u * A.x + 2 * u * t * e.cx + t * t * B.x, u * u * A.y + 2 * u * t * e.cy + t * t * B.y];
+    }
+    function geo() {
+      var sy = window.scrollY, cont = document.querySelector('#dupla .container');
+      if (!cont) return;
+      var cr = cont.getBoundingClientRect(), pad = parseFloat(getComputedStyle(cont).paddingLeft || 0);
+      var cl = cr.left + pad, crr = cr.right - pad;
+      var rects = SECTIONS.map(function (id) { var s = document.getElementById(id); return s ? s.getBoundingClientRect() : null; });
+      var sig = T.W + '|' + rects.map(function (r) { return r ? Math.round(r.top + sy) + ':' + Math.round(r.height) : ''; }).join(',');
+      if (sig === T.sig) return; T.sig = sig;
+      T.nodes = []; T.edges = []; T.out = []; T.list = [];
+      /* faixas laterais: a margem fora do conteúdo; em tela estreita, uma
+         tira fina junto à borda */
+      var wide = cl >= 72;
+      var L0 = wide ? 18 : 6, L1 = wide ? cl - 28 : 34, R0 = wide ? crr + 28 : T.W - 34, R1 = wide ? T.W - 18 : T.W - 6;
+      var hr = heroEl.getBoundingClientRect(), src;
+      if (P.box && heroArt && getComputedStyle(heroArt).display !== 'none') {
+        var ar = heroArt.getBoundingClientRect(), b = P.box;
+        src = node(ar.right - b.w + 572 * b.s, ar.bottom + sy - b.h + 690 * b.s, 'ochre', 'src');
+      } else {
+        src = node((R0 + R1) / 2, hr.bottom + sy - 60, 'ochre', 'src');
+      }
+      SECTIONS.forEach(function (id, si) {
+        var r = rects[si]; if (!r) return;
+        var s = document.getElementById(id), tone = TONES[id];
+        var top = r.top + sy, h = r.height;
+        var t = s.querySelector('.section-title, .contact__title');
+        if (t) { var tr = t.getBoundingClientRect(); node(wide ? cl - 34 : 16, tr.top + sy + Math.min(tr.height, 64) / 2, tone, 'core'); }
+        var n = Math.max(1, Math.min(2, Math.round(h / 480)));
+        for (var k = 0; k < n; k++) {
+          var seed = si * 97 + k * 13;
+          node(L0 + rnd(seed) * (L1 - L0), top + h * (0.08 + 0.84 * (k + rnd(seed + 1)) / n), tone, 'n');
+          node(R0 + rnd(seed + 2) * (R1 - R0), top + h * (0.08 + 0.84 * (k + rnd(seed + 3)) / n), tone, 'n');
+        }
+      });
+      /* ligações em fluxo: cada nó liga-se a 1–2 vizinhos abaixo (o mais
+         próximo e um mais distante), nunca fechando triângulos — sem nós de
+         emaranhado; a rede desce como fios, não como teia */
+      var N = T.nodes.length, seen = {}, deg = [], nb = [];
+      var mid = T.W / 2;
+      for (var i0 = 0; i0 < N; i0++) { deg.push(0); nb.push({}); }
+      function link(a, b, seed) {
+        var key = Math.min(a, b) + '-' + Math.max(a, b); if (seen[key]) return false;
+        for (var k in nb[a]) if (nb[b][k]) return false; /* triângulo */
+        seen[key] = 1; nb[a][b] = 1; nb[b][a] = 1; deg[a]++; deg[b]++; edge(a, b, seed); return true;
+      }
+      var order = []; for (var o = 0; o < N; o++) order.push(o);
+      order.sort(function (p, q) { return T.nodes[p].y - T.nodes[q].y; });
+      for (var oi = 0; oi < N; oi++) {
+        var i = order[oi], A = T.nodes[i], side = A.x < mid, cand = [];
+        for (var j = 0; j < N; j++) {
+          if (j === i) continue; var B = T.nodes[j];
+          if (B.y <= A.y + 40) continue;
+          if ((B.x < mid) !== side && A.kind !== 'src') continue;
+          if (deg[j] >= 2) continue;
+          var d = Math.hypot(A.x - B.x, A.y - B.y); if (d > 700) continue;
+          cand.push([d, j]);
+        }
+        if (!cand.length) continue;
+        cand.sort(function (p, q) { return p[0] - q[0]; });
+        var want = A.kind === 'src' ? 2 : (rnd(i * 7) < 0.25 ? 2 : 1), got = 0;
+        for (var c = 0; c < cand.length && got < want && deg[i] < 2; c++) {
+          /* o segundo fio pula alguns vizinhos: abre a malha */
+          if (got === 1 && c < 2) continue;
+          if (link(i, cand[c][1], i * 31 + cand[c][1])) got++;
+        }
+      }
+      T.glow = []; T.fired = [];
+      for (var g = 0; g < N; g++) { T.glow.push(0); T.fired.push(0); }
+    }
+    function fit() {
+      T.W = window.innerWidth; T.H = window.innerHeight;
+      T.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      cv.width = Math.round(T.W * T.dpr); cv.height = Math.round(T.H * T.dpr);
+      T.colors = pulsoColors(); T.sig = ''; geo();
+    }
+    function push(ei, from) {
+      if (T.list.length >= 5) return;
+      var e = T.edges[ei]; if (!e) return;
+      T.list.push({ e: ei, dir: e.a === from ? 1 : -1, t: e.a === from ? 0 : 1, v: 340 + Math.random() * 200, hops: 0 });
+    }
+    /* o nó dispara: acende, fica refratário e retransmite para 1–2 vizinhos */
+    function fire(n, fromEdge, now, hops) {
+      if (now - T.fired[n] < 700) return;
+      T.fired[n] = now; T.glow[n] = 1;
+      if (hops > 5) return;
+      var outs = (T.out[n] || []).filter(function (i) { return i !== fromEdge; });
+      if (!outs.length) return;
+      outs.sort(function () { return Math.random() - 0.5; });
+      var k = 1;
+      for (var i = 0; i < Math.min(k, outs.length); i++) { push(outs[i], n); T.list[T.list.length - 1].hops = hops + 1; }
+    }
+    function emit() {
+      var now = performance.now();
+      if (!T.edges.length || now - T.emitAt < 900) return;
+      T.emitAt = now; T.fired[0] = 0; fire(0, -1, now, 0);
+    }
+    window.__trail = { emit: emit };
+
+    function step(now) {
+      T.raf = null;
+      var dt = Math.min(0.05, (now - (T.last || now)) / 1000); T.last = now;
+      if (now - T.geoAt > 500) { geo(); T.geoAt = now; }
+      for (var g = 0; g < T.glow.length; g++) T.glow[g] *= Math.pow(0.12, dt);
+      var alive = [];
+      for (var i = 0; i < T.list.length; i++) {
+        var p = T.list[i], e = T.edges[p.e]; if (!e) continue;
+        p.t += p.dir * p.v * dt / e.len;
+        if (p.t > 0 && p.t < 1) { alive.push(p); continue; }
+        fire(p.dir > 0 ? e.b : e.a, p.e, now, p.hops);
+      }
+      T.list = alive;
+      /* disparo espontâneo: um nó que está na tela acorda sozinho */
+      if (now >= T.spawnAt && T.nodes.length) {
+        var sy = window.scrollY, vis = [];
+        for (var n = 1; n < T.nodes.length; n++) { var y = T.nodes[n].y - sy; if (y > 0 && y < T.H) vis.push(n); }
+        if (vis.length) fire(vis[Math.floor(Math.random() * vis.length)], -1, now, 2);
+        T.spawnAt = now + 4000 + Math.random() * 5000;
+      }
+      draw(now);
+      if (!document.hidden) T.raf = window.requestAnimationFrame(step);
+    }
+
+    function bloom(x, y, r, color, a) {
+      var rg = ctx.createRadialGradient(x, y, 0, x, y, r);
+      rg.addColorStop(0, color); rg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.globalAlpha = a; ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+    function draw(now) {
+      var sy = window.scrollY, c = T.colors, H = T.H;
+      ctx.setTransform(T.dpr, 0, 0, T.dpr, 0, 0);
+      ctx.clearRect(0, 0, T.W, H);
+      ctx.translate(0, -sy);
+      var lo = sy - 200, hi = sy + H + 200;
+      /* as ligações, fracas como as linhas do site */
+      ctx.globalAlpha = 1;
+      for (var i = 0; i < T.edges.length; i++) {
+        var e = T.edges[i], A = T.nodes[e.a], B = T.nodes[e.b];
+        if (Math.max(A.y, B.y, e.cy) < lo || Math.min(A.y, B.y, e.cy) > hi) continue;
+        var ez = (A.z + B.z) / 2;
+        ctx.lineWidth = 0.8 + ez * 1.4; ctx.strokeStyle = 'rgba(241,238,230,' + (0.035 + ez * 0.09).toFixed(3) + ')';
+        ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.quadraticCurveTo(e.cx, e.cy, B.x, B.y); ctx.stroke();
+      }
+      /* nós: um ponto; o núcleo do título respira; quem disparou acende */
+      for (var n = 0; n < T.nodes.length; n++) {
+        var N = T.nodes[n]; if (N.y < lo || N.y > hi) continue;
+        var tone = c[N.tone], g = T.glow[n] || 0;
+        var zs = 0.4 + N.z * 0.9;
+        if (N.kind === 'n' || N.kind === 'join') {
+          /* lá dentro: mancha larga e fraca; à frente: ponto nítido */
+          bloom(N.x, N.y, 26 * (1.6 - N.z), tone, 0.05 + 0.05 * (1 - N.z));
+          bloom(N.x, N.y, 4 * zs, c.ink, 0.2 + 0.45 * N.z);
+        }
+        if (N.kind === 'core') {
+          var br = 0.5 + 0.5 * Math.sin(now / 1500 + n * 1.7);
+          bloom(N.x, N.y, 40, tone, 0.08 + 0.06 * br);
+          bloom(N.x, N.y, 4.5, c.ink, 0.55 + 0.25 * br);
+        }
+        if (g > 0.02) {
+          bloom(N.x, N.y, (N.kind === 'core' ? 190 : 120) * (1.3 - N.z * 0.5), tone, (0.1 + 0.12 * N.z) * g);
+          bloom(N.x, N.y, 48 * zs, tone, (0.3 + 0.35 * N.z) * g);
+          bloom(N.x, N.y, 12 * zs, c.ink, (0.45 + 0.55 * N.z) * g);
+        }
+      }
+      /* impulsos: cabeça pequena, cauda curta, halo desfocado */
+      for (var p = 0; p < T.list.length; p++) {
+        var q = T.list[p], ed = T.edges[q.e]; if (!ed) continue;
+        var tn = c[T.nodes[q.dir > 0 ? ed.b : ed.a].tone], head = bez(ed, q.t);
+        if (head[1] < lo || head[1] > hi) continue;
+        /* a luz vem de dentro e volta para dentro: perto é pequena e viva,
+           longe é uma mancha larga e apagada */
+        var pz = T.nodes[ed.a].z + (T.nodes[ed.b].z - T.nodes[ed.a].z) * q.t, ps = 0.45 + pz * 0.8;
+        bloom(head[0], head[1], 70 * (1.5 - pz * 0.6), tn, 0.08 + 0.16 * pz);
+        for (var s = 6; s >= 1; s--) {
+          var pt = bez(ed, Math.min(1, Math.max(0, q.t - q.dir * s * 12 / ed.len)));
+          bloom(pt[0], pt[1], 12 * ps * (1 - s / 8), tn, (0.25 + 0.5 * pz) * (1 - s / 7));
+        }
+        bloom(head[0], head[1], 18 * ps, tn, 0.35 + 0.6 * pz);
+        bloom(head[0], head[1], 7 * ps, c.ink, 0.4 + 0.6 * pz);
+      }
+      ctx.globalAlpha = 1;
+    }
+    function start() { if (!T.raf && !document.hidden) { T.last = 0; T.raf = window.requestAnimationFrame(step); } }
+    function stop() { if (T.raf) { window.cancelAnimationFrame(T.raf); T.raf = null; } }
+
+    fit(); start();
+    var ft = null;
+    window.addEventListener('resize', function () { clearTimeout(ft); ft = setTimeout(fit, 120); });
+    if (heroArt) heroArt.addEventListener('load', function () { setTimeout(function () { T.sig = ''; geo(); }, 50); });
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
+  })();
+
   /* ─── "O que entregamos": explorador ──────────────────────────────
      Fecha sete das oito entregas (o HTML entrega as oito abertas) e passa
      a revezá-las a cada 3,5 s, com uma barra de tempo no item ativo. O
@@ -3301,14 +3575,12 @@ textarea.field__input { min-height: 120px; resize: vertical; }
      o painel segura enquanto estiver lá. Fora da tela, com a aba oculta
      ou com reduced-motion o relógio não corre — a troca por clique
      continua funcionando. */
-  (function () {
-    var root = document.querySelector('[data-explorer]');
-    if (!root) return;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-explorer]'), function (root) {
     var rm = window.matchMedia('(prefers-reduced-motion: reduce)');
     var tabs = Array.prototype.slice.call(root.querySelectorAll('.explorer__item'));
     var panels = Array.prototype.slice.call(root.querySelectorAll('.explorer__panel'));
     if (tabs.length !== panels.length || !tabs.length) return;
-    var DWELL = 3500, cur = 0, timer = null, pinned = false, hover = false, visible = false;
+    var DWELL = parseInt(root.getAttribute('data-dwell'), 10) || 3500, cur = 0, timer = null, pinned = false, hover = false, visible = false;
     function running() { return !pinned && !hover && visible && !rm.matches; }
     function show(i, focus) {
       cur = i;
@@ -3368,7 +3640,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       start();
     }
     document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
-  })();
+  });
 
   /* ─── Entrada ao rolar ─────────────────────────────────────────── */
   if (document.documentElement.classList.contains('js-reveal')) {
