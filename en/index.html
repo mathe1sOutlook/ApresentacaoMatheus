@@ -465,16 +465,50 @@ button {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
-/* o quadro: fundo mais escuro que a parede, moldura fina ocre e sombra
-   projetada; a luz de galeria é uma barra acima, com o cone caindo por dentro */
+/* o quadro: moldura de madeira preta com quatro sarrafos e canto em meia-
+   esquadria. Quem corta os cantos é o conic-gradient — girado 45°, os quatro
+   setores encontram-se nas diagonais, que é exatamente onde a mitra cai. A luz
+   vem de cima e da esquerda, então o sarrafo de cima é o mais claro e o de
+   baixo o mais escuro. A borda transparente é o que reserva a área da madeira:
+   o fundo da arte é pintado no padding-box e a madeira no border-box. */
 .plaque {
   position: relative;
-  padding: 40px 34px 42px;
-  background: linear-gradient(180deg, #13171F, #0F1218 55%);
-  border: 1px solid rgba(201, 162, 78, 0.3);
-  border-radius: 6px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 44px 60px -34px rgba(0, 0, 0, 0.95);
+  padding: 34px 30px 36px;
+  border: 20px solid transparent;
+  border-radius: 3px;
+  background:
+    linear-gradient(180deg, #13171F, #0F1218 55%) padding-box,
+    repeating-linear-gradient(103deg,
+      rgba(255, 255, 255, 0.0132) 0px,
+      rgba(0, 0, 0, 0.03) 3px,
+      rgba(255, 255, 255, 0.0072) 8px,
+      rgba(0, 0, 0, 0.033) 13px,
+      rgba(255, 255, 255, 0.0108) 19px,
+      rgba(0, 0, 0, 0.024) 26px,
+      rgba(255, 255, 255, 0.0132) 31px) border-box,
+    conic-gradient(from 45deg,
+      #0a0a0d 0 25%,
+      #050507 0 50%,
+      #15151a 0 75%,
+      #202026 0 100%) border-box;
+  box-shadow:
+    /* rebaixo: fio dourado, corte preto e a sombra que a moldura joga
+       sobre a arte — mais forte em cima e à esquerda, de onde vem a luz */
+    inset 0 0 0 1px rgba(201, 162, 78, 0.26),
+    inset 0 0 0 2px rgba(0, 0, 0, 0.92),
+    inset 0 5px 10px -3px rgba(0, 0, 0, 0.85),
+    inset 4px 0 9px -5px rgba(0, 0, 0, 0.7),
+    /* as quatro arestas da madeira: as de cima e da esquerda pegam luz,
+       as de baixo e da direita são o corte contra a parede */
+    0 -1px 0 rgba(255, 255, 255, 0.07),
+    -1px 0 0 rgba(255, 255, 255, 0.04),
+    1px 0 0 rgba(0, 0, 0, 0.9),
+    0 1px 0 rgba(0, 0, 0, 0.9),
+    /* o peso de um quadro pendurado: contato curto e sombra longa */
+    0 10px 20px -14px rgba(0, 0, 0, 0.9),
+    0 44px 60px -34px rgba(0, 0, 0, 0.95);
 }
+
 .plaque__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
 .plaque .avatar { width: 120px; height: 120px; border-color: rgba(201, 162, 78, 0.45); box-shadow: 0 0 0 5px #0F1218, 0 0 0 6px rgba(201, 162, 78, 0.16); }
 .plaque .person__tag { margin: 6px 0 0; text-align: right; max-width: 12ch; line-height: 1.6; }
@@ -488,7 +522,7 @@ button {
 }
 @media (max-width: 639px) {
   .gallery__wall { grid-template-columns: 1fr; gap: 44px; }
-  .plaque { padding: 32px 26px 34px; }
+  .plaque { padding: 26px 22px 28px; border-width: 12px; }
   .plaque .avatar { width: 96px; height: 96px; }
 }
 
@@ -2080,6 +2114,9 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   }
   .js-reveal .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   .js-reveal .steps::before { transform: none !important; }
+  /* no papel a moldura de madeira vira um fio: preto chapado de 20px
+     come tinta e briga com o tema claro da impressão */
+  .plaque { padding: 24px 22px 26px; border: 1px solid var(--line); border-radius: 4px; background: none; box-shadow: none; }
   /* no papel não há clique: a lista sai e as oito entregas descem abertas */
   .explorer { grid-template-columns: 1fr; }
   .explorer__list { display: none; }

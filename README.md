@@ -245,8 +245,14 @@ que arrebenta logo depois de "Entrega". O detalhe está em
 `docs/handoff-rede-e-diagnostico.md`.
 
 O `#dupla` é uma galeria: o texto à esquerda e, à direita, dois quadros
-pendurados com avatar, nome, cargo, bio e chips. Um quadro por ofício, e a
-borda ocre é o que os pendura.
+pendurados com avatar, nome, cargo, bio e chips — um por ofício. A moldura é
+de madeira preta, e quem corta os cantos em meia-esquadria é um
+`conic-gradient` girado 45°: os quatro setores se encontram nas diagonais, que
+é onde a mitra cai. A luz vem de cima e da esquerda, então o sarrafo de cima é
+o mais claro e o de baixo o mais escuro, e as quatro arestas externas repetem
+isso em 1px. Por dentro, o fio dourado do rebaixo e a sombra que a moldura
+joga sobre a arte. No papel tudo isso vira um fio de 1px: preto chapado de
+20px come tinta e briga com o tema claro da impressão.
 
 A faixa de clientes não para no mouse. Quem quiser olhar um nome de perto
 arrasta a faixa ou gira a roda na horizontal; ao soltar, ela retoma do ponto
