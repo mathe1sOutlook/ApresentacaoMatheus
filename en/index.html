@@ -536,8 +536,9 @@ button {
 
 /* Prova social — faixa em marquee, sangrando as bordas do container. */
 .proof {
-  margin-top: 56px;
+  margin-top: 72px;
   border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
   background: var(--bg-deep);
   padding: 24px 0 26px;
 }
@@ -570,20 +571,6 @@ button {
 .marquee:focus-within .marquee__track { animation-play-state: paused; }
 .marquee:focus-visible { outline-offset: -2px; }
 .proof__list li { display: flex; align-items: center; height: 40px; }
-.proof__list img {
-  /* logo largo (wordmark) limita pela largura, logo alto limita pela altura:
-     assim nenhum deles pesa mais que os nomes em texto ao lado */
-  height: 28px;
-  width: auto;
-  max-width: 132px;
-  /* wordmark largo bate no limite de largura e é centrado na altura;
-     logo mais quadrado usa a altura inteira */
-  object-fit: contain;
-  opacity: 0.85;
-  /* qualquer logo vira silhueta creme, coerente com a identidade */
-  filter: brightness(0) invert(0.93);
-}
-.proof__list img + span { display: none; }
 .proof__list {
   display: flex;
   gap: 88px;
@@ -731,7 +718,7 @@ button {
   font-size: 16px;
 }
 .explorer--diag { --dwell: 7s; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
-.explorer--diag .explorer__item { grid-template-columns: minmax(0, 1fr) 12px; font-size: 19px; padding: 18px 24px; }
+.explorer--diag .explorer__item { grid-template-columns: 30px minmax(0, 1fr) 12px; font-size: 19px; padding: 18px 24px; }
 .explorer--diag .explorer__detail { position: relative; min-height: 460px; padding: 44px 44px 48px; }
 /* o texto para antes da ilustração: a coluna da arte fica reservada */
 .diag__panel .explorer__front, .diag__text { padding-right: 180px; }
@@ -1489,6 +1476,9 @@ html.has-case-open { --header-h: 52px; }
 }
 /* O cartaz do AMWC é retrato numa caixa 2:1: mostra o alto — título e olhar. */
 [data-slot="more-amwc"] img { object-position: 50% 5%; }
+/* O header da Gipsyy também é retrato: centrado, o corte passa na boca da
+   cigana. Subindo o enquadramento entram as mãos, o rosto e a bola. */
+[data-slot="more-gipsyy"] img { object-position: 50% 30%; }
 .more-card__media .media { display: none; }
 .more-card__media.is-empty img { display: none; }
 .more-card__media.is-empty .media {
@@ -1589,8 +1579,27 @@ html.has-case-open { --header-h: 52px; }
 .step__number { font-family: var(--mono); font-size: 16px; color: var(--step-tone); }
 .step__title { font-family: var(--serif); font-size: 26px; font-weight: 600; }
 .step__text { font-size: 17px; color: var(--ink-soft); }
+.step__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.step__list li { display: flex; align-items: baseline; gap: 12px; }
+.step__list li i { flex: none; width: 8px; height: 1px; background: var(--step-tone); transform: translateY(-4px); }
+.js-reveal .steps.is-cycling .step.is-active .step__list li { animation: explorer-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.js-reveal .steps.is-cycling .step.is-active .step__list li:nth-child(2) { animation-delay: 0.1s; }
+.js-reveal .steps.is-cycling .step.is-active .step__list li:nth-child(3) { animation-delay: 0.2s; }
+/* Revezamento: como no explorador de entregas, um passo por vez está
+   "aceso" — os outros recuam —, com uma linha de tempo no pé, na cor do
+   passo. Avança sozinho a cada 4 s; o clique fixa; o mouse segura. */
+.steps.is-cycling .step { cursor: pointer; transition: opacity 0.5s ease; }
+.steps.is-cycling .step:not(.is-active) { opacity: 0.42; }
+.steps.is-cycling .step:not(.is-active):hover { opacity: 0.7; }
+.steps.is-cycling .step.is-active::after { opacity: 0.22; transform: scale(3.2); }
+.step__timer { position: absolute; left: 0; bottom: -1px; height: 1px; width: 0; background: linear-gradient(90deg, var(--step-tone), transparent); opacity: 0; pointer-events: none; }
+.step.is-timing .step__timer { opacity: 1; animation: explorer-timer var(--dwell, 4s) linear forwards; }
+.js-reveal .steps.is-cycling .step.is-active .step__title { animation: explorer-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
 @media (prefers-reduced-motion: reduce) {
   .step:hover::after { opacity: 0; transform: scale(1); }
+  .steps.is-cycling .step:not(.is-active) { opacity: 1; }
+  .step__timer { display: none; }
 }
 
 /* ─── WhatsApp flutuante (só telas estreitas, depois do hero) ─────── */
@@ -1659,7 +1668,9 @@ html.has-case-open { --header-h: 52px; }
   border-bottom: 1px solid var(--line-strong);
   padding-bottom: 6px;
 }
-.contact__links a:hover { border-bottom-color: var(--ink); color: var(--ochre); }
+.contact__links a:first-child { color: var(--ochre); border-bottom-color: color-mix(in srgb, var(--ochre) 45%, transparent); }
+.contact__links a:last-child { color: var(--blue); border-bottom-color: color-mix(in srgb, var(--blue) 45%, transparent); }
+.contact__links a:hover { border-bottom-color: currentColor; color: var(--ink); }
 
 /* Formulário — abre o WhatsApp com a mensagem montada. */
 .lead {
@@ -2116,7 +2127,6 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   .pull-quote { padding: 36px 28px 36px 76px; font-size: 22px; }
   .pull-quote::before { left: 28px; top: 28px; font-size: 44px; }
   .proof__list { font-size: 22px; gap: 64px; }
-  .proof__list img { height: 24px; max-width: 112px; }
   .case__cover { min-height: 420px; padding: 22px 24px 26px; }
   .case__title { font-size: 26px; }
   .case__details { padding: 26px 24px 30px; }
@@ -2148,7 +2158,8 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   #servicos .section-title { background: none; color: var(--ink); -webkit-text-fill-color: currentColor; }
   /* o trocadilho MAR·TEC é de tela: no papel as duas cores não têm contraste */
   .mar, .tec { color: inherit; }
-  .hero__art, .hero__pulsos, .wa-float, .site-header, .marquee, .lead, .skip-link { display: none !important; }
+  /* a faixa inteira, não só o marquee: sem os nomes o rótulo fica órfão entre duas réguas */
+  .hero__art, .hero__pulsos, .wa-float, .site-header, .proof, .lead, .skip-link { display: none !important; }
   /* o carrossel é de tela; no papel os casos voltam a empilhar, um por linha */
   .cases { display: block; overflow: visible; }
   .case { flex: none; scroll-snap-align: none; }
@@ -2207,48 +2218,22 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   <canvas class="hero__pulsos" id="hero-pulsos" aria-hidden="true"></canvas>
 
   <div class="container">
-    <p class="eyebrow" data-en="Brand strategy &nbsp;×&nbsp; Systems engineering" data-pt="Estratégia de marca &amp;nbsp;×&amp;nbsp; Engenharia de sistemas">Brand strategy &nbsp;×&nbsp; Systems engineering</p>
+    <p class="eyebrow" data-en="Marketing strategy &nbsp;×&nbsp; Systems engineering" data-pt="Estratégia de marketing &amp;nbsp;×&amp;nbsp; Engenharia de sistemas">Marketing strategy &nbsp;×&nbsp; Systems engineering</p>
 
     <div class="hero__body">
-      <h1 class="hero__title" data-en="Brands that stand out. Technology that holds them up." data-pt="&lt;span class=&quot;mar&quot;&gt;Mar&lt;/span&gt;cas que se destacam. &lt;span class=&quot;tec&quot;&gt;Tec&lt;/span&gt;nologia que sustenta.">Brands that stand out. Technology that holds them up.</h1>
+      <h1 class="hero__title" data-en="Brands that stand out. Technology that takes shape." data-pt="&lt;span class=&quot;mar&quot;&gt;Mar&lt;/span&gt;cas que se destacam.&lt;br&gt;&lt;span class=&quot;tec&quot;&gt;Tec&lt;/span&gt;nologias que se moldam.">Brands that stand out. Technology that takes shape.</h1>
 
-      <p class="hero__lede" data-en="A duo — brand strategy and software engineering — building a brand and the technology behind it from the ground up." data-pt="Uma dupla — estratégia de marca e engenharia de software — construindo, do zero, a marca e a tecnologia por trás dela.">A duo — brand strategy and software engineering — building a brand and the technology behind it from the ground up.</p>
+      <p class="hero__lede" data-en="There are two of us. One looks after how the brand is seen, the other after how it works inside. Project after project, we learned these two things are never solved apart." data-pt="Somos dois. Um cuida de como a marca é vista, o outro de como ela funciona por dentro. A gente aprendeu, projeto atrás de projeto, que essas duas coisas não se resolvem separadas.">There are two of us. One looks after how the brand is seen, the other after how it works inside. Project after project, we learned these two things are never solved apart.</p>
     </div>
   </div>
 
-  <div class="proof">
-    <div class="container">
-      <span class="proof__label" data-en="We've made history with..." data-pt="Já fizemos história com...">We've made history with...</span>
-    </div>
-    <div class="marquee" tabindex="0" role="group" aria-label="Clients served; focusing pauses the scrolling" data-en-aria-label="Clients served; focusing pauses the scrolling" data-pt-aria-label="Clientes atendidos; o foco pausa a rolagem">
-      <div class="marquee__track">
-        <!-- Logos: /img/logos/<slug>.svg (monocromático; o CSS pinta de creme). Sem o arquivo, fica o nome em texto. -->
-        <ul class="proof__list">
-          <li><span>Corning</span></li>
-          <li><img src="../img/logos/ame.svg" alt="Ame Digital" onerror="this.remove()"><span>Ame Digital</span></li>
-          <li><img src="../img/logos/quintoandar.svg" alt="QuintoAndar" onerror="this.remove()"><span>QuintoAndar</span></li>
-          <li><img src="../img/logos/mediaportal.svg" alt="Media Portal" onerror="this.remove()"><span>Media Portal</span></li>
-          <li><img src="../img/logos/informa.svg" alt="Informa Markets" onerror="this.remove()"><span>Informa Markets</span></li>
-          <li><img src="../img/logos/gipsyy.svg" alt="Gipsyy" onerror="this.remove()"><span>Gipsyy</span></li>
-        </ul>
-        <ul class="proof__list" aria-hidden="true">
-          <li><span>Corning</span></li>
-          <li><img src="../img/logos/ame.svg" alt="Ame Digital" onerror="this.remove()"><span>Ame Digital</span></li>
-          <li><img src="../img/logos/quintoandar.svg" alt="QuintoAndar" onerror="this.remove()"><span>QuintoAndar</span></li>
-          <li><img src="../img/logos/mediaportal.svg" alt="Media Portal" onerror="this.remove()"><span>Media Portal</span></li>
-          <li><img src="../img/logos/informa.svg" alt="Informa Markets" onerror="this.remove()"><span>Informa Markets</span></li>
-          <li><img src="../img/logos/gipsyy.svg" alt="Gipsyy" onerror="this.remove()"><span>Gipsyy</span></li>
-        </ul>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- ═══════════════════════════════════════════════ A DUPLA -->
 <section class="section gallery" id="dupla">
   <div class="container gallery__grid">
     <div class="gallery__intro reveal">
-      <h2 class="section-title gallery__title" data-en="One brand, two crafts." data-pt="Uma marca, dois ofícios.">One brand, two crafts.</h2>
+      <h2 class="section-title gallery__title" data-en="One house, two crafts." data-pt="Uma casa, dois ofícios.">One house, two crafts.</h2>
       <p class="section-intro gallery__text" data-en="Most hire the strategy and the system separately. Here they are born together." data-pt="A maioria contrata separado quem pensa a estratégia e quem constrói o sistema. Aqui nasce junto.">Most hire the strategy and the system separately. Here they are born together.</p>
     </div>
 
@@ -2264,7 +2249,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         </div>
         <h3 class="person__name">Bruno Amaral</h3>
         <p class="person__role" data-en="Marketing Strategist &amp; Branding Consultant" data-pt="Estrategista de Marketing &amp;amp; Consultor de Branding">Marketing Strategist &amp; Branding Consultant</p>
-        <p class="person__bio" data-en="Corning, Informa Markets, Ame Digital (Americanas S/A), Gipsyy, QuintoAndar — strategic vision, research and creative execution." data-pt="Corning, Informa Markets, Ame Digital (Americanas S/A), Gipsyy, QuintoAndar — visão estratégica, pesquisa e execução criativa.">Corning, Informa Markets, Ame Digital (Americanas S/A), Gipsyy, QuintoAndar — strategic vision, research and creative execution.</p>
+        <p class="person__bio" data-en="Bruno is from São Paulo, but has always been in touch with different cultures and social realities, and that still shapes how he sees brands and markets. He has worked at companies such as Corning, an American Fortune 500 multinational, Informa Markets, Ame Digital, part of Americanas S/A, and Gipsyy, always moving between strategy, research and creative execution. Today he works as a Marketing Consultant and Strategist, combining strategic vision with data and culture to build brands that make sense to the audiences they want to reach." data-pt="Bruno é paulistano, mas sempre teve contato com culturas e realidades sociais diferentes, e isso molda até hoje como ele enxerga marca e mercado. Passou por empresas como Corning, multinacional americana da Fortune 500, Informa Markets, Ame Digital, do grupo Americanas S/A, e Gipsyy. Sempre transitando entre estratégia, pesquisa e execução criativa. Hoje atua como Consultor e Estrategista de Marketing, combinando visão estratégica com dado e cultura pra construir marcas que fazem sentido pro público que elas querem alcançar.">Bruno is from São Paulo, but has always been in touch with different cultures and social realities, and that still shapes how he sees brands and markets. He has worked at companies such as Corning, an American Fortune 500 multinational, Informa Markets, Ame Digital, part of Americanas S/A, and Gipsyy, always moving between strategy, research and creative execution. Today he works as a Marketing Consultant and Strategist, combining strategic vision with data and culture to build brands that make sense to the audiences they want to reach.</p>
         <ul class="chips">
           <li>Branding</li>
           <li data-en="Market Research" data-pt="Pesquisa de Mercado">Market Research</li>
@@ -2284,7 +2269,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         </div>
         <h3 class="person__name">Matheus Silva</h3>
         <p class="person__role" data-en="Civil Eng., MSc in Structures &amp; Full-Stack Dev" data-pt="Eng. Civil, Mestre em Estruturas &amp;amp; Dev Full-Stack">Civil Eng., MSc in Structures &amp; Full-Stack Dev</p>
-        <p class="person__bio" data-en="Matheus is a civil engineer and software developer. At Casa Martech, he bridges marketing and technology, turning ideas and strategy into well-structured, secure digital solutions ready to grow." data-pt="Matheus é engenheiro civil e desenvolvedor de software. Na Casa Martech, faz a ponte entre marketing e tecnologia, transformando ideias e estratégias em soluções digitais bem estruturadas, seguras e preparadas para crescer.">Matheus is a civil engineer and software developer. At Casa Martech, he bridges marketing and technology, turning ideas and strategy into well-structured, secure digital solutions ready to grow.</p>
+        <p class="person__bio" data-en="Matheus is a civil engineer with a master's in structures and a software developer. He comes from scientific computing and computational physics, with research at INPE and development work at TQS, a background that shaped his rigour with models, data and systems. At Casa Martech he bridges marketing and technology, turning ideas and strategy into digital solutions that are well structured, secure and ready to grow." data-pt="Matheus é engenheiro civil, mestre em estruturas e desenvolvedor de software. Vem da programação científica e da física computacional, com pesquisa no INPE e desenvolvimento na TQS, formação que moldou o rigor com modelos, dados e sistemas. Na Casa Martech, faz a ponte entre marketing e tecnologia, transformando ideias e estratégias em soluções digitais bem estruturadas, seguras e preparadas para crescer.">Matheus is a civil engineer with a master's in structures and a software developer. He comes from scientific computing and computational physics, with research at INPE and development work at TQS, a background that shaped his rigour with models, data and systems. At Casa Martech he bridges marketing and technology, turning ideas and strategy into digital solutions that are well structured, secure and ready to grow.</p>
         <ul class="chips">
           <li data-en="Custom systems" data-pt="Sistemas sob medida">Custom systems</li>
           <li data-en="Dashboards &amp; Data" data-pt="Dashboards &amp;amp; Dados">Dashboards &amp; Data</li>
@@ -2314,37 +2299,57 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       <ul class="explorer__list" role="tablist" aria-orientation="vertical">
         <li role="presentation">
           <button class="explorer__item is-active" role="tab" type="button" id="diag-tab-0" aria-selected="true" aria-controls="diag-panel-0" data-front="b">
-            <span data-en="Marketing with no traceable results" data-pt="Marketing sem rastreabilidade de resultado">Marketing with no traceable results</span>
+            <span class="explorer__num">01</span>
+            <span data-en="Marketing" data-pt="Marketing">Marketing</span>
             <span class="explorer__dot" aria-hidden="true"></span>
           </button>
         </li>
         <li role="presentation">
           <button class="explorer__item" role="tab" type="button" id="diag-tab-1" aria-selected="false" aria-controls="diag-panel-1" data-front="t">
-            <span data-en="The operation grew, but the processes did not keep up" data-pt="A operação cresceu, mas os processos não acompanharam">The operation grew, but the processes did not keep up</span>
+            <span class="explorer__num">02</span>
+            <span data-en="Processes" data-pt="Processos">Processes</span>
             <span class="explorer__dot" aria-hidden="true"></span>
           </button>
         </li>
         <li role="presentation">
           <button class="explorer__item" role="tab" type="button" id="diag-tab-2" aria-selected="false" aria-controls="diag-panel-2" data-front="b">
-            <span data-en="The company sends out different messages" data-pt="A empresa comunica mensagens diferentes">The company sends out different messages</span>
+            <span class="explorer__num">03</span>
+            <span data-en="Communication" data-pt="Comunicação">Communication</span>
             <span class="explorer__dot" aria-hidden="true"></span>
           </button>
         </li>
         <li role="presentation">
           <button class="explorer__item" role="tab" type="button" id="diag-tab-3" aria-selected="false" aria-controls="diag-panel-3" data-front="t">
-            <span data-en="Scattered data, inconsistent numbers" data-pt="Dados dispersos, números inconsistentes">Scattered data, inconsistent numbers</span>
+            <span class="explorer__num">04</span>
+            <span data-en="Data" data-pt="Dados">Data</span>
             <span class="explorer__dot" aria-hidden="true"></span>
           </button>
         </li>
         <li role="presentation">
           <button class="explorer__item" role="tab" type="button" id="diag-tab-4" aria-selected="false" aria-controls="diag-panel-4" data-front="t">
-            <span data-en="Technology underused by the team" data-pt="Tecnologia subutilizada pela equipe">Technology underused by the team</span>
+            <span class="explorer__num">05</span>
+            <span data-en="Technology" data-pt="Tecnologia">Technology</span>
             <span class="explorer__dot" aria-hidden="true"></span>
           </button>
         </li>
         <li role="presentation">
           <button class="explorer__item" role="tab" type="button" id="diag-tab-5" aria-selected="false" aria-controls="diag-panel-5" data-front="t">
-            <span data-en="Project delivered with no continuity" data-pt="Projeto entregue sem continuidade">Project delivered with no continuity</span>
+            <span class="explorer__num">06</span>
+            <span data-en="Continuity" data-pt="Continuidade">Continuity</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="diag-tab-6" aria-selected="false" aria-controls="diag-panel-6" data-front="b">
+            <span class="explorer__num">07</span>
+            <span data-en="Research" data-pt="Pesquisa">Research</span>
+            <span class="explorer__dot" aria-hidden="true"></span>
+          </button>
+        </li>
+        <li role="presentation">
+          <button class="explorer__item" role="tab" type="button" id="diag-tab-7" aria-selected="false" aria-controls="diag-panel-7" data-front="t">
+            <span class="explorer__num">08</span>
+            <span data-en="Applied AI" data-pt="IA aplicada">Applied AI</span>
             <span class="explorer__dot" aria-hidden="true"></span>
           </button>
         </li>
@@ -2353,55 +2358,73 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         <div class="explorer__panel diag__panel is-active" role="tabpanel" id="diag-panel-0" aria-labelledby="diag-tab-0" data-front="b">
           <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="12" y="76" width="14" height="42" fill="rgba(201,162,78,0.4)" stroke="#E8C97A"></rect><rect x="32" y="62" width="14" height="56" fill="rgba(201,162,78,0.4)" stroke="#E8C97A"></rect><rect x="52" y="46" width="14" height="72" fill="rgba(201,162,78,0.4)" stroke="#E8C97A"></rect><path d="M80 32v92" opacity="0.35" stroke-dasharray="2 4"></path><rect x="94" y="70" width="14" height="48" stroke-dasharray="2 3" opacity="0.5"></rect><rect x="114" y="54" width="14" height="64" stroke-dasharray="2 3" opacity="0.5"></rect><rect x="134" y="84" width="14" height="34" stroke-dasharray="2 3" opacity="0.5"></rect><path d="M8 118h144" opacity="0.6"></path></g><g font-family="IBM Plex Mono, monospace" font-size="14" fill="#E8C97A"><text x="96" y="62">?</text><text x="116" y="46">?</text><text x="136" y="76">?</text></g><g font-family="IBM Plex Mono, monospace" font-size="8" letter-spacing="1.2" fill="#A6A39B"><text x="12" y="134" fill="#E8C97A" data-en="INVESTED" data-pt="INVESTIDO">INVESTED</text><text x="94" y="134" opacity="0.7" data-en="RETURNED" data-pt="RETORNO">RETURNED</text></g></svg>
           <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Marketing" data-pt="Marketing">Marketing</span></span>
-          <p class="diag__text" data-en="Spend goes out every month, yet it is hard to tell which actions actually generate opportunities and sales." data-pt="O investimento acontece todos os meses, mas é difícil identificar quais ações realmente geram oportunidades e vendas.">Spend goes out every month, yet it is hard to tell which actions actually generate opportunities and sales.</p>
+          <p class="diag__text" data-en="Money goes into marketing every month. Nobody can say for sure which action brought which sale." data-pt="Todo mês entra dinheiro em marketing. Ninguém consegue dizer com certeza qual ação trouxe qual venda.">Money goes into marketing every month. Nobody can say for sure which action brought which sale.</p>
           <ul class="diag__signs">
-            <li><i aria-hidden="true"></i><span data-en="Campaigns, content and events with no source tracking" data-pt="Campanhas, conteúdos e eventos sem rastreamento de origem">Campaigns, content and events with no source tracking</span></li>
-            <li><i aria-hidden="true"></i><span data-en="Budget set with little grounding in historical data" data-pt="Orçamento definido com pouca base em dados históricos">Budget set with little grounding in historical data</span></li>
+            <li><i aria-hidden="true"></i><span data-en="Campaign, content, event: all running, none tracked through to the sale" data-pt="Campanha, conteúdo, evento: tudo rodando, nada rastreado até a venda">Campaign, content, event: all running, none tracked through to the sale</span></li>
+            <li><i aria-hidden="true"></i><span data-en="Next month's budget decided the same way as last year's: on gut feeling" data-pt="Orçamento do mês que vem decidido do mesmo jeito que o do ano passado: no feeling">Next month's budget decided the same way as last year's: on gut feeling</span></li>
           </ul>
         </div>
         <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-1" aria-labelledby="diag-tab-1" data-front="t">
           <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="8" y="8" width="144" height="60" rx="4" fill="rgba(201,162,78,0.07)"></rect><g fill="#C9A24E" stroke="none"><circle cx="22" cy="22" r="3.2"></circle><circle cx="40" cy="20" r="3.2"></circle><circle cx="58" cy="24" r="3.2"></circle><circle cx="76" cy="20" r="3.2"></circle><circle cx="94" cy="24" r="3.2"></circle><circle cx="112" cy="20" r="3.2"></circle><circle cx="130" cy="24" r="3.2"></circle><circle cx="30" cy="38" r="3.2"></circle><circle cx="48" cy="40" r="3.2"></circle><circle cx="66" cy="38" r="3.2"></circle><circle cx="84" cy="42" r="3.2"></circle><circle cx="102" cy="38" r="3.2"></circle><circle cx="120" cy="42" r="3.2"></circle><circle cx="138" cy="38" r="3.2"></circle><circle cx="40" cy="56" r="3.2"></circle><circle cx="58" cy="58" r="3.2"></circle><circle cx="102" cy="58" r="3.2"></circle><circle cx="120" cy="56" r="3.2"></circle><circle cx="80" cy="60" r="3.2" fill="#E8C97A"></circle></g><path d="M8 68h60M92 68h60" stroke="#E8C97A" stroke-width="1.4"></path><path d="M68 68v60M92 68v60" stroke="#E8C97A"></path><circle cx="80" cy="82" r="3.2" fill="#C9A24E" stroke="none" opacity="0.8"></circle><circle cx="80" cy="102" r="3.2" fill="#C9A24E" stroke="none" opacity="0.5"></circle><circle cx="80" cy="122" r="3.2" fill="#C9A24E" stroke="none" opacity="0.25"></circle><path d="M14 90h40M14 100h30M14 110h36" stroke-dasharray="2 4" opacity="0.3"></path><path d="M106 90h40M106 100h32M106 110h38" stroke-dasharray="2 4" opacity="0.3"></path></g></svg>
           <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Processes" data-pt="Processos">Processes</span></span>
-          <p class="diag__text" data-en="More clients, more people and more demands — with processes still running as they did when the company was smaller." data-pt="Mais clientes, mais pessoas e mais demandas — com processos que continuam funcionando como quando a empresa era menor.">More clients, more people and more demands — with processes still running as they did when the company was smaller.</p>
+          <p class="diag__text" data-en="The company grew. The processes are still the ones from when it was small." data-pt="A empresa cresceu. Os processos ainda são os mesmos de quando ela era pequena.">The company grew. The processes are still the ones from when it was small.</p>
           <ul class="diag__signs">
-            <li><i aria-hidden="true"></i><span data-en="Information concentrated in a few people" data-pt="Informações concentradas em poucas pessoas">Information concentrated in a few people</span></li>
-            <li><i aria-hidden="true"></i><span data-en="Each team runs on its own spreadsheets and methods" data-pt="Cada área opera com suas próprias planilhas e métodos">Each team runs on its own spreadsheets and methods</span></li>
+            <li><i aria-hidden="true"></i><span data-en="If that person goes on holiday, nobody else knows how it works" data-pt="Se essa pessoa sai de férias, ninguém mais sabe como aquilo funciona">If that person goes on holiday, nobody else knows how it works</span></li>
+            <li><i aria-hidden="true"></i><span data-en="Each team with its own spreadsheet, its own way, its own version of the truth" data-pt="Cada área com sua planilha, seu jeito, sua versão da verdade">Each team with its own spreadsheet, its own way, its own version of the truth</span></li>
           </ul>
         </div>
         <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-2" aria-labelledby="diag-tab-2" data-front="b">
           <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><path d="M8 14a6 6 0 0 1 6-6h34a6 6 0 0 1 6 6v24a6 6 0 0 1-6 6H26l-8 8v-8h-4a6 6 0 0 1-6-6z" fill="rgba(201,162,78,0.12)"></path><path d="M16 20h26M16 27h18M16 34h22" stroke="#E8C97A" opacity="0.8"></path><path d="M57 14a6 6 0 0 1 6-6h34a6 6 0 0 1 6 6v24a6 6 0 0 1-6 6H80l-8 8v-8h-9a6 6 0 0 1-6-6z" fill="rgba(201,162,78,0.12)"></path><path d="M64 22q5-6 10 0t10 0 10 0M64 34q5-6 10 0t10 0 10 0" stroke="#E8C97A" opacity="0.8"></path><path d="M106 14a6 6 0 0 1 6-6h34a6 6 0 0 1 6 6v24a6 6 0 0 1-6 6h-6l-8 8v-8h-20a6 6 0 0 1-6-6z" fill="rgba(201,162,78,0.12)"></path><path d="M114 24l5-6 5 6 5-6 5 6 5-6 5 6M114 34l5-4 5 4 5-4 5 4" stroke="#E8C97A" opacity="0.8"></path><path d="M30 54v20q0 8 8 8h34M80 54v28M130 54v20q0 8-8 8H88" stroke-dasharray="2 4" opacity="0.5"></path><path d="M80 82v10" opacity="0.6"></path><circle cx="80" cy="104" r="11" fill="rgba(201,162,78,0.08)"></circle><path d="M62 134c0-10 8-16 18-16s18 6 18 16" fill="rgba(201,162,78,0.08)"></path></g><text x="76" y="109" font-family="IBM Plex Mono, monospace" font-size="13" fill="#E8C97A">?</text></svg>
           <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Communication" data-pt="Comunicação">Communication</span></span>
-          <p class="diag__text" data-en="Website, sales team and communications present the company in ways that are not always aligned." data-pt="Site, equipe comercial e comunicação apresentam a empresa de formas que nem sempre estão alinhadas.">Website, sales team and communications present the company in ways that are not always aligned.</p>
+          <p class="diag__text" data-en="The website says one thing. The salesperson says another. The sales material says a third." data-pt="O site fala uma coisa. O vendedor fala outra. O material de venda fala uma terceira.">The website says one thing. The salesperson says another. The sales material says a third.</p>
           <ul class="diag__signs">
-            <li><i aria-hidden="true"></i><span data-en="Sales proposals disconnected from the digital positioning" data-pt="Propostas comerciais desconectadas do posicionamento digital">Sales proposals disconnected from the digital positioning</span></li>
-            <li><i aria-hidden="true"></i><span data-en="Clients struggle to clearly understand the offer" data-pt="Dificuldade do cliente em compreender claramente a oferta">Clients struggle to clearly understand the offer</span></li>
+            <li><i aria-hidden="true"></i><span data-en="A sales proposal that looks like another company's, next to the website" data-pt="Proposta comercial que parece de outra empresa, comparada ao site">A sales proposal that looks like another company's, next to the website</span></li>
+            <li><i aria-hidden="true"></i><span data-en="The client leaves the meeting unsure of what they are buying" data-pt="O cliente termina a reunião sem saber direito o que está comprando">The client leaves the meeting unsure of what they are buying</span></li>
           </ul>
         </div>
         <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-3" aria-labelledby="diag-tab-3" data-front="t">
           <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="8" y="26" width="40" height="84" rx="4" fill="rgba(201,162,78,0.08)"></rect><path d="M14 34h20" opacity="0.6"></path><rect x="14" y="66" width="8" height="36" fill="rgba(201,162,78,0.25)"></rect><rect x="24" y="80" width="8" height="22" fill="rgba(201,162,78,0.25)"></rect><rect x="34" y="52" width="8" height="50" fill="rgba(201,162,78,0.5)" stroke="#E8C97A"></rect><rect x="60" y="26" width="40" height="84" rx="4" fill="rgba(201,162,78,0.08)"></rect><path d="M66 34h20" opacity="0.6"></path><rect x="66" y="66" width="8" height="36" fill="rgba(201,162,78,0.25)"></rect><rect x="76" y="80" width="8" height="22" fill="rgba(201,162,78,0.25)"></rect><rect x="86" y="74" width="8" height="28" fill="rgba(201,162,78,0.5)" stroke="#E8C97A"></rect><rect x="112" y="26" width="40" height="84" rx="4" fill="rgba(201,162,78,0.08)"></rect><path d="M118 34h20" opacity="0.6"></path><rect x="118" y="66" width="8" height="36" fill="rgba(201,162,78,0.25)"></rect><rect x="128" y="80" width="8" height="22" fill="rgba(201,162,78,0.25)"></rect><rect x="138" y="40" width="8" height="62" fill="rgba(201,162,78,0.5)" stroke="#E8C97A"></rect><path d="M14 102h28M66 102h28M118 102h28" opacity="0.6"></path></g><g font-family="IBM Plex Mono, monospace" font-size="14" fill="#E8C97A"><text x="49" y="72">≠</text><text x="101" y="72">≠</text></g><g font-family="IBM Plex Mono, monospace" font-size="8" letter-spacing="1.2" fill="#A6A39B" opacity="0.8"><text x="8" y="130" data-en="SAME INDICATOR" data-pt="MESMO INDICADOR">SAME INDICATOR</text><text x="112" y="130" data-en="3 SOURCES" data-pt="3 FONTES">3 SOURCES</text></g></svg>
           <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Data" data-pt="Dados">Data</span></span>
-          <p class="diag__text" data-en="Different sources show different results, making analysis slow and unreliable." data-pt="Fontes diferentes apresentam resultados diferentes, tornando a análise lenta e pouco confiável.">Different sources show different results, making analysis slow and unreliable.</p>
+          <p class="diag__text" data-en="Two spreadsheets, two different numbers for the same indicator. Nobody knows which one to trust." data-pt="Duas planilhas, dois números diferentes pro mesmo indicador. Ninguém sabe em qual confiar.">Two spreadsheets, two different numbers for the same indicator. Nobody knows which one to trust.</p>
           <ul class="diag__signs">
-            <li><i aria-hidden="true"></i><span data-en="Indicators consolidated by hand" data-pt="Consolidação de indicadores feita manualmente">Indicators consolidated by hand</span></li>
-            <li><i aria-hidden="true"></i><span data-en="Decisions made before the information is organised" data-pt="Decisões tomadas antes que a informação esteja organizada">Decisions made before the information is organised</span></li>
+            <li><i aria-hidden="true"></i><span data-en="Each team closes its own report before looking at the others'" data-pt="Cada área fecha o próprio relatório antes de olhar pro dos outros">Each team closes its own report before looking at the others'</span></li>
+            <li><i aria-hidden="true"></i><span data-en="The decision is made, and only later someone notices the number changed" data-pt="A decisão é tomada, e só depois alguém percebe que o número mudou">The decision is made, and only later someone notices the number changed</span></li>
           </ul>
         </div>
         <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-4" aria-labelledby="diag-tab-4" data-front="t">
           <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="34" y="8" width="118" height="72" rx="6" fill="rgba(201,162,78,0.07)"></rect><path d="M34 22h118" opacity="0.6"></path><circle cx="42" cy="15" r="1.6" fill="#C9A24E" stroke="none"></circle><circle cx="48" cy="15" r="1.6" fill="#C9A24E" stroke="none" opacity="0.6"></circle><rect x="44" y="30" width="30" height="20" rx="2" fill="rgba(201,162,78,0.45)" stroke="#E8C97A"></rect><rect x="80" y="30" width="30" height="20" rx="2" stroke-dasharray="2 3" opacity="0.35"></rect><rect x="116" y="30" width="28" height="20" rx="2" stroke-dasharray="2 3" opacity="0.35"></rect><rect x="44" y="54" width="30" height="20" rx="2" stroke-dasharray="2 3" opacity="0.35"></rect><rect x="80" y="54" width="30" height="20" rx="2" stroke-dasharray="2 3" opacity="0.35"></rect><rect x="116" y="54" width="28" height="20" rx="2" stroke-dasharray="2 3" opacity="0.35"></rect><path d="M6 40h38" stroke="#E8C97A" stroke-width="1.4"></path><path d="M6 40v60q0 10 10 10h34" stroke="#E8C97A" stroke-dasharray="3 4"></path><path d="M46 106l4 4-4 4" stroke="#E8C97A"></path><rect x="58" y="94" width="42" height="32" rx="3" fill="rgba(201,162,78,0.16)"></rect><path d="M58 104h42M58 115h42M72 94v32M86 94v32" opacity="0.6"></path><path d="M100 110h10" stroke="#E8C97A" stroke-dasharray="3 4"></path><path d="M116 96h30a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6h-14l-8 6v-6h-8a6 6 0 0 1-6-6v-14a6 6 0 0 1 6-6z" fill="rgba(201,162,78,0.16)"></path><path d="M122 107h20M122 114h12" opacity="0.6"></path></g></svg>
           <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Technology" data-pt="Tecnologia">Technology</span></span>
-          <p class="diag__text" data-en="The company invests in tools, but the operation still depends on parallel processes and manual controls." data-pt="A empresa investe em ferramentas, mas a operação continua dependendo de processos paralelos e controles manuais.">The company invests in tools, but the operation still depends on parallel processes and manual controls.</p>
+          <p class="diag__text" data-en="The company bought the right tool. The team keeps working as if it did not exist." data-pt="A empresa comprou a ferramenta certa. A equipe continua trabalhando como se ela não existisse.">The company bought the right tool. The team keeps working as if it did not exist.</p>
           <ul class="diag__signs">
-            <li><i aria-hidden="true"></i><span data-en="Systems that force the operation to adapt to the tool" data-pt="Sistemas que exigem que a operação se adapte à ferramenta">Systems that force the operation to adapt to the tool</span></li>
-            <li><i aria-hidden="true"></i><span data-en="Spreadsheets, messages and side controls to cover limitations" data-pt="Planilhas, mensagens e controles paralelos para suprir limitações">Spreadsheets, messages and side controls to cover limitations</span></li>
+            <li><i aria-hidden="true"></i><span data-en="A side spreadsheet to do what the system would already do on its own" data-pt="Planilha paralela pra fazer o que o sistema já faria sozinho">A side spreadsheet to do what the system would already do on its own</span></li>
+            <li><i aria-hidden="true"></i><span data-en="Nobody was properly trained, so nobody trusts the system" data-pt="Ninguém foi treinado direito, então ninguém confia no sistema">Nobody was properly trained, so nobody trusts the system</span></li>
           </ul>
         </div>
         <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-5" aria-labelledby="diag-tab-5" data-front="t">
           <svg class="pain__art pain__art--timeline" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><path d="M8 112h144" opacity="0.4"></path><path d="M8 112C30 110 48 96 68 60" stroke="#E8C97A" stroke-width="1.6"></path><circle cx="8" cy="112" r="3" fill="#C9A24E" stroke="none"></circle><circle cx="34" cy="104" r="3" fill="#C9A24E" stroke="none"></circle><circle cx="54" cy="86" r="3" fill="#C9A24E" stroke="none"></circle><circle cx="68" cy="60" r="4.5" fill="#E8C97A" stroke="none"></circle><path d="M68 60V22" stroke="#E8C97A"></path><path d="M68 22h30l-7 9 7 9H68z" fill="rgba(201,162,78,0.3)" stroke="#E8C97A"></path><path d="M68 60c14 0 26 4 38 12" stroke-dasharray="3 4" opacity="0.6"></path><path d="M106 72c12 8 22 18 30 30" stroke-dasharray="2 5" opacity="0.3"></path><circle cx="106" cy="72" r="3" opacity="0.6"></circle><circle cx="128" cy="90" r="3" opacity="0.35"></circle><path d="M96 112v-10M116 112v-8" opacity="0.4"></path><circle cx="96" cy="98" r="3" fill="rgba(201,162,78,0.25)" opacity="0.7"></circle><circle cx="116" cy="100" r="3" fill="rgba(201,162,78,0.25)" opacity="0.7"></circle></g><g font-family="IBM Plex Mono, monospace" font-size="8" letter-spacing="1.2" fill="#A6A39B"><text x="8" y="130" fill="#E8C97A" data-en="DELIVERY" data-pt="ENTREGA">DELIVERY</text><text x="88" y="130" opacity="0.6" data-en="LOOSE ENDS" data-pt="PENDÊNCIAS">LOOSE ENDS</text></g></svg>
           <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Continuity" data-pt="Continuidade">Continuity</span></span>
-          <p class="diag__text" data-en="The solution goes live, but improvements, adjustments and follow-up stop happening after delivery." data-pt="A solução entra em produção, mas evoluções, ajustes e acompanhamento deixam de acontecer depois da entrega.">The solution goes live, but improvements, adjustments and follow-up stop happening after delivery.</p>
+          <p class="diag__text" data-en="The project was delivered. Nobody has been back since." data-pt="O projeto foi entregue. Ninguém voltou lá desde então.">The project was delivered. Nobody has been back since.</p>
           <ul class="diag__signs">
-            <li><i aria-hidden="true"></i><span data-en="No maintenance or ongoing follow-up" data-pt="Ausência de manutenção e acompanhamento contínuo">No maintenance or ongoing follow-up</span></li>
-            <li><i aria-hidden="true"></i><span data-en="Loose ends piling up after launch" data-pt="Pendências acumuladas após o lançamento">Loose ends piling up after launch</span></li>
+            <li><i aria-hidden="true"></i><span data-en="A bug reported months ago, still on the same list" data-pt="Bug reportado há meses, ainda na mesma lista">A bug reported months ago, still on the same list</span></li>
+            <li><i aria-hidden="true"></i><span data-en="The vendor who delivered it no longer picks up the phone" data-pt="O fornecedor que entregou já nem atende mais o telefone">The vendor who delivered it no longer picks up the phone</span></li>
+          </ul>
+        </div>
+        <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-6" aria-labelledby="diag-tab-6" data-front="b">
+          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="8" y="10" width="64" height="44" rx="4" fill="rgba(201,162,78,0.12)"></rect><path d="M16 22h30M16 30h40M16 38h22" stroke="#E8C97A" opacity="0.8"></path><circle cx="24" cy="70" r="5" fill="rgba(201,162,78,0.35)"></circle><circle cx="40" cy="70" r="5" fill="rgba(201,162,78,0.35)"></circle><circle cx="56" cy="70" r="5" fill="rgba(201,162,78,0.35)"></circle><path d="M72 32h20" stroke="#E8C97A" stroke-dasharray="3 4"></path><path d="M92 32l4 4-4 4" stroke="#E8C97A"></path><g stroke-dasharray="2 3" opacity="0.5"><circle cx="112" cy="26" r="3.5"></circle><circle cx="128" cy="40" r="3.5"></circle><circle cx="144" cy="22" r="3.5"></circle><circle cx="120" cy="58" r="3.5"></circle><circle cx="140" cy="66" r="3.5"></circle><circle cx="104" cy="50" r="3.5"></circle><circle cx="148" cy="46" r="3.5"></circle></g><circle cx="126" cy="86" r="16" stroke="#E8C97A" opacity="0.8"></circle><path d="M137 97l14 14" stroke="#E8C97A" stroke-width="1.6"></path><path d="M8 118h144" opacity="0.6"></path></g><g font-family="IBM Plex Mono, monospace" font-size="8" letter-spacing="1.2" fill="#A6A39B"><text x="8" y="134" fill="#E8C97A" data-en="THE ROOM" data-pt="A SALA">THE ROOM</text><text x="104" y="134" opacity="0.7" data-en="THE MARKET" data-pt="O MERCADO">THE MARKET</text></g></svg>
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Research" data-pt="Pesquisa">Research</span></span>
+          <p class="diag__text" data-en="The company decides positioning, campaigns and even pricing on the gut feeling of whoever is in the room. Nobody asked the market first." data-pt="A empresa decide posicionamento, campanha e até preço no feeling de quem está na sala. Ninguém perguntou pro mercado antes.">The company decides positioning, campaigns and even pricing on the gut feeling of whoever is in the room. Nobody asked the market first.</p>
+          <ul class="diag__signs">
+            <li><i aria-hidden="true"></i><span data-en="A competitor launches something similar and the company is caught off guard" data-pt="Concorrente lança algo parecido e a empresa é pega de surpresa">A competitor launches something similar and the company is caught off guard</span></li>
+            <li><i aria-hidden="true"></i><span data-en="A campaign that looked good internally converts nobody" data-pt="Campanha que parecia boa internamente não converte ninguém">A campaign that looked good internally converts nobody</span></li>
+          </ul>
+        </div>
+        <div class="explorer__panel diag__panel" role="tabpanel" id="diag-panel-7" aria-labelledby="diag-tab-7" data-front="t">
+          <svg class="pain__art" viewBox="0 0 160 140" aria-hidden="true"><g stroke="#C9A24E" fill="none" stroke-width="1"><rect x="8" y="8" width="34" height="46" rx="3" fill="rgba(201,162,78,0.12)"></rect><rect x="8" y="62" width="34" height="46" rx="3" fill="rgba(201,162,78,0.12)"></rect><rect x="48" y="30" width="34" height="46" rx="3" fill="rgba(201,162,78,0.12)"></rect><path d="M14 18h22M14 26h16M14 34h20M14 42h12M14 72h22M14 80h14M14 88h20M14 96h16M54 40h22M54 48h14M54 56h20M54 64h12" stroke="#E8C97A" opacity="0.6"></path><path d="M82 52h14" stroke="#E8C97A" stroke-dasharray="3 4"></path><path d="M96 52l4 4-4 4" stroke="#E8C97A"></path><rect x="106" y="34" width="46" height="36" rx="4" fill="rgba(201,162,78,0.3)" stroke="#E8C97A"></rect><circle cx="121" cy="48" r="2.4" fill="#E8C97A" stroke="none"></circle><circle cx="137" cy="48" r="2.4" fill="#E8C97A" stroke="none"></circle><path d="M118 60h22" stroke="#E8C97A"></path><path d="M129 34v-10M124 24h10" stroke="#E8C97A" opacity="0.8"></path><path d="M129 70v18M116 88h26" stroke="#E8C97A" stroke-dasharray="2 4"></path><rect x="108" y="94" width="42" height="14" rx="2" fill="rgba(201,162,78,0.16)"></rect><path d="M114 101h30" stroke="#E8C97A" opacity="0.6"></path><path d="M8 118h144" opacity="0.6"></path></g><g font-family="IBM Plex Mono, monospace" font-size="8" letter-spacing="1.2" fill="#A6A39B"><text x="8" y="134" opacity="0.7" data-en="BY HAND" data-pt="À MÃO">BY HAND</text><text x="106" y="134" fill="#E8C97A" data-en="AUTOMATIC" data-pt="AUTOMÁTICO">AUTOMATIC</text></g></svg>
+          <span class="explorer__front"><i aria-hidden="true"></i><span data-en="Applied AI" data-pt="IA aplicada">Applied AI</span></span>
+          <p class="diag__text" data-en="Someone on the team spends hours reading contracts, spreadsheets or reports by hand. That could be automatic." data-pt="Alguém no time gasta hora lendo contrato, planilha ou relatório à mão. Isso podia ser automático.">Someone on the team spends hours reading contracts, spreadsheets or reports by hand. That could be automatic.</p>
+          <ul class="diag__signs">
+            <li><i aria-hidden="true"></i><span data-en="Expensive people's time spent on tasks that should belong to a machine" data-pt="Tempo de gente cara gasto em tarefa que devia ser de máquina">Expensive people's time spent on tasks that should belong to a machine</span></li>
+            <li><i aria-hidden="true"></i><span data-en="Human error in something repetitive that should never depend on a human" data-pt="Erro humano em algo repetitivo que nunca deveria depender de humano">Human error in something repetitive that should never depend on a human</span></li>
           </ul>
         </div>
       </div>
@@ -2594,12 +2617,13 @@ textarea.field__input { min-height: 120px; resize: vertical; }
     <div class="cases" tabindex="0" role="group" aria-label="Project cases; focusing pauses the auto-advance" data-en-aria-label="Project cases; focusing pauses the auto-advance" data-pt-aria-label="Casos de projeto; o foco pausa o avanço automático">
 <!-- Caso 01 ─────────────────────────────────────────────────── -->
     <article class="case case--featured reveal">
-  <!-- Capa: /img/casos/mediaportal.jpg, 1600×1956. É o print da home no ar
-       (mediaportal.com.br) desfocado, com o logo oficial por cima — a receita
-       está no README. O print legível roubava a leitura: a manchete do site
-       disputava com o título do caso, e quem passava lia o texto errado. Como
-       textura, ele continua dizendo "site escuro, azul, com vídeo" sem pedir
-       leitura, e o corte do cartão não tem onde errar. Sem o arquivo, a
+  <!-- Capa: /img/casos/mediaportal.png, 1000×1300 — composição, não print
+       inteiro: o recorte do hero (o player com o logo colorido e a legenda do
+       vídeo) ocupa os 585 px de cima e o resto é o azul do próprio site, com
+       um degradê de 60 px na emenda. Print de site legível não entra: a
+       manchete disputava a leitura com o título do caso e quem passava lia o
+       texto errado. A receita está no README. PNG porque é degradê chapado
+       com logo — em JPEG o fundo escuro ganha faixas. Sem o arquivo, a
        moldura tracejada aparece. -->
   <div class="case__cover case__cover--photo">
     <div class="case__media">
@@ -2609,23 +2633,23 @@ textarea.field__input { min-height: 120px; resize: vertical; }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="../img/casos/mediaportal.jpg" alt="Media Portal logo over the blurred website home" data-en-alt="Media Portal logo over the blurred website home" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Logo da Media Portal sobre a home do site, desfocada">
+          <img class="case__shot" src="../img/casos/mediaportal.png" alt="Video player with the Media Portal logo and the caption “Media Portal in under a minute”" data-en-alt="Video player with the Media Portal logo and the caption “Media Portal in under a minute”" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Player de vídeo com o logo da Media Portal e a legenda “Media Portal em menos de um minuto”">
         </div>
-        <span class="media__client">Media Portal Soluções</span>
-        <figcaption class="media__hint" data-en="Awaiting the real site screenshot" data-pt="Aguardando print real do site">Awaiting the real site screenshot</figcaption>
+        <span class="media__client">Media Portal Technology</span>
+        <figcaption class="media__hint" data-en="Awaiting the product page screenshot" data-pt="Aguardando print da página do produto">Awaiting the product page screenshot</figcaption>
       </figure>
     </div>
     <div class="case__caption">
-      <h3 class="case__title" data-en="Digital repositioning" data-pt="Reposicionamento digital">Digital repositioning</h3>
+      <h3 class="case__title" data-en="Media Portal Technology" data-pt="Media Portal Technology">Media Portal Technology</h3>
       <div class="case__reveal">
-        <p class="case__metric" data-en="18+ years of operation · full redesign" data-pt="18+ anos de operação · redesign completo">18+ years of operation · full redesign</p>
+        <p class="case__metric" data-en="Digital repositioning · full redesign" data-pt="Reposicionamento digital · redesign completo">Digital repositioning · full redesign</p>
         <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-01-details"><span class="is-open" data-en="See details ↓" data-pt="Ver detalhes ↓">See details ↓</span><span class="is-close" data-en="Close ↑" data-pt="Fechar ↑">Close ↑</span></button>
       </div>
     </div>
   </div>
 
   <div class="case__details" id="case-01-details" hidden="">
-    <p class="case__client">Media Portal Soluções</p>
+    <p class="case__client">Media Portal Technology</p>
     <span class="case__sector" data-en="Media &amp; Broadcast · joint" data-pt="Mídia &amp;amp; Broadcast · conjunto">Media &amp; Broadcast · joint</span>
     <div>
       <div class="case__block">
@@ -2648,14 +2672,6 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         <ul class="ficha__tags"><li>Next.js</li><li>TypeScript</li><li>Supabase</li><li>Vercel</li></ul>
       </div>
       <div class="ficha__cell">
-        <p class="ficha__label" data-en="Numbers" data-pt="Números">Numbers</p>
-        <ul class="ficha__list">
-          <li><b>18+</b> <span data-en="years of operation" data-pt="anos de operação">years of operation</span></li>
-          <li><b>3</b> <span data-en="months of initial cycle" data-pt="meses de ciclo inicial">months of initial cycle</span></li>
-          <li><b>2</b> <span data-en="weeks of scope definition" data-pt="semanas de definição de escopo">weeks of scope definition</span></li>
-        </ul>
-      </div>
-      <div class="ficha__cell">
         <p class="ficha__label" data-en="Architecture" data-pt="Arquitetura">Architecture</p>
         <ul class="ficha__list" data-en="&lt;li&gt;Relational database, auth and storage on Supabase&lt;/li&gt;&lt;li&gt;Institutional timeline driven by data&lt;/li&gt;&lt;li&gt;Product modules + partner ecosystem&lt;/li&gt;&lt;li&gt;Staging and production, assisted deploy&lt;/li&gt;" data-pt="&lt;li&gt;Banco relacional, auth e storage em Supabase&lt;/li&gt;&lt;li&gt;Linha do tempo institucional orientada a dados&lt;/li&gt;&lt;li&gt;Módulos de produto + ecossistema de parceiros&lt;/li&gt;&lt;li&gt;Homologação e produção, implantação assistida&lt;/li&gt;"><li>Relational database, auth and storage on Supabase</li><li>Institutional timeline driven by data</li><li>Product modules + partner ecosystem</li><li>Staging and production, assisted deploy</li></ul>
       </div>
@@ -2665,8 +2681,14 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 
     <!-- Caso 02 ─────────────────────────────────────────────────── -->
     <article class="case reveal">
-  <!-- Foto de capa: /img/casos/mindminers.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
-  <div class="case__cover case__cover--photo">
+  <!-- Peça: /img/casos/mindminers.jpg, 1566×877 — a abertura da apresentação
+       "Marketing Data Driven", montada na prancha (case__cover--piece) e não
+       cobrindo a capa: um slide de 1,8:1 numa capa de 0,95:1 perde metade da
+       largura, e o que se perde é o título dele. No modo peça o rótulo do
+       cliente sai da capa, que aqui era o que caía em cima do texto do slide.
+       Sem o arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--piece">
+    <img class="case__fundo" src="../img/casos/mindminers.jpg" alt="" aria-hidden="true" onerror="this.remove()">
     <div class="case__media">
       <figure class="media" data-slot="case-mindminers">
         <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
@@ -2674,7 +2696,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="../img/casos/mindminers.jpg" alt="Five young people on a park bench, laughing at their phones" data-en-alt="Five young people on a park bench, laughing at their phones" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Cinco jovens sentados num banco de praça, rindo enquanto olham o celular">
+          <img class="case__shot" src="../img/casos/mindminers.jpg" alt="Opening slide of Ame Digital's Marketing Data Driven talk: integrating market research and marketing analytics" data-en-alt="Opening slide of Ame Digital's Marketing Data Driven talk: integrating market research and marketing analytics" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Abertura da apresentação Marketing Data Driven da Ame Digital: integração entre pesquisa de mercado e marketing analytics">
         </div>
         <span class="media__client">Ame Digital × MindMiners</span>
         <figcaption class="media__hint" data-en="Awaiting the case screenshot" data-pt="Aguardando print do case">Awaiting the case screenshot</figcaption>
@@ -2730,14 +2752,11 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 
     <!-- Caso 03 ─────────────────────────────────────────────────── -->
     <article class="case reveal">
-  <!-- Peça de campanha: /img/casos/ame-x.jpg, montada na prancha na proporção
-       original (case__cover--piece) em vez de cobrir a capa — um banner de
-       3,7:1 cobrindo mostraria um terço de si. O que enche o resto do cartão é
-       o mesmo arquivo atrás, ampliado e desfocado (case__fundo): a cor da peça
-       toma a capa inteira e a arte continua inteira. Sem o arquivo, a moldura
-       tracejada aparece. -->
-  <div class="case__cover case__cover--piece">
-    <img class="case__fundo" src="../img/casos/ame-x.jpg" alt="" aria-hidden="true" onerror="this.remove()">
+  <!-- Foto de capa: /img/casos/ame-x.jpg, 1600×1066 (paisagem), cobrindo o
+       cartão. O banner de campanha que estava aqui pedia a prancha
+       (case__cover--piece, que o FundaCalc ainda usa); a foto não. Sem o
+       arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--photo">
     <div class="case__media">
       <figure class="media" data-slot="case-x">
         <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
@@ -2745,7 +2764,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="../img/casos/ame-x.jpg" alt="Ame's Cashback Friday banner: get your Ame card and earn up to 100% cashback" data-en-alt="Ame's Cashback Friday banner: get your Ame card and earn up to 100% cashback" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Banner da Ame para a Cashback Friday: peça seu Cartão Ame e ganhe até 100% de cashback">
+          <img class="case__shot" src="../img/casos/ame-x.jpg" alt="Five young people on a park bench, laughing at their phones" data-en-alt="Five young people on a park bench, laughing at their phones" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Cinco jovens sentados num banco de praça, rindo enquanto olham o celular">
         </div>
         <span class="media__client">Ame Digital × X (Twitter)</span>
         <figcaption class="media__hint" data-en="Awaiting the case screenshot" data-pt="Aguardando print do case">Awaiting the case screenshot</figcaption>
@@ -2985,9 +3004,9 @@ textarea.field__input { min-height: 120px; resize: vertical; }
           </div>
         </article>
 <article class="more-card reveal">
-          <!-- Imagem: /img/projetos/gipsyy.jpg (paisagem). Sem o arquivo, a moldura tracejada aparece. -->
+          <!-- Imagem: /img/projetos/gipsyy.jpg, 807×888 — o cabeçalho da landing "Friday do Futuro". Sem o arquivo, a moldura tracejada aparece. -->
           <div class="more-card__media" data-slot="more-gipsyy">
-            <img src="../img/projetos/gipsyy.jpg" alt="" onerror="this.parentNode.classList.add('is-empty')">
+            <img src="../img/projetos/gipsyy.jpg" alt="Header of Gipsyy's Friday do Futuro landing: a fortune teller over a glowing crystal ball" data-en-alt="Header of Gipsyy's Friday do Futuro landing: a fortune teller over a glowing crystal ball" onerror="this.parentNode.classList.add('is-empty')" data-pt-alt="Cabeçalho da landing Friday do Futuro da Gipsyy: cigana sobre uma bola de cristal iluminada">
             <figure class="media">
               <span class="media__client">Gipsyy</span>
               <figcaption class="media__hint" data-en="Screenshot pending" data-pt="Screenshot pendente">Screenshot pending</figcaption>
@@ -3000,6 +3019,31 @@ textarea.field__input { min-height: 120px; resize: vertical; }
           </div>
         </article>
 </div>
+    </div>
+  </div>
+  <div class="proof">
+    <div class="container">
+      <span class="proof__label" data-en="We've made history with..." data-pt="Já fizemos história com...">We've made history with...</span>
+    </div>
+    <div class="marquee" tabindex="0" role="group" aria-label="Clients served; focusing pauses the scrolling" data-en-aria-label="Clients served; focusing pauses the scrolling" data-pt-aria-label="Clientes atendidos; o foco pausa a rolagem">
+      <div class="marquee__track">
+        <!-- Só os nomes, na mesma serifa: os <img> apontavam para logos que
+             nunca existiram e cada card gastava um 404 para cair no texto. -->
+        <ul class="proof__list">
+          <li><span>Corning</span></li>
+          <li><span>Informa Markets</span></li>
+          <li><span>Ame Digital</span></li>
+          <li><span>Gipsyy</span></li>
+          <li><span>Media Portal Technology</span></li>
+        </ul>
+        <ul class="proof__list" aria-hidden="true">
+          <li><span>Corning</span></li>
+          <li><span>Informa Markets</span></li>
+          <li><span>Ame Digital</span></li>
+          <li><span>Gipsyy</span></li>
+          <li><span>Media Portal Technology</span></li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
@@ -3017,22 +3061,26 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       <li class="step reveal">
         <span class="step__number">01</span>
         <h3 class="step__title" data-en="Diagnosis" data-pt="Diagnóstico">Diagnosis</h3>
-        <p class="step__text" data-en="Business, current brand, processes." data-pt="Negócio, marca atual, processos.">Business, current brand, processes.</p>
+        <ul class="step__text step__list"><li><i aria-hidden="true"></i><span data-en="Business" data-pt="Negócio">Business</span></li><li><i aria-hidden="true"></i><span data-en="Current brand" data-pt="Marca atual">Current brand</span></li><li><i aria-hidden="true"></i><span data-en="Processes" data-pt="Processos">Processes</span></li></ul>
+        <i class="step__timer" aria-hidden="true"></i>
       </li>
       <li class="step reveal">
         <span class="step__number">02</span>
         <h3 class="step__title" data-en="Scope &amp; schedule" data-pt="Escopo &amp;amp; cronograma">Scope &amp; schedule</h3>
-        <p class="step__text" data-en="Positioning, screens, order of execution." data-pt="Posicionamento, telas, ordem de execução.">Positioning, screens, order of execution.</p>
+        <ul class="step__text step__list"><li><i aria-hidden="true"></i><span data-en="Positioning" data-pt="Posicionamento">Positioning</span></li><li><i aria-hidden="true"></i><span data-en="Screens" data-pt="Telas">Screens</span></li><li><i aria-hidden="true"></i><span data-en="Order of execution" data-pt="Ordem de execução">Order of execution</span></li></ul>
+        <i class="step__timer" aria-hidden="true"></i>
       </li>
       <li class="step reveal">
         <span class="step__number">03</span>
         <h3 class="step__title" data-en="Incremental build" data-pt="Construção incremental">Incremental build</h3>
-        <p class="step__text" data-en="Brand and system evolve in parallel." data-pt="Marca e sistema evoluem em paralelo.">Brand and system evolve in parallel.</p>
+        <ul class="step__text step__list"><li><i aria-hidden="true"></i><span data-en="Brand and system in parallel" data-pt="Marca e sistema em paralelo">Brand and system in parallel</span></li><li><i aria-hidden="true"></i><span data-en="Reviews per cycle" data-pt="Revisões por ciclo">Reviews per cycle</span></li></ul>
+        <i class="step__timer" aria-hidden="true"></i>
       </li>
       <li class="step reveal">
         <span class="step__number">04</span>
         <h3 class="step__title" data-en="Launch &amp; evolution" data-pt="Entrega &amp;amp; evolução">Launch &amp; evolution</h3>
-        <p class="step__text" data-en="We publish, follow up, adjust." data-pt="Publicamos, acompanhamos, ajustamos.">We publish, follow up, adjust.</p>
+        <ul class="step__text step__list"><li><i aria-hidden="true"></i><span data-en="We publish" data-pt="Publicamos">We publish</span></li><li><i aria-hidden="true"></i><span data-en="We follow up" data-pt="Acompanhamos">We follow up</span></li><li><i aria-hidden="true"></i><span data-en="We adjust" data-pt="Ajustamos">We adjust</span></li></ul>
+        <i class="step__timer" aria-hidden="true"></i>
       </li>
     </ol>
   </div>
@@ -3043,7 +3091,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   <div class="container contact__inner">
     <div class="contact__main reveal">
       <h2 class="contact__title" data-en="Shall we build your brand and the system behind it?" data-pt="Vamos construir sua marca e o sistema por trás dela?">Shall we build your brand and the system behind it?</h2>
-      <p class="contact__text" data-en="Tell us a bit about where your business stands. We reply within one business day." data-pt="Conte um pouco sobre o momento do seu negócio. Respondemos em até 1 dia útil.">Tell us a bit about where your business stands. We reply within one business day.</p>
+      <p class="contact__text" data-en="Tell us a bit about where your business stands." data-pt="Conte um pouco sobre o momento do seu negócio.">Tell us a bit about where your business stands.</p>
 
       <div class="contact__links">
         <a href="https://wa.me/5511999773471?text=Hi%2C%20I%20saw%20the%20portfolio%20and%20would%20like%20to%20talk%20about%20a%20project." data-en-href="https://wa.me/5511999773471?text=Hi%2C%20I%20saw%20the%20portfolio%20and%20would%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener" data-en="WhatsApp — talk now" data-pt="WhatsApp — falar agora" data-pt-href="https://wa.me/5511999773471?text=Ol%C3%A1%2C%20vi%20o%20portf%C3%B3lio%20e%20quero%20conversar%20sobre%20um%20projeto.">WhatsApp — talk now</a>
@@ -3112,7 +3160,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         <button type="submit" class="lead__submit"><span data-en="Send" data-pt="Enviar">Send</span></button>
         <a class="lead__wa" href="https://wa.me/5511999773471?text=Hi%2C%20I%20saw%20the%20CASA%20MARTECH%20site%20and%20would%20like%20to%20talk%20about%20a%20project." data-en-href="https://wa.me/5511999773471?text=Hi%2C%20I%20saw%20the%20CASA%20MARTECH%20site%20and%20would%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener" data-pt-href="https://wa.me/5511999773471?text=Ol%C3%A1%2C%20vi%20o%20site%20da%20CASA%20MARTECH%20e%20quero%20conversar%20sobre%20um%20projeto."><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2m0 1.67c4.54 0 8.24 3.7 8.24 8.24s-3.7 8.24-8.24 8.24c-1.48 0-2.93-.4-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24M8.53 7.33c-.16 0-.43.06-.66.31-.22.25-.87.86-.87 2.07 0 1.22.89 2.39 1 2.56.14.17 1.76 2.67 4.25 3.73.59.27 1.05.42 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.16-.48-.27-.25-.14-1.47-.74-1.69-.82-.23-.08-.37-.12-.56.12-.16.25-.64.81-.78.97-.15.17-.29.19-.53.07-.26-.13-1.06-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.12-.24-.01-.39.11-.5.11-.11.27-.29.37-.44.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.11-.56-1.35-.77-1.84-.2-.48-.4-.42-.56-.43-.14 0-.3-.01-.47-.01"></path></svg><span data-en="Talk on WhatsApp" data-pt="Falar no WhatsApp">Talk on WhatsApp</span></a>
       </div>
-      <p class="lead__done" id="lead-ok" role="status" hidden=""><span data-en="We got it. We reply within one business day, at the contact you left." data-pt="Recebemos. Respondemos em até 1 dia útil, no contato que você deixou.">We got it. We reply within one business day, at the contact you left.</span></p>
+      <p class="lead__done" id="lead-ok" role="status" hidden=""><span data-en="We got it. We'll get back to you at the contact you left." data-pt="Recebemos. Retornamos no contato que você deixou.">We got it. We'll get back to you at the contact you left.</span></p>
       <p class="lead__done lead__done--erro" id="lead-erro" role="status" hidden=""><span data-en="We couldn't register your message now. Talk to us on WhatsApp or by e-mail." data-pt="Não conseguimos registrar sua mensagem agora. Fale com a gente no WhatsApp ou por e-mail.">We couldn't register your message now. Talk to us on WhatsApp or by e-mail.</span></p>
       <p class="lead__foot">
         <button type="button" class="info" aria-describedby="lead-nota" aria-label="What we do with your data" data-en-aria-label="What we do with your data" data-pt-aria-label="O que fazemos com os seus dados"><span aria-hidden="true">i</span></button>
@@ -3513,12 +3561,14 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         diagnostico: { fx: 1 - (wide ? (T.W - crr) / T.W * 0.5 : 0.02), fy: 0.22, k: 0.46 }, /* margem direita, altura do título */
         servicos:    { fx: wide ? cl / T.W * 0.5 : 0.02, fy: 0.55, k: 0.42 },
         cases:       { fx: 1 - (wide ? (T.W - crr) / T.W * 0.5 : 0.02), fy: 0.55, k: 0.48 }, /* margem direita, entre cases e outros projetos */
-        processo:    { fx: wide ? cl / T.W * 0.5 : 0.02, fy: 0.5, k: 0.4 },
+        processo:    [{ fx: wide ? cl / T.W * 0.5 : 0.02, fy: 0.5, k: 0.4 },
+                      { fx: 1 - (wide ? (T.W - crr) / T.W * 0.35 : 0.02), fy: 0.7, k: 0.32 }], /* margem direita, menor e mais para fora, na altura dos últimos passos */
         contato:     { fx: wide ? (cl + (crr - cl) * 0.2) / T.W : 0.25, fy: 0.72, k: 0.4 } /* vazio sob o texto da coluna esquerda */
       };
       SECTIONS.forEach(function (id, si) {
-        var r = rects[si], sp = SPOTS[id]; if (!r || !sp) return;
-        var top = r.top + sy, h = r.height, tone = TONES[id], seed = si * 53;
+        var r = rects[si], spots = SPOTS[id]; if (!r || !spots) return;
+        (Array.isArray(spots) ? spots : [spots]).forEach(function (sp, k) {
+        var top = r.top + sy, h = r.height, tone = TONES[id], seed = si * 53 + k * 17;
         /* a rota de cada foco: amplitude proporcional à janela e à altura da
            seção, e cinco períodos entre 41 s e 144 s que não se dividem uns
            pelos outros — a soma deles não repete o mesmo caminho no tempo em
@@ -3534,6 +3584,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
           w4: TAU / (49 + rnd(seed + 8) * 26), p4: rnd(seed + 9) * TAU,
           w5: TAU / (63 + rnd(seed + 10) * 37), p5: rnd(seed + 11) * TAU,
           glow: (old[T.pools.length] || {}).glow || 0
+        });
         });
       });
     }
@@ -3596,6 +3647,46 @@ textarea.field__input { min-height: 120px; resize: vertical; }
     fit(); start();
     var ft = null;
     window.addEventListener('resize', function () { clearTimeout(ft); ft = setTimeout(fit, 120); });
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
+  })();
+
+  /* ─── "Como trabalhamos": revezamento dos passos ───────────────────
+     Mesmo ritmo do explorador: um passo aceso por vez, linha de tempo,
+     clique fixa, mouse segura, fora da tela para. */
+  (function () {
+    var list = document.querySelector('.steps');
+    if (!list) return;
+    var rm = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var steps = Array.prototype.slice.call(list.querySelectorAll('.step'));
+    if (steps.length < 2 || rm.matches) return;
+    var DWELL = 4000, cur = 0, timer = null, pinned = false, hover = false, visible = false;
+    list.classList.add('is-cycling');
+    list.style.setProperty('--dwell', DWELL + 'ms');
+    function running() { return !pinned && !hover && visible; }
+    function show(i) {
+      cur = i;
+      steps.forEach(function (s, k) {
+        var on = k === i;
+        s.classList.remove('is-timing');
+        s.classList.remove('is-active');
+        if (on) { void s.offsetWidth; s.classList.add('is-active'); }
+      });
+      if (running()) { void steps[i].offsetWidth; steps[i].classList.add('is-timing'); }
+    }
+    function stop() { clearTimeout(timer); timer = null; steps.forEach(function (s) { s.classList.remove('is-timing'); }); }
+    function start() {
+      stop();
+      if (!running()) return;
+      void steps[cur].offsetWidth; steps[cur].classList.add('is-timing');
+      timer = setTimeout(function step() { show((cur + 1) % steps.length); timer = setTimeout(step, DWELL); }, DWELL);
+    }
+    steps.forEach(function (s, k) { s.addEventListener('click', function () { pinned = true; stop(); show(k); }); });
+    list.addEventListener('pointerenter', function () { hover = true; stop(); });
+    list.addEventListener('pointerleave', function () { hover = false; start(); });
+    show(0);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) { visible = entries[0].isIntersecting; if (visible) start(); else stop(); }, { threshold: 0.4 }).observe(list);
+    } else { visible = true; start(); }
     document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
   })();
 

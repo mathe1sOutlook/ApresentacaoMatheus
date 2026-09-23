@@ -177,7 +177,14 @@ ficar numa pasta servida pela Vercel.
   explorador seguem valendo; a rede de luz e as ilustrações, não.
 - `docs/handoff-focos-e-iconografia.md` — a rodada de 22/09/2026, que trocou a
   rede de luz por seis focos desfocados e redesenhou as seis ilustrações do
-  diagnóstico. É o handoff em vigor para o fundo e para a iconografia.
+  diagnóstico. É o handoff em vigor para o fundo e para a iconografia; a rodada
+  seguinte acrescentou um sétimo foco e mais duas ilustrações.
+- `docs/handoff-reestruturacao-de-branding.md` — a rodada de 23/09/2026: hero e
+  bios reescritos, o diagnóstico de seis para oito áreas, a faixa de clientes
+  do hero para o fim dos cases, capas novas em três casos, "Como trabalhamos"
+  em revezamento e um segundo foco no `#processo`. Traz também o que a
+  implementação decidiu por conta própria — a peneira das imagens e dois
+  ajustes de enquadramento.
 
 ## Convenções gerais
 

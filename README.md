@@ -174,8 +174,8 @@ mudarem, é o script que muda — e as duas imagens são versionadas junto.
 O "Iniciar conversa" em `#contato` grava o lead na tabela
 `amaralesilva_leads` do Supabase (projeto `mApps`), via REST com a chave
 publicável, e responde na própria página — **Enviar não abre mais o
-WhatsApp**. Deu certo, entra a faixa "Recebemos. Respondemos em até 1 dia
-útil" e o formulário se limpa; falhou (rede fora, 4xx/5xx — `fetch` não
+WhatsApp**. Deu certo, entra a faixa "Recebemos. Retornamos no contato que
+você deixou" e o formulário se limpa; falhou (rede fora, 4xx/5xx — `fetch` não
 reclama de status, quem recusa é o nosso `res.ok`), entra a faixa de erro
 apontando o WhatsApp e o e-mail, e o que foi digitado fica onde está. As
 duas faixas são `role="status"`, para leitor de tela anunciar.
@@ -278,6 +278,13 @@ o script. Sem JavaScript, ou com `prefers-reduced-motion`, o CSS continua
 mandando. Só o foco de teclado pausa: é o jeito de ler a faixa parada, e é
 o que a `aria-label` do grupo promete.
 
+Ela é **só texto**, na serifa do site. Os `<img>` de logo apontavam para
+arquivos que nunca chegaram, cada cartão gastava um 404 para cair no nome
+escrito, e o que se via era sempre a mesma serifa — em setembro isso virou a
+forma, não o plano B. A lista saiu do hero e foi para o fim dos cases, onde
+os nomes chegam depois do trabalho, e acompanha as empresas da bio do Bruno:
+Corning, Informa Markets, Ame Digital, Gipsyy e Media Portal Technology.
+
 Abaixo de 640px o `#servicos` troca o explorador por duas abas — Marca e
 Tecnologia — que se revezam a cada 6s enquanto a seção está na tela; uma
 barra fina sob a aba ativa marca o tempo, e tocar numa aba fixa aquela frente
@@ -339,15 +346,6 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
 
 ## Pendências
 
-- **Logos da faixa "já fizemos história com..."** — `/img/logos/<slug>.svg`
-  (corning, ame, quintoandar, mediaportal, informa, gipsyy), monocromáticos; o
-  CSS pinta de creme. Sem o arquivo, fica o nome em texto — que é como os
-  **seis** estão hoje: o `corning.svg`, único que existia, saiu na rodada de
-  setembro e a faixa ficou toda na mesma serifa. O
-  arquivo precisa ter **fundo transparente**: o filtro que pinta de creme
-  (`brightness(0) invert(0.93)`) pinta tudo que não é transparente, então um
-  retângulo de fundo vira um bloco chapado. Serve SVG ou PNG com alpha; se for
-  PNG, trocar a extensão no `src` das duas listas da faixa.
 - **Vercel Web Analytics** — o site já carrega `/_vercel/insights/script.js`;
   só começa a contar depois de ativar *Analytics* no projeto na Vercel.
 - **Imagens dos casos e projetos** — cada card aponta para um arquivo em
@@ -356,33 +354,44 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   `/img/projetos/` (amwc, ame-tom-de-voz, gipsyy). **Esta lista é a seleção
   aprovada; não acrescentar nomes sem aprovação** — os cases retirados na
   rodada 2 não voltam. Já estão no ar: `corning` (foto do barco), `mindminers`
-  (banco de praça), `ame-x` (banner Cashback Friday), `mediaportal` (a home do
-  site desfocada com o logo por cima), `fundacalc` e `fundacalc-spt` (a
-  treliça em 3D e o perfil de sondagem, recortados dos prints), `amwc` (cartaz) e `ame-tom-de-voz` (banner do
-  super app + grade de serviços). **Falta `gipsyy`.** Basta salvar o arquivo
-  com esse nome; enquanto ele não existe, o `onerror` do `<img>` deixa a capa na
-  moldura de espera sobre uma malha de desenho (as imagens ausentes respondem
-  404, que é barato). O que está no ar é JPEG progressivo, 1600 px de largura
-  nas capas e o tamanho original nos cards; WebP/AVIF fica para quando houver
-  pipeline de imagem.
+  (a abertura da apresentação "Marketing Data Driven"), `ame-x` (o banco de
+  praça), `mediaportal` (o player do site com o logo, ver a receita adiante),
+  `fundacalc` e `fundacalc-spt` (a treliça em 3D e o perfil de sondagem,
+  recortados dos prints), `amwc` (cartaz), `ame-tom-de-voz` (banner do super
+  app + grade de serviços) e `gipsyy` (o cabeçalho da landing "Friday do
+  Futuro"). Nenhuma falta mais; se uma sumir, o `onerror` do `<img>` deixa a
+  capa na moldura de espera sobre uma malha de desenho (as imagens ausentes
+  respondem 404, que é barato). O que está no ar é JPEG progressivo, 1600 px
+  de largura nas capas e o tamanho original nos cards; WebP/AVIF fica para
+  quando houver pipeline de imagem. A exceção é `mediaportal.png`, que é
+  composição e não fotografia: em JPEG o degradê do fundo escuro ganha faixas.
+  **Arquivo que chega do design passa por uma peneira antes de entrar**: o
+  pacote de setembro trouxe 3,2 MB em quatro imagens e foi para 938 KB sem
+  perda visível — o ponteiro do mouse tinha ficado gravado no slide da
+  MindMiners, a captura trouxe cinco colunas pretas na direita dele, e as
+  fotos vinham em PNG.
   Uma capa de caso tem dois modos. **Foto** (`case__cover--photo`) cobre o
   card inteiro, com degradê para a legenda ler. **Peça** (`case__cover--piece`)
-  é para banner e anúncio: a imagem fica montada na prancha, na proporção em
-  que foi feita — cobrindo, um banner de 3,7:1 numa capa quase quadrada
-  mostraria um terço de si. O `onerror` de cada `<img>` remove a classe do seu
+  é para banner, anúncio e slide: a imagem fica montada na prancha, na
+  proporção em que foi feita — cobrindo, um banner de 3,7:1 numa capa quase
+  quadrada mostraria um terço de si. **O que decide não é a origem do arquivo,
+  é se ele tem texto.** A capa mede 438×460 (0,95:1); o slide da MindMiners é
+  1,79:1, e cobrindo perdia metade da largura, justamente a metade onde está o
+  título dele — e o rótulo do cliente, que no modo foto fica sobre a imagem,
+  caía em cima da linha de texto do slide. No modo peça esse rótulo some (o CSS
+  já o esconde) e a peça aparece inteira. Foto aguenta o corte; arte com texto
+  não. O `onerror` de cada `<img>` remove a classe do seu
   modo, e a capa volta para a moldura de espera.
   **Print de site não entra legível.** O do Media Portal entrou, e a manchete
   do site disputava a leitura com o título do caso — quem passava lia o texto
-  errado. A capa de hoje é o mesmo print virado textura: desfocado, escurecido
-  e com o logo oficial da marca por cima, que é o que se quer comunicar.
-  Também resolve o corte, porque uma textura não tem onde ser decepada — a
-  capa é quase quadrada no desktop e bem mais alta no celular.
-  A receita, para refazer se o site mudar: print da home em 1440px de largura
-  (só a primeira dobra), desfoque gaussiano de ~28px sobre 1600px, altas luzes
-  comprimidas (o painel branco do vídeo vira brilho, não bloco), sombra radial
-  atrás do logo, véu escurecendo o terço de baixo — é lá que caem título,
-  métrica e botão — e o logo branco da marca a 31% da largura, centrado a 32%
-  da altura. Resultado: 1600×1956, retrato.
+  errado. A saída, de setembro: em vez do print inteiro, um recorte que fala
+  sozinho. A capa é uma composição de 1000×1300 — o player de vídeo do hero,
+  com o logo colorido e a legenda "Media Portal em menos de um minuto", nos
+  585 px de cima, o azul do próprio site embaixo e um degradê de 60 px na
+  emenda. O título do caso cai sobre a metade escura, longe do logo. A receita,
+  para refazer se o site mudar: print do hero de `mediaportal.com.br` em
+  2827×1248, região x 1300–2530 e y 96–816, sobre um fundo na cor amostrada do
+  site.
   **Peça de campanha ganha o próprio fundo** (`case__fundo`): o mesmo arquivo
   entra atrás, ampliado e desfocado, para a cor da peça tomar o cartão inteiro.
   A prancha vazia em volta de um banner era espaço morto, e uma segunda imagem
