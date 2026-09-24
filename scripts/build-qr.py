@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Gera img/qr.svg e img/qr-print.svg — o QR que vai em cartão, crachá e proposta.
 
-O endereço do site é a única coisa que muda aqui. Quando a CASA MARTECH tiver
-domínio próprio, troque SITE e rode de novo; o material já impresso continua
-funcionando enquanto o endereço antigo estiver anexado ao projeto na Vercel.
+O endereço do site é a única coisa que muda aqui. Se o domínio mudar, troque
+SITE e rode de novo; o material já impresso continua funcionando enquanto o
+endereço antigo estiver anexado ao projeto na Vercel.
 
 Uso (dev): pip install segno && python3 scripts/build-qr.py
 
@@ -14,7 +14,7 @@ módulos pretos — é o que mantém o arquivo pequeno e nítido em qualquer tam
 import segno
 from pathlib import Path
 
-SITE = 'https://casamartech.vercel.app/?utm_source=qr'
+SITE = 'https://www.casamartech.com.br/?utm_source=qr'
 RAIZ = Path(__file__).resolve().parent.parent
 
 TEMAS = {

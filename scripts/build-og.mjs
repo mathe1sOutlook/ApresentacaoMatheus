@@ -19,8 +19,8 @@ const FONTS = {
   mono: font('plex-mono-normal-latin.woff2'),
 };
 
-// O endereço técnico atual. Quando a CASA MARTECH tiver domínio próprio, muda aqui.
-const SITE = 'casamartech.vercel.app';
+// O endereço do site. Se o domínio mudar, muda aqui.
+const SITE = 'casamartech.com.br';
 
 const CARDS = {
   'og.png': {
