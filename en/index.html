@@ -2888,14 +2888,14 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 
     <!-- Caso 05 ────────────────────────────────────── -->
     <article class="case reveal">
-  <!-- Duas peças de 1320×600, montadas na prancha (case__cover--piece) e não
-       cobrindo a capa: a faixa corre entre elas. /img/casos/fundacalc.jpg é a
-       treliça — bielas amarelas descendo do pilar, tirantes azuis ligando as
-       cabeças — e /img/casos/fundacalc-spt.jpg é o perfil de sondagem com as
-       curvas de capacidade e recalque. As duas são recorte do print, não a tela
-       inteira: num cartão de 375px uma interface desenhada para 1900 vira cinza
+  <!-- Três peças de 1320×600, montadas na prancha (case__cover--piece) e não
+       cobrindo a capa: a faixa corre entre elas. /img/casos/fundacalc.jpg é o
+       bloco em 3D com os tirantes coloridos pela força,
+       /img/casos/fundacalc-planta.jpg é a planta com a reação de cada estaca e
+       /img/casos/fundacalc-molas.jpg é a sondagem com as molas do solo. As três
+       são recorte do print, não a tela inteira: num cartão de 375px uma interface desenhada para 1900 vira cinza
        e não se lê nada; recortada na parte que fala sozinha, ela é reconhecível
-       sem ser lida. Proporção idêntica nas duas, senão a faixa assume a
+       sem ser lida. Proporção idêntica nas três, senão a faixa assume a
        altura da mais alta. O fundo é a primeira ampliada e desfocada, como em
        toda peça; como a arte é clara, a capa leva `case__cover--claro`, que
        põe o véu no pé para o título e a métrica lerem sem apagar a cor do
@@ -2905,8 +2905,9 @@ textarea.field__input { min-height: 120px; resize: vertical; }
     <div class="case__media">
       <figure class="media" data-slot="case-fundacalc">
         <div class="case__shots">
-          <img class="case__shot" src="../img/casos/fundacalc.jpg" alt="The pile cap truss in 3D: struts running from the column down to the seven pile heads, with ties linking the heads to one another" data-en-alt="The pile cap truss in 3D: struts running from the column down to the seven pile heads, with ties linking the heads to one another" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="A treliça do bloco em 3D: bielas descendo do pilar até as cabeças das sete estacas, e os tirantes ligando as cabeças entre si">
-          <img class="case__shot" src="../img/casos/fundacalc-spt.jpg" alt="Borehole log SP-01: sand, silt and clay layers with their SPT blow counts, and alongside them the bearing capacity, allowable load and settlement curves over depth" data-en-alt="Borehole log SP-01: sand, silt and clay layers with their SPT blow counts, and alongside them the bearing capacity, allowable load and settlement curves over depth" onerror="this.remove()" data-pt-alt="Perfil de sondagem SP-01: camadas de areia, silte e argila com o Nspt de cada uma, e ao lado as curvas de capacidade de carga, carga admissível e recalque ao longo da profundidade">
+          <img class="case__shot" src="../img/casos/fundacalc.jpg" alt="3D view of the cap on seven piles under the Fusco A method, with the ties coloured by the force they carry, from 4 to 28 kN" data-en-alt="3D view of the cap on seven piles under the Fusco A method, with the ties coloured by the force they carry, from 4 to 28 kN" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Vista 3D do bloco sobre sete estacas no método Fusco A, com os tirantes coloridos pela força que carregam, de 4 a 28 kN">
+          <img class="case__shot" src="../img/casos/fundacalc-planta.jpg" alt="Plan of the 285 × 125 cm cap on seven piles, with each pile's reaction in kN and as a percentage of its allowable load" data-en-alt="Plan of the 285 × 125 cm cap on seven piles, with each pile's reaction in kN and as a percentage of its allowable load" onerror="this.remove()" data-pt-alt="Planta do bloco de 285 × 125 cm sobre sete estacas, com a reação de cada estaca em kN e em porcentagem da carga admissível">
+          <img class="case__shot" src="../img/casos/fundacalc-molas.jpg" alt="Soil springs for borehole SP-01: sand, silt and clay layers with their SPT counts, the horizontal and vertical subgrade reaction coefficients along the pile, and the per-node table" data-en-alt="Soil springs for borehole SP-01: sand, silt and clay layers with their SPT counts, the horizontal and vertical subgrade reaction coefficients along the pile, and the per-node table" onerror="this.remove()" data-pt-alt="Molas do solo na sondagem SP-01: camadas de areia, silte e argila com o Nspt, os coeficientes de reação horizontal e vertical ao longo da estaca e a tabela por nó">
         </div>
         <span class="media__client">FundaCalc</span>
         <figcaption class="media__hint" data-en="Awaiting the case screenshot" data-pt="Aguardando print do case">Awaiting the case screenshot</figcaption>

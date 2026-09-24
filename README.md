@@ -353,14 +353,15 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   só começa a contar depois de ativar *Analytics* no projeto na Vercel.
 - **Imagens dos casos e projetos** — cada card aponta para um arquivo em
   `/img/casos/` (mediaportal, mindminers, ame-x, corning, fundacalc,
-  fundacalc-spt) e em
+  fundacalc-planta, fundacalc-molas) e em
   `/img/projetos/` (amwc, ame-tom-de-voz, gipsyy). **Esta lista é a seleção
   aprovada; não acrescentar nomes sem aprovação** — os cases retirados na
   rodada 2 não voltam. Já estão no ar: `corning` (foto do barco), `mindminers`
   (a abertura da apresentação "Marketing Data Driven"), `ame-x` (o banco de
   praça), `mediaportal` (o player do site com o logo, ver a receita adiante),
-  `fundacalc` e `fundacalc-spt` (a treliça em 3D e o perfil de sondagem,
-  recortados dos prints), `amwc` (cartaz), `ame-tom-de-voz` (banner do super
+  `fundacalc`, `fundacalc-planta` e `fundacalc-molas` (o bloco em 3D com os
+  tirantes, a planta com as reações e as molas da sondagem, recortados dos
+  prints), `amwc` (cartaz), `ame-tom-de-voz` (banner do super
   app + grade de serviços) e `gipsyy` (o cabeçalho da landing "Friday do
   Futuro"). Nenhuma falta mais; se uma sumir, o `onerror` do `<img>` deixa a
   capa na moldura de espera sobre uma malha de desenho (as imagens ausentes
