@@ -376,7 +376,10 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   MindMiners, a captura trouxe cinco colunas pretas na direita dele, e as
   fotos vinham em PNG.
   Uma capa de caso tem dois modos. **Foto** (`case__cover--photo`) cobre o
-  card inteiro, com degradê para a legenda ler. **Peça** (`case__cover--piece`)
+  card inteiro, com degradê para a legenda ler — hoje nenhum caso usa: desde
+  setembro todos são peça, na proporção da peça do Ame (1566×877), com o
+  fundo desfocado, e as fotos de `ame-x` e `corning` foram recortadas nessa
+  proporção. **Peça** (`case__cover--piece`)
   é para banner, anúncio e slide: a imagem fica montada na prancha, na
   proporção em que foi feita — cobrindo, um banner de 3,7:1 numa capa quase
   quadrada mostraria um terço de si. **O que decide não é a origem do arquivo,
