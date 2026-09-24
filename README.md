@@ -361,7 +361,7 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   praça), `mediaportal` (o player do site com o logo, ver a receita adiante),
   `fundacalc`, `fundacalc-planta` e `fundacalc-molas` (o bloco em 3D com os
   tirantes, a planta com as reações e as molas da sondagem, recortados dos
-  prints), `amwc` (cartaz), `ame-tom-de-voz` (banner do super
+  prints em 1566×877, a proporção da peça do Ame), `amwc` (cartaz), `ame-tom-de-voz` (banner do super
   app + grade de serviços) e `gipsyy` (o cabeçalho da landing "Friday do
   Futuro"). Nenhuma falta mais; se uma sumir, o `onerror` do `<img>` deixa a
   capa na moldura de espera sobre uma malha de desenho (as imagens ausentes
