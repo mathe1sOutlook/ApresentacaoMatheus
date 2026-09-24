@@ -2631,15 +2631,16 @@ textarea.field__input { min-height: 120px; resize: vertical; }
     <div class="cases" tabindex="0" role="group" aria-label="Project cases; focusing pauses the auto-advance" data-en-aria-label="Project cases; focusing pauses the auto-advance" data-pt-aria-label="Casos de projeto; o foco pausa o avanço automático">
 <!-- Caso 01 ─────────────────────────────────────────────────── -->
     <article class="case case--featured reveal">
-  <!-- Capa: /img/casos/mediaportal.png, 1000×1300 — composição, não print
-       inteiro: o recorte do hero (o player com o logo colorido e a legenda do
-       vídeo) ocupa os 585 px de cima e o resto é o azul do próprio site, com
-       um degradê de 60 px na emenda. Print de site legível não entra: a
-       manchete disputava a leitura com o título do caso e quem passava lia o
-       texto errado. A receita está no README. PNG porque é degradê chapado
-       com logo — em JPEG o fundo escuro ganha faixas. Sem o arquivo, a
-       moldura tracejada aparece. -->
-  <div class="case__cover case__cover--photo">
+  <!-- Quatro peças de 1566×877 — a proporção da peça do Ame —, montadas na
+       prancha (case__cover--piece): /img/casos/mediaportal.jpg é o player do
+       hero com o logo, e mediaportal-inicio, -solucoes e -eventos são as
+       páginas do site. No modo peça o print fica emoldurado acima do título
+       do caso, e não por baixo dele, como ficava no modo foto — era ali que a
+       manchete do site disputava a leitura. O fundo é a peça da vez ampliada e
+       desfocada; o player é claro, então a capa leva case__cover--claro para
+       o título ler. Sem o primeiro arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--piece case__cover--claro">
+    <img class="case__fundo" src="../img/casos/mediaportal.jpg" alt="" aria-hidden="true" onerror="this.remove()">
     <div class="case__media">
       <figure class="media" data-slot="case-mediaportal">
         <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
@@ -2647,7 +2648,10 @@ textarea.field__input { min-height: 120px; resize: vertical; }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="../img/casos/mediaportal.png" alt="Video player with the Media Portal logo and the caption “Media Portal in under a minute”" data-en-alt="Video player with the Media Portal logo and the caption “Media Portal in under a minute”" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Player de vídeo com o logo da Media Portal e a legenda “Media Portal em menos de um minuto”">
+          <img class="case__shot" src="../img/casos/mediaportal.jpg" alt="Video player with the Media Portal logo and the caption “Media Portal in under a minute”" data-en-alt="Video player with the Media Portal logo and the caption “Media Portal in under a minute”" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Player de vídeo com o logo da Media Portal e a legenda “Media Portal em menos de um minuto”">
+          <img class="case__shot" src="../img/casos/mediaportal-inicio.jpg" alt="Media Portal website home page: the headline “A segurança da sua mídia começa na gestão do seu acervo”, the intro video and the company figures" data-en-alt="Media Portal website home page: the headline “A segurança da sua mídia começa na gestão do seu acervo”, the intro video and the company figures" onerror="this.remove()" data-pt-alt="Página inicial do site da Media Portal: a manchete “A segurança da sua mídia começa na gestão do seu acervo”, o vídeo de apresentação e os números da empresa">
+          <img class="case__shot" src="../img/casos/mediaportal-solucoes.jpg" alt="Media Portal website solutions page: the list of cloud and on-premises solutions and, open, Cloud Safira with its capture, editing, management and preservation modules" data-en-alt="Media Portal website solutions page: the list of cloud and on-premises solutions and, open, Cloud Safira with its capture, editing, management and preservation modules" onerror="this.remove()" data-pt-alt="Página de soluções do site da Media Portal: a lista das soluções em nuvem e locais e, aberta, a Cloud Safira com os módulos de captura, edição, gestão e preservação">
+          <img class="case__shot" src="../img/casos/mediaportal-eventos.jpg" alt="Media Portal website events page: SET Nordeste 2026 with a countdown and, below, other events" data-en-alt="Media Portal website events page: SET Nordeste 2026 with a countdown and, below, other events" onerror="this.remove()" data-pt-alt="Página de eventos do site da Media Portal: a SET Nordeste 2026 com contagem regressiva e, abaixo, outros eventos">
         </div>
         <span class="media__client">Media Portal Technology</span>
         <figcaption class="media__hint" data-en="Awaiting the product page screenshot" data-pt="Aguardando print da página do produto">Awaiting the product page screenshot</figcaption>

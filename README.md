@@ -352,13 +352,16 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
 - **Vercel Web Analytics** — o site já carrega `/_vercel/insights/script.js`;
   só começa a contar depois de ativar *Analytics* no projeto na Vercel.
 - **Imagens dos casos e projetos** — cada card aponta para um arquivo em
-  `/img/casos/` (mediaportal, mindminers, ame-x, corning, fundacalc,
+  `/img/casos/` (mediaportal, mediaportal-inicio, mediaportal-solucoes,
+  mediaportal-eventos, mindminers, ame-x, corning, fundacalc,
   fundacalc-planta, fundacalc-molas) e em
   `/img/projetos/` (amwc, ame-tom-de-voz, gipsyy). **Esta lista é a seleção
   aprovada; não acrescentar nomes sem aprovação** — os cases retirados na
   rodada 2 não voltam. Já estão no ar: `corning` (foto do barco), `mindminers`
   (a abertura da apresentação "Marketing Data Driven"), `ame-x` (o banco de
-  praça), `mediaportal` (o player do site com o logo, ver a receita adiante),
+  praça), `mediaportal`, `mediaportal-inicio`, `mediaportal-solucoes` e
+  `mediaportal-eventos` (o player do hero com o logo e três páginas do site,
+  em 1566×877),
   `fundacalc`, `fundacalc-planta` e `fundacalc-molas` (o bloco em 3D com os
   tirantes, a planta com as reações e as molas da sondagem, recortados dos
   prints em 1566×877, a proporção da peça do Ame), `amwc` (cartaz), `ame-tom-de-voz` (banner do super
@@ -367,8 +370,7 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   capa na moldura de espera sobre uma malha de desenho (as imagens ausentes
   respondem 404, que é barato). O que está no ar é JPEG progressivo, 1600 px
   de largura nas capas e o tamanho original nos cards; WebP/AVIF fica para
-  quando houver pipeline de imagem. A exceção é `mediaportal.png`, que é
-  composição e não fotografia: em JPEG o degradê do fundo escuro ganha faixas.
+  quando houver pipeline de imagem.
   **Arquivo que chega do design passa por uma peneira antes de entrar**: o
   pacote de setembro trouxe 3,2 MB em quatro imagens e foi para 938 KB sem
   perda visível — o ponteiro do mouse tinha ficado gravado no slide da
@@ -386,16 +388,14 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   já o esconde) e a peça aparece inteira. Foto aguenta o corte; arte com texto
   não. O `onerror` de cada `<img>` remove a classe do seu
   modo, e a capa volta para a moldura de espera.
-  **Print de site não entra legível.** O do Media Portal entrou, e a manchete
-  do site disputava a leitura com o título do caso — quem passava lia o texto
-  errado. A saída, de setembro: em vez do print inteiro, um recorte que fala
-  sozinho. A capa é uma composição de 1000×1300 — o player de vídeo do hero,
-  com o logo colorido e a legenda "Media Portal em menos de um minuto", nos
-  585 px de cima, o azul do próprio site embaixo e um degradê de 60 px na
-  emenda. O título do caso cai sobre a metade escura, longe do logo. A receita,
-  para refazer se o site mudar: print do hero de `mediaportal.com.br` em
-  2827×1248, região x 1300–2530 e y 96–816, sobre um fundo na cor amostrada do
-  site.
+  **Print de site entra como peça, nunca como foto.** No modo foto o print do
+  Media Portal ficava por baixo do título do caso, e a manchete do site
+  disputava a leitura com ele — quem passava lia o texto errado. No modo peça
+  o print fica emoldurado acima do título, e as páginas do site entram
+  inteiras. As quatro peças do Media Portal vêm de prints de
+  `mediaportal.com.br` (a primeira é o player do hero, recortado da capa
+  antiga); onde a largura do print não fechava 1566×877, a altura foi
+  completada repetindo a linha da borda, que é o fundo escuro do site.
   **Peça de campanha ganha o próprio fundo** (`case__fundo`): o mesmo arquivo
   entra atrás, ampliado e desfocado, para a cor da peça tomar o cartão inteiro.
   A prancha vazia em volta de um banner era espaço morto, e uma segunda imagem
