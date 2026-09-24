@@ -2845,11 +2845,12 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 
     <!-- Caso 03 ─────────────────────────────────────────────────── -->
     <article class="case reveal">
-  <!-- Foto de capa: /img/casos/ame-x.jpg, 1600×1066 (paisagem), cobrindo o
-       cartão. O banner de campanha que estava aqui pedia a prancha
-       (case__cover--piece, que o FundaCalc ainda usa); a foto não. Sem o
-       arquivo, a moldura tracejada aparece. -->
-  <div class="case__cover case__cover--photo">
+  <!-- /img/casos/ame-x.jpg, 1566×877 — a proporção da peça do Ame —,
+       montada na prancha (case__cover--piece) como os outros casos: recorte
+       da foto na largura inteira, dos rostos ao banco. O fundo é a mesma foto
+       ampliada e desfocada. Sem o arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--piece">
+    <img class="case__fundo" src="../img/casos/ame-x.jpg" alt="" aria-hidden="true" onerror="this.remove()">
     <div class="case__media">
       <figure class="media" data-slot="case-x">
         <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
@@ -2857,7 +2858,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="../img/casos/ame-x.jpg" alt="Five young people on a park bench, laughing at their phones" data-en-alt="Five young people on a park bench, laughing at their phones" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Cinco jovens sentados num banco de praça, rindo enquanto olham o celular">
+          <img class="case__shot" src="../img/casos/ame-x.jpg" alt="Five young people on a park bench, laughing at their phones" data-en-alt="Five young people on a park bench, laughing at their phones" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Cinco jovens sentados num banco de praça, rindo enquanto olham o celular">
         </div>
         <span class="media__client">Ame Digital × X (Twitter)</span>
         <figcaption class="media__hint" data-en="Awaiting the case screenshot" data-pt="Aguardando print do case">Awaiting the case screenshot</figcaption>
@@ -2913,8 +2914,13 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 
     <!-- Caso 04 ─────────────────────────────────────────────────── -->
     <article class="case reveal">
-  <!-- Foto de capa: /img/casos/corning.jpg (paisagem, 1600×1000 ou mais). Sem o arquivo, a moldura tracejada aparece. -->
-  <div class="case__cover case__cover--photo">
+  <!-- /img/casos/corning.jpg, 1566×877 — a proporção da peça do Ame —,
+       montada na prancha (case__cover--piece) como os outros casos: recorte
+       da foto na largura inteira, o grupo na proa com o mar em volta. O fundo
+       é a mesma foto ampliada e desfocada. Sem o arquivo, a moldura tracejada
+       aparece. -->
+  <div class="case__cover case__cover--piece">
+    <img class="case__fundo" src="../img/casos/corning.jpg" alt="" aria-hidden="true" onerror="this.remove()">
     <div class="case__media">
       <figure class="media" data-slot="case-corning">
         <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
@@ -2922,7 +2928,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="../img/casos/corning.jpg" alt="Corning CALA Channel Summit attendees gathered on the bow of a boat, in Panama hats, waving at the camera" data-en-alt="Corning CALA Channel Summit attendees gathered on the bow of a boat, in Panama hats, waving at the camera" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Participantes do Corning CALA Channel Summit reunidos na proa de um barco, de chapéu panamá, acenando para a câmera">
+          <img class="case__shot" src="../img/casos/corning.jpg" alt="Corning CALA Channel Summit attendees gathered on the bow of a boat, in Panama hats, waving at the camera" data-en-alt="Corning CALA Channel Summit attendees gathered on the bow of a boat, in Panama hats, waving at the camera" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Participantes do Corning CALA Channel Summit reunidos na proa de um barco, de chapéu panamá, acenando para a câmera">
         </div>
         <span class="media__client">Corning CALA Summit</span>
         <figcaption class="media__hint" data-en="Awaiting event photos" data-pt="Aguardando fotos do evento">Awaiting event photos</figcaption>
