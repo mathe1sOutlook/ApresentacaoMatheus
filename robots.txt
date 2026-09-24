@@ -3,4 +3,4 @@ Allow: /
 Disallow: /proposta-
 Disallow: /admin
 
-Sitemap: https://casamartech.vercel.app/sitemap.xml
+Sitemap: https://casamartech.com.br/sitemap.xml
