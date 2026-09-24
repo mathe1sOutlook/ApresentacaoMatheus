@@ -7,7 +7,7 @@ um hábito genérico, **este arquivo vence**.
 
 Site institucional da **CASA MARTECH** — a dupla **Bruno Amaral** (marca e
 estratégia) e **Matheus Silva** (tecnologia e dados). No ar em
-<https://casamartech.com.br>, domínio registrado no Registro.br. Os endereços
+<https://www.casamartech.com.br>, domínio registrado no Registro.br. Os endereços
 técnicos anteriores, `casamartech.vercel.app` e `amaralesilva.vercel.app`,
 seguem anexados ao projeto na Vercel e continuam abrindo o site — é o que
 mantém de pé os QR já impressos e os links que circularam. HTML

@@ -14,7 +14,7 @@ módulos pretos — é o que mantém o arquivo pequeno e nítido em qualquer tam
 import segno
 from pathlib import Path
 
-SITE = 'https://casamartech.com.br/?utm_source=qr'
+SITE = 'https://www.casamartech.com.br/?utm_source=qr'
 RAIZ = Path(__file__).resolve().parent.parent
 
 TEMAS = {

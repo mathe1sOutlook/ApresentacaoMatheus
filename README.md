@@ -2,14 +2,14 @@
 
 One-pager bilíngue (PT-BR / EN) da **CASA MARTECH** — a dupla **Bruno Amaral**
 (marca e estratégia) e **Matheus Silva** (tecnologia e dados). Publicado em
-<https://casamartech.com.br>, registrado no Registro.br e anexado ao projeto na
-Vercel (o `www` redireciona para o endereço sem `www`).
+<https://www.casamartech.com.br>, registrado no Registro.br e anexado ao projeto
+na Vercel (o endereço sem `www` redireciona para o com `www`).
 
 Os endereços técnicos anteriores, `casamartech.vercel.app` e
 `amaralesilva.vercel.app`, continuam anexados ao projeto e abrindo o site — são
 eles que seguram os QR já impressos e os links que circularam. O canônico, o
 sitemap, o Open Graph, o JSON-LD e os QR novos apontam para
-`casamartech.com.br`.
+`www.casamartech.com.br`.
 
 Implementa o handoff *Reestruturação de branding* na versão escura — fundo
 quase preto, tinta creme, ocre para marca, azul para tecnologia, Fraunces +
@@ -93,7 +93,7 @@ dicionários do `next-intl`.
 `img/qr.svg` (creme sobre quase preto, para a tela) e `img/qr-print.svg` (preto
 no branco, para papel) são **gerados**: `pip install segno && python3
 scripts/build-qr.py`. Os dois codificam
-`https://casamartech.com.br/?utm_source=qr`, em 33 módulos com correção de
+`https://www.casamartech.com.br/?utm_source=qr`, em 33 módulos com correção de
 erro Q. A caixa "uso físico" saiu do contato; os dois arquivos ficam porque o
 impresso continua usando.
 
@@ -338,7 +338,7 @@ No painel do Supabase, em *Authentication → URL Configuration* do projeto
 `mApps`, adicionar às **Redirect URLs**:
 
 ```
-https://casamartech.com.br/admin
+https://www.casamartech.com.br/admin
 https://casamartech.vercel.app/admin
 https://amaralesilva.vercel.app/admin
 ```
