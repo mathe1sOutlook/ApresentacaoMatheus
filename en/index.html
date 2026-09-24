@@ -2631,15 +2631,16 @@ textarea.field__input { min-height: 120px; resize: vertical; }
     <div class="cases" tabindex="0" role="group" aria-label="Project cases; focusing pauses the auto-advance" data-en-aria-label="Project cases; focusing pauses the auto-advance" data-pt-aria-label="Casos de projeto; o foco pausa o avanço automático">
 <!-- Caso 01 ─────────────────────────────────────────────────── -->
     <article class="case case--featured reveal">
-  <!-- Capa: /img/casos/mediaportal.png, 1000×1300 — composição, não print
-       inteiro: o recorte do hero (o player com o logo colorido e a legenda do
-       vídeo) ocupa os 585 px de cima e o resto é o azul do próprio site, com
-       um degradê de 60 px na emenda. Print de site legível não entra: a
-       manchete disputava a leitura com o título do caso e quem passava lia o
-       texto errado. A receita está no README. PNG porque é degradê chapado
-       com logo — em JPEG o fundo escuro ganha faixas. Sem o arquivo, a
-       moldura tracejada aparece. -->
-  <div class="case__cover case__cover--photo">
+  <!-- Quatro peças de 1566×877 — a proporção da peça do Ame —, montadas na
+       prancha (case__cover--piece): /img/casos/mediaportal.jpg é o player do
+       hero com o logo, e mediaportal-inicio, -solucoes e -eventos são as
+       páginas do site. No modo peça o print fica emoldurado acima do título
+       do caso, e não por baixo dele, como ficava no modo foto — era ali que a
+       manchete do site disputava a leitura. O fundo é a peça da vez ampliada e
+       desfocada; o player é claro, então a capa leva case__cover--claro para
+       o título ler. Sem o primeiro arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--piece case__cover--claro">
+    <img class="case__fundo" src="../img/casos/mediaportal.jpg" alt="" aria-hidden="true" onerror="this.remove()">
     <div class="case__media">
       <figure class="media" data-slot="case-mediaportal">
         <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
@@ -2647,7 +2648,10 @@ textarea.field__input { min-height: 120px; resize: vertical; }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="../img/casos/mediaportal.png" alt="Video player with the Media Portal logo and the caption “Media Portal in under a minute”" data-en-alt="Video player with the Media Portal logo and the caption “Media Portal in under a minute”" onerror="this.closest('.case__cover').classList.remove('case__cover--photo')" data-pt-alt="Player de vídeo com o logo da Media Portal e a legenda “Media Portal em menos de um minuto”">
+          <img class="case__shot" src="../img/casos/mediaportal.jpg" alt="Video player with the Media Portal logo and the caption “Media Portal in under a minute”" data-en-alt="Video player with the Media Portal logo and the caption “Media Portal in under a minute”" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Player de vídeo com o logo da Media Portal e a legenda “Media Portal em menos de um minuto”">
+          <img class="case__shot" src="../img/casos/mediaportal-inicio.jpg" alt="Media Portal website home page: the headline “A segurança da sua mídia começa na gestão do seu acervo”, the intro video and the company figures" data-en-alt="Media Portal website home page: the headline “A segurança da sua mídia começa na gestão do seu acervo”, the intro video and the company figures" onerror="this.remove()" data-pt-alt="Página inicial do site da Media Portal: a manchete “A segurança da sua mídia começa na gestão do seu acervo”, o vídeo de apresentação e os números da empresa">
+          <img class="case__shot" src="../img/casos/mediaportal-solucoes.jpg" alt="Media Portal website solutions page: the list of cloud and on-premises solutions and, open, Cloud Safira with its capture, editing, management and preservation modules" data-en-alt="Media Portal website solutions page: the list of cloud and on-premises solutions and, open, Cloud Safira with its capture, editing, management and preservation modules" onerror="this.remove()" data-pt-alt="Página de soluções do site da Media Portal: a lista das soluções em nuvem e locais e, aberta, a Cloud Safira com os módulos de captura, edição, gestão e preservação">
+          <img class="case__shot" src="../img/casos/mediaportal-eventos.jpg" alt="Media Portal website events page: SET Nordeste 2026 with a countdown and, below, other events" data-en-alt="Media Portal website events page: SET Nordeste 2026 with a countdown and, below, other events" onerror="this.remove()" data-pt-alt="Página de eventos do site da Media Portal: a SET Nordeste 2026 com contagem regressiva e, abaixo, outros eventos">
         </div>
         <span class="media__client">Media Portal Technology</span>
         <figcaption class="media__hint" data-en="Awaiting the product page screenshot" data-pt="Aguardando print da página do produto">Awaiting the product page screenshot</figcaption>
@@ -2688,6 +2692,81 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       <div class="ficha__cell">
         <p class="ficha__label" data-en="Architecture" data-pt="Arquitetura">Architecture</p>
         <ul class="ficha__list" data-en="&lt;li&gt;Relational database, auth and storage on Supabase&lt;/li&gt;&lt;li&gt;Institutional timeline driven by data&lt;/li&gt;&lt;li&gt;Product modules + partner ecosystem&lt;/li&gt;&lt;li&gt;Staging and production, assisted deploy&lt;/li&gt;" data-pt="&lt;li&gt;Banco relacional, auth e storage em Supabase&lt;/li&gt;&lt;li&gt;Linha do tempo institucional orientada a dados&lt;/li&gt;&lt;li&gt;Módulos de produto + ecossistema de parceiros&lt;/li&gt;&lt;li&gt;Homologação e produção, implantação assistida&lt;/li&gt;"><li>Relational database, auth and storage on Supabase</li><li>Institutional timeline driven by data</li><li>Product modules + partner ecosystem</li><li>Staging and production, assisted deploy</li></ul>
+      </div>
+    </div>
+  </div>
+</article>
+
+    <!-- Caso 05 ────────────────────────────────────── -->
+    <article class="case reveal">
+  <!-- Três peças de 1566×877 — a proporção da peça do Ame —, montadas na prancha (case__cover--piece) e não
+       cobrindo a capa: a faixa corre entre elas. /img/casos/fundacalc.jpg é o
+       bloco em 3D com os tirantes coloridos pela força,
+       /img/casos/fundacalc-planta.jpg é a planta com a reação de cada estaca e
+       /img/casos/fundacalc-molas.jpg é a sondagem com as molas do solo. As três
+       são recorte do print, não a tela inteira: num cartão de 375px uma interface desenhada para 1900 vira cinza
+       e não se lê nada; recortada na parte que fala sozinha, ela é reconhecível
+       sem ser lida. Proporção idêntica nas três, senão a faixa assume a
+       altura da mais alta. O fundo é a peça ampliada e desfocada, como em
+       toda peça; com o script, ele troca junto com a imagem da vez; como a arte é clara, a capa leva `case__cover--claro`, que
+       põe o véu no pé para o título e a métrica lerem sem apagar a cor do
+       fundo. Sem o primeiro arquivo, a moldura tracejada aparece. -->
+  <div class="case__cover case__cover--piece case__cover--claro">
+    <img class="case__fundo" src="../img/casos/fundacalc.jpg" alt="" aria-hidden="true" onerror="this.remove()">
+    <div class="case__media">
+      <figure class="media" data-slot="case-fundacalc">
+        <div class="case__shots">
+          <img class="case__shot" src="../img/casos/fundacalc.jpg" alt="3D view of the cap on seven piles under the Fusco A method, with the ties coloured by the force they carry, from 4 to 28 kN" data-en-alt="3D view of the cap on seven piles under the Fusco A method, with the ties coloured by the force they carry, from 4 to 28 kN" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Vista 3D do bloco sobre sete estacas no método Fusco A, com os tirantes coloridos pela força que carregam, de 4 a 28 kN">
+          <img class="case__shot" src="../img/casos/fundacalc-planta.jpg" alt="Plan of the 285 × 125 cm cap on seven piles, with each pile's reaction in kN and as a percentage of its allowable load" data-en-alt="Plan of the 285 × 125 cm cap on seven piles, with each pile's reaction in kN and as a percentage of its allowable load" onerror="this.remove()" data-pt-alt="Planta do bloco de 285 × 125 cm sobre sete estacas, com a reação de cada estaca em kN e em porcentagem da carga admissível">
+          <img class="case__shot" src="../img/casos/fundacalc-molas.jpg" alt="Soil springs for borehole SP-01: sand, silt and clay layers with their SPT counts, the horizontal and vertical subgrade reaction coefficients along the pile, and the per-node table" data-en-alt="Soil springs for borehole SP-01: sand, silt and clay layers with their SPT counts, the horizontal and vertical subgrade reaction coefficients along the pile, and the per-node table" onerror="this.remove()" data-pt-alt="Molas do solo na sondagem SP-01: camadas de areia, silte e argila com o Nspt, os coeficientes de reação horizontal e vertical ao longo da estaca e a tabela por nó">
+        </div>
+        <span class="media__client">FundaCalc</span>
+        <figcaption class="media__hint" data-en="Awaiting the case screenshot" data-pt="Aguardando print do case">Awaiting the case screenshot</figcaption>
+      </figure>
+    </div>
+    <div class="case__caption">
+      <h3 class="case__title">FundaCalc</h3>
+      <div class="case__reveal">
+        <p class="case__metric" data-en="No software did this when it launched" data-pt="Solução inédita quando lançada">No software did this when it launched</p>
+        <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-05-details"><span class="is-open" data-en="See details ↓" data-pt="Ver detalhes ↓">See details ↓</span><span class="is-close" data-en="Close ↑" data-pt="Fechar ↑">Close ↑</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="case__details" id="case-05-details" hidden="">
+    <p class="case__client">FundaCalc</p>
+    <span class="case__sector" data-en="Structural engineering · master’s project · Matheus" data-pt="Engenharia estrutural · projeto de mestrado · Matheus">Structural engineering · master’s project · Matheus</span>
+    <div>
+      <div class="case__block">
+        <p class="label label--ochre" data-en="Problem" data-pt="Problema">Problem</p>
+        <p data-en="A pile cap is designed by strut and tie: a truss that carries the column load down to the piles. Every method — Blévot, Fusco, MBT — assumes its own truss, drawn for a particular case, and none of them generalises. There was no software that generalised strut and tie far enough to put the several analysis and design methods for pile caps side by side and judge them on the same geometry." data-pt="Bloco sobre estacas se dimensiona por bielas e tirantes: uma treliça que leva a carga do pilar até as estacas. Cada método — Blévot, Fusco, MBT — assume a sua, desenhada para um caso particular, e nenhum deles generaliza. Não existia software que generalizasse bielas e tirantes a ponto de avaliar os diversos métodos de análise e dimensionamento de blocos sobre a mesma geometria.">A pile cap is designed by strut and tie: a truss that carries the column load down to the piles. Every method — Blévot, Fusco, MBT — assumes its own truss, drawn for a particular case, and none of them generalises. There was no software that generalised strut and tie far enough to put the several analysis and design methods for pile caps side by side and judge them on the same geometry.</p>
+      </div>
+      <div class="case__block">
+        <p class="label label--blue" data-en="Solution" data-pt="Solução">Solution</p>
+        <p data-en="The truss is assembled by finite elements, in a solution that satisfies the lower bound theorem — what it returns is statically admissible, and therefore on the safe side. That is what generalises the model: eccentricity in the column and in the pile, more than one column over the same cap, and the methods compared against each other instead of each one in its own idealisation. It came out of a master’s project, and nothing did this when it launched." data-pt="A treliça é montada por elementos finitos, numa solução que atende ao Teorema do Limite Inferior — o que ela devolve é estaticamente admissível, e portanto a favor da segurança. É isso que generaliza o modelo: excentricidade no pilar e na estaca, mais de um pilar sobre o mesmo bloco, e os métodos comparados entre si em vez de cada um na sua idealização. Saiu de um projeto de mestrado, e não havia nada assim quando foi lançado.">The truss is assembled by finite elements, in a solution that satisfies the lower bound theorem — what it returns is statically admissible, and therefore on the safe side. That is what generalises the model: eccentricity in the column and in the pile, more than one column over the same cap, and the methods compared against each other instead of each one in its own idealisation. It came out of a master’s project, and nothing did this when it launched.</p>
+      </div>
+      <div class="case__value">
+        <p class="label" data-en="Value delivered" data-pt="Valor entregue">Value delivered</p>
+        <p data-en="The cap that exists on site — pile off its design position, column off centre — is what goes into the model, instead of an idealisation of it. The engineer sees the truss each method assumes, compares what each one demands in reinforcement and chooses on criteria. The same engine covers the geotechnical side: bearing capacity by Aoki-Velloso and Decourt-Quaresma over the borehole log, settlement and p-y curves." data-pt="O bloco que existe na obra — estaca fora da posição de projeto, pilar excêntrico — é o que entra no modelo, em vez de uma idealização dele. O engenheiro vê a treliça que cada método assume, compara o que cada um exige de armadura e escolhe por critério. A mesma base cobre o lado geotécnico: capacidade de carga por Aoki-Velloso e Decourt-Quaresma sobre o perfil de sondagem, recalque e curvas p-y.">The cap that exists on site — pile off its design position, column off centre — is what goes into the model, instead of an idealisation of it. The engineer sees the truss each method assumes, compares what each one demands in reinforcement and chooses on criteria. The same engine covers the geotechnical side: bearing capacity by Aoki-Velloso and Decourt-Quaresma over the borehole log, settlement and p-y curves.</p>
+      </div>
+    </div>
+
+    <div class="ficha">
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Deliverables" data-pt="Entregáveis">Deliverables</p>
+        <ul class="ficha__tags"><li data-en="Strut and tie by FE" data-pt="Bielas e tirantes por MEF">Strut and tie by FE</li><li data-en="Method comparison" data-pt="Comparador de métodos">Method comparison</li><li data-en="3D view" data-pt="Visualização 3D">3D view</li><li data-en="Geotechnics" data-pt="Geotecnia">Geotechnics</li><li data-en="Excel export" data-pt="Exportação Excel">Excel export</li></ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Numbers" data-pt="Números">Numbers</p>
+        <ul class="ficha__list">
+          <li><b>6</b> <span data-en="design methods judged on the same geometry" data-pt="métodos avaliados sobre a mesma geometria">design methods judged on the same geometry</span></li>
+          <li><b>11</b> <span data-en="pile layouts, from 2 to 7 piles" data-pt="arranjos de estaca, de 2 a 7 estacas">pile layouts, from 2 to 7 piles</span></li>
+          <li><b data-en="12k" data-pt="12 mil">12k</b> <span data-en="lines in the calculation engine alone" data-pt="linhas só no motor de cálculo">lines in the calculation engine alone</span></li>
+        </ul>
+      </div>
+      <div class="ficha__cell">
+        <p class="ficha__label" data-en="Method" data-pt="Método">Method</p>
+        <ul class="ficha__list" data-en="&lt;li&gt;Truss assembled by finite elements&lt;/li&gt;&lt;li&gt;Statically admissible solution — lower bound theorem&lt;/li&gt;&lt;li&gt;Eccentricity in the column and in the pile&lt;/li&gt;&lt;li&gt;More than one column over the same cap&lt;/li&gt;&lt;li&gt;Born as a Python notebook, then .NET MAUI desktop, today in the browser&lt;/li&gt;" data-pt="&lt;li&gt;Treliça montada por elementos finitos&lt;/li&gt;&lt;li&gt;Solução estaticamente admissível — Teorema do Limite Inferior&lt;/li&gt;&lt;li&gt;Excentricidade no pilar e na estaca&lt;/li&gt;&lt;li&gt;Mais de um pilar sobre o mesmo bloco&lt;/li&gt;&lt;li&gt;Nasceu em notebook Python, passou por desktop .NET MAUI, hoje roda no navegador&lt;/li&gt;"><li>Truss assembled by finite elements</li><li>Statically admissible solution — lower bound theorem</li><li>Eccentricity in the column and in the pile</li><li>More than one column over the same cap</li><li>Born as a Python notebook, then .NET MAUI desktop, today in the browser</li></ul>
       </div>
     </div>
   </div>
@@ -2897,80 +2976,6 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   </div>
 </article>
 
-    <!-- Caso 05 ────────────────────────────────────── -->
-    <article class="case reveal">
-  <!-- Três peças de 1566×877 — a proporção da peça do Ame —, montadas na prancha (case__cover--piece) e não
-       cobrindo a capa: a faixa corre entre elas. /img/casos/fundacalc.jpg é o
-       bloco em 3D com os tirantes coloridos pela força,
-       /img/casos/fundacalc-planta.jpg é a planta com a reação de cada estaca e
-       /img/casos/fundacalc-molas.jpg é a sondagem com as molas do solo. As três
-       são recorte do print, não a tela inteira: num cartão de 375px uma interface desenhada para 1900 vira cinza
-       e não se lê nada; recortada na parte que fala sozinha, ela é reconhecível
-       sem ser lida. Proporção idêntica nas três, senão a faixa assume a
-       altura da mais alta. O fundo é a peça ampliada e desfocada, como em
-       toda peça; com o script, ele troca junto com a imagem da vez; como a arte é clara, a capa leva `case__cover--claro`, que
-       põe o véu no pé para o título e a métrica lerem sem apagar a cor do
-       fundo. Sem o primeiro arquivo, a moldura tracejada aparece. -->
-  <div class="case__cover case__cover--piece case__cover--claro">
-    <img class="case__fundo" src="../img/casos/fundacalc.jpg" alt="" aria-hidden="true" onerror="this.remove()">
-    <div class="case__media">
-      <figure class="media" data-slot="case-fundacalc">
-        <div class="case__shots">
-          <img class="case__shot" src="../img/casos/fundacalc.jpg" alt="3D view of the cap on seven piles under the Fusco A method, with the ties coloured by the force they carry, from 4 to 28 kN" data-en-alt="3D view of the cap on seven piles under the Fusco A method, with the ties coloured by the force they carry, from 4 to 28 kN" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Vista 3D do bloco sobre sete estacas no método Fusco A, com os tirantes coloridos pela força que carregam, de 4 a 28 kN">
-          <img class="case__shot" src="../img/casos/fundacalc-planta.jpg" alt="Plan of the 285 × 125 cm cap on seven piles, with each pile's reaction in kN and as a percentage of its allowable load" data-en-alt="Plan of the 285 × 125 cm cap on seven piles, with each pile's reaction in kN and as a percentage of its allowable load" onerror="this.remove()" data-pt-alt="Planta do bloco de 285 × 125 cm sobre sete estacas, com a reação de cada estaca em kN e em porcentagem da carga admissível">
-          <img class="case__shot" src="../img/casos/fundacalc-molas.jpg" alt="Soil springs for borehole SP-01: sand, silt and clay layers with their SPT counts, the horizontal and vertical subgrade reaction coefficients along the pile, and the per-node table" data-en-alt="Soil springs for borehole SP-01: sand, silt and clay layers with their SPT counts, the horizontal and vertical subgrade reaction coefficients along the pile, and the per-node table" onerror="this.remove()" data-pt-alt="Molas do solo na sondagem SP-01: camadas de areia, silte e argila com o Nspt, os coeficientes de reação horizontal e vertical ao longo da estaca e a tabela por nó">
-        </div>
-        <span class="media__client">FundaCalc</span>
-        <figcaption class="media__hint" data-en="Awaiting the case screenshot" data-pt="Aguardando print do case">Awaiting the case screenshot</figcaption>
-      </figure>
-    </div>
-    <div class="case__caption">
-      <h3 class="case__title">FundaCalc</h3>
-      <div class="case__reveal">
-        <p class="case__metric" data-en="No software did this when it launched" data-pt="Solução inédita quando lançada">No software did this when it launched</p>
-        <button type="button" class="case__toggle" aria-expanded="false" aria-controls="case-05-details"><span class="is-open" data-en="See details ↓" data-pt="Ver detalhes ↓">See details ↓</span><span class="is-close" data-en="Close ↑" data-pt="Fechar ↑">Close ↑</span></button>
-      </div>
-    </div>
-  </div>
-
-  <div class="case__details" id="case-05-details" hidden="">
-    <p class="case__client">FundaCalc</p>
-    <span class="case__sector" data-en="Structural engineering · master’s project · Matheus" data-pt="Engenharia estrutural · projeto de mestrado · Matheus">Structural engineering · master’s project · Matheus</span>
-    <div>
-      <div class="case__block">
-        <p class="label label--ochre" data-en="Problem" data-pt="Problema">Problem</p>
-        <p data-en="A pile cap is designed by strut and tie: a truss that carries the column load down to the piles. Every method — Blévot, Fusco, MBT — assumes its own truss, drawn for a particular case, and none of them generalises. There was no software that generalised strut and tie far enough to put the several analysis and design methods for pile caps side by side and judge them on the same geometry." data-pt="Bloco sobre estacas se dimensiona por bielas e tirantes: uma treliça que leva a carga do pilar até as estacas. Cada método — Blévot, Fusco, MBT — assume a sua, desenhada para um caso particular, e nenhum deles generaliza. Não existia software que generalizasse bielas e tirantes a ponto de avaliar os diversos métodos de análise e dimensionamento de blocos sobre a mesma geometria.">A pile cap is designed by strut and tie: a truss that carries the column load down to the piles. Every method — Blévot, Fusco, MBT — assumes its own truss, drawn for a particular case, and none of them generalises. There was no software that generalised strut and tie far enough to put the several analysis and design methods for pile caps side by side and judge them on the same geometry.</p>
-      </div>
-      <div class="case__block">
-        <p class="label label--blue" data-en="Solution" data-pt="Solução">Solution</p>
-        <p data-en="The truss is assembled by finite elements, in a solution that satisfies the lower bound theorem — what it returns is statically admissible, and therefore on the safe side. That is what generalises the model: eccentricity in the column and in the pile, more than one column over the same cap, and the methods compared against each other instead of each one in its own idealisation. It came out of a master’s project, and nothing did this when it launched." data-pt="A treliça é montada por elementos finitos, numa solução que atende ao Teorema do Limite Inferior — o que ela devolve é estaticamente admissível, e portanto a favor da segurança. É isso que generaliza o modelo: excentricidade no pilar e na estaca, mais de um pilar sobre o mesmo bloco, e os métodos comparados entre si em vez de cada um na sua idealização. Saiu de um projeto de mestrado, e não havia nada assim quando foi lançado.">The truss is assembled by finite elements, in a solution that satisfies the lower bound theorem — what it returns is statically admissible, and therefore on the safe side. That is what generalises the model: eccentricity in the column and in the pile, more than one column over the same cap, and the methods compared against each other instead of each one in its own idealisation. It came out of a master’s project, and nothing did this when it launched.</p>
-      </div>
-      <div class="case__value">
-        <p class="label" data-en="Value delivered" data-pt="Valor entregue">Value delivered</p>
-        <p data-en="The cap that exists on site — pile off its design position, column off centre — is what goes into the model, instead of an idealisation of it. The engineer sees the truss each method assumes, compares what each one demands in reinforcement and chooses on criteria. The same engine covers the geotechnical side: bearing capacity by Aoki-Velloso and Decourt-Quaresma over the borehole log, settlement and p-y curves." data-pt="O bloco que existe na obra — estaca fora da posição de projeto, pilar excêntrico — é o que entra no modelo, em vez de uma idealização dele. O engenheiro vê a treliça que cada método assume, compara o que cada um exige de armadura e escolhe por critério. A mesma base cobre o lado geotécnico: capacidade de carga por Aoki-Velloso e Decourt-Quaresma sobre o perfil de sondagem, recalque e curvas p-y.">The cap that exists on site — pile off its design position, column off centre — is what goes into the model, instead of an idealisation of it. The engineer sees the truss each method assumes, compares what each one demands in reinforcement and chooses on criteria. The same engine covers the geotechnical side: bearing capacity by Aoki-Velloso and Decourt-Quaresma over the borehole log, settlement and p-y curves.</p>
-      </div>
-    </div>
-
-    <div class="ficha">
-      <div class="ficha__cell">
-        <p class="ficha__label" data-en="Deliverables" data-pt="Entregáveis">Deliverables</p>
-        <ul class="ficha__tags"><li data-en="Strut and tie by FE" data-pt="Bielas e tirantes por MEF">Strut and tie by FE</li><li data-en="Method comparison" data-pt="Comparador de métodos">Method comparison</li><li data-en="3D view" data-pt="Visualização 3D">3D view</li><li data-en="Geotechnics" data-pt="Geotecnia">Geotechnics</li><li data-en="Excel export" data-pt="Exportação Excel">Excel export</li></ul>
-      </div>
-      <div class="ficha__cell">
-        <p class="ficha__label" data-en="Numbers" data-pt="Números">Numbers</p>
-        <ul class="ficha__list">
-          <li><b>6</b> <span data-en="design methods judged on the same geometry" data-pt="métodos avaliados sobre a mesma geometria">design methods judged on the same geometry</span></li>
-          <li><b>11</b> <span data-en="pile layouts, from 2 to 7 piles" data-pt="arranjos de estaca, de 2 a 7 estacas">pile layouts, from 2 to 7 piles</span></li>
-          <li><b data-en="12k" data-pt="12 mil">12k</b> <span data-en="lines in the calculation engine alone" data-pt="linhas só no motor de cálculo">lines in the calculation engine alone</span></li>
-        </ul>
-      </div>
-      <div class="ficha__cell">
-        <p class="ficha__label" data-en="Method" data-pt="Método">Method</p>
-        <ul class="ficha__list" data-en="&lt;li&gt;Truss assembled by finite elements&lt;/li&gt;&lt;li&gt;Statically admissible solution — lower bound theorem&lt;/li&gt;&lt;li&gt;Eccentricity in the column and in the pile&lt;/li&gt;&lt;li&gt;More than one column over the same cap&lt;/li&gt;&lt;li&gt;Born as a Python notebook, then .NET MAUI desktop, today in the browser&lt;/li&gt;" data-pt="&lt;li&gt;Treliça montada por elementos finitos&lt;/li&gt;&lt;li&gt;Solução estaticamente admissível — Teorema do Limite Inferior&lt;/li&gt;&lt;li&gt;Excentricidade no pilar e na estaca&lt;/li&gt;&lt;li&gt;Mais de um pilar sobre o mesmo bloco&lt;/li&gt;&lt;li&gt;Nasceu em notebook Python, passou por desktop .NET MAUI, hoje roda no navegador&lt;/li&gt;"><li>Truss assembled by finite elements</li><li>Statically admissible solution — lower bound theorem</li><li>Eccentricity in the column and in the pile</li><li>More than one column over the same cap</li><li>Born as a Python notebook, then .NET MAUI desktop, today in the browser</li></ul>
-      </div>
-    </div>
-  </div>
-</article>
 </div>
     <!-- Barra da fileira: só aparece com os casos abertos, e quem a move é o
          script — sem ele o modo leitura não existe. -->
