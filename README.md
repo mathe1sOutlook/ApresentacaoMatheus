@@ -352,18 +352,17 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
 - **Vercel Web Analytics** — o site já carrega `/_vercel/insights/script.js`;
   só começa a contar depois de ativar *Analytics* no projeto na Vercel.
 - **Imagens dos casos e projetos** — cada card aponta para um arquivo em
-  `/img/casos/` (mediaportal, mediaportal-inicio, mediaportal-solucoes,
+  `/img/casos/` (mediaportal-inicio, mediaportal-solucoes,
   mediaportal-eventos, mindminers, ame-x, corning, fundacalc,
   fundacalc-planta, fundacalc-molas) e em
   `/img/projetos/` (amwc, ame-tom-de-voz, gipsyy). **Esta lista é a seleção
   aprovada; não acrescentar nomes sem aprovação** — os cases retirados na
   rodada 2 não voltam. Já estão no ar: `corning` (foto do barco), `mindminers`
   (a abertura da apresentação "Marketing Data Driven"), `ame-x` (o banco de
-  praça), `mediaportal`, `mediaportal-inicio`, `mediaportal-solucoes` e
-  `mediaportal-eventos` (o player do hero com o logo e três páginas do site,
-  em 1566×877),
-  `fundacalc`, `fundacalc-planta` e `fundacalc-molas` (o bloco em 3D com os
-  tirantes, a planta com as reações e as molas da sondagem, recortados dos
+  praça), `mediaportal-inicio`, `mediaportal-solucoes` e
+  `mediaportal-eventos` (três páginas do site, em 1566×877),
+  `fundacalc`, `fundacalc-planta` e `fundacalc-molas` (a tela inteira do bloco em
+  3D, a planta com as reações e as molas da sondagem, recortados dos
   prints em 1566×877, a proporção da peça do Ame), `amwc` (cartaz), `ame-tom-de-voz` (banner do super
   app + grade de serviços) e `gipsyy` (o cabeçalho da landing "Friday do
   Futuro"). Nenhuma falta mais; se uma sumir, o `onerror` do `<img>` deixa a
@@ -392,9 +391,8 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
   Media Portal ficava por baixo do título do caso, e a manchete do site
   disputava a leitura com ele — quem passava lia o texto errado. No modo peça
   o print fica emoldurado acima do título, e as páginas do site entram
-  inteiras. As quatro peças do Media Portal vêm de prints de
-  `mediaportal.com.br` (a primeira é o player do hero, recortado da capa
-  antiga); onde a largura do print não fechava 1566×877, a altura foi
+  inteiras. As três peças do Media Portal vêm de prints de
+  `mediaportal.com.br`; onde a largura do print não fechava 1566×877, a altura foi
   completada repetindo a linha da borda, que é o fundo escuro do site.
   **Peça de campanha ganha o próprio fundo** (`case__fundo`): o mesmo arquivo
   entra atrás, ampliado e desfocado, para a cor da peça tomar o cartão inteiro.
