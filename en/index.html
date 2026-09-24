@@ -372,7 +372,9 @@ button {
 .hero {
   position: relative;
   overflow: hidden;
-  padding: 104px 0 0;
+  /* O respiro de baixo é o mesmo das seções: sem ele o último parágrafo
+     encosta na régua que fecha o hero. */
+  padding: 104px 0 88px;
   border-bottom: 1px solid var(--line);
   scroll-margin-top: var(--header-h);
 }
@@ -2091,6 +2093,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 @media (min-width: 1600px) {
   :root { --container: 1280px; --gutter: 40px; }
   .section { padding: 96px 0 104px; }
+  .hero { padding-bottom: 104px; }
 }
 
 /* Abaixo de 1024px o header fica só com marca + idioma + CTA, como no mobile. */
@@ -2119,7 +2122,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 @media (max-width: 599px) {
   :root { --gutter: 20px; }
   .section { padding: 60px 0 64px; }
-  .hero { padding: 88px 0 0; }
+  .hero { padding: 88px 0 64px; }
   .person { padding: 36px 28px; }
   .person__head { grid-template-columns: 80px 1fr; gap: 20px; }
   .avatar { width: 80px; height: 80px; }
