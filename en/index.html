@@ -2631,16 +2631,15 @@ textarea.field__input { min-height: 120px; resize: vertical; }
     <div class="cases" tabindex="0" role="group" aria-label="Project cases; focusing pauses the auto-advance" data-en-aria-label="Project cases; focusing pauses the auto-advance" data-pt-aria-label="Casos de projeto; o foco pausa o avanço automático">
 <!-- Caso 01 ─────────────────────────────────────────────────── -->
     <article class="case case--featured reveal">
-  <!-- Quatro peças de 1566×877 — a proporção da peça do Ame —, montadas na
-       prancha (case__cover--piece): /img/casos/mediaportal.jpg é o player do
-       hero com o logo, e mediaportal-inicio, -solucoes e -eventos são as
-       páginas do site. No modo peça o print fica emoldurado acima do título
-       do caso, e não por baixo dele, como ficava no modo foto — era ali que a
-       manchete do site disputava a leitura. O fundo é a peça da vez ampliada e
-       desfocada; o player é claro, então a capa leva case__cover--claro para
-       o título ler. Sem o primeiro arquivo, a moldura tracejada aparece. -->
-  <div class="case__cover case__cover--piece case__cover--claro">
-    <img class="case__fundo" src="../img/casos/mediaportal.jpg" alt="" aria-hidden="true" onerror="this.remove()">
+  <!-- Três peças de 1566×877 — a proporção da peça do Ame —, montadas na
+       prancha (case__cover--piece): mediaportal-inicio, -solucoes e -eventos
+       são páginas do site. No modo peça o print fica emoldurado acima do
+       título do caso, e não por baixo dele, como ficava no modo foto — era
+       ali que a manchete do site disputava a leitura. O fundo é a peça da vez
+       ampliada e desfocada. Sem o primeiro arquivo, a moldura tracejada
+       aparece. -->
+  <div class="case__cover case__cover--piece">
+    <img class="case__fundo" src="../img/casos/mediaportal-inicio.jpg" alt="" aria-hidden="true" onerror="this.remove()">
     <div class="case__media">
       <figure class="media" data-slot="case-mediaportal">
         <!-- Uma imagem por <img class="case__shot">. Com duas ou mais a faixa
@@ -2648,8 +2647,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
              script. A primeira é a capa — se ela faltar, o caso volta para a
              moldura de espera. -->
         <div class="case__shots">
-          <img class="case__shot" src="../img/casos/mediaportal.jpg" alt="Video player with the Media Portal logo and the caption “Media Portal in under a minute”" data-en-alt="Video player with the Media Portal logo and the caption “Media Portal in under a minute”" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Player de vídeo com o logo da Media Portal e a legenda “Media Portal em menos de um minuto”">
-          <img class="case__shot" src="../img/casos/mediaportal-inicio.jpg" alt="Media Portal website home page: the headline “A segurança da sua mídia começa na gestão do seu acervo”, the intro video and the company figures" data-en-alt="Media Portal website home page: the headline “A segurança da sua mídia começa na gestão do seu acervo”, the intro video and the company figures" onerror="this.remove()" data-pt-alt="Página inicial do site da Media Portal: a manchete “A segurança da sua mídia começa na gestão do seu acervo”, o vídeo de apresentação e os números da empresa">
+          <img class="case__shot" src="../img/casos/mediaportal-inicio.jpg" alt="Media Portal website home page: the headline “A segurança da sua mídia começa na gestão do seu acervo”, the intro video and the company figures" data-en-alt="Media Portal website home page: the headline “A segurança da sua mídia começa na gestão do seu acervo”, the intro video and the company figures" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Página inicial do site da Media Portal: a manchete “A segurança da sua mídia começa na gestão do seu acervo”, o vídeo de apresentação e os números da empresa">
           <img class="case__shot" src="../img/casos/mediaportal-solucoes.jpg" alt="Media Portal website solutions page: the list of cloud and on-premises solutions and, open, Cloud Safira with its capture, editing, management and preservation modules" data-en-alt="Media Portal website solutions page: the list of cloud and on-premises solutions and, open, Cloud Safira with its capture, editing, management and preservation modules" onerror="this.remove()" data-pt-alt="Página de soluções do site da Media Portal: a lista das soluções em nuvem e locais e, aberta, a Cloud Safira com os módulos de captura, edição, gestão e preservação">
           <img class="case__shot" src="../img/casos/mediaportal-eventos.jpg" alt="Media Portal website events page: SET Nordeste 2026 with a countdown and, below, other events" data-en-alt="Media Portal website events page: SET Nordeste 2026 with a countdown and, below, other events" onerror="this.remove()" data-pt-alt="Página de eventos do site da Media Portal: a SET Nordeste 2026 com contagem regressiva e, abaixo, outros eventos">
         </div>
@@ -2700,11 +2698,13 @@ textarea.field__input { min-height: 120px; resize: vertical; }
     <!-- Caso 05 ────────────────────────────────────── -->
     <article class="case reveal">
   <!-- Três peças de 1566×877 — a proporção da peça do Ame —, montadas na prancha (case__cover--piece) e não
-       cobrindo a capa: a faixa corre entre elas. /img/casos/fundacalc.jpg é o
-       bloco em 3D com os tirantes coloridos pela força,
+       cobrindo a capa: a faixa corre entre elas. /img/casos/fundacalc.jpg é a
+       tela inteira do bloco em 3D — tirantes coloridos pela força, resumo e
+       a tabela dos métodos —, com uma faixa do cinza do app em cima e
+       embaixo para fechar a proporção,
        /img/casos/fundacalc-planta.jpg é a planta com a reação de cada estaca e
-       /img/casos/fundacalc-molas.jpg é a sondagem com as molas do solo. As três
-       são recorte do print, não a tela inteira: num cartão de 375px uma interface desenhada para 1900 vira cinza
+       /img/casos/fundacalc-molas.jpg é a sondagem com as molas do solo. As
+       duas últimas são recorte do print, não a tela inteira: num cartão de 375px uma interface desenhada para 1900 vira cinza
        e não se lê nada; recortada na parte que fala sozinha, ela é reconhecível
        sem ser lida. Proporção idêntica nas três, senão a faixa assume a
        altura da mais alta. O fundo é a peça ampliada e desfocada, como em
@@ -2716,7 +2716,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
     <div class="case__media">
       <figure class="media" data-slot="case-fundacalc">
         <div class="case__shots">
-          <img class="case__shot" src="../img/casos/fundacalc.jpg" alt="3D view of the cap on seven piles under the Fusco A method, with the ties coloured by the force they carry, from 4 to 28 kN" data-en-alt="3D view of the cap on seven piles under the Fusco A method, with the ties coloured by the force they carry, from 4 to 28 kN" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Vista 3D do bloco sobre sete estacas no método Fusco A, com os tirantes coloridos pela força que carregam, de 4 a 28 kN">
+          <img class="case__shot" src="../img/casos/fundacalc.jpg" alt="FundaCalc screen: the cap on seven piles in 3D, with the Fusco A ties coloured by force, and below the six design methods side by side, with the steel area and maximum force of each" data-en-alt="FundaCalc screen: the cap on seven piles in 3D, with the Fusco A ties coloured by force, and below the six design methods side by side, with the steel area and maximum force of each" onerror="this.closest('.case__cover').classList.remove('case__cover--piece')" data-pt-alt="Tela do FundaCalc: o bloco sobre sete estacas em 3D, com os tirantes do método Fusco A coloridos pela força, e abaixo os seis métodos de cálculo lado a lado, com a área de aço e a força máxima de cada um">
           <img class="case__shot" src="../img/casos/fundacalc-planta.jpg" alt="Plan of the 285 × 125 cm cap on seven piles, with each pile's reaction in kN and as a percentage of its allowable load" data-en-alt="Plan of the 285 × 125 cm cap on seven piles, with each pile's reaction in kN and as a percentage of its allowable load" onerror="this.remove()" data-pt-alt="Planta do bloco de 285 × 125 cm sobre sete estacas, com a reação de cada estaca em kN e em porcentagem da carga admissível">
           <img class="case__shot" src="../img/casos/fundacalc-molas.jpg" alt="Soil springs for borehole SP-01: sand, silt and clay layers with their SPT counts, the horizontal and vertical subgrade reaction coefficients along the pile, and the per-node table" data-en-alt="Soil springs for borehole SP-01: sand, silt and clay layers with their SPT counts, the horizontal and vertical subgrade reaction coefficients along the pile, and the per-node table" onerror="this.remove()" data-pt-alt="Molas do solo na sondagem SP-01: camadas de areia, silte e argila com o Nspt, os coeficientes de reação horizontal e vertical ao longo da estaca e a tabela por nó">
         </div>
