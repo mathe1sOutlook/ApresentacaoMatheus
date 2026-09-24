@@ -536,14 +536,17 @@ button {
   color: var(--ink-soft);
 }
 
-/* Prova social — faixa em marquee, sangrando as bordas do container. */
+/* Prova social — faixa em marquee, sangrando as bordas do container. Ela
+   fecha a seção de casos: encosta no pé da seção, sem o respiro de baixo, e a
+   régua da seção é a única linha entre a faixa e o método. Com régua própria
+   e respiro, sobravam duas linhas com uma tira vazia entre elas. */
 .proof {
   margin-top: 72px;
   border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
   background: var(--bg-deep);
   padding: 24px 0 26px;
 }
+#cases { padding-bottom: 0; }
 .proof__label {
   display: block;
   font-family: var(--mono);
