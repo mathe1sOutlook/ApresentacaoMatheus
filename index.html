@@ -1112,7 +1112,11 @@ html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-to
   object-fit: cover;
   filter: blur(34px) saturate(1.5) brightness(0.52);
   z-index: 0;
+  transition: opacity 0.7s ease;
 }
+/* Caso com mais de uma peça: o script põe um fundo por peça e apaga os que
+   não são da vez. */
+.case__fundo.is-off { opacity: 0; }
 /* Peça de arte clara — print de interface em tema claro. O fundo desfocado
    fica claro, e é esse o ponto: ele é a cor da peça, como em qualquer caso.
    Só que aí o título creme e a métrica ocre não leem sobre ele — 3,7:1 na capa
@@ -1167,6 +1171,7 @@ html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-to
   gap: 8px;
 }
 .case__dots button {
+  position: relative;
   width: 22px;
   height: 3px;
   /* pontas redondas: o marcador é uma régua macia, não um retângulo */
@@ -1175,6 +1180,9 @@ html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-to
   transition: background 0.3s ease;
 }
 .case__dots button[aria-current="true"] { background: var(--ink); }
+/* A régua tem 3px de altura: no dedo ninguém acerta. A área de toque cresce
+   por fora, sem mudar o desenho — 30×31px, encostando na do vizinho. */
+.case__dots button::before { content: ""; position: absolute; inset: -14px -4px; }
 
 .case__cover--photo::after {
   content: "";
@@ -2891,7 +2899,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 
     <!-- Caso 05 ────────────────────────────────────── -->
     <article class="case reveal">
-  <!-- Três peças de 1320×600, montadas na prancha (case__cover--piece) e não
+  <!-- Três peças de 1566×877 — a proporção da peça do Ame —, montadas na prancha (case__cover--piece) e não
        cobrindo a capa: a faixa corre entre elas. /img/casos/fundacalc.jpg é o
        bloco em 3D com os tirantes coloridos pela força,
        /img/casos/fundacalc-planta.jpg é a planta com a reação de cada estaca e
@@ -2899,8 +2907,8 @@ textarea.field__input { min-height: 120px; resize: vertical; }
        são recorte do print, não a tela inteira: num cartão de 375px uma interface desenhada para 1900 vira cinza
        e não se lê nada; recortada na parte que fala sozinha, ela é reconhecível
        sem ser lida. Proporção idêntica nas três, senão a faixa assume a
-       altura da mais alta. O fundo é a primeira ampliada e desfocada, como em
-       toda peça; como a arte é clara, a capa leva `case__cover--claro`, que
+       altura da mais alta. O fundo é a peça ampliada e desfocada, como em
+       toda peça; com o script, ele troca junto com a imagem da vez; como a arte é clara, a capa leva `case__cover--claro`, que
        põe o véu no pé para o título e a métrica lerem sem apagar a cor do
        fundo. Sem o primeiro arquivo, a moldura tracejada aparece. -->
   <div class="case__cover case__cover--piece case__cover--claro">
@@ -4019,8 +4027,9 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   /* ─── Casos: faixa de imagens ─────────────────────────────────────
      Com uma imagem a faixa é só a capa. Com duas ou mais o arrasto já
      funciona sozinho (scroll-snap, sem script); aqui entram os
-     marcadores, o foco e as setas do teclado. Enquanto nenhum caso tem
-     mais de uma imagem, este bloco não faz nada.
+     marcadores, o foco, as setas do teclado, o fundo desfocado que troca
+     junto com a peça e o avanço automático — que só anda com a faixa na
+     tela e para sob o dedo, o mouse, o foco e com os casos abertos.
      ───────────────────────────────────────────────────────────────── */
   var GALLERY_WORDS = {
     pt: { group: 'Imagens do caso', shot: 'Imagem ' },
@@ -4054,7 +4063,22 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       dots.appendChild(b);
       return b;
     });
-    track.closest('.case__cover').appendChild(dots);
+    var cover = track.closest('.case__cover');
+    cover.appendChild(dots);
+
+    /* Um fundo por peça, empilhados: a troca é um esmaecer entre eles. */
+    var fundo = cover.querySelector('.case__fundo');
+    var fundos = [];
+    if (fundo) Array.prototype.forEach.call(shots, function (shot, i) {
+      var f = fundo;
+      if (i > 0) {
+        f = fundo.cloneNode(false);
+        f.src = shot.getAttribute('src');
+        f.classList.add('is-off');
+        fundos[i - 1].after(f);
+      }
+      fundos.push(f);
+    });
 
     var tick = false;
     track.addEventListener('scroll', function () {
@@ -4064,8 +4088,36 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         tick = false;
         var i = at();
         marks.forEach(function (b, k) { b.setAttribute('aria-current', String(k === i)); });
+        fundos.forEach(function (f, k) { f.classList.toggle('is-off', k !== i); });
       });
     }, { passive: true });
+
+    if (motionOK) {
+      var hold = false, seen = false, timer = null;
+      function next() {
+        if (hold || !seen || document.hidden || document.querySelector('.cases.has-open')) return;
+        go(at() + 1 < shots.length ? at() + 1 : 0);
+      }
+      function restart() { clearInterval(timer); timer = setInterval(next, 4000); }
+      restart();
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) { seen = entries[0].isIntersecting; }, { threshold: 0.6 }).observe(track);
+      } else {
+        seen = true;
+      }
+      cover.addEventListener('pointerenter', function () { hold = true; });
+      cover.addEventListener('pointerleave', function () { hold = false; });
+      cover.addEventListener('pointerdown', function () { hold = true; });
+      ['pointerup', 'pointercancel'].forEach(function (ev) {
+        cover.addEventListener(ev, function (e) { if (e.pointerType !== 'mouse') hold = false; restart(); });
+      });
+      /* Só o foco de teclado pausa: o toque num marcador também põe foco
+         nele, e aí o avanço nunca mais voltaria. */
+      cover.addEventListener('focusin', function (e) {
+        try { hold = e.target.matches(':focus-visible'); } catch (x) { hold = true; }
+      });
+      cover.addEventListener('focusout', function () { hold = false; });
+    }
 
     track.addEventListener('keydown', function (event) {
       if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
