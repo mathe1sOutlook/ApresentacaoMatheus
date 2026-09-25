@@ -1131,11 +1131,27 @@ html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-to
   background: linear-gradient(180deg, rgba(11, 13, 18, 0) 50%, rgba(11, 13, 18, 0.62) 72%, rgba(11, 13, 18, 0.94) 100%);
   pointer-events: none;
 }
-/* No modo leitura a peça sai e a faixa mostra só o fundo: o véu fecha por
-   inteiro, como no modo foto. */
-.cases.has-open .case__cover--claro::after {
-  background: linear-gradient(180deg, rgba(11, 13, 18, 0.62) 0%, rgba(11, 13, 18, 0.78) 55%, rgba(11, 13, 18, 0.95) 100%);
+/* No modo leitura a peça sai e a faixa vira a miniatura dela: o fundo perde
+   quase todo o desfoque e mostra a própria imagem, e um véu da esquerda, onde
+   estão o título e o botão, para a direita segura a leitura. Com o desfoque
+   cheio, peça escura (o site da Media Portal) ou cinza (o FundaCalc) virava
+   uma mancha sem nada. */
+.cases.has-open .case__fundo {
+  inset: -3%;
+  width: 106%;
+  height: 106%;
+  filter: blur(2px) saturate(1.1) brightness(0.7);
 }
+.cases.has-open .case__cover--piece::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, rgba(11, 13, 18, 0.9) 0%, rgba(11, 13, 18, 0.72) 45%, rgba(11, 13, 18, 0.28) 100%);
+  pointer-events: none;
+}
+/* A peça está escondida, então os marcadores não teriam o que trocar. */
+.cases.has-open .case__dots { display: none; }
 /* A peça descola do fundo: sem sombra, arte e desfoque encostam e viram borrão. */
 .case__cover--piece .case__media .media {
   box-shadow: 0 26px 60px rgba(4, 6, 12, 0.55);
@@ -3093,7 +3109,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       <li class="step reveal">
         <span class="step__number">02</span>
         <h3 class="step__title" data-en="Scope &amp; schedule">Escopo &amp; cronograma</h3>
-        <ul class="step__text step__list"><li><i aria-hidden="true"></i><span data-en="Positioning">Posicionamento</span></li><li><i aria-hidden="true"></i><span data-en="Screens">Telas</span></li><li><i aria-hidden="true"></i><span data-en="Order of execution">Ordem de execução</span></li></ul>
+        <ul class="step__text step__list"><li><i aria-hidden="true"></i><span data-en="Positioning">Posicionamento</span></li><li><i aria-hidden="true"></i><span data-en="Page wireframes">Wireframes das páginas</span></li><li><i aria-hidden="true"></i><span data-en="Order of execution">Ordem de execução</span></li></ul>
         <i class="step__timer" aria-hidden="true"></i>
       </li>
       <li class="step reveal">
