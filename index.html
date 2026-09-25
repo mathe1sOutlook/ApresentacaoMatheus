@@ -1393,6 +1393,9 @@ html.has-case-open { --header-h: 52px; }
   font-size: 15px;
   color: var(--ink-soft);
 }
+/* Texto em mais de um parágrafo: o segundo separa do primeiro. */
+.case__block p:not(.label) + p,
+.case__value p:not(.label) + p { margin-top: 10px; }
 .case__value {
   margin-top: 18px;
   padding-top: 16px;
@@ -2751,40 +2754,25 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 
   <div class="case__details" id="case-05-details" hidden>
     <p class="case__client">FundaCalc</p>
-    <span class="case__sector" data-en="Structural engineering · master’s project · Matheus">Engenharia estrutural · projeto de mestrado · Matheus</span>
+    <span class="case__sector" data-en="Structural engineering · master’s project · Matheus">Engenharia de estruturas · projeto de mestrado · Matheus</span>
     <div>
       <div class="case__block">
         <p class="label label--ochre" data-en="Problem">Problema</p>
-        <p data-en="A pile cap is designed by strut and tie: a truss that carries the column load down to the piles. Every method — Blévot, Fusco, MBT — assumes its own truss, drawn for a particular case, and none of them generalises. There was no software that generalised strut and tie far enough to put the several analysis and design methods for pile caps side by side and judge them on the same geometry.">Bloco sobre estacas se dimensiona por bielas e tirantes: uma treliça que leva a carga do pilar até as estacas. Cada método — Blévot, Fusco, MBT — assume a sua, desenhada para um caso particular, e nenhum deles generaliza. Não existia software que generalizasse bielas e tirantes a ponto de avaliar os diversos métodos de análise e dimensionamento de blocos sobre a mesma geometria.</p>
+        <p data-en="Pile caps are complex elements in structural engineering: they carry the load from the columns to the foundation piles, sharing the forces of the superstructure among them.">Blocos sobre estacas são elementos complexos da engenharia de estruturas: fazem a transição entre os pilares e as estacas da fundação, distribuindo entre elas os esforços da superestrutura.</p>
+        <p data-en="That transfer is not uniform, and it grows more complex with multiple columns, eccentricities and imperfections in how the piles are positioned and driven. The few cases backed by experimental tests generally start from idealised geometries, far from many real design and construction situations.">Essa transferência não é uniforme e se torna ainda mais complexa quando entram múltiplos pilares, excentricidades e imperfeições no posicionamento e na cravação das estacas. Os poucos casos respaldados por ensaios experimentais partem, em geral, de geometrias idealizadas, distantes de muitas situações reais de projeto e obra.</p>
       </div>
       <div class="case__block">
         <p class="label label--blue" data-en="Solution">Solução</p>
-        <p data-en="The truss is assembled by finite elements, in a solution that satisfies the lower bound theorem — what it returns is statically admissible, and therefore on the safe side. That is what generalises the model: eccentricity in the column and in the pile, more than one column over the same cap, and the methods compared against each other instead of each one in its own idealisation. It came out of a master’s project, and nothing did this when it launched.">A treliça é montada por elementos finitos, numa solução que atende ao Teorema do Limite Inferior — o que ela devolve é estaticamente admissível, e portanto a favor da segurança. É isso que generaliza o modelo: excentricidade no pilar e na estaca, mais de um pilar sobre o mesmo bloco, e os métodos comparados entre si em vez de cada um na sua idealização. Saiu de um projeto de mestrado, e não havia nada assim quando foi lançado.</p>
+        <p data-en="FundaCalc turns that geometry into a computational model. The cap is discretised and analysed with finite elements, which makes it possible to represent different supports, loads, eccentricities and arrangements of columns and piles.">O FundaCalc transforma essa geometria em um modelo computacional. O bloco é discretizado e analisado com elementos finitos, permitindo representar diferentes apoios, carregamentos, excentricidades e configurações de pilares e estacas.</p>
+        <p data-en="On that same basis, different analysis and design methods can be applied and compared on the same geometry. During the research, no commercial tools with this purpose were found in Brazil.">Sobre essa mesma base, diferentes métodos de análise e dimensionamento podem ser aplicados e comparados na mesma geometria. Durante o desenvolvimento da pesquisa, não foram identificadas ferramentas comerciais no Brasil com essa finalidade.</p>
       </div>
       <div class="case__value">
         <p class="label" data-en="Value delivered">Valor entregue</p>
-        <p data-en="The cap that exists on site — pile off its design position, column off centre — is what goes into the model, instead of an idealisation of it. The engineer sees the truss each method assumes, compares what each one demands in reinforcement and chooses on criteria. The same engine covers the geotechnical side: bearing capacity by Aoki-Velloso and Decourt-Quaresma over the borehole log, settlement and p-y curves.">O bloco que existe na obra — estaca fora da posição de projeto, pilar excêntrico — é o que entra no modelo, em vez de uma idealização dele. O engenheiro vê a treliça que cada método assume, compara o que cada um exige de armadura e escolhe por critério. A mesma base cobre o lado geotécnico: capacidade de carga por Aoki-Velloso e Decourt-Quaresma sobre o perfil de sondagem, recalque e curvas p-y.</p>
+        <p data-en="FundaCalc brings the calculation model closer to real design and construction conditions.">O FundaCalc aproxima o modelo de cálculo das condições reais de projeto e obra.</p>
+        <p data-en="The engineer can represent more complex geometries, see how the forces are transferred and compare different methods on the same problem, making an analysis that is hard to carry out by hand clearer, verifiable and consistent.">O engenheiro pode representar geometrias mais complexas, visualizar a transferência dos esforços e comparar diferentes métodos sobre o mesmo problema, tornando uma análise difícil de conduzir manualmente mais clara, verificável e consistente.</p>
       </div>
     </div>
 
-    <div class="ficha">
-      <div class="ficha__cell">
-        <p class="ficha__label" data-en="Deliverables">Entregáveis</p>
-        <ul class="ficha__tags"><li data-en="Strut and tie by FE">Bielas e tirantes por MEF</li><li data-en="Method comparison">Comparador de métodos</li><li data-en="3D view">Visualização 3D</li><li data-en="Geotechnics">Geotecnia</li><li data-en="Excel export">Exportação Excel</li></ul>
-      </div>
-      <div class="ficha__cell">
-        <p class="ficha__label" data-en="Numbers">Números</p>
-        <ul class="ficha__list">
-          <li><b>6</b> <span data-en="design methods judged on the same geometry">métodos avaliados sobre a mesma geometria</span></li>
-          <li><b>11</b> <span data-en="pile layouts, from 2 to 7 piles">arranjos de estaca, de 2 a 7 estacas</span></li>
-          <li><b data-en="12k">12 mil</b> <span data-en="lines in the calculation engine alone">linhas só no motor de cálculo</span></li>
-        </ul>
-      </div>
-      <div class="ficha__cell">
-        <p class="ficha__label" data-en="Method">Método</p>
-        <ul class="ficha__list" data-en="<li>Truss assembled by finite elements</li><li>Statically admissible solution — lower bound theorem</li><li>Eccentricity in the column and in the pile</li><li>More than one column over the same cap</li><li>Born as a Python notebook, then .NET MAUI desktop, today in the browser</li>"><li>Treliça montada por elementos finitos</li><li>Solução estaticamente admissível — Teorema do Limite Inferior</li><li>Excentricidade no pilar e na estaca</li><li>Mais de um pilar sobre o mesmo bloco</li><li>Nasceu em notebook Python, passou por desktop .NET MAUI, hoje roda no navegador</li></ul>
-      </div>
-    </div>
   </div>
 </article>
 
