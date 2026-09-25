@@ -1264,6 +1264,27 @@ html:not(.js) .explorer__panel + .explorer__panel { padding-top: 40px; border-to
 }
 .case__toggle:hover { border-color: var(--ink); background: var(--ink); color: var(--bg); }
 
+/* Fileira alinhada: com a peça centralizada na altura livre e a legenda
+   empurrada para o pé, título de uma ou duas linhas movia a imagem e o
+   título de card para card. Fechados, os cards seguem a mesma régua: peça
+   logo abaixo dos marcadores, título a uma distância fixa dela e o botão
+   sempre no pé. Aberto, a faixa tem regras próprias e não entra aqui. */
+.cases:not(.has-open) .case__cover--piece .case__media { flex: none; margin: 44px 0 0; }
+.cases:not(.has-open) .case__cover--piece .case__caption {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: 32px;
+}
+.cases:not(.has-open) .case__cover--piece .case__reveal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.cases:not(.has-open) .case__cover--piece .case__metric { margin-bottom: 20px; }
+.cases:not(.has-open) .case__cover--piece .case__toggle { margin-top: auto; }
+
 /* Repouso limpo só onde há mouse e há foto: no toque falta o estado
    intermediário que revelaria o botão, e sem foto não há imagem para ser
    protagonista — nos dois casos métrica e botão ficam sempre à vista. */
