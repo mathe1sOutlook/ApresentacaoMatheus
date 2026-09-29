@@ -810,7 +810,9 @@ button {
 @media (max-width: 639px) {
   .explorer--diag { display: grid; }
   .explorer--diag .explorer__item { font-size: 17px; padding: 14px 20px; }
-  .pain__art { width: 110px; height: 96px; opacity: 0.45; }
+  /* sem coluna reservada, a arte no canto caía por cima do texto: no
+     celular ela entra no fluxo, acima do rótulo */
+  .pain__art, .pain__art--timeline { position: static; width: 120px; height: 105px; opacity: 0.85; margin: -8px 0 -14px -4px; }
   .diag__panel .explorer__front, .diag__text { padding-right: 0; }
   .diag__text { font-size: 21px; max-width: none; }
 }
@@ -3233,7 +3235,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 <footer class="site-footer">
   <div class="container site-footer__inner">
     <span>© 2026 CASA MARTECH</span>
-    <span data-en="Brand strategy &amp; systems engineering · PT-BR / EN" data-pt="Estratégia de marca &amp;amp; engenharia de sistemas · PT-BR / EN">Brand strategy &amp; systems engineering · PT-BR / EN</span>
+    <span><span data-en="Brand strategy &amp; systems engineering" data-pt="Estratégia de marca &amp;amp; engenharia de sistemas">Brand strategy &amp; systems engineering</span> · <span style="white-space: nowrap">PT-BR / EN</span></span>
   </div>
 </footer>
 
