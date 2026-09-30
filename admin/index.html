@@ -160,6 +160,7 @@ button {
   text-transform: uppercase;
   color: var(--blue);
   border-bottom: 1px solid transparent;
+  text-align: left; /* botão centraliza por padrão; título que quebra linha ficava no meio */
 }
 .btn-link:hover { color: var(--ochre); }
 
@@ -323,7 +324,9 @@ body.drawer-open { overflow: hidden; }
 .drawer__foot { margin-top: auto; padding: 18px 22px; display: flex; flex-direction: column; gap: 10px; }
 
 /* ─── Corpo ──────────────────────────────────────────────────────── */
-.view { padding: 40px 0 96px; }
+/* Só vertical: o <main> também é .container, e um padding abreviado aqui
+   zerava a margem lateral dele — no celular o conteúdo colava na borda. */
+.view { padding-top: 40px; padding-bottom: 96px; }
 .view-head {
   display: flex;
   flex-wrap: wrap;
@@ -714,11 +717,61 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   .grid-2, .grid-3, .form-grid { grid-template-columns: 1fr; }
   .rule-grid--3, .rule-grid--4 { grid-template-columns: 1fr 1fr; }
   .stat__value { white-space: normal; }
-  .view { padding: 26px 0 80px; }
+  .view { padding-top: 26px; padding-bottom: 80px; }
   .topbar__user { display: none; }
   .cal__day { min-height: 64px; padding: 5px; }
   .cal__evt { font-size: 9px; padding: 2px 4px; }
   .stat__value { font-size: 20px; }
+  /* abaixo de 16px o Safari do iPhone dá zoom na página ao focar o campo */
+  .field input, .field select, .field textarea, .lead-status, .proj-status select { font-size: 16px; }
+  /* uma coluna por tela, com a próxima aparecendo na borda */
+  .kanban { grid-auto-columns: 84%; scroll-snap-type: x mandatory; }
+  .kanban__col { min-height: 200px; scroll-snap-align: start; }
+  .modal { padding: 12px 10px 32px; }
+  .topbar__bar { gap: 12px; }
+  .modal__head { padding: 14px 16px; }
+  .modal__body { padding: 18px 16px; }
+}
+
+/* Tabelas viram cartões: um registro por bloco, com o nome da coluna ao
+   lado de cada valor. O rótulo vem do data-label que afterRender() copia
+   do cabeçalho; célula de cabeçalho vazio (ações) fica sem rótulo. */
+@media (max-width: 640px) {
+  .tbl-wrap { overflow-x: visible; }
+  table.tbl, .tbl tbody, .tbl tfoot, .tbl tr, .tbl td { display: block; width: 100%; }
+  .tbl thead { display: none; }
+  .tbl tbody tr { padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .tbl tbody tr:last-child { border-bottom: 0; }
+  .tbl td { border-bottom: 0; padding: 3px 0; }
+  .tbl td.empty { padding: 10px 0; }
+  /* flow-root segura a altura do rótulo flutuado quando ele quebra linha */
+  .tbl td[data-label] { display: flow-root; padding-left: 100px; overflow-wrap: anywhere; }
+  .tbl td[data-label]::before {
+    content: attr(data-label);
+    float: left;
+    margin-left: -100px;
+    padding-top: 3px;
+    width: 88px;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .tbl td.num { text-align: left; }
+  .tbl td.actions { text-align: left; white-space: normal; padding-top: 8px; }
+  .tbl td.actions .btn-mini { margin: 0 6px 0 0; }
+  tr.is-new td:first-child { box-shadow: none; }
+  .tbl tbody tr.is-new { box-shadow: inset 3px 0 0 var(--blue); }
+  .tbl tbody tr.is-target { background: var(--ochre-soft, #F3E9D2); }
+  .tbl tfoot tr { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 12px 16px; border-top: 1px solid var(--ink); }
+  .tbl tfoot td { width: auto; border: 0; padding: 0; text-align: left; }
+}
+@media (max-width: 400px) {
+  .brandmark { font-size: 13px; letter-spacing: 0.07em; gap: 8px; }
+}
+@media (max-width: 359px) {
+  .brandmark .label { display: none; }
 }
 </style>
 </head>
@@ -858,6 +911,14 @@ const ui = {
   agendaY: now0.getFullYear(), agendaM: now0.getMonth(),
   taskFilter: 'todas', taskShowDone: false,
 };
+/* mesmo corte do CSS em que as tabelas viram cartões */
+const NARROW = matchMedia('(max-width: 640px)');
+/* o gráfico do Financeiro é desenhado para a largura; girar o celular pede
+   um novo desenho. Só nessa tela: nas outras, redesenhar perderia o que
+   estivesse sendo digitado. */
+NARROW.addEventListener('change', () => {
+  if (state.me && parseRoute().name === 'financeiro') renderApp();
+});
 
 /* ═══ Utilidades ═══════════════════════════════════════════════════ */
 const $  = (sel, el) => (el || document).querySelector(sel);
@@ -1193,6 +1254,13 @@ function renderApp() {
 function afterRender(route) {
   const chart = $('#fin-chart');
   if (chart) bindChartTooltip(chart);
+  /* rótulo de cada célula para a tabela-em-cartões do celular */
+  $$('#view table.tbl').forEach((t) => {
+    const heads = $$('thead th', t).map((th) => th.textContent.trim());
+    $$('tbody tr', t).forEach((tr) => Array.from(tr.cells).forEach((td, i) => {
+      if (heads[i] && td.colSpan === 1) td.dataset.label = heads[i];
+    }));
+  });
   const target = route.name === 'leads' && route.id ? $('#lead-' + route.id) : null;
   if (target) target.scrollIntoView({ block: 'center' });
 }
@@ -1789,10 +1857,17 @@ function renderFinChart(from, to) {
     return { y, m, key, rec: recM, prev: prevM };
   });
 
-  const W = 760, H = 264, L = 64, R = 14, T = 22, B = 30;
+  /* No celular o SVG é desenhado mais estreito: esticado de 760 para ~340px,
+     o texto de 10 unidades virava 4px. */
+  const narrow = NARROW.matches;
+  const W = narrow ? 380 : 760, H = narrow ? 240 : 264, L = narrow ? 50 : 64, R = 14, T = 22, B = 30;
   const iw = W - L - R, ih = H - T - B;
   const n = byMonth.length;
   const slot = iw / n;
+  /* rótulo de mês de N em N quando não cabem todos */
+  const every = narrow ? Math.ceil(n / 6) : 1;
+  const monthLabel = (d, i) => i % every ? ''
+    : `<text x="${L + slot * i + slot / 2}" y="${H - 10}" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="#57544C">${MONTHS_S[d.m]}${d.m === 0 || i === 0 ? '/' + String(d.y).slice(2) : ''}</text>`;
 
   let svgBody = '', legend = '', hoverRects = '';
 
@@ -1822,10 +1897,10 @@ function renderFinChart(from, to) {
       if (d.rec > 0) bars += `<rect x="${x}" y="${yRec}" width="${bw}" height="${Math.max(1, hRec)}" fill="var(--data-blue)" />`;
       if (d.prev > 0) bars += `<rect x="${x}" y="${yPrev}" width="${bw}" height="${Math.max(1, hPrev)}" fill="var(--data-ochre)" />`;
       const total = d.rec + d.prev;
-      if (n <= 9 && total > 0) {
+      if (n <= (narrow ? 4 : 9) && total > 0) {
         bars += `<text x="${cx}" y="${Math.min(yRec, yPrev) - 6}" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="#57544C">${fmtK(total)}</text>`;
       }
-      bars += `<text x="${cx}" y="${H - 10}" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="#57544C">${MONTHS_S[d.m]}${d.m === 0 || i === 0 ? '/' + String(d.y).slice(2) : ''}</text>`;
+      bars += monthLabel(d, i);
       hoverRects += `<rect x="${L + slot * i}" y="${T}" width="${slot}" height="${ih}" fill="transparent"
         data-tip="${esc(`<b>${MONTHS_S[d.m]}/${d.y}</b><br />Recebido: ${fmtBRL(d.rec)}<br />A receber: ${fmtBRL(d.prev)}<br />Total: ${fmtBRL(total)}`)}" />`;
     });
@@ -1865,7 +1940,7 @@ function renderFinChart(from, to) {
       <polyline points="${lineOf(ptsReal)}" fill="none" stroke="var(--data-blue)" stroke-width="2" />`;
     byMonth.forEach((d, i) => {
       lines += `<circle cx="${xFor(i)}" cy="${yFor(ptsReal[i])}" r="3.5" fill="var(--data-blue)" stroke="var(--paper)" stroke-width="2" />`;
-      lines += `<text x="${xFor(i)}" y="${H - 10}" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="#57544C">${MONTHS_S[d.m]}${d.m === 0 || i === 0 ? '/' + String(d.y).slice(2) : ''}</text>`;
+      lines += monthLabel(d, i);
       hoverRects += `<rect x="${L + slot * i}" y="${T}" width="${slot}" height="${ih}" fill="transparent"
         data-tip="${esc(`<b>${MONTHS_S[d.m]}/${d.y}</b><br />Acumulado recebido: ${fmtBRL(ptsReal[i])}<br />Com previstos: ${fmtBRL(ptsProj[i])}`)}" />`;
     });
