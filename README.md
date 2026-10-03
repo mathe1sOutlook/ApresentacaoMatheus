@@ -59,7 +59,8 @@ proposta-mediaportal-*/   três propostas privadas para a Media Portal, fora do 
                 (site, contrato e CRM & Inteligência de Dados)
 proposta-2jem-*/          proposta de marca e plataforma digital da 2JEM, no
                 sistema "Verde · Navy" (tokens próprios, tema claro só)
-admin/          painel interno da dupla (CRM, financeiro, agenda, tarefas)
+admin/          painel interno da dupla (CRM, financeiro, agenda, tarefas,
+                métricas do site)
 ```
 
 Sem etapa de build e sem dependências: é HTML estático servido direto pela
@@ -209,6 +210,51 @@ derivados no envio. Nada vem marcado de saída, para o que chegar ser escolha
 de quem escreveu; sem marcação a linha não entra na mensagem do WhatsApp. O
 lead nunca vai vazio: `need` é `not null` com `check` nos quatro valores.
 
+## Métricas do site
+
+O site mede a si mesmo, no mesmo desenho do `/admin/metricas` da Media
+Portal: um script no fim do `index.html` grava **o fato, nunca a pessoa** —
+sem cookie, sem identificador de visitante, sem IP e sem texto digitado. Vai
+para a tabela `amaralesilva_site_events` do Supabase pelo mesmo caminho do
+formulário (REST com a chave publicável; o papel anônimo só insere, e só nas
+colunas que o script preenche). O painel lê pela função
+`amaralesilva_site_metrics(dias)`, que devolve totais — nenhuma linha crua
+chega ao navegador. Em `localhost` e `file://` nada é gravado.
+
+O que entra:
+
+- `visita_pagina` — uma por abertura de página, com o canal de chegada
+  (Google, LinkedIn, campanha `utm_source`… ou "direto"), a faixa de largura
+  da tela (celular / tablet / computador), o tipo de navegação e a conexão;
+- `secao_vista` — uma vez por seção por visita, quando um quarto dela aparece:
+  é o "até onde a página foi lida";
+- os cliques, só o fato e um detalhe curto: menu, botão de caminho, área do
+  diagnóstico, entrega, caso, idioma, WhatsApp, e-mail, link externo,
+  formulário enviado ou falhou (`lead_envio_ok` / `lead_envio_erro`, chamados
+  pelo script principal via `window.cmMetrica`);
+- `web_vital_*` — LCP, FCP, TTFB, CLS e INP medidos no próprio navegador com
+  `PerformanceObserver` (sem biblioteca), com as fases da abertura junto do
+  LCP. CLS e INP só ficam prontos na saída da página.
+
+Navegador que se declara automatizado (`navigator.webdriver`) grava com a
+marca `automation` e fica fora das contas de pessoas. Os eventos são juntados
+em lotes de até 20 (`fetch` com `keepalive`); um gatilho no banco recusa lotes
+acima de 25 e mais de 4.000 registros a cada 10 minutos — o site não tem
+servidor para limitar por endereço, então o teto é global.
+
+A tela usa **mediana, nunca média**, mostra o dia típico ao lado do total e
+dá nota de velocidade pela régua pública das Core Web Vitals (sobre o p75, e
+só a partir de 30 medidas). Evento novo no site ⇒ rótulo novo em
+`MET_EVENTOS`, no `admin/index.html`; seção nova ⇒ linha em `MET_SECOES`.
+
+**Google Analytics 4** é separado e opcional: o `<head>` tem o snippet do
+gtag, que só carrega quando `GA_ID` está preenchido (formato `G-XXXXXXXXXX`,
+em *Administrador → Fluxos de dados* do GA). Vazio, nenhum script do Google
+carrega e nenhum cookie é gravado. O GA grava cookies por dois anos, o que é
+dado pessoal pela LGPD, e o site não tem aviso de cookies — a medição própria
+não depende disso. Ao preencher, rodar `node scripts/build-en.mjs` para o
+`/en` acompanhar.
+
 ## Seções
 
 `#topo` (hero) · `#dupla` · `#diagnostico` · `#servicos` · `#cases` ·
@@ -314,6 +360,10 @@ Reúne:
   de hoje, da semana e o que atrasou.
 - **Leads do site** — o que chegou pelo formulário público, com situação
   (novo, em contato, convertido, descartado) e conversão em cliente.
+- **Métricas do site** — visitas por dia, de onde vieram, aparelho e idioma,
+  até que seção a página foi lida, o que as pessoas clicaram e a velocidade
+  (Core Web Vitals), em 7, 30 ou 90 dias, com comparação ao período anterior.
+  Ver "Métricas do site" acima: nada ali identifica quem visita.
 
 O painel **relê o banco sozinho**: quando a aba volta ao foco e a cada minuto
 com ela à vista, respeitando um piso de 15s entre leituras e se segurando
@@ -351,6 +401,9 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
 
 - **Vercel Web Analytics** — o site já carrega `/_vercel/insights/script.js`;
   só começa a contar depois de ativar *Analytics* no projeto na Vercel.
+- **Google Analytics** — o snippet está no `<head>` e desligado: falta criar a
+  propriedade no GA e preencher `GA_ID` (ver "Métricas do site"), decidindo
+  antes o aviso de cookies.
 - **Imagens dos casos e projetos** — cada card aponta para um arquivo em
   `/img/casos/` (mediaportal-inicio, mediaportal-solucoes,
   mediaportal-eventos, mindminers, ame-x, corning, fundacalc,

@@ -58,6 +58,30 @@
      antes disso o script responde 404 e nada acontece. -->
 <script defer src="/_vercel/insights/script.js"></script>
 
+<!-- Google Analytics 4: LIGADO SOMENTE quando GA_ID está preenchido (formato
+     G-XXXXXXXXXX, em Administrador → Fluxos de dados do GA). Vazio, nada
+     carrega: nenhum script do Google, nenhuma requisição, nenhum cookie.
+     Atenção: o GA grava cookies por dois anos (_ga/_ga_*), o que é dado
+     pessoal pela LGPD — o site não tem aviso de cookies. A medição própria
+     (fim do arquivo) não depende disto. Em localhost e file:// fica fora. -->
+<script>
+(function () {
+  var GA_ID = '';
+  if (!/^G-[A-Z0-9]{4,20}$/.test(GA_ID)) return;
+  var h = window.location.hostname;
+  if (window.location.protocol === 'file:' || h === 'localhost' || h === '127.0.0.1') return;
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { window.dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', GA_ID);
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+  document.head.appendChild(s);
+})();
+</script>
+
 <style>
 /* ═══════════════════════════════════════════════════════════════════
    Fontes (variáveis, subsets latin + latin-ext)
@@ -3919,11 +3943,13 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         source: 'site'
       }).then(function () {
         aviso('ok');
+        if (window.cmMetrica) window.cmMetrica('lead_envio_ok');
         form.reset();
         Array.prototype.forEach.call(form.querySelectorAll('[aria-invalid]'), function (i) { i.removeAttribute('aria-invalid'); });
       }, function () {
         /* não deu para gravar: a pessoa precisa saber, e ter por onde ir */
         aviso('erro');
+        if (window.cmMetrica) window.cmMetrica('lead_envio_erro');
       }).then(function () { btn.disabled = false; });
     });
   }
@@ -4383,6 +4409,258 @@ textarea.field__input { min-height: 120px; resize: vertical; }
     mq.addEventListener ? mq.addEventListener('change', start) : mq.addListener(start);
   })();
 
+})();
+</script>
+
+
+<!-- ─── Medição própria do site ─────────────────────────────────────
+     O que o painel (/admin → Métricas do site) mostra sai daqui: a visita,
+     até que seção a pessoa chegou, o que ela clicou e quanto a página
+     demorou. Vai para a tabela amaralesilva_site_events pelo mesmo
+     caminho do formulário (REST com a chave publicável, política só de
+     INSERT para anon). Mesmo desenho do /admin/metricas da Media Portal.
+
+     O que NUNCA sai daqui: cookie, identificador de visitante, endereço
+     IP, texto digitado. Guardamos o fato ("enviou o formulário"), não o
+     dado. Por isso esta medição não depende de aviso de cookies — o
+     Google Analytics, no <head>, é outra história.
+
+     Sem JavaScript nada disto roda e o site segue inteiro. Em localhost
+     e em file:// não grava: desenvolvimento não é visita.
+     ───────────────────────────────────────────────────────────────── -->
+<script>
+(function () {
+  'use strict';
+  if (!window.fetch || !window.JSON) return;
+  var host = window.location.hostname;
+  if (window.location.protocol === 'file:' || host === 'localhost' || host === '127.0.0.1') return;
+
+  var SB_URL = 'https://wsgjbzsdewzplsnpfvdf.supabase.co';
+  var SB_KEY = 'sb_publishable_uUuSrKXuJXalJ79WO0PxDg_QpIEOfvA';
+  var LOTE_MAX = 20;      /* o banco recusa lotes acima de 25 */
+  var ESPERA_MS = 2500;   /* junta cliques próximos num envio só */
+
+  /* ─── Contexto da abertura (lido uma vez) ──────────────────────── */
+  var pagina = (window.location.pathname.replace(/\/index\.html$/, '') || '/')
+    .toLowerCase().replace(/[^a-z0-9\/_-]/g, '').slice(0, 120) || '/';
+  var idioma = /^\/en(\/|$)/.test(window.location.pathname) || /[?&]lang=en\b/.test(window.location.search) ? 'en' : 'pt';
+  var automacao = navigator.webdriver === true;
+
+  function aparelho(largura) {
+    if (!(largura > 0)) return 'desconhecido';
+    return largura < 640 ? 'celular' : largura < 1024 ? 'tablet' : 'computador';
+  }
+  function limpar(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9.\-_]/g, '').slice(0, 60); }
+  function hostDe(url) {
+    try { return new URL(url).hostname.replace(/^www\./, '').toLowerCase(); } catch (e) { return ''; }
+  }
+  /* De onde veio: campanha (utm_source) ganha do site de origem; o site de
+     origem vira o CANAL (google, linkedin…), nunca a página inteira. */
+  var CANAIS = [
+    ['google', ['google', 'googleusercontent']], ['bing', ['bing']], ['duckduckgo', ['duckduckgo']],
+    ['linkedin', ['linkedin', 'lnkd']], ['instagram', ['instagram']], ['facebook', ['facebook', 'fb']],
+    ['whatsapp', ['whatsapp', 'wa.me']], ['youtube', ['youtube', 'youtu.be']], ['x-twitter', ['twitter', 'x.com', 't.co']],
+    ['telegram', ['telegram', 't.me']]
+  ];
+  function origem() {
+    var campanha = limpar(new URLSearchParams(window.location.search).get('utm_source'));
+    if (campanha) return 'campanha-' + campanha;
+    var ref = hostDe(document.referrer);
+    if (!ref) return 'direto';
+    if (ref === host.replace(/^www\./, '').toLowerCase()) return 'interno';
+    var rotulos = ref.split('.');
+    for (var i = 0; i < CANAIS.length; i++) {
+      var nomes = CANAIS[i][1];
+      for (var j = 0; j < nomes.length; j++) {
+        if (ref === nomes[j] || ref.slice(-nomes[j].length - 1) === '.' + nomes[j] || rotulos.indexOf(nomes[j]) !== -1) return CANAIS[i][0];
+      }
+    }
+    return limpar(ref) || 'direto';
+  }
+  function tipoNavegacao() {
+    var e = performance.getEntriesByType && performance.getEntriesByType('navigation');
+    return (e && e[0] && e[0].type) || 'navigate';
+  }
+  function conexao() {
+    var c = navigator.connection;
+    return c && typeof c.effectiveType === 'string' ? c.effectiveType.slice(0, 10) : undefined;
+  }
+  var contexto = { aparelho: aparelho(window.innerWidth), conexao: conexao(), navegacao: tipoNavegacao() };
+
+  /* ─── Fila e envio ─────────────────────────────────────────────── */
+  var fila = [], timer = null;
+  function enviar() {
+    clearTimeout(timer); timer = null;
+    if (!fila.length) return;
+    var lote = fila.splice(0, LOTE_MAX);
+    try {
+      fetch(SB_URL + '/rest/v1/amaralesilva_site_events', {
+        method: 'POST',
+        keepalive: true,
+        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify(lote)
+      }).catch(function () { /* medição nunca atrapalha quem navega */ });
+    } catch (e) { /* idem */ }
+    if (fila.length) enviar();
+  }
+  function registrar(nome, meta) {
+    var limpo = {};
+    Object.keys(meta || {}).forEach(function (k) {
+      var v = meta[k];
+      if (v === undefined || v === null || v === '') return;
+      limpo[k] = typeof v === 'number' ? v : typeof v === 'boolean' ? v : String(v).slice(0, 80);
+    });
+    fila.push({ name: nome, page: pagina, lang: idioma, meta: limpo, automation: automacao });
+    if (fila.length >= LOTE_MAX) enviar();
+    else if (!timer) timer = setTimeout(enviar, ESPERA_MS);
+  }
+  /* para o script principal registrar o envio do formulário */
+  window.cmMetrica = function (nome, detalhe) { registrar(nome, detalhe ? { detalhe: detalhe } : {}); };
+
+  /* ─── A visita ─────────────────────────────────────────────────── */
+  registrar('visita_pagina', { origem: origem(), aparelho: contexto.aparelho, navegacao: contexto.navegacao, conexao: contexto.conexao });
+
+  /* ─── Até onde a página foi lida: uma vez por seção ────────────── */
+  if ('IntersectionObserver' in window) {
+    var vistas = {};
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var id = en.target.id;
+        if (!id || vistas[id]) return;
+        vistas[id] = true;
+        registrar('secao_vista', { secao: id });
+        obs.unobserve(en.target);
+      });
+    }, { threshold: 0.25 });
+    Array.prototype.forEach.call(document.querySelectorAll('section[id]'), function (s) { obs.observe(s); });
+  }
+
+  /* ─── O que a pessoa fez (só o fato, nunca o texto digitado) ───── */
+  var LATEST_LANG = idioma;
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest ? e.target.closest('a, button') : null;
+    if (!el) return;
+    var secao = el.closest('section, header, footer');
+    var secaoId = secao ? (secao.id || secao.tagName.toLowerCase()) : '';
+    if (el.matches('.lang-toggle button')) {
+      var para = el.dataset.lang;
+      if (para && para !== LATEST_LANG) { LATEST_LANG = para; registrar('idioma_troca', { detalhe: para }); }
+      return;
+    }
+    if (el.matches('.explorer__item')) {
+      var rotulo = (el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 60);
+      registrar(secaoId === 'diagnostico' ? 'diagnostico_aberto' : 'entrega_aberta', { detalhe: rotulo });
+      return;
+    }
+    if (el.matches('.case__toggle')) {
+      var card = el.closest('.case');
+      var titulo = card && card.querySelector('h3, .case__title');
+      registrar('caso_aberto', { detalhe: titulo ? (titulo.textContent || '').trim().slice(0, 60) : el.getAttribute('aria-controls') });
+      return;
+    }
+    if (el.matches('.lead__wa') || /^https:\/\/wa\.me\//.test(el.getAttribute('href') || '')) {
+      registrar('whatsapp_clique', { detalhe: secaoId });
+      return;
+    }
+    if (/^mailto:/.test(el.getAttribute('href') || '')) { registrar('email_clique', { detalhe: secaoId }); return; }
+    var href = el.getAttribute('href') || '';
+    if (href.charAt(0) === '#' && href.length > 1) {
+      registrar(secaoId === 'header' ? 'nav_clique' : 'cta_clique', { detalhe: href.slice(0, 40) });
+      return;
+    }
+    if (/^https?:\/\//.test(href) && hostDe(href) !== host.replace(/^www\./, '').toLowerCase()) {
+      registrar('link_externo', { detalhe: hostDe(href).slice(0, 60) });
+    }
+  }, true);
+
+  /* ─── Velocidade (Core Web Vitals, de campo, sem biblioteca) ───────
+     LCP, FCP e TTFB ficam prontos no carregamento; CLS e INP só na saída
+     da página. Só a primeira abertura do documento é medida. */
+  if (!('PerformanceObserver' in window)) return;
+  function medida(nome, valor, extra) {
+    var m = { valor: valor, aparelho: contexto.aparelho, conexao: contexto.conexao, navegacao: contexto.navegacao };
+    if (extra) Object.keys(extra).forEach(function (k) { m[k] = extra[k]; });
+    registrar('web_vital_' + nome, m);
+  }
+  function observar(tipo, cb, opts) {
+    try {
+      var po = new PerformanceObserver(function (lista) { cb(lista.getEntries(), po); });
+      var o = { type: tipo, buffered: true };
+      if (opts) Object.keys(opts).forEach(function (k) { o[k] = opts[k]; });
+      po.observe(o);
+      return po;
+    } catch (e) { return null; }
+  }
+
+  var ttfb = null, fcp = null;
+  var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+  if (nav && nav.responseStart > 0) { ttfb = Math.round(nav.responseStart); medida('ttfb', ttfb); }
+  observar('paint', function (entries, po) {
+    entries.forEach(function (en) {
+      if (en.name !== 'first-contentful-paint' || fcp !== null) return;
+      fcp = Math.round(en.startTime);
+      medida('fcp', fcp, ttfb !== null ? { resposta: ttfb } : null);
+      po.disconnect();
+    });
+  });
+
+  var lcp = null, lcpEnviado = false;
+  var poLcp = observar('largest-contentful-paint', function (entries) {
+    var ultimo = entries[entries.length - 1];
+    if (ultimo) lcp = Math.round(ultimo.startTime);
+  });
+  function fecharLcp() {
+    if (lcpEnviado || lcp === null) return;
+    lcpEnviado = true;
+    if (poLcp) poLcp.disconnect();
+    var fases = {};
+    if (ttfb !== null) fases.resposta = ttfb;
+    if (fcp !== null) fases.desenho = fcp;
+    medida('lcp', lcp, fases);
+  }
+  ['keydown', 'click', 'pointerdown'].forEach(function (ev) { addEventListener(ev, fecharLcp, { once: true, capture: true }); });
+
+  /* CLS: soma por "sessões" de deslocamento (janela de 5 s, 1 s entre
+     deslocamentos), vale a maior sessão — a mesma conta da biblioteca
+     web-vitals. Deslocamento logo depois de um toque não conta. */
+  var clsMax = 0, sessao = 0, sessaoIni = 0, sessaoFim = 0;
+  observar('layout-shift', function (entries) {
+    entries.forEach(function (en) {
+      if (en.hadRecentInput) return;
+      if (sessao && en.startTime - sessaoFim < 1000 && en.startTime - sessaoIni < 5000) sessao += en.value;
+      else { sessao = en.value; sessaoIni = en.startTime; }
+      sessaoFim = en.startTime;
+      if (sessao > clsMax) clsMax = sessao;
+    });
+  });
+
+  /* INP: a interação mais lenta (até 50 interações, é o que a biblioteca
+     web-vitals também usa como estimativa do percentil 98). */
+  var interacoes = {}, nInteracoes = 0;
+  var poInp = observar('event', function (entries) {
+    entries.forEach(function (en) {
+      if (!en.interactionId) return;
+      if (!interacoes[en.interactionId]) { interacoes[en.interactionId] = 0; nInteracoes++; }
+      if (en.duration > interacoes[en.interactionId]) interacoes[en.interactionId] = en.duration;
+    });
+  }, { durationThreshold: 40 });
+
+  var saidaRegistrada = false;
+  function naSaida() {
+    if (saidaRegistrada || document.visibilityState !== 'hidden') return;
+    saidaRegistrada = true;
+    fecharLcp();
+    medida('cls', Number(clsMax.toFixed(3)));
+    if (poInp && nInteracoes) {
+      var valores = Object.keys(interacoes).map(function (k) { return interacoes[k]; }).sort(function (a, b) { return b - a; });
+      var indice = Math.min(valores.length - 1, Math.floor(nInteracoes / 50));
+      medida('inp', Math.round(valores[indice]));
+    }
+    enviar();
+  }
+  document.addEventListener('visibilitychange', naSaida);
+  addEventListener('pagehide', naSaida);
 })();
 </script>
 

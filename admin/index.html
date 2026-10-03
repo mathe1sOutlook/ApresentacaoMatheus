@@ -649,6 +649,29 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .fchip:hover { border-color: var(--ink); color: var(--ink); }
 .fchip.on { border-color: var(--ink); background: var(--ink); color: var(--paper); }
 
+/* ─── Métricas do site ─── */
+.met-intro { color: var(--ink-soft); font-size: 13.5px; line-height: 1.55; max-width: 72ch; margin: -12px 0 24px; }
+.met-intro b { color: var(--ink); font-weight: 500; }
+.met-intro .btn-link { margin-left: 6px; }
+.met-note { color: var(--ink-soft); font-size: 12.5px; line-height: 1.5; margin: 14px 0 0; }
+.met-note p { margin: 0 0 8px; }
+.met-note p:last-child { margin-bottom: 0; }
+.met-note b { color: var(--ink); font-weight: 500; }
+.met-bars { list-style: none; margin: 0; padding: 0; }
+.met-bars li { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr) auto; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+.met-bars li:last-child { border-bottom: 0; }
+.met-bars__label { overflow-wrap: anywhere; }
+.met-bars__track { height: 10px; background: var(--paper-deep, #ECE8DF); position: relative; }
+.met-bars__track i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--data-blue); }
+.met-bars__n { font-family: var(--mono); font-size: 11.5px; white-space: nowrap; text-align: right; }
+.met-status { display: inline-block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border: 1px solid currentColor; }
+.met-status--bom { color: #2E6B3F; }
+.met-status--atencao { color: var(--ochre); }
+.met-status--ruim { color: var(--red); }
+.met-tbl td.num { white-space: nowrap; }
+.met-up { color: #2E6B3F; }
+.met-down { color: var(--red); }
+
 /* ─── Financeiro ─────────────────────────────────────────────────── */
 .fin-filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 24px; }
 .fin-filters .field { min-width: 150px; }
@@ -840,6 +863,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
         <a href="#/dashboard" data-route="dashboard">Dashboard</a>
         <a href="#/crm" data-route="crm">CRM · Propostas</a>
         <a href="#/leads" data-route="leads">Leads do site<span class="nav-count" id="nav-leads-count" hidden></span></a>
+        <a href="#/metricas" data-route="metricas">Métricas do site</a>
         <a href="#/clientes" data-route="clientes">Clientes</a>
         <a href="#/financeiro" data-route="financeiro">Financeiro</a>
         <a href="#/agenda" data-route="agenda">Agenda</a>
@@ -903,11 +927,13 @@ const state = {
   session: null,
   members: [], me: null,
   clients: [], projects: [], notes: [], meetings: [], payments: [], tasks: [], leads: [],
+  metricas: {}, /* por período (dias): { dados, erro, carregando, quando } */
 };
 const now0 = new Date();
 const ui = {
   finPreset: 'prox3', finFrom: '', finTo: '', finStatus: 'todos',
   chartMode: 'mensal',
+  metDias: 30,
   agendaY: now0.getFullYear(), agendaM: now0.getMonth(),
   taskFilter: 'todas', taskShowDone: false,
 };
@@ -917,7 +943,7 @@ const NARROW = matchMedia('(max-width: 640px)');
    um novo desenho. Só nessa tela: nas outras, redesenhar perderia o que
    estivesse sendo digitado. */
 NARROW.addEventListener('change', () => {
-  if (state.me && parseRoute().name === 'financeiro') renderApp();
+  if (state.me && /^(financeiro|metricas)$/.test(parseRoute().name)) renderApp();
 });
 
 /* ═══ Utilidades ═══════════════════════════════════════════════════ */
@@ -1252,7 +1278,7 @@ function renderApp() {
 
 /* pós-render: liga comportamentos que delegação de clique não cobre */
 function afterRender(route) {
-  const chart = $('#fin-chart');
+  const chart = $('#fin-chart') || $('#met-chart');
   if (chart) bindChartTooltip(chart);
   /* rótulo de cada célula para a tabela-em-cartões do celular */
   $$('#view table.tbl').forEach((t) => {
@@ -1986,6 +2012,271 @@ function bindChartTooltip(svg) {
   svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
 }
 
+/* ═══ Métricas do site ═════════════════════════════════════════════
+   O que o site registra (ver a medição própria no fim do index.html)
+   somado pelo banco: a função amaralesilva_site_metrics devolve só
+   totais — nenhuma linha crua chega aqui. Sem cookie e sem identificar
+   quem visita, então "visitas" são aberturas de página, não pessoas.
+   Aprendizados trazidos do /admin/metricas da Media Portal: mediana em
+   vez de média, dia típico ao lado do total, aberturas automáticas fora
+   da conta, e cada número com a sua régua.
+   ───────────────────────────────────────────────────────────────────── */
+const MET_DIAS = [7, 30, 90];
+const MET_FRESCO_MS = 60000; /* releitura silenciosa, no ritmo do painel */
+
+const MET_EVENTOS = {
+  nav_clique: 'Clique no menu',
+  cta_clique: 'Botão de caminho (“Iniciar conversa” e afins)',
+  idioma_troca: 'Troca de idioma',
+  diagnostico_aberto: 'Abriu uma área do diagnóstico',
+  entrega_aberta: 'Abriu uma entrega em Serviços',
+  caso_aberto: 'Abriu os detalhes de um caso',
+  whatsapp_clique: 'Clique no WhatsApp',
+  email_clique: 'Clique no e-mail',
+  link_externo: 'Saiu para outro site',
+  lead_envio_ok: 'Formulário enviado',
+  lead_envio_erro: 'Formulário falhou ao enviar',
+};
+/* na ordem em que as seções aparecem na página */
+const MET_SECOES = [
+  ['topo', 'Abertura'], ['dupla', 'A dupla'], ['diagnostico', 'Diagnóstico'], ['servicos', 'Serviços'],
+  ['cases', 'Casos'], ['processo', 'Processo'], ['contato', 'Contato'],
+];
+const MET_ORIGENS = {
+  direto: 'Direto (digitou, favoritos ou link sem origem)', interno: 'Dentro do próprio site',
+  google: 'Google', bing: 'Bing', duckduckgo: 'DuckDuckGo', linkedin: 'LinkedIn', instagram: 'Instagram',
+  facebook: 'Facebook', whatsapp: 'WhatsApp', youtube: 'YouTube', 'x-twitter': 'X (Twitter)', telegram: 'Telegram',
+};
+const MET_APARELHOS = { celular: 'Celular', tablet: 'Tablet', computador: 'Computador', desconhecido: 'Não medido' };
+const MET_IDIOMAS = { pt: 'Português', en: 'Inglês' };
+/* régua pública das Core Web Vitals — a mesma que o Google usa para
+   classificar a página; uma régua caseira discordaria dela em silêncio */
+const MET_VITAIS = [
+  ['lcp', 'Conteúdo principal na tela', 'LCP', 2500, 4000],
+  ['fcp', 'Primeiro desenho', 'FCP', 1800, 3000],
+  ['ttfb', 'Resposta do servidor', 'TTFB', 800, 1800],
+  ['inp', 'Resposta ao clique', 'INP', 200, 500],
+  ['cls', 'Estabilidade da tela', 'CLS', 0.1, 0.25],
+];
+const MET_MINIMO_MEDIDAS = 30; /* abaixo disto o p75 é frágil demais para virar nota */
+
+const metOrigemLabel = (k) => MET_ORIGENS[k] || (k.indexOf('campanha-') === 0 ? 'Campanha: ' + k.slice(9) : k);
+const metPct = (n, total) => (total > 0 ? Math.round((n / total) * 100) + '%' : '—');
+const metNum = (v) => Number(v || 0).toLocaleString('pt-BR');
+function metTempo(ind, v) {
+  if (v == null) return '—';
+  if (ind === 'cls') return Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return v >= 1000 ? (v / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' s' : Math.round(v) + ' ms';
+}
+function metStatus(bom, ruim, v) {
+  if (v == null) return null;
+  return v <= bom ? ['bom', 'Boa'] : v <= ruim ? ['atencao', 'Precisa melhorar'] : ['ruim', 'Ruim'];
+}
+/* variação contra o período anterior; sem base, sem número */
+function metVar(atual, anterior) {
+  if (!(anterior > 0)) return '<span class="soft">sem período anterior para comparar</span>';
+  const d = Math.round(((atual - anterior) / anterior) * 100);
+  const cls = d > 0 ? 'met-up' : d < 0 ? 'met-down' : '';
+  return `<span class="${cls}">${d > 0 ? '+' : ''}${d}%</span> vs. período anterior (${metNum(anterior)})`;
+}
+
+async function loadMetricas(dias, force) {
+  const cache = state.metricas[dias] || (state.metricas[dias] = {});
+  if (cache.carregando) return;
+  if (!force && cache.dados && Date.now() - cache.quando < MET_FRESCO_MS) return;
+  cache.carregando = true;
+  try {
+    const { data, error } = await sb.rpc('amaralesilva_site_metrics', { p_dias: dias });
+    if (error) throw error;
+    cache.dados = data; cache.erro = null; cache.quando = Date.now();
+  } catch (e) {
+    cache.erro = e.message || String(e);
+  } finally {
+    cache.carregando = false;
+    if (state.me && parseRoute().name === 'metricas') renderApp();
+  }
+}
+
+function metBarras(itens, total, label) {
+  if (!itens.length) return '<p class="empty">Nada registrado no período.</p>';
+  const max = Math.max(1, ...itens.map((i) => i.n));
+  return `<ul class="met-bars">${itens.map((i) => `<li>
+    <span class="met-bars__label">${esc(label(i.chave))}</span>
+    <span class="met-bars__track"><i style="width:${Math.max(2, Math.round((i.n / max) * 100))}%"></i></span>
+    <span class="met-bars__n">${metNum(i.n)} <span class="soft">${metPct(i.n, total)}</span></span>
+  </li>`).join('')}</ul>`;
+}
+
+function renderMetChart(serie) {
+  if (!serie.length) return '<p class="empty">Sem dias no período.</p>';
+  const narrow = NARROW.matches;
+  const W = narrow ? 380 : 760, H = narrow ? 220 : 250, L = narrow ? 36 : 48, R = 14, T = 20, B = 30;
+  const iw = W - L - R, ih = H - T - B;
+  const n = serie.length, slot = iw / n;
+  const yMax = niceCeil(Math.max(1, ...serie.map((d) => d.visitas)));
+  const yFor = (v) => T + ih - (v / yMax) * ih;
+  const every = Math.ceil(n / (narrow ? 5 : 10));
+  let grid = '';
+  for (let i = 0; i <= 4; i++) {
+    const v = (yMax * i) / 4, yy = yFor(v);
+    grid += `<line x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}" stroke="var(--line)" stroke-width="1" />
+      <text x="${L - 8}" y="${yy + 3}" text-anchor="end" font-size="10" font-family="IBM Plex Mono, monospace" fill="#57544C">${fmtK(v)}</text>`;
+  }
+  const bw = Math.min(slot * 0.62, 34);
+  let bars = '', hover = '';
+  serie.forEach((d, i) => {
+    const cx = L + slot * i + slot / 2;
+    const h = (d.visitas / yMax) * ih;
+    if (d.visitas > 0) bars += `<rect x="${cx - bw / 2}" y="${T + ih - h}" width="${bw}" height="${Math.max(1, h)}" fill="var(--data-blue)" />`;
+    if (i % every === 0 || i === n - 1) bars += `<text x="${cx}" y="${H - 10}" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="#57544C">${fmtDateShort(d.dia)}</text>`;
+    hover += `<rect x="${L + slot * i}" y="${T}" width="${slot}" height="${ih}" fill="transparent"
+      data-tip="${esc(`<b>${fmtDate(d.dia)}</b><br />Visitas: ${metNum(d.visitas)}<br />Ações: ${metNum(d.acoes)}`)}" />`;
+  });
+  return `<div class="chart-box">
+    <svg id="met-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Visitas por dia">
+      ${grid}${bars}
+      <line x1="${L}" x2="${W - R}" y1="${T + ih}" y2="${T + ih}" stroke="#14171A" stroke-width="1" />
+      ${hover}
+    </svg>
+  </div>`;
+}
+
+VIEWS.metricas = function () {
+  const dias = ui.metDias;
+  loadMetricas(dias, false);
+  const cache = state.metricas[dias] || {};
+  const d = cache.dados;
+
+  const head = `
+  <div class="view-head">
+    <div><p class="eyebrow">Painel</p><h1 class="view-title">Métricas do site</h1></div>
+    <div class="view-actions">
+      <span class="filter-row" style="margin:0">
+        ${MET_DIAS.map((n) => `<button type="button" class="fchip ${dias === n ? 'on' : ''}" data-action="metDias" data-dias="${n}">${n} dias</button>`).join('')}
+        <button type="button" class="btn-mini" data-action="metRefresh" title="Reler agora">↻</button>
+      </span>
+    </div>
+  </div>
+  <p class="met-intro">Aberturas e ações no site, medidas pelo próprio site: sem cookie, sem identificar quem visita e sem serviço de fora.
+    ${d ? `Período: <b>${fmtDate(d.de)}</b> a <b>${fmtDate(d.ate)}</b>, no horário de São Paulo.` : ''}
+    <a class="btn-link" href="https://analytics.google.com/" target="_blank" rel="noopener">Google Analytics ↗</a></p>`;
+
+  if (!d) {
+    if (cache.erro) return head + `<div class="card"><p class="empty">Não foi possível ler as métricas agora (${esc(cache.erro)}). <button type="button" class="btn-link" data-action="metRefresh">Tentar de novo</button></p></div>`;
+    return head + '<div class="card"><p class="empty">Lendo o período…</p></div>';
+  }
+
+  const r = d.resumo, a = d.anterior;
+  const vazio = !r.visitas && !r.acoes && !r.visitas_automacao;
+  if (vazio) {
+    return head + `<div class="card"><p class="empty">Nada registrado nestes ${dias} dias. A medição começa a contar a partir da primeira visita depois de o site entrar no ar com ela.</p></div>`;
+  }
+
+  const lcp = (d.velocidade || []).find((v) => v.indicador === 'lcp');
+  const lcpStatus = lcp && lcp.n >= MET_MINIMO_MEDIDAS ? metStatus(2500, 4000, lcp.p75) : null;
+  const stats = `
+  <div class="rule-grid rule-grid--4">
+    <div class="stat"><span class="label label--blue">Visitas</span><span class="stat__value">${metNum(r.visitas)}</span>
+      <span class="stat__hint">dia típico ${metNum(r.dia_tipico)} · pico ${metNum(r.dia_maximo)}${r.visitas_automacao ? ' · ' + metNum(r.visitas_automacao) + ' automática(s) fora da conta' : ''}</span>
+      <span class="stat__hint">${metVar(r.visitas, a.visitas)}</span></div>
+    <div class="stat"><span class="label label--ochre">Ações nas páginas</span><span class="stat__value">${metNum(r.acoes)}</span>
+      <span class="stat__hint">${r.visitas ? (r.acoes / r.visitas).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' por visita' : '—'}</span>
+      <span class="stat__hint">${metVar(r.acoes, a.acoes)}</span></div>
+    <div class="stat"><span class="label label--soft">Contatos pelo formulário</span><span class="stat__value">${metNum(r.contatos)}</span>
+      <span class="stat__hint">+ ${metNum(r.whatsapp)} clique(s) no WhatsApp</span>
+      <span class="stat__hint">${metVar(r.contatos, a.contatos)}</span></div>
+    <div class="stat"><span class="label label--soft">Conteúdo principal na tela</span>
+      <span class="stat__value">${lcp ? metTempo('lcp', lcp.mediana) : '—'}</span>
+      <span class="stat__hint">${lcp ? `mediana · p75 ${metTempo('lcp', lcp.p75)} · ${metNum(lcp.n)} medida(s)` : 'sem medida ainda'}</span>
+      <span class="stat__hint">${lcpStatus ? `<span class="met-status met-status--${lcpStatus[0]}">${lcpStatus[1]}</span>` : lcp ? 'poucas medidas para dar nota' : ''}</span></div>
+  </div>`;
+
+  const secoes = MET_SECOES.map(([k, l]) => ({ chave: k, label: l, n: ((d.secoes || []).find((s) => s.chave === k) || { n: 0 }).n }));
+  const secoesHtml = `<ul class="met-bars">${secoes.map((s) => `<li>
+    <span class="met-bars__label">${esc(s.label)}</span>
+    <span class="met-bars__track"><i style="width:${Math.max(2, Math.round((Math.min(s.n, r.visitas || s.n) / Math.max(1, r.visitas)) * 100))}%"></i></span>
+    <span class="met-bars__n">${metPct(s.n, r.visitas)} <span class="soft">${metNum(s.n)}</span></span>
+  </li>`).join('')}</ul>`;
+
+  const acoesRows = (d.acoes || []).map((x) => `<tr>
+    <td>${esc(MET_EVENTOS[x.name] || x.name)}</td>
+    <td class="soft">${esc(x.detalhe || '—')}</td>
+    <td class="num">${metNum(x.n)}</td>
+  </tr>`).join('');
+
+  const vitRows = MET_VITAIS.map(([k, label, sigla, bom, ruim]) => {
+    const v = (d.velocidade || []).find((x) => x.indicador === k);
+    const st = v && v.n >= MET_MINIMO_MEDIDAS ? metStatus(bom, ruim, v.p75) : null;
+    return `<tr>
+      <td>${label} <span class="soft mono" style="font-size:10.5px">${sigla}</span></td>
+      <td class="num">${v ? metTempo(k, v.mediana) : '—'}</td>
+      <td class="num">${v ? metTempo(k, v.p75) : '—'}</td>
+      <td class="num">${v ? metNum(v.n) : '0'}</td>
+      <td>${st ? `<span class="met-status met-status--${st[0]}">${st[1]}</span>` : v ? '<span class="soft">poucas medidas</span>' : '<span class="soft">—</span>'}</td>
+    </tr>`;
+  }).join('');
+
+  return head + stats + `
+  <div class="card" style="margin-top:24px">
+    <div class="card__head"><span class="label label--blue">Visitas por dia</span>
+      <span class="mono soft" style="font-size:11px">passe o mouse para ver as ações do dia</span></div>
+    ${renderMetChart(d.por_dia || [])}
+  </div>
+
+  <div class="grid-2" style="margin-top:24px">
+    <div class="card">
+      <div class="card__head"><span class="label label--ochre">De onde vieram</span></div>
+      <div class="card__body">${metBarras(d.origens || [], r.visitas, metOrigemLabel)}
+        <p class="met-note">Canal de chegada: o site que trouxe a visita, ou a campanha marcada no link (utm_source). Quem digitou o endereço, abriu de favoritos ou veio de um app que não informa a origem conta como “direto”.</p></div>
+    </div>
+    <div class="card">
+      <div class="card__head"><span class="label label--ochre">Aparelho e idioma</span></div>
+      <div class="card__body">
+        ${metBarras(d.aparelhos || [], r.visitas, (k) => MET_APARELHOS[k] || k)}
+        <div style="height:14px"></div>
+        ${metBarras(d.idiomas || [], r.visitas, (k) => MET_IDIOMAS[k] || k)}
+        ${(d.paginas || []).length > 1 ? '<div style="height:14px"></div>' + metBarras(d.paginas, r.visitas, (k) => 'Página ' + k) : ''}
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <div class="card__head"><span class="label label--blue">Até onde a página foi lida</span>
+      <span class="mono soft" style="font-size:11px">% das visitas que chegaram a cada seção</span></div>
+    <div class="card__body">${secoesHtml}
+      <p class="met-note">Uma seção conta quando ao menos um quarto dela apareceu na tela, uma vez por visita. Quem clica no menu pula seções: a queda não é sempre abandono.</p></div>
+  </div>
+
+  <div class="grid-2" style="margin-top:24px">
+    <div class="card">
+      <div class="card__head"><span class="label label--ochre">O que as pessoas fizeram</span>
+        <span class="mono soft" style="font-size:11px">${metNum(r.acoes)} ação(ões)</span></div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Ação</th><th>Detalhe</th><th class="num">Quantas</th></tr></thead>
+        <tbody>${acoesRows || '<tr><td colspan="3" class="empty">Nenhuma ação registrada no período.</td></tr>'}</tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="card__head"><span class="label label--ochre">Velocidade</span>
+        <span class="mono soft" style="font-size:11px">só pessoas, sem aberturas automáticas</span></div>
+      <div class="tbl-wrap"><table class="tbl met-tbl">
+        <thead><tr><th>Indicador</th><th class="num">Mediana</th><th class="num">p75</th><th class="num">Medidas</th><th>Nota</th></tr></thead>
+        <tbody>${vitRows}</tbody>
+      </table></div>
+      <p class="met-note" style="padding:0 18px 16px">A nota segue a régua pública das Core Web Vitals, aplicada ao p75 (o que três em cada quatro aberturas viveram), e só aparece a partir de ${MET_MINIMO_MEDIDAS} medidas. Mediana, nunca média: uma única abertura numa rede ruim não reescreve o número do mês.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <div class="card__head"><span class="label label--soft">O que esta tela não mostra</span></div>
+    <div class="card__body met-note" style="margin:0">
+      <p><b>Quantas pessoas diferentes entraram.</b> Separar duas visitas da mesma pessoa de duas pessoas exige marcar o aparelho de quem visita. Não fazemos isso — é o que o Google Analytics faz, com cookie e aviso.</p>
+      <p><b>Quem voltou.</b> Pelo mesmo motivo.</p>
+      <p><b>Tempo de permanência.</b> Ainda não medido; o que existe é até onde a página foi lida.</p>
+    </div>
+  </div>`;
+};
+
 /* ═══ Agenda ═══════════════════════════════════════════════════════ */
 VIEWS.agenda = function () {
   const { agendaY: y, agendaM: m } = ui;
@@ -2571,6 +2862,8 @@ const ACTIONS = {
   },
 
   chartMode: (el) => { ui.chartMode = el.dataset.mode; renderApp(); },
+  metDias: (el) => { ui.metDias = Number(el.dataset.dias) || 30; renderApp(); },
+  metRefresh: () => { loadMetricas(ui.metDias, true); toast('Relendo as métricas…'); },
   taskFilter: (el) => { ui.taskFilter = el.dataset.v; renderApp(); },
   taskToggleDone: () => { ui.taskShowDone = !ui.taskShowDone; renderApp(); },
   calNav: (el) => {

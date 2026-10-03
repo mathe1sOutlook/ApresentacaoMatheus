@@ -139,6 +139,12 @@ convenções que não estão lá:
   vista; `installments_count` diz em quantas vezes o parcelado é oferecido — o
   valor da parcela é **derivado na tela, nunca gravado**. `price_final` é o que
   foi fechado, e é ele que registra qual das duas condições venceu.
+- **Medição do site sem dado pessoal**: o que `index.html` grava em
+  `amaralesilva_site_events` é o fato (visita, seção vista, clique, medida de
+  velocidade) e um detalhe curto — nunca texto digitado, e-mail, IP ou
+  identificador de visitante. Evento novo ⇒ rótulo em `MET_EVENTOS`; o painel
+  lê só totais, pela função `amaralesilva_site_metrics`. Ver "Métricas do
+  site" no `README.md`.
 - **Parcela oferecida ≠ parcela real**: `installments_count` é uma condição da
   proposta, que pode nunca ser aceita. As parcelas reais do que já fechou vivem
   em `amaralesilva_payments` e alimentam o Financeiro. Nunca criar linhas lá a
