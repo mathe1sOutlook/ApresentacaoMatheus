@@ -505,11 +505,40 @@ button {
   .gallery__grid { grid-template-columns: 1fr; gap: 48px; }
   .gallery__text { max-width: 44ch; }
 }
+/* No celular os dois quadros ficam lado a lado numa fileira de arrasto
+   (scroll-snap, sem script): o segundo aparece pela beirada, que é o convite
+   para arrastar. A fileira vaza o gutter para a borda da tela, e o padding
+   de baixo guarda a sombra do quadro, que o overflow cortaria. */
 @media (max-width: 639px) {
-  .gallery__wall { grid-template-columns: 1fr; gap: 44px; }
-  .plaque { padding: 26px 22px 28px; border-width: 12px; }
+  .gallery__wall {
+    display: flex;
+    gap: 16px;
+    margin: 0 calc(var(--gutter) * -1);
+    padding: 0 var(--gutter) 40px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 var(--gutter);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .gallery__wall::-webkit-scrollbar { display: none; }
+  .plaque { flex: 0 0 86%; scroll-snap-align: start; padding: 26px 22px 28px; border-width: 12px; }
   .plaque .avatar { width: 96px; height: 96px; }
 }
+.gallery__dots { display: none; }
+@media (max-width: 639px) {
+  .gallery__dots { display: flex; justify-content: center; gap: 8px; margin-top: -12px; }
+}
+.gallery__dots button {
+  position: relative;
+  width: 22px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(241, 238, 230, 0.35);
+  transition: background 0.3s ease;
+}
+.gallery__dots button[aria-current="true"] { background: var(--ink); }
+.gallery__dots button::before { content: ""; position: absolute; inset: -14px -4px; }
 
 .hero__body { margin-top: 26px; max-width: 46ch; }
 
@@ -2228,7 +2257,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   .cases.has-open .case__cover { height: auto; }
   /* a barra é para a mão, e no papel não há mão */
   .cases__bar { display: none !important; }
-  .case__toggle, .case__dots { display: none; }
+  .case__toggle, .case__dots, .gallery__dots { display: none; }
   .case__reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   .case__title::after { transform: none !important; }
   .case__cover:not(.case__cover--photo) { background: none; }
@@ -4061,6 +4090,47 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   });
   /* só com o script de pé a capa vira área clicável (o CSS lê esta classe) */
   if (document.querySelector('.case__toggle')) document.documentElement.classList.add('js-cases');
+
+  /* ─── A dupla: marcadores da fileira no celular ───────────────────
+     O arrasto é do CSS; aqui entram só os dois marcadores, que o CSS
+     mostra apenas quando a fileira existe (≤639px). */
+  (function () {
+    var wall = document.querySelector('.gallery__wall');
+    var plaques = wall ? wall.querySelectorAll('.plaque') : [];
+    if (plaques.length < 2) return;
+    function at() {
+      var max = wall.scrollWidth - wall.clientWidth;
+      if (wall.scrollLeft >= max - 2) return plaques.length - 1;
+      var step = plaques[1].offsetLeft - plaques[0].offsetLeft;
+      return Math.round(wall.scrollLeft / Math.max(1, step));
+    }
+    var dots = document.createElement('div');
+    dots.className = 'gallery__dots';
+    var marks = Array.prototype.map.call(plaques, function (p, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-label', p.querySelector('.person__name').textContent);
+      b.setAttribute('aria-current', String(i === 0));
+      b.addEventListener('click', function () {
+        var left = plaques[i].offsetLeft - plaques[0].offsetLeft;
+        if (wall.scrollTo) wall.scrollTo({ left: left, behavior: motionOK ? 'smooth' : 'auto' });
+        else wall.scrollLeft = left;
+      });
+      dots.appendChild(b);
+      return b;
+    });
+    wall.after(dots);
+    var tick = false;
+    wall.addEventListener('scroll', function () {
+      if (tick) return;
+      tick = true;
+      window.requestAnimationFrame(function () {
+        tick = false;
+        var i = at();
+        marks.forEach(function (b, k) { b.setAttribute('aria-current', String(k === i)); });
+      });
+    }, { passive: true });
+  })();
 
   /* ─── Casos: faixa de imagens ─────────────────────────────────────
      Com uma imagem a faixa é só a capa. Com duas ou mais o arrasto já
