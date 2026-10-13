@@ -605,6 +605,13 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .timeline__when { font-family: var(--mono); font-size: 10.5px; color: var(--ink-soft); }
 .timeline__content { font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
 
+/* ─── Ajustes da proposta ────────────────────────────────────────── */
+.adj .adj__from, .adj .adj__to, .adj .adj__why { white-space: pre-wrap; overflow-wrap: anywhere; }
+.adj .adj__from, .adj .adj__to { min-width: 150px; }
+.adj .adj__from, .adj .adj__why { color: var(--ink-soft); }
+.adj tr.adj--auto td { color: var(--ink-soft); font-size: 12.5px; }
+@media (max-width: 640px) { .tbl.adj td:empty { display: none; } }
+
 /* ─── Tarefas ────────────────────────────────────────────────────── */
 .tasksec { margin-bottom: 26px; }
 .tasksec > .label { display: block; margin-bottom: 8px; }
@@ -902,7 +909,7 @@ const sb = window.supabase
 const state = {
   session: null,
   members: [], me: null,
-  clients: [], projects: [], notes: [], meetings: [], payments: [], tasks: [], leads: [],
+  clients: [], projects: [], notes: [], meetings: [], payments: [], tasks: [], leads: [], adjustments: [],
 };
 const now0 = new Date();
 const ui = {
@@ -996,17 +1003,26 @@ async function copyText(txt) {
 }
 
 /* ═══ Domínio ══════════════════════════════════════════════════════ */
-const STATUSES = ['contato', 'proposta_a_enviar', 'proposta_enviada', 'negociacao', 'fechado', 'concluido', 'perdido'];
+const STATUSES = ['contato', 'proposta_a_enviar', 'proposta_enviada', 'ajuste_proposta', 'negociacao', 'fechado', 'concluido', 'perdido'];
 const STATUS_LABEL = {
   contato: 'Contato',
   proposta_a_enviar: 'Proposta a enviar',
   proposta_enviada: 'Proposta enviada',
+  ajuste_proposta: 'Ajuste de proposta',
   negociacao: 'Negociação',
   fechado: 'Contrato fechado',
   concluido: 'Concluído',
   perdido: 'Perdido',
 };
 const NOTE_KINDS = { devolutiva: 'Devolutiva', combinado: 'Combinado', conversa: 'Conversa', nota: 'Nota' };
+/* Ajustes da proposta: o que a dupla lança à mão (ADJ_TOPICS) e o que o banco
+   grava sozinho quando etapa, preços ou condições do projeto mudam
+   (ADJ_AUTO_TOPICS). Autor, data e etapa são carimbados pelo banco. */
+const ADJ_TOPICS = { escopo: 'Escopo', prazo: 'Prazo', valor: 'Valor', pagamento: 'Pagamento', entrega: 'Entrega', outro: 'Outro' };
+const ADJ_AUTO_TOPICS = {
+  etapa: 'Etapa', preco_proposto: 'Preço proposto', preco_avista: 'Preço à vista',
+  parcelas: 'Parcelas', preco_final: 'Preço final', condicoes: 'Condições',
+};
 const LEAD_STATUSES = ['novo', 'em_contato', 'convertido', 'descartado'];
 const LEAD_STATUS_LABEL = { novo: 'Novo', em_contato: 'Em contato', convertido: 'Convertido', descartado: 'Descartado' };
 const LEAD_NEED_LABEL = { marca: 'Marca & branding', sistema: 'Sistema & tecnologia', ambos: 'As duas coisas', 'nao-sei': 'Ainda não sabe' };
@@ -1052,6 +1068,16 @@ const notesOf    = (pid) => state.notes.filter((n) => n.project_id === pid);
 const meetingsOf = (pid) => state.meetings.filter((m) => m.project_id === pid);
 const paymentsOf = (pid) => state.payments.filter((p) => p.project_id === pid);
 const tasksOf    = (pid) => state.tasks.filter((t) => t.project_id === pid);
+const adjustmentsOf = (pid) => state.adjustments.filter((a) => a.project_id === pid);
+/* Valor de um ajuste automático na forma em que a tela mostra o campo. */
+function adjValue(a, v) {
+  if (v == null || v === '') return '—';
+  if (a.source !== 'auto') return v;
+  if (a.topic === 'etapa') return STATUS_LABEL[v] || v;
+  if (a.topic === 'parcelas') return `${v}x`;
+  if (a.topic.startsWith('preco_')) return fmtBRL(Number(v));
+  return v;
+}
 
 function payState(p) {
   if (p.status === 'pago') return 'pago';
@@ -1091,7 +1117,7 @@ function payShareB(p) {
 
 /* ═══ Dados ════════════════════════════════════════════════════════ */
 async function fetchAll() {
-  const [clients, projects, notes, meetings, payments, tasks, members, leads] = await Promise.all([
+  const [clients, projects, notes, meetings, payments, tasks, members, leads, adjustments] = await Promise.all([
     sb.from(TB('clients')).select('*').order('name'),
     sb.from(TB('projects')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('notes')).select('*').order('created_at', { ascending: false }),
@@ -1100,12 +1126,13 @@ async function fetchAll() {
     sb.from(TB('tasks')).select('*').order('due_date', { ascending: true, nullsFirst: false }),
     sb.from(TB('members')).select('*').order('name'),
     sb.from(TB('leads')).select('*').order('created_at', { ascending: false }),
+    sb.from(TB('adjustments')).select('id, project_id, source, topic, value_from, value_to, reason, stage, author_email, created_at').order('created_at'),
   ]);
-  const firstErr = [clients, projects, notes, meetings, payments, tasks, members, leads].find((r) => r.error);
+  const firstErr = [clients, projects, notes, meetings, payments, tasks, members, leads, adjustments].find((r) => r.error);
   if (firstErr) throw firstErr.error;
   state.clients = clients.data; state.projects = projects.data; state.notes = notes.data;
   state.meetings = meetings.data; state.payments = payments.data; state.tasks = tasks.data;
-  state.members = members.data; state.leads = leads.data;
+  state.members = members.data; state.leads = leads.data; state.adjustments = adjustments.data;
 }
 
 /* ═══ Releitura automática ═════════════════════════════════════════
@@ -1418,11 +1445,13 @@ VIEWS.crm = function () {
         installmentsLabel(p),
         cash && cheio && cash !== cheio ? `ou ${fmtBRL(cash)} à vista` : '',
       ].filter(Boolean);
+      const nAdj = adjustmentsOf(p.id).filter((a) => a.source === 'manual').length;
       return `<div class="kcard" data-action="openProject" data-id="${p.id}" role="link" tabindex="0">
         <div class="kcard__name">${esc(p.name)}</div>
         ${cli ? `<div class="kcard__client">${esc(cli.name)}${cli.company ? ' · ' + esc(cli.company) : ''}</div>` : ''}
         ${val ? `<div class="kcard__value">${fmtBRL(val)}</div>` : ''}
         ${alt.length ? `<div class="kcard__alt">${esc(alt.join(' · '))}</div>` : ''}
+        ${nAdj ? `<div class="kcard__alt">${nAdj} ${nAdj === 1 ? 'ajuste' : 'ajustes'} na proposta</div>` : ''}
         <div class="kcard__foot">
           <span class="label label--soft" style="font-size:9.5px">${fmtDateShort(toISODate(new Date(p.created_at)))}</span>
           <span class="kcard__move">
@@ -1444,7 +1473,7 @@ VIEWS.crm = function () {
   return `
   <div class="view-head">
     <div>
-      <p class="eyebrow">Quem entrou em contato → proposta → contrato</p>
+      <p class="eyebrow">Quem entrou em contato → proposta → ajustes → contrato</p>
       <h1 class="view-title">CRM · Propostas</h1>
     </div>
     <div class="view-actions">
@@ -1591,6 +1620,23 @@ VIEWS.projeto = function (route) {
       <div class="timeline__content">${esc(n.content)}</div>
     </li>`).join('');
 
+  /* ajustes da proposta, em ordem de acontecimento: o que foi lançado à mão
+     e o que o banco gravou sozinho (etapa, preços, parcelas, condições) */
+  const adjs = adjustmentsOf(p.id);
+  const adjRows = adjs.map((a) => {
+    const auto = a.source === 'auto';
+    const topic = (auto ? ADJ_AUTO_TOPICS : ADJ_TOPICS)[a.topic] || a.topic;
+    return `<tr class="${auto ? 'adj--auto' : ''}">
+      <td class="mono" style="font-size:12px">${fmtDT(a.created_at)}<br /><span class="soft" style="font-size:10px">${esc(firstName(memberName(a.author_email)))}${auto ? ' · automático' : ''}</span></td>
+      <td><span class="chip">${esc(STATUS_LABEL[a.stage] || a.stage)}</span></td>
+      <td>${esc(topic)}</td>
+      <td class="adj__from">${esc(adjValue(a, a.value_from))}</td>
+      <td class="adj__to">${esc(adjValue(a, a.value_to))}</td>
+      <td class="adj__why">${esc(a.reason || '')}</td>
+      <td class="actions">${auto ? '' : `<button type="button" class="btn-mini btn-mini--danger" data-action="deleteAdjustment" data-id="${a.id}" aria-label="Excluir ajuste de ${esc(topic.toLowerCase())} de ${fmtDT(a.created_at)}">Excluir</button>`}</td>
+    </tr>`;
+  }).join('');
+
   /* tarefas */
   const ptasks = tasksOf(p.id);
   const taskItems = ptasks.map((t) => `
@@ -1686,6 +1732,20 @@ VIEWS.projeto = function (route) {
         ${ptasks.length ? taskItems : '<p class="empty">Nenhuma tarefa vinculada.</p>'}
       </div>
     </div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <div class="card__head"><span class="label label--ochre">Ajustes da proposta · de → para</span>
+      <button type="button" class="btn-mini" data-action="newAdjustment" data-project="${p.id}">+ Ajuste</button></div>
+    ${adjs.length ? `<div class="tbl-wrap">
+    <table class="tbl adj">
+      <thead><tr><th>Quando</th><th>Etapa</th><th>O quê</th><th>De</th><th>Para</th><th>Motivo</th><th></th></tr></thead>
+      <tbody>
+        <tr class="adj--auto"><td class="mono" style="font-size:12px">${fmtDT(p.created_at)}</td><td colspan="6">Projeto cadastrado no CRM.</td></tr>
+        ${adjRows}
+      </tbody>
+    </table>
+    </div>` : '<p class="empty">Nada ajustado até aqui. Lance cada mudança na proposta — escopo, prazo, valor, condição — com como era e como ficou. Mudanças de etapa, preços, parcelas e condições feitas nesta página entram sozinhas.</p>'}
   </div>
 
   <div class="card" style="margin-top:24px">
@@ -2183,7 +2243,7 @@ function fld(id, label, inner, span2, hint) {
   return `<div class="field ${span2 ? 'span2' : ''}"><label for="${id}">${label}</label>${inner}${hint ? `<span class="field__hint">${hint}</span>` : ''}</div>`;
 }
 const inp = (id, name, type, value, extra) => `<input id="${id}" name="${name}" type="${type}" value="${esc(value ?? '')}" ${extra || ''} />`;
-const txa = (id, name, value, ph) => `<textarea id="${id}" name="${name}" placeholder="${esc(ph || '')}">${esc(value ?? '')}</textarea>`;
+const txa = (id, name, value, ph, extra) => `<textarea id="${id}" name="${name}" placeholder="${esc(ph || '')}" ${extra || ''}>${esc(value ?? '')}</textarea>`;
 const sel = (id, name, options, cur) => `<select id="${id}" name="${name}">${options.map(([v, l]) => `<option value="${esc(v)}" ${String(cur ?? '') === String(v) ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
 
 const clientOptions = (cur) => [['', '— sem cliente —']].concat(state.clients.map((c) => [c.id, c.name]));
@@ -2401,6 +2461,28 @@ function noteModal(projectId, note) {
   });
 }
 
+/* — Ajuste da proposta — só inclusão: um ajuste não se edita, corrige-se
+   lançando outro. Autor, data e etapa vêm do banco, não daqui. */
+function adjustmentModal(projectId) {
+  openModal('Novo ajuste na proposta', `
+    <form>
+      <div class="form-grid">
+        ${fld('adj-topic', 'O que mudou', sel('adj-topic', 'topic', Object.entries(ADJ_TOPICS), 'escopo'), true)}
+        ${fld('adj-from', 'Como era', txa('adj-from', 'value_from', '', 'O que a proposta dizia antes', 'maxlength="2000"'))}
+        ${fld('adj-to', 'Como ficou', txa('adj-to', 'value_to', '', 'O que passa a valer', 'maxlength="2000"'))}
+        ${fld('adj-reason', 'Motivo / quem pediu', inp('adj-reason', 'reason', 'text', '', 'maxlength="1000"'), true,
+          'Data, quem lançou e a etapa do projeto entram sozinhos.')}
+      </div>
+      <div class="form-foot"><button type="submit" class="btn-solid">Registrar ajuste</button></div>
+    </form>`, async (d) => {
+    if (!d.value_from && !d.value_to) { toast('Preencha como era ou como ficou.'); return false; }
+    return mutate(() => dbInsert('adjustments', {
+      project_id: projectId, topic: d.topic,
+      value_from: strOrNull(d.value_from), value_to: strOrNull(d.value_to), reason: strOrNull(d.reason),
+    }), 'Ajuste registrado.');
+  });
+}
+
 /* — Membro — */
 function memberModal() {
   openModal('Novo membro', `
@@ -2560,6 +2642,12 @@ const ACTIONS = {
   deleteNote: (el) => {
     if (!confirm('Excluir este registro?')) return;
     mutate(() => dbDelete('notes', el.dataset.id), 'Registro excluído.');
+  },
+
+  newAdjustment: (el) => adjustmentModal(el.dataset.project),
+  deleteAdjustment: (el) => {
+    if (!confirm('Excluir este ajuste? Os registros automáticos não mudam.')) return;
+    mutate(() => dbDelete('adjustments', el.dataset.id), 'Ajuste excluído.');
   },
 
   newMember: () => { closeDrawer(); memberModal(); },

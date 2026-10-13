@@ -55,7 +55,7 @@ create table public.amaralesilva_projects (
   name           text not null,
   site_url       text,
   status         text not null default 'contato'
-                 check (status in ('contato','proposta_a_enviar','proposta_enviada','negociacao','fechado','concluido','perdido')),
+                 check (status in ('contato','proposta_a_enviar','proposta_enviada','ajuste_proposta','negociacao','fechado','concluido','perdido')),
   proposal_url   text,
   contract_url   text,
   price_proposed numeric(12,2),
@@ -290,3 +290,133 @@ create trigger amaralesilva_leads_guard
 revoke all on public.amaralesilva_clients, public.amaralesilva_projects, public.amaralesilva_notes,
   public.amaralesilva_meetings, public.amaralesilva_payments, public.amaralesilva_tasks,
   public.amaralesilva_members from anon;
+
+-- ═══ Migração amaralesilva_ajuste_proposta ═══
+-- Etapa "Ajuste de proposta" entre proposta enviada e negociação, e o
+-- registro de tudo o que mudou na proposta (de → para), do contato ao
+-- contrato. Duas origens:
+--   manual — o que a dupla lança na tela (escopo, prazo, valor…);
+--   auto   — o banco grava sozinho quando etapa, preços, parcelas ou
+--            condições do projeto mudam de fato.
+-- A tela não decide nada que importe: autor, data, etapa e origem são
+-- carimbados pelo banco; o cliente só insere as colunas de conteúdo, não
+-- edita nada e só apaga lançamento manual. O automático é imutável.
+alter table public.amaralesilva_projects drop constraint amaralesilva_projects_status_check;
+alter table public.amaralesilva_projects add constraint amaralesilva_projects_status_check
+  check (status in ('contato','proposta_a_enviar','proposta_enviada','ajuste_proposta','negociacao','fechado','concluido','perdido'));
+
+create table public.amaralesilva_adjustments (
+  id           uuid primary key default gen_random_uuid(),
+  project_id   uuid not null references public.amaralesilva_projects(id) on delete cascade,
+  source       text not null default 'manual' check (source in ('manual','auto')),
+  topic        text not null,
+  value_from   text check (value_from is null or char_length(value_from) <= 2000),
+  value_to     text check (value_to   is null or char_length(value_to)   <= 2000),
+  reason       text check (reason     is null or char_length(reason)     <= 1000),
+  stage        text not null,
+  author_email text,
+  created_at   timestamptz not null default now(),
+  constraint amaralesilva_adjustments_topic check (
+    (source = 'manual' and topic in ('escopo','prazo','valor','pagamento','entrega','outro'))
+    or (source = 'auto' and topic in ('etapa','preco_proposto','preco_avista','parcelas','preco_final','condicoes'))
+  ),
+  constraint amaralesilva_adjustments_has_value check (
+    source = 'auto' or value_from is not null or value_to is not null
+  )
+);
+
+create index amaralesilva_adjustments_project_idx
+  on public.amaralesilva_adjustments (project_id, created_at);
+
+-- Carimbo: autor vem da sessão (nunca da tela), data do relógio do banco e a
+-- etapa do próprio projeto. Texto vazio vira nulo antes dos checks.
+create or replace function public.amaralesilva_adjustments_stamp()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  new.value_from   := nullif(btrim(new.value_from), '');
+  new.value_to     := nullif(btrim(new.value_to), '');
+  new.reason       := nullif(btrim(new.reason), '');
+  new.author_email := nullif(auth.jwt() ->> 'email', '');
+  new.created_at   := now();
+  if new.source = 'manual' or new.stage is null then
+    select p.status into new.stage
+      from public.amaralesilva_projects p
+     where p.id = new.project_id;
+  end if;
+  return new;
+end;
+$$;
+
+create trigger amaralesilva_adjustments_stamp
+  before insert on public.amaralesilva_adjustments
+  for each row execute function public.amaralesilva_adjustments_stamp();
+
+-- Registro automático. SECURITY DEFINER porque o papel authenticated não
+-- tem grant na coluna source; só grava o que mudou de fato (o formulário
+-- reenvia todos os campos a cada save). Na mudança de etapa, a etapa
+-- registrada é a de onde o projeto saiu.
+create or replace function public.amaralesilva_projects_log_adjustments()
+returns trigger
+language plpgsql security definer
+set search_path = ''
+as $$
+begin
+  if new.status is distinct from old.status then
+    insert into public.amaralesilva_adjustments (project_id, source, topic, value_from, value_to, stage)
+    values (new.id, 'auto', 'etapa', old.status, new.status, old.status);
+  end if;
+  if new.price_proposed is distinct from old.price_proposed then
+    insert into public.amaralesilva_adjustments (project_id, source, topic, value_from, value_to, stage)
+    values (new.id, 'auto', 'preco_proposto', old.price_proposed::text, new.price_proposed::text, new.status);
+  end if;
+  if new.price_cash is distinct from old.price_cash then
+    insert into public.amaralesilva_adjustments (project_id, source, topic, value_from, value_to, stage)
+    values (new.id, 'auto', 'preco_avista', old.price_cash::text, new.price_cash::text, new.status);
+  end if;
+  if new.installments_count is distinct from old.installments_count then
+    insert into public.amaralesilva_adjustments (project_id, source, topic, value_from, value_to, stage)
+    values (new.id, 'auto', 'parcelas', old.installments_count::text, new.installments_count::text, new.status);
+  end if;
+  if new.price_final is distinct from old.price_final then
+    insert into public.amaralesilva_adjustments (project_id, source, topic, value_from, value_to, stage)
+    values (new.id, 'auto', 'preco_final', old.price_final::text, new.price_final::text, new.status);
+  end if;
+  if new.payment_terms is distinct from old.payment_terms then
+    insert into public.amaralesilva_adjustments (project_id, source, topic, value_from, value_to, stage)
+    values (new.id, 'auto', 'condicoes', left(old.payment_terms, 2000), left(new.payment_terms, 2000), new.status);
+  end if;
+  return null;
+end;
+$$;
+
+create trigger amaralesilva_projects_log_adjustments
+  after update on public.amaralesilva_projects
+  for each row execute function public.amaralesilva_projects_log_adjustments();
+
+-- Funções de trigger não são chamáveis por RPC; o revoke tira até a
+-- possibilidade de tentar.
+revoke execute on function public.amaralesilva_adjustments_stamp()        from public, anon, authenticated;
+revoke execute on function public.amaralesilva_projects_log_adjustments() from public, anon, authenticated;
+
+alter table public.amaralesilva_adjustments enable row level security;
+
+-- Privilégios por coluna: o cliente lê, apaga e insere só o conteúdo. Sem
+-- UPDATE — um ajuste não se edita; corrige-se lançando outro.
+revoke all on public.amaralesilva_adjustments from anon, authenticated;
+grant select, delete on public.amaralesilva_adjustments to authenticated;
+grant insert (project_id, topic, value_from, value_to, reason) on public.amaralesilva_adjustments to authenticated;
+
+create policy "amaralesilva members read adjustments" on public.amaralesilva_adjustments
+  for select to authenticated
+  using (public.amaralesilva_is_member());
+
+create policy "amaralesilva members add manual adjustments" on public.amaralesilva_adjustments
+  for insert to authenticated
+  with check (public.amaralesilva_is_member() and source = 'manual');
+
+create policy "amaralesilva members remove manual adjustments" on public.amaralesilva_adjustments
+  for delete to authenticated
+  using (public.amaralesilva_is_member() and source = 'manual');
