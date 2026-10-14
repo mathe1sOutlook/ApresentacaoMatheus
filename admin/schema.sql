@@ -420,3 +420,91 @@ create policy "amaralesilva members add manual adjustments" on public.amaralesil
 create policy "amaralesilva members remove manual adjustments" on public.amaralesilva_adjustments
   for delete to authenticated
   using (public.amaralesilva_is_member() and source = 'manual');
+
+-- ═══ Migração amaralesilva_leads_limite_por_origem ═══
+-- O teto antigo (30 leads em 10 min somando todo mundo) deixava qualquer um
+-- derrubar o formulário de contato para todos com algumas dezenas de envios.
+-- Agora o limite é por origem: no máximo 3 envios por IP em 10 minutos, com
+-- um teto global folgado (120 por hora) só como rede de segurança. O IP vem
+-- do cabeçalho que o PostgREST repassa e fica no próprio lead apenas como
+-- hash (origin_hash), que o formulário não consegue escrever; some junto com
+-- o lead. Sem cabeçalho de origem, vale só o teto global. Estourar o limite
+-- responde 429.
+alter table public.amaralesilva_leads
+  add column origin_hash text check (origin_hash is null or origin_hash ~ '^[0-9a-f]{64}$');
+create index amaralesilva_leads_origin_idx on public.amaralesilva_leads (origin_hash, created_at);
+
+-- Carimbo da origem, antes de gravar. Cabeçalho ilegível não pode derrubar
+-- o formulário: sem origem, o lead entra sem hash.
+create or replace function public.amaralesilva_leads_origin()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+declare
+  hdr json;
+  origem text;
+begin
+  new.origin_hash := null;
+  begin
+    hdr := nullif(current_setting('request.headers', true), '')::json;
+  exception when others then
+    hdr := null;
+  end;
+  origem := btrim(coalesce(
+    hdr ->> 'cf-connecting-ip',
+    split_part(hdr ->> 'x-forwarded-for', ',', 1),
+    hdr ->> 'x-real-ip'
+  ));
+  if coalesce(origem, '') <> '' then
+    new.origin_hash := encode(sha256(convert_to(origem, 'UTF8')), 'hex');
+  end if;
+  return new;
+end;
+$$;
+
+create trigger amaralesilva_leads_origin
+  before insert on public.amaralesilva_leads
+  for each row execute function public.amaralesilva_leads_origin();
+
+create or replace function public.amaralesilva_leads_guard()
+returns trigger
+language plpgsql security definer
+set search_path = ''
+as $$
+declare
+  n int;
+  origem text;
+begin
+  if coalesce(auth.role(), '') <> 'anon' then
+    return null;
+  end if;
+  select count(*), max(origin_hash) into n, origem from inserted;
+  if n > 1 then
+    raise exception 'one lead per request' using errcode = 'P0001';
+  end if;
+
+  select count(*) into n from public.amaralesilva_leads
+   where created_at > now() - interval '1 hour';
+  if n > 120 then
+    raise sqlstate 'PGRST' using
+      message = '{"code":"rate_limited","message":"too many leads, try again later"}',
+      detail  = '{"status":429,"headers":{"Retry-After":"600"}}';
+  end if;
+
+  if origem is not null then
+    select count(*) into n from public.amaralesilva_leads
+     where origin_hash = origem and created_at > now() - interval '10 minutes';
+    if n > 3 then
+      raise sqlstate 'PGRST' using
+        message = '{"code":"rate_limited","message":"too many leads from this origin, try again later"}',
+        detail  = '{"status":429,"headers":{"Retry-After":"600"}}';
+    end if;
+  end if;
+  return null;
+end;
+$$;
+
+-- Funções de trigger: não são para ser chamadas pela API (advisor 0028/0029).
+revoke execute on function public.amaralesilva_leads_origin() from public, anon, authenticated;
+revoke execute on function public.amaralesilva_leads_guard()  from public, anon, authenticated;
