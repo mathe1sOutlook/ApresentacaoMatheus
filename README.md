@@ -358,8 +358,11 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
 
 ## Pendências
 
-- **Vercel Web Analytics** — o site já carrega `/_vercel/insights/script.js`;
-  só começa a contar depois de ativar *Analytics* no projeto na Vercel.
+- **Medição do site** — o script da Vercel Web Analytics saiu do `index.html`
+  (auditoria de conformidade, C-04): ele carregava antes de qualquer escolha
+  do visitante e não estava declarado em política nenhuma. Volta só junto com
+  a Política de Privacidade publicada e, se a base for consentimento, com um
+  aviso que deixe aceitar e recusar com o mesmo destaque.
 - **Imagens dos casos e projetos** — cada card aponta para um arquivo em
   `/img/casos/` (mediaportal-inicio, mediaportal-solucoes,
   mediaportal-eventos, mindminers, ame-x, corning, fundacalc,
