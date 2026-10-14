@@ -1,0 +1,69 @@
+# CI mínimo do site estático: barra o merge quando o JS não compila, quando
+# vai chave secreta para o que a Vercel publica ou quando a RLS do painel
+# afrouxa. Sem build e sem dependência: só Node, bash e um Postgres de teste.
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [master]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  qualidade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Sintaxe do JS inline e dos scripts
+        run: |
+          set -e
+          for f in index.html en/index.html admin/index.html proposta-*/index.html; do
+            node -e '
+              const h = require("fs").readFileSync(process.argv[1], "utf8");
+              const blocos = [...h.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>([\s\S]*?)<\/script>/g)];
+              for (const [, js] of blocos) new Function(js);
+              console.log("ok", process.argv[1], blocos.length, "bloco(s)");
+            ' "$f"
+          done
+          for f in scripts/*.mjs; do node --check "$f"; done
+      - name: Árvore que a Vercel publica
+        run: |
+          mkdir -p /tmp/site
+          git archive HEAD | tar -x -C /tmp/site
+          cd /tmp/site
+          grep -vE '^[[:space:]]*(#|$)' .vercelignore | while read -r p; do rm -rf -- "./$p"; done
+          rm -f .vercelignore
+      - name: Portão de segurança — chave secreta no cliente (bloqueante)
+        run: |
+          set +e
+          bash scripts/varrer-build.sh /tmp/site
+          s=$?
+          if [ "$s" -eq 3 ]; then echo "::warning::varrer-build: suspeitas para revisar"; exit 0; fi
+          exit "$s"
+      - name: vercel.json válido
+        run: node -e 'JSON.parse(require("fs").readFileSync("vercel.json", "utf8"))'
+
+  banco:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v7
+      - name: RLS, privilégios e guardas do painel
+        run: bash scripts/testar-banco.sh
