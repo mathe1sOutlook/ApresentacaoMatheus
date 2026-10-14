@@ -25,6 +25,7 @@
   --blue:       #1F3A5F;
   --blue-soft:  #D9E1EA;
   --line:       #DAD5C9;
+  --line-field: #8A8578; /* borda de campo: a --line dá 1,3:1 e some; esta dá 3,3:1 */
   --red:        #8A2620;
   --red-soft:   #EAD3D0;
 
@@ -506,7 +507,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   font-size: 14px;
   color: var(--ink);
   background: var(--paper);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-field);
   border-radius: 0;
   padding: 9px 11px;
   width: 100%;
@@ -713,6 +714,22 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   max-width: min(90vw, 560px);
 }
 .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast__retry { font: inherit; color: var(--ochre-soft); background: none; border: 0; padding: 0; margin-left: 10px; text-decoration: underline; cursor: pointer; }
+
+/* ─── Ação em andamento ──────────────────────────────────────────── */
+.btn-solid:disabled, .btn-ghost:disabled, .btn-mini:disabled { opacity: 0.55; cursor: progress; }
+.topbar__sync { display: none; font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+body.is-saving .topbar__sync { display: inline; }
+
+/* ─── Carregando (esqueleto do painel) ───────────────────────────── */
+.sk { display: block; background: var(--paper-deep); }
+.sk--eyebrow { width: 180px; height: 11px; }
+.sk--title { width: min(320px, 70vw); height: 34px; margin-top: 10px; }
+.sk--label { width: 90px; height: 10px; margin-bottom: 12px; }
+.sk--value { width: 140px; height: 26px; }
+.sk--card { height: 220px; }
+.sk-gap { margin-top: 24px; }
+.sk-msg { margin-top: 24px; min-height: 1.6em; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
@@ -785,8 +802,19 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 <body>
 
 <!-- ═══ Carregando ═══ -->
-<div class="screen screen--on" id="scr-loading">
-  <div class="gate"><p class="eyebrow">Carregando…</p></div>
+<div class="screen screen--on" id="scr-loading" aria-busy="true" aria-label="Carregando o painel">
+  <header class="topbar"><div class="container topbar__bar"><span class="brandmark"><span class="brand-dots" aria-hidden="true"><i></i><i></i></span>CASA MARTECH</span></div></header>
+  <main class="container view" aria-hidden="true">
+    <div class="view-head"><div><span class="sk sk--eyebrow"></span><span class="sk sk--title"></span></div></div>
+    <div class="rule-grid rule-grid--4">
+      <div class="stat"><span class="sk sk--label"></span><span class="sk sk--value"></span></div>
+      <div class="stat"><span class="sk sk--label"></span><span class="sk sk--value"></span></div>
+      <div class="stat"><span class="sk sk--label"></span><span class="sk sk--value"></span></div>
+      <div class="stat"><span class="sk sk--label"></span><span class="sk sk--value"></span></div>
+    </div>
+    <div class="grid-2 sk-gap"><div class="card sk sk--card"></div><div class="card sk sk--card"></div></div>
+  </main>
+  <div class="container"><p class="eyebrow sk-msg" id="boot-msg" role="status"></p></div>
 </div>
 
 <!-- ═══ Login ═══ -->
@@ -824,6 +852,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
         <span class="label label--ochre">Admin</span>
       </a>
       <div class="topbar__right">
+        <span class="topbar__sync" role="status">Salvando…</span>
         <span class="topbar__user" id="topbar-user"></span>
         <button type="button" class="nav-toggle" data-action="openDrawer" aria-expanded="false" aria-controls="drawer" aria-label="Abrir menu">
           <span class="nav-toggle__ico" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -836,7 +865,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 
   <div class="backdrop" data-action="closeDrawer"></div>
 
-  <aside class="drawer" id="drawer" aria-label="Menu do painel">
+  <aside class="drawer" id="drawer" aria-label="Menu do painel" inert>
     <div class="drawer__head">
       <span class="label label--ochre">Menu</span>
       <button type="button" class="drawer__close" data-action="closeDrawer">Fechar ✕</button>
@@ -876,7 +905,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 </div>
 
 <!-- ═══ Modal / toast / tooltip ═══ -->
-<div class="modal" id="modal" role="dialog" aria-modal="true">
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
   <div class="modal__panel">
     <div class="modal__head">
       <h2 class="modal__title" id="modal-title"></h2>
@@ -968,12 +997,28 @@ const DOW = ['seg', 'ter', 'qua', 'qui', 'sex', 'sáb', 'dom'];
 
 const firstName = (s) => String(s || '').trim().split(/\s+/)[0] || '';
 
-function toast(msg) {
+function toast(msg, retry) {
   const el = $('#toast');
   el.textContent = msg;
+  if (retry) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'toast__retry'; b.textContent = 'Tentar de novo';
+    b.addEventListener('click', () => { el.classList.remove('on'); retry(); });
+    el.append(b);
+  }
+  el.style.pointerEvents = retry ? 'auto' : '';
   el.classList.add('on');
   clearTimeout(toast._t);
-  toast._t = setTimeout(() => el.classList.remove('on'), 4200);
+  toast._t = setTimeout(() => el.classList.remove('on'), retry ? 9000 : 4200);
+}
+/* Erro na tela em língua de gente: o detalhe do banco (tabela, coluna,
+   constraint) vai só para o console de quem está usando. */
+function errMsg(e, acao) {
+  const m = String((e && (e.message || e)) || '');
+  if (m === GONE_MSG) return GONE_MSG;
+  const o = acao || 'salvar';
+  if (!navigator.onLine || /Failed to fetch|NetworkError|Load failed/i.test(m)) return 'Sem conexão: não foi possível ' + o + '. Confira a internet e tente de novo.';
+  return 'Não foi possível ' + o + '. Tente de novo; se continuar, recarregue a página.';
 }
 
 /* Área de transferência: navigator.clipboard só existe em contexto seguro
@@ -1200,6 +1245,7 @@ setInterval(() => { if (!document.hidden) autoRefresh(); }, AUTO_MS);
 let mutateChain = Promise.resolve();
 function mutate(fn, okMsg) {
   const run = async () => {
+    document.body.classList.add('is-saving');
     try {
       await fn();
       await fetchAll();
@@ -1207,9 +1253,12 @@ function mutate(fn, okMsg) {
       if (okMsg) toast(okMsg);
       return true;
     } catch (e) {
+      console.error(e);
       renderPreservingForm();
-      toast('Erro: ' + (e.message || e));
+      toast(errMsg(e), () => mutate(fn, okMsg));
       return false;
+    } finally {
+      document.body.classList.remove('is-saving');
     }
   };
   const p = mutateChain.then(run, run);
@@ -2214,7 +2263,16 @@ VIEWS.equipe = function () {
 };
 
 /* ═══ Modal & formulários ══════════════════════════════════════════ */
+/* Modal prende o foco: o resto do painel fica inerte enquanto ele está
+   aberto e, ao fechar, o foco volta ao botão que o abriu (ou ao seu
+   equivalente, se a tela foi redesenhada no meio). */
+let modalOpener = null;
 function openModal(title, bodyHTML, onSubmit) {
+  const a = document.activeElement;
+  if (!$('#modal').classList.contains('on')) {
+    modalOpener = a && a !== document.body ? { el: a, action: a.dataset && a.dataset.action, id: a.dataset && (a.dataset.id || a.dataset.project) } : null;
+  }
+  $('#scr-app').inert = true;
   $('#modal-title').textContent = title;
   $('#modal-body').innerHTML = bodyHTML;
   $('#modal').classList.add('on');
@@ -2223,18 +2281,31 @@ function openModal(title, bodyHTML, onSubmit) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = form.querySelector('button[type="submit"]');
-      if (btn) btn.disabled = true;
+      if (btn && btn.disabled) return;
+      if (btn) { btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
       const data = {};
       new FormData(form).forEach((v, k) => { data[k] = typeof v === 'string' ? v.trim() : v; });
       const ok = await onSubmit(data, form);
-      if (btn) btn.disabled = false;
+      if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); }
       if (ok !== false) closeModal();
     });
     const f = form.querySelector('input:not([type="hidden"]), select, textarea');
     if (f) f.focus();
   }
 }
-function closeModal() { $('#modal').classList.remove('on'); $('#modal-body').innerHTML = ''; }
+function closeModal() {
+  const wasOpen = $('#modal').classList.contains('on');
+  $('#modal').classList.remove('on'); $('#modal-body').innerHTML = '';
+  $('#scr-app').inert = false;
+  const o = modalOpener; modalOpener = null;
+  if (!wasOpen || !o) return;
+  let el = o.el && o.el.isConnected ? o.el : null;
+  if (!el && o.action) {
+    const a = `[data-action="${CSS.escape(o.action)}"]`;
+    el = document.querySelector(o.id ? `${a}[data-id="${CSS.escape(o.id)}"], ${a}[data-project="${CSS.escape(o.id)}"]` : a);
+  }
+  if (el) el.focus();
+}
 
 const numOrNull = (v) => (v === '' || v == null ? null : Number(v));
 const strOrNull = (v) => (v === '' || v == null ? null : v);
@@ -2499,9 +2570,12 @@ function memberModal() {
 
 /* ═══ Ações (delegação de eventos) ═════════════════════════════════ */
 function closeDrawer() {
+  const d = $('#drawer');
+  const tinhaFoco = d && d.contains(document.activeElement);
   document.body.classList.remove('drawer-open');
+  if (d) d.inert = true;
   const t = $('.nav-toggle');
-  if (t) t.setAttribute('aria-expanded', 'false');
+  if (t) { t.setAttribute('aria-expanded', 'false'); if (tinhaFoco) t.focus(); }
 }
 
 const ACTIONS = {
@@ -2512,13 +2586,24 @@ const ACTIONS = {
       provider: 'google',
       options: { redirectTo: location.origin + '/admin' },
     });
-    if (error) toast('Erro no login: ' + error.message);
+    if (error) { console.error(error); toast('Não foi possível abrir o login do Google. Tente de novo.'); }
   },
   signOut: async () => { await sb.auth.signOut(); location.hash = ''; showScreen('login'); },
-  openDrawer: () => { document.body.classList.add('drawer-open'); $('.nav-toggle').setAttribute('aria-expanded', 'true'); },
+  openDrawer: () => {
+    const d = $('#drawer');
+    d.inert = false;
+    document.body.classList.add('drawer-open');
+    $('.nav-toggle').setAttribute('aria-expanded', 'true');
+    const f = d.querySelector('a, button');
+    if (f) f.focus();
+  },
   closeDrawer,
   closeModal,
-  refreshData: async () => { closeDrawer(); await fetchAll(); renderApp(); toast('Dados atualizados.'); },
+  refreshData: async () => {
+    closeDrawer();
+    try { await fetchAll(); renderApp(); toast('Dados atualizados.'); }
+    catch (e) { console.error(e); toast(errMsg(e, 'atualizar os dados'), ACTIONS.refreshData); }
+  },
 
   newProject: () => { closeDrawer(); projectModal(); },
   openProject: (el) => { location.hash = '#/projeto/' + el.dataset.id; },
@@ -2802,41 +2887,64 @@ document.addEventListener('submit', async (e) => {
       toast('O preço à vista não pode ser maior que o cheio — confira qual valor vai em cada campo.');
       return;
     }
+    const sbtn = form.querySelector('button[type="submit"]');
+    if (sbtn && sbtn.disabled) return;
+    if (sbtn) { sbtn.disabled = true; sbtn.setAttribute('aria-busy', 'true'); }
+    /* o re-render do mutate devolve um botão novo, já livre */
     mutate(() => dbUpdate('projects', form.dataset.id, row), 'Projeto salvo.');
   }
 });
 
 /* ═══ Inicialização ════════════════════════════════════════════════ */
-function showErrorGate(msg) {
-  $('#scr-loading .gate').innerHTML = '<div class="gate__card"><p class="eyebrow">Erro</p>'
+function showGate(eyebrow, msg, btnLabel) {
+  const scr = $('#scr-loading');
+  scr.removeAttribute('aria-busy');
+  scr.innerHTML = '<div class="gate"><div class="gate__card"><p class="eyebrow">' + esc(eyebrow) + '</p>'
     + '<p class="gate__note">' + esc(msg) + '</p>'
-    + '<button type="button" class="btn-ghost" onclick="location.reload()">Tentar de novo</button></div>';
+    + '<button type="button" class="btn-ghost" onclick="location.reload()">' + esc(btnLabel) + '</button></div></div>';
   showScreen('loading');
+}
+function showErrorGate(msg) { showGate('Erro', msg, 'Tentar de novo'); }
+
+/* Espera longa explicada: aos 3 s diz o que está acontecendo, aos 10 s
+   admite a demora e oferece recarregar. */
+function bootTimers() {
+  const msg = $('#boot-msg');
+  if (!msg) return { stop() {} };
+  const t3 = setTimeout(() => { msg.textContent = 'Buscando projetos, parcelas e tarefas no banco…'; }, 3000);
+  const t10 = setTimeout(() => {
+    msg.textContent = 'Está demorando mais que o normal. ';
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn-link'; b.textContent = 'Tentar de novo';
+    b.addEventListener('click', () => location.reload());
+    msg.append(b);
+  }, 10000);
+  return { stop() { clearTimeout(t3); clearTimeout(t10); msg.textContent = ''; } };
 }
 
 async function enter(session) {
   state.session = session;
   showScreen('loading');
-  const { data: members, error } = await sb.from(TB('members')).select('*').order('name');
+  const slow = bootTimers();
   const email = (session.user.email || '').toLowerCase();
-  if (error) {
-    /* falha de rede/servidor NÃO é acesso negado */
-    showErrorGate('Não foi possível verificar seu acesso agora (' + (error.message || 'erro de conexão') + '). Verifique a internet e tente de novo.');
+  /* Uma ida só ao banco: quem não está na allowlist recebe zero linhas da
+     RLS (sem erro) e cai em "Acesso restrito"; falha de rede ou servidor
+     NÃO é acesso negado e vai para a tela de erro. */
+  try {
+    await fetchAll();
+  } catch (e) {
+    console.error(e);
+    slow.stop();
+    showErrorGate('Não foi possível carregar o painel agora. Verifique a internet e tente de novo.');
     return;
   }
-  if (!members || !members.length || !members.some((m) => m.email.toLowerCase() === email)) {
+  slow.stop();
+  if (!state.members.some((m) => m.email.toLowerCase() === email)) {
     $('#denied-email').textContent = session.user.email || '(sem e-mail)';
     showScreen('denied');
     return;
   }
-  state.members = members;
-  state.me = members.find((m) => m.email.toLowerCase() === email);
-  try {
-    await fetchAll();
-  } catch (e) {
-    showErrorGate('Não foi possível carregar os dados (' + (e.message || e) + ').');
-    return;
-  }
+  state.me = state.members.find((m) => m.email.toLowerCase() === email);
   let backHash = '';
   try { backHash = sessionStorage.getItem('as_admin_hash') || ''; sessionStorage.removeItem('as_admin_hash'); } catch (e) { /* modo privado */ }
   if (backHash && backHash.startsWith('#/')) location.hash = backHash;
@@ -2845,15 +2953,19 @@ async function enter(session) {
   renderApp();
 }
 
+/* promessa rejeitada sem tratamento não pode virar silêncio */
+window.addEventListener('unhandledrejection', (ev) => {
+  console.error(ev.reason);
+  toast('Algo deu errado. Tente de novo; se continuar, recarregue a página.');
+});
+
 if (sb) sb.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_OUT') { state.session = null; state.me = null; showScreen('login'); }
 });
 
 (async function init() {
   if (!sb) {
-    $('#scr-loading .gate').innerHTML = '<div class="gate__card"><p class="eyebrow">Sem conexão</p>'
-      + '<p class="gate__note">Não foi possível carregar a biblioteca de acesso (CDN). Verifique a internet e recarregue a página.</p>'
-      + '<button type="button" class="btn-ghost" onclick="location.reload()">Recarregar</button></div>';
+    showGate('Sem conexão', 'Não foi possível carregar a biblioteca de acesso (CDN). Verifique a internet e recarregue a página.', 'Recarregar');
     return;
   }
   try {
@@ -2861,7 +2973,8 @@ if (sb) sb.auth.onAuthStateChange((event, session) => {
     if (!session) { showScreen('login'); return; }
     await enter(session);
   } catch (e) {
-    toast('Erro ao iniciar: ' + (e.message || e));
+    console.error(e);
+    toast('Não foi possível iniciar o painel. Recarregue a página.');
     showScreen('login');
   }
 })();
