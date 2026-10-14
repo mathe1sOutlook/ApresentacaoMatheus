@@ -185,6 +185,10 @@ ficar numa pasta servida pela Vercel.
   em revezamento e um segundo foco no `#processo`. Traz também o que a
   implementação decidiu por conta própria — a peneira das imagens e dois
   ajustes de enquadramento.
+- `docs/privacidade-rascunho.md` — o rascunho da Política de Privacidade e o
+  inventário de terceiros que saíram da auditoria de conformidade de
+  13/10/2026. Os colchetes são dados que só o dono fornece; passa por
+  advogado antes de ir ao ar.
 
 ## Convenções gerais
 
@@ -194,3 +198,10 @@ ficar numa pasta servida pela Vercel.
   versionar o `en/index.html` junto (ver "Idiomas" no `README.md`).
 - Toda mudança de schema entra em `admin/schema.sql` **e** é aplicada no
   Supabase — os dois sempre em sincronia. 
+
+## Diretrizes gerais (agents-draft)
+
+As diretrizes de segurança, design, conformidade, e-mail e engenharia ficam
+no `AGENTS.md`, importado aqui:
+
+@AGENTS.md
