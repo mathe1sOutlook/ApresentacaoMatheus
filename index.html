@@ -54,9 +54,6 @@
 })();
 </script>
 
-<!-- Vercel Web Analytics: só coleta depois de ativado em Project → Analytics;
-     antes disso o script responde 404 e nada acontece. -->
-<script defer src="/_vercel/insights/script.js"></script>
 
 <style>
 /* ═══════════════════════════════════════════════════════════════════
@@ -1788,14 +1785,14 @@ html.has-case-open { --header-h: 52px; }
   font-size: 18px;
   color: var(--ink);
   background: rgba(11, 13, 18, 0.4);
-  border: 1px solid rgba(166, 163, 155, 0.34);
+  border: 1px solid rgba(166, 163, 155, 0.6);
   border-radius: var(--r-control);
   padding: 13px 14px;
   transition: border-color 0.25s ease, background 0.25s ease;
   -webkit-appearance: none;
   appearance: none;
 }
-.field__input:hover { border-color: rgba(166, 163, 155, 0.6); }
+.field__input:hover { border-color: rgba(166, 163, 155, 0.85); }
 .field__input:focus { border-color: var(--ink); background: rgba(11, 13, 18, 0.62); }
 .field__input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 .field__input[aria-invalid="true"] { border-color: #E07A6A; }
@@ -1815,7 +1812,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
    frente: ocre em marca, azul em sistema. */
 .field--choice { border: 0; padding: 0; min-width: 0; }
 .field--choice .field__label { margin-bottom: 10px; padding: 0; }
-.field__hint { text-transform: none; letter-spacing: 0.04em; opacity: 0.66; }
+.field__hint { text-transform: none; letter-spacing: 0.04em; }
 .field__hint::before { content: "· "; }
 .choices { display: flex; flex-wrap: wrap; gap: 8px; }
 .choice { --choice-tone: var(--ink-soft); display: inline-flex; }
@@ -1932,7 +1929,9 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   overflow: hidden;
 }
 .lead { position: relative; }
-.lead__submit[disabled] { opacity: 0.6; cursor: default; box-shadow: none; transform: none; }
+.lead__submit[disabled] { opacity: 0.6; cursor: progress; box-shadow: none; transform: none; }
+.lead__submit.is-sending span::after { content: "…"; }
+.lead__done--espera::before { content: "…"; }
 
 /* A nota sobre o que acontece com os dados sai do pé do formulário e passa a
    morar num "i" embaixo do botão. O texto fica no documento o tempo todo —
@@ -3243,6 +3242,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         <a class="lead__wa" href="https://wa.me/5511999773471?text=Ol%C3%A1%2C%20vi%20o%20site%20da%20CASA%20MARTECH%20e%20quero%20conversar%20sobre%20um%20projeto." data-en-href="https://wa.me/5511999773471?text=Hi%2C%20I%20saw%20the%20CASA%20MARTECH%20site%20and%20would%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2m0 1.67c4.54 0 8.24 3.7 8.24 8.24s-3.7 8.24-8.24 8.24c-1.48 0-2.93-.4-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24M8.53 7.33c-.16 0-.43.06-.66.31-.22.25-.87.86-.87 2.07 0 1.22.89 2.39 1 2.56.14.17 1.76 2.67 4.25 3.73.59.27 1.05.42 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.16-.48-.27-.25-.14-1.47-.74-1.69-.82-.23-.08-.37-.12-.56.12-.16.25-.64.81-.78.97-.15.17-.29.19-.53.07-.26-.13-1.06-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.12-.24-.01-.39.11-.5.11-.11.27-.29.37-.44.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.11-.56-1.35-.77-1.84-.2-.48-.4-.42-.56-.43-.14 0-.3-.01-.47-.01"/></svg><span data-en="Talk on WhatsApp">Falar no WhatsApp</span></a>
       </div>
       <p class="lead__done" id="lead-ok" role="status" hidden><span data-en="We got it. We'll get back to you at the contact you left.">Recebemos. Retornamos no contato que você deixou.</span></p>
+      <p class="lead__done lead__done--espera" id="lead-espera" role="status" hidden><span data-en="Still sending — the connection is slow.">Ainda enviando — a conexão está lenta.</span></p>
       <p class="lead__done lead__done--erro" id="lead-erro" role="status" hidden><span data-en="We couldn't register your message now. Talk to us on WhatsApp or by e-mail.">Não conseguimos registrar sua mensagem agora. Fale com a gente no WhatsApp ou por e-mail.</span></p>
       <p class="lead__foot">
         <button type="button" class="info" aria-describedby="lead-nota" aria-label="O que fazemos com os seus dados" data-en-aria-label="What we do with your data"><span aria-hidden="true">i</span></button>
@@ -3866,11 +3866,12 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   var SB_KEY = 'sb_publishable_uUuSrKXuJXalJ79WO0PxDg_QpIEOfvA';
   var form = document.getElementById('lead-form');
 
-  function saveLead(lead) {
+  function saveLead(lead, signal) {
     if (!window.fetch) return Promise.reject(new Error('sem fetch'));
     return fetch(SB_URL + '/rest/v1/amaralesilva_leads', {
       method: 'POST',
       keepalive: true,
+      signal: signal,
       headers: {
         'apikey': SB_KEY,
         'Authorization': 'Bearer ' + SB_KEY,
@@ -3911,9 +3912,11 @@ textarea.field__input { min-height: 120px; resize: vertical; }
   if (form) {
     var avisoOk = document.getElementById('lead-ok');
     var avisoErro = document.getElementById('lead-erro');
+    var avisoEspera = document.getElementById('lead-espera');
     function aviso(qual) {
       if (avisoOk) avisoOk.hidden = qual !== 'ok';
       if (avisoErro) avisoErro.hidden = qual !== 'erro';
+      if (avisoEspera) avisoEspera.hidden = qual !== 'espera';
     }
     form.addEventListener('submit', function (event) {
       event.preventDefault();
@@ -3936,8 +3939,16 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       if (form.website.value) return; /* robô caiu na isca */
 
       var btn = form.querySelector('.lead__submit');
+      if (btn.disabled) return;
       btn.disabled = true;
+      btn.setAttribute('aria-busy', 'true');
+      btn.classList.add('is-sending');
       aviso(null);
+      /* Rede lenta: aos 3 s avisa que ainda está enviando; aos 15 s desiste e
+         cai na faixa de erro, que mantém o texto e oferece WhatsApp e e-mail. */
+      var ctrl = window.AbortController ? new AbortController() : null;
+      var t3 = setTimeout(function () { aviso('espera'); }, 3000);
+      var t15 = setTimeout(function () { if (ctrl) ctrl.abort(); }, 15000);
       saveLead({
         name: nome.slice(0, 120),
         company: empresa ? empresa.slice(0, 120) : null,
@@ -3946,14 +3957,19 @@ textarea.field__input { min-height: 120px; resize: vertical; }
         message: mensagem ? mensagem.slice(0, 2000) : null,
         lang: en ? 'en' : 'pt',
         source: 'site'
-      }).then(function () {
+      }, ctrl && ctrl.signal).then(function () {
         aviso('ok');
         form.reset();
         Array.prototype.forEach.call(form.querySelectorAll('[aria-invalid]'), function (i) { i.removeAttribute('aria-invalid'); });
       }, function () {
         /* não deu para gravar: a pessoa precisa saber, e ter por onde ir */
         aviso('erro');
-      }).then(function () { btn.disabled = false; });
+      }).then(function () {
+        clearTimeout(t3); clearTimeout(t15);
+        btn.disabled = false;
+        btn.removeAttribute('aria-busy');
+        btn.classList.remove('is-sending');
+      });
     });
   }
 

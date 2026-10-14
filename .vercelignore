@@ -3,3 +3,11 @@
 scripts/
 README.md
 docs/
+CLAUDE.md
+AGENTS.md
+ENTREGA.md
+DESIGN.md
+.claude/
+.github/
+admin/schema.sql
+tests/

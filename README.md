@@ -179,8 +179,10 @@ publicável, e responde na própria página — **Enviar não abre mais o
 WhatsApp**. Deu certo, entra a faixa "Recebemos. Retornamos no contato que
 você deixou" e o formulário se limpa; falhou (rede fora, 4xx/5xx — `fetch` não
 reclama de status, quem recusa é o nosso `res.ok`), entra a faixa de erro
-apontando o WhatsApp e o e-mail, e o que foi digitado fica onde está. As
-duas faixas são `role="status"`, para leitor de tela anunciar.
+apontando o WhatsApp e o e-mail, e o que foi digitado fica onde está. Rede
+lenta: aos 3 s entra "Ainda enviando — a conexão está lenta"; aos 15 s o envio
+desiste e cai na faixa de erro. As três faixas são `role="status"`, para
+leitor de tela anunciar.
 
 Quem prefere falar na hora tem o segundo botão, "Falar no WhatsApp": é um
 `<a>` de verdade, com a saudação já no `href` — sem JavaScript ele abre
@@ -190,7 +192,9 @@ Enviar.
 
 A política RLS permite ao papel anônimo apenas INSERT com `source = 'site'`
 e `status = 'novo'`, e só nas colunas que o formulário preenche; um trigger
-limita a uma linha por requisição e a 30 leads por 10 minutos. Leitura e
+limita a uma linha por requisição, a 3 envios por origem (IP, guardado no
+lead só como hash) em 10 minutos e a 120 leads por hora no total — estourar
+responde 429 e cai na faixa de erro. Leitura e
 edição só para membros, pela tela **Leads do site** do painel `/admin`, que
 também converte o lead em cliente com um clique. Um campo-isca (`website`)
 barra robôs simples, e o campo de contato aceita e-mail ou WhatsApp. A nota
@@ -356,10 +360,31 @@ Sem isso o retorno do login Google não volta para o painel — o `/admin` usa
 `location.origin`, então **todo endereço pelo qual o painel é aberto precisa
 estar nessa lista**. (O provider Google já está ativo no projeto.)
 
+## Testes e CI
+
+`.github/workflows/ci.yml` roda em todo PR e em push na `master`:
+
+- **qualidade** — compila o JS inline de site, `/en`, painel e propostas e os
+  `scripts/*.mjs`; monta a árvore que a Vercel publica (o repositório menos o
+  `.vercelignore`) e passa `scripts/varrer-build.sh` nela — chave secreta no
+  que vai ao ar reprova o PR; confere que o `vercel.json` é JSON válido.
+- **banco** — `scripts/testar-banco.sh` carrega `admin/schema.sql` num
+  Postgres 16 descartável, com o stub mínimo do Supabase de
+  `tests/db/supabase-stub.sql`, e roda `tests/db/rls.sql`: quem lê e escreve
+  o quê, os carimbos de autor e etapa dos ajustes e o limite de leads por
+  origem. Tudo numa transação desfeita. Local:
+  `PGHOST=… PGPORT=… PGUSER=postgres bash scripts/testar-banco.sh` — nunca
+  contra o banco real.
+
+Tabela ou política nova entra com o teste dela em `tests/db/rls.sql`.
+
 ## Pendências
 
-- **Vercel Web Analytics** — o site já carrega `/_vercel/insights/script.js`;
-  só começa a contar depois de ativar *Analytics* no projeto na Vercel.
+- **Medição do site** — o script da Vercel Web Analytics saiu do `index.html`
+  (auditoria de conformidade, C-04): ele carregava antes de qualquer escolha
+  do visitante e não estava declarado em política nenhuma. Volta só junto com
+  a Política de Privacidade publicada e, se a base for consentimento, com um
+  aviso que deixe aceitar e recusar com o mesmo destaque.
 - **Imagens dos casos e projetos** — cada card aponta para um arquivo em
   `/img/casos/` (mediaportal-inicio, mediaportal-solucoes,
   mediaportal-eventos, mindminers, ame-x, corning, fundacalc,
