@@ -933,6 +933,13 @@ const safeUrl = (u) => {
   if (!/^[a-z][a-z0-9+.-]*:/i.test(s)) return esc(s); /* sem esquema → relativa */
   return '#';
 };
+/* Propostas e contratos moram no domínio canônico; o painel pode estar aberto
+   num dos endereços técnicos, e o link relativo abriria o documento nele. */
+const CANON = 'https://www.casamartech.com.br';
+const docUrl = (u) => {
+  const s = String(u == null ? '' : u).trim();
+  return safeUrl(/^\/(?!\/)/.test(s) ? CANON + s : s);
+};
 const N = (v) => (v == null || v === '' ? 0 : Number(v));
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -1613,8 +1620,8 @@ VIEWS.projeto = function (route) {
         ${cli ? `<span class="mono soft" style="font-size:12px">${esc(cli.name)}${cli.company ? ' · ' + esc(cli.company) : ''}</span>` : ''}
         ${p.site_url ? `<a class="btn-link" href="${safeUrl(p.site_url)}" target="_blank" rel="noopener">Site ↗</a>` : ''}
         <span class="doc-links">
-          ${p.proposal_url ? `<a class="btn-mini" href="${safeUrl(p.proposal_url)}" target="_blank" rel="noopener">Consultar proposta ↗</a>` : ''}
-          ${p.contract_url ? `<a class="btn-mini" href="${safeUrl(p.contract_url)}" target="_blank" rel="noopener">Consultar contrato ↗</a>` : ''}
+          ${p.proposal_url ? `<a class="btn-mini" href="${docUrl(p.proposal_url)}" target="_blank" rel="noopener">Consultar proposta ↗</a>` : ''}
+          ${p.contract_url ? `<a class="btn-mini" href="${docUrl(p.contract_url)}" target="_blank" rel="noopener">Consultar contrato ↗</a>` : ''}
         </span>
       </div>
     </div>
