@@ -33,6 +33,14 @@
       "destination": "/proposta-2jem-tN8I96nywHcRy0G7ZuSaTzNx/index.html"
     },
     {
+      "source": "/proposta-2jem-contrato-UVHYpwDDmPZaeH0GUWKabGAh",
+      "destination": "/proposta-2jem-contrato-UVHYpwDDmPZaeH0GUWKabGAh/index.html"
+    },
+    {
+      "source": "/proposta-2jem-contrato-UVHYpwDDmPZaeH0GUWKabGAh/(.*)",
+      "destination": "/proposta-2jem-contrato-UVHYpwDDmPZaeH0GUWKabGAh/index.html"
+    },
+    {
       "source": "/admin",
       "destination": "/admin/index.html"
     },

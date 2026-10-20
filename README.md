@@ -59,6 +59,8 @@ proposta-mediaportal-*/   três propostas privadas para a Media Portal, fora do 
                 (site, contrato e CRM & Inteligência de Dados)
 proposta-2jem-*/          proposta de marca e plataforma digital da 2JEM, no
                 sistema "Verde · Navy" (tokens próprios, tema claro só)
+proposta-2jem-contrato-*/ contrato da 2JEM, no mesmo molde do contrato da Media
+                Portal; a proposta entra como Anexo I
 admin/          painel interno da dupla (CRM, financeiro, agenda, tarefas)
 ```
 
