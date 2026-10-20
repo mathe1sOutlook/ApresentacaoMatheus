@@ -48,7 +48,7 @@ img/hero-casa.jpg  a casa de luz do hero (1072×821); img/hero-casa-luz.png é a
 img/qr.svg      QR do site em creme sobre escuro; img/qr-print.svg é a
                 versão preto-no-branco. Os dois são para papel — cartão,
                 crachá, proposta — e saem de scripts/build-qr.py
-robots.txt      libera o site, bloqueia as propostas e o /admin
+robots.txt      libera o site, bloqueia as propostas, os encerramentos e o /admin
 sitemap.xml     / e /en com hreflang
 vercel.json     rewrites (/en, /admin, propostas), noindex das propostas e do
                 admin, cache longo para /fonts. Não há catch-all: caminho que
@@ -59,6 +59,10 @@ proposta-mediaportal-*/   três propostas privadas para a Media Portal, fora do 
                 (site, contrato e CRM & Inteligência de Dados)
 proposta-2jem-*/          proposta de marca e plataforma digital da 2JEM, no
                 sistema "Verde · Navy" (tokens próprios, tema claro só)
+encerramento-mediaportal-*/  encerramento do ciclo inicial do site da Media Portal:
+                checklist do escopo contratado com a data de cada entrega, o
+                que veio além do escopo, pendências, garantia e aceite (PDF).
+                Rota privada, com as mesmas regras das propostas
 admin/          painel interno da dupla (CRM, financeiro, agenda, tarefas)
 ```
 

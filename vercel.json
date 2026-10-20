@@ -33,6 +33,14 @@
       "destination": "/proposta-2jem-tN8I96nywHcRy0G7ZuSaTzNx/index.html"
     },
     {
+      "source": "/encerramento-mediaportal-zkeufRdKVUzfMOtYn0Qqr8LaK1Ek",
+      "destination": "/encerramento-mediaportal-zkeufRdKVUzfMOtYn0Qqr8LaK1Ek/index.html"
+    },
+    {
+      "source": "/encerramento-mediaportal-zkeufRdKVUzfMOtYn0Qqr8LaK1Ek/(.*)",
+      "destination": "/encerramento-mediaportal-zkeufRdKVUzfMOtYn0Qqr8LaK1Ek/index.html"
+    },
+    {
       "source": "/admin",
       "destination": "/admin/index.html"
     },
@@ -48,6 +56,12 @@
   "headers": [
     {
       "source": "/proposta-(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+      ]
+    },
+    {
+      "source": "/encerramento-(.*)",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
       ]

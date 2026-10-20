@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<title>Encerramento do ciclo inicial — Media Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fundo: #eceff3;
+    --papel: #ffffff;
+    --tinta: #1c2b3f;
+    --tinta-2: #4a5a70;
+    --tinta-3: #6b7a8f;
+    --linha: #d8dee6;
+    --linha-forte: #b9c3cf;
+    --laranja: #e0561d;
+    --verde: #1f7a4d;
+    --verde-claro: #e3f2ea;
+    --ambar: #a86400;
+    --ambar-claro: #fbf0dc;
+    --azul: #2554a6;
+    --azul-claro: #e6edf9;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--fundo);
+    color: var(--tinta);
+    font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--laranja); }
+
+  .folha {
+    max-width: 960px;
+    margin: 32px auto 64px;
+    background: var(--papel);
+    padding: 56px 64px 64px;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(28, 43, 63, .06), 0 12px 40px rgba(28, 43, 63, .07);
+  }
+
+  .barra {
+    max-width: 960px;
+    margin: 24px auto 0;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 16px;
+  }
+  .barra button {
+    font: 600 13px 'Public Sans', sans-serif;
+    color: #fff;
+    background: var(--tinta);
+    border: 0;
+    border-radius: 4px;
+    padding: 10px 16px;
+    cursor: pointer;
+  }
+  .barra button:hover { background: #0f1b2b; }
+  .barra button:focus-visible { outline: 3px solid var(--laranja); outline-offset: 2px; }
+
+  header.capa { border-bottom: 2px solid var(--tinta); padding-bottom: 28px; margin-bottom: 36px; }
+  .rotulo {
+    font: 600 11.5px 'IBM Plex Mono', monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--laranja);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font: 800 38px/1.12 'Archivo', sans-serif;
+    letter-spacing: -.01em;
+    margin: 0 0 16px;
+  }
+  .abertura { font-size: 17px; color: var(--tinta-2); max-width: 680px; margin: 0 0 26px; }
+  .ficha {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: 8px 36px;
+    justify-content: start;
+    font-size: 13px;
+    margin: 0;
+  }
+  .ficha dt { font: 600 10.5px 'IBM Plex Mono', monospace; letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); }
+  .ficha dd { margin: 2px 0 0; font-weight: 600; }
+
+  h2 {
+    font: 700 23px/1.2 'Archivo', sans-serif;
+    margin: 52px 0 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  h2 .num { font: 600 13px 'IBM Plex Mono', monospace; color: var(--laranja); }
+  h3 {
+    font: 700 15px/1.3 'Archivo', sans-serif;
+    margin: 30px 0 8px;
+    color: var(--tinta);
+  }
+  h3 small { font: 500 12px 'IBM Plex Mono', monospace; color: var(--tinta-3); margin-left: 6px; }
+  p { margin: 0 0 12px; }
+  .nota { font-size: 13px; color: var(--tinta-2); }
+
+  .placar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    margin: 18px 0 6px;
+    padding: 14px 18px;
+    background: #f5f7fa;
+    border-left: 3px solid var(--tinta);
+    font-size: 14px;
+  }
+  .placar b { font: 800 22px 'Archivo', sans-serif; margin-right: 6px; }
+
+  .legenda { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 12.5px; color: var(--tinta-2); margin: 10px 0 0; }
+  .legenda span { display: inline-flex; align-items: center; gap: 7px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead th {
+    text-align: left;
+    font: 600 10.5px 'IBM Plex Mono', monospace;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--tinta-3);
+    border-bottom: 1px solid var(--linha-forte);
+    padding: 0 10px 8px 0;
+  }
+  tbody td { border-bottom: 1px solid var(--linha); padding: 10px 10px 10px 0; vertical-align: top; }
+  tbody tr { break-inside: avoid; page-break-inside: avoid; }
+  td.marca { width: 30px; padding-right: 4px; }
+  td.data { width: 108px; font: 500 12.5px 'IBM Plex Mono', monospace; white-space: nowrap; color: var(--tinta); }
+  td.item { width: 34%; font-weight: 600; }
+  td.obs { color: var(--tinta-2); }
+  td.quem { width: 150px; font-size: 12.5px; font-weight: 600; }
+
+  .caixa {
+    display: inline-block;
+    width: 17px; height: 17px;
+    border-radius: 3px;
+    border: 1.5px solid var(--linha-forte);
+    position: relative;
+    vertical-align: -3px;
+    flex: none;
+  }
+  .caixa.ok { background: var(--verde); border-color: var(--verde); }
+  .caixa.ok::after {
+    content: "";
+    position: absolute;
+    left: 5px; top: 1px;
+    width: 4px; height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .caixa.parcial { border-color: var(--ambar); background: linear-gradient(135deg, var(--ambar) 50%, #fff 50%); }
+  .caixa.aberto { border-color: var(--azul); border-style: dashed; }
+
+  .selo {
+    display: inline-block;
+    font: 600 10px 'IBM Plex Mono', monospace;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: 1px;
+    white-space: nowrap;
+  }
+  .selo.depois { background: var(--ambar-claro); color: var(--ambar); }
+  .selo.mp { background: var(--azul-claro); color: var(--azul); }
+
+  .regua {
+    margin: 22px 0 8px;
+    font-size: 12px;
+    color: var(--tinta-2);
+  }
+  .regua .trilho { position: relative; height: 34px; border-bottom: 1px solid var(--linha-forte); margin: 0 4px; }
+  .regua .mes { position: absolute; bottom: -20px; font: 500 11px 'IBM Plex Mono', monospace; color: var(--tinta-3); transform: translateX(-50%); }
+  .regua .pino { position: absolute; bottom: 0; width: 3px; margin-left: -1px; background: var(--tinta); }
+  .regua .pino::before { content: ""; position: absolute; top: -3px; left: -2px; width: 7px; height: 7px; border-radius: 50%; background: inherit; }
+  .regua .pino.alem { background: var(--laranja); }
+  .regua .faixa { position: absolute; bottom: -1px; height: 3px; background: var(--tinta); }
+
+  .garantia { columns: 2; column-gap: 40px; font-size: 13.5px; }
+  .garantia h4 { font: 700 13px 'Archivo', sans-serif; margin: 0 0 6px; break-after: avoid; }
+  .garantia ul { margin: 0 0 16px; padding-left: 18px; break-inside: avoid; }
+  .garantia li { margin-bottom: 4px; }
+
+  .aceite { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 46px; break-inside: avoid; }
+  .aceite div { border-top: 1px solid var(--tinta); padding-top: 8px; font-size: 13px; }
+  .aceite b { display: block; }
+  .aceite span { color: var(--tinta-2); }
+  .assinaturas { break-inside: avoid; page-break-inside: avoid; }
+  .data-aceite { margin-top: 26px; font-size: 13px; }
+  .data-aceite i { display: inline-block; width: 160px; border-bottom: 1px solid var(--tinta); }
+
+  footer.fonte { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--linha); font-size: 12px; color: var(--tinta-3); }
+
+  @media (max-width: 760px) {
+    .folha { margin: 16px 0 40px; padding: 32px 16px 40px; border-radius: 0; }
+    h1 { font-size: 29px; }
+    .ficha { grid-template-columns: 1fr 1fr; }
+    .garantia { columns: 1; }
+    .aceite { grid-template-columns: 1fr; }
+    table, thead, tbody, tr, td { display: block; width: auto !important; }
+    thead { display: none; }
+    tbody tr { display: grid; grid-template-columns: 26px 1fr; column-gap: 8px; border-bottom: 1px solid var(--linha); padding: 10px 0; }
+    tbody td { border: 0; padding: 0; grid-column: 2; }
+    td.marca { grid-column: 1; grid-row: 1 / span 3; }
+    td.data { margin-bottom: 2px; }
+    td.item { margin-bottom: 2px; }
+  }
+
+  @page { size: A4; margin: 14mm 13mm; }
+  @media print {
+    html, body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { font-size: 11.5px; }
+    .barra { display: none; }
+    .folha { max-width: none; margin: 0; padding: 0; box-shadow: none; border-radius: 0; }
+    h1 { font-size: 28px; }
+    h2 { font-size: 18px; margin-top: 30px; break-after: avoid; }
+    h3 { break-after: avoid; }
+    table { font-size: 10.5px; }
+    td.data { font-size: 10px; width: 92px; }
+    thead { display: table-header-group; }
+    .quebra { break-before: page; }
+    .junto { break-inside: avoid; page-break-inside: avoid; }
+    a { color: var(--tinta); text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="barra"><button type="button" onclick="window.print()">Salvar em PDF</button></div>
+
+<main class="folha">
+
+<header class="capa">
+  <p class="rotulo">Encerramento do ciclo inicial · Contrato de 22/07/2026</p>
+  <h1>Site Media Portal: o que foi contratado, quando foi entregue e o que veio além</h1>
+  <p class="abertura">O contrato previa três meses de desenvolvimento do novo site, com o escopo descrito na proposta comercial (Anexo I). Este documento confere cada item da proposta contra o que está no ar, com a data em que ficou pronto. Também registra o que foi feito além do combinado e o que ainda falta para fechar o ciclo.</p>
+  <dl class="ficha">
+    <div><dt>Contratante</dt><dd>Media Portal Soluções Ltda.</dd></div>
+    <div><dt>Desenvolvimento</dt><dd>Matheus Silva</dd></div>
+    <div><dt>Período</dt><dd>22/07 a 22/10/2026</dd></div>
+    <div><dt>Situação em</dt><dd>20/10/2026</dd></div>
+  </dl>
+</header>
+
+<section aria-labelledby="s1">
+  <h2 id="s1"><span class="num">01</span>O escopo contratado, item a item</h2>
+  <p>Os itens abaixo estão na ordem e com as palavras da proposta comercial de 21/07/2026. A data é a do dia em que o item ficou pronto. Quando ele cresceu depois, a observação diz até onde foi.</p>
+
+  <div class="placar" role="note">
+    <span><b>49</b>itens propostos</span>
+    <span><b>41</b>entregues</span>
+    <span><b>2</b>entregues em parte</span>
+    <span><b>6</b>no fechamento ou com a Media Portal</span>
+  </div>
+  <p class="legenda">
+    <span><i class="caixa ok" aria-hidden="true"></i>Entregue</span>
+    <span><i class="caixa parcial" aria-hidden="true"></i>Entregue em parte</span>
+    <span><i class="caixa aberto" aria-hidden="true"></i>Fica para o fechamento</span>
+    <span><span class="selo mp" style="margin:0">Media Portal</span>depende de algo da empresa</span>
+  </p>
+
+  <h3>Objeto da proposta <small>seção 1</small></h3>
+  <table>
+    <thead><tr><th></th><th>Item proposto</th><th>Pronto em</th><th>Onde está</th></tr></thead>
+    <tbody>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Arquitetura da informação</td><td class="data">25/07</td><td class="obs">Estrutura das sete páginas e navegação validada: Home, Soluções, Serviços, Ecossistemas, Cases, Blog e Eventos.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Interface</td><td class="data">31/07</td><td class="obs">Telas com a nova identidade visual. Refinadas por rodadas até 18/09 (Ecossistemas, Soluções, faixa de clientes).</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Frontend</td><td class="data">25/07 – 18/08</td><td class="obs">Páginas construídas por etapas; Soluções dividida entre nuvem e local em 06/08, Eventos com a agenda de 2026 em 31/08.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Backend</td><td class="data">25/07</td><td class="obs">Banco de dados no Supabase desde o primeiro dia, com os contatos gravados nele.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Responsividade</td><td class="data">18/08</td><td class="obs">Site revisto página por página no celular.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Painel administrativo</td><td class="data">06/08</td><td class="obs">Área interna em mediaportal.com.br/admin, começando pelos contatos; depois vieram métricas, páginas, eventos, documentos, acessos e blog.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Infraestrutura</td><td class="data">17/08</td><td class="obs">Hospedagem na Vercel, banco no Supabase, e-mails automáticos pela Resend.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Otimização técnica</td><td class="data">02/10</td><td class="obs">Velocidade de abertura medida por página, aparelho e conexão, com o diagnóstico na tela de métricas.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Formulários</td><td class="data">06/08</td><td class="obs">Fale conosco na Home. Em 03/09 passou a perguntar por onde a pessoa quer ser respondida.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Instrumentação dos funis de marketing</td><td class="data">12/08</td><td class="obs">Cada clique, envio e visita registrado, sem dado pessoal. Conversões separadas dos cliques em 11/09.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Dashboards</td><td class="data">15/08</td><td class="obs">Métricas do site: visitas, origens, aparelhos, conversões, tempo de permanência e mapa de atenção.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Testes</td><td class="data">10/10</td><td class="obs">Mais de 600 testes automáticos rodando a cada alteração, também no GitHub desde 10/10.</td></tr>
+      <tr><td class="marca"><i class="caixa aberto" aria-label="Fica para o fechamento"></i></td><td class="item">Homologação</td><td class="data">—</td><td class="obs">Conferência final da Media Portal e aceite, na seção 04.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Publicação</td><td class="data">17/08</td><td class="obs">No ar em mediaportal.com.br, na semana do SET EXPO.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Gestão de conteúdo e autonomia <small>seção 2</small></h3>
+  <table>
+    <thead><tr><th></th><th>Item proposto</th><th>Pronto em</th><th>Onde está</th></tr></thead>
+    <tbody>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Criação, edição e publicação de notícias e artigos do blog</td><td class="data">15/10</td><td class="obs">Editor com prévia ao lado, publicar, tirar do ar e tradução opcional para o inglês. Cada artigo ganha página própria.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Organização por categorias e temas</td><td class="data">15/10</td><td class="obs">Categorias criadas e editadas no próprio painel do blog.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Atualização de textos estratégicos definidos</td><td class="data">31/08</td><td class="obs">Eventos (31/08), Política de Privacidade e Termos (03/09), data e horário no cartão do evento (15/10) e convite do Encontro (16/10).</td></tr>
+      <tr><td class="marca"><i class="caixa parcial" aria-label="Entregue em parte"></i></td><td class="item">Substituição de imagens em áreas estratégicas definidas</td><td class="data">15/10</td><td class="obs">As imagens do blog sobem pelo painel. Nenhuma outra área foi definida para troca pelo painel; as demais imagens do site mudam por desenvolvimento.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Atualização de informações comerciais definidas</td><td class="data">03/09</td><td class="obs">Prazo de resposta do Fale conosco (03/09), LinkedIn e Instagram do rodapé (10/10) e dados legais da empresa (12/10).</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Infraestrutura para o blog sem dependência recorrente</td><td class="data">15/10</td><td class="obs">Pronto para uso. O Blog fica desligado até a Media Portal publicar os primeiros artigos.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Formulários e dados <small>seção 4</small></h3>
+  <table>
+    <thead><tr><th></th><th>Item proposto</th><th>Pronto em</th><th>Onde está</th></tr></thead>
+    <tbody>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Coleta inteligente</td><td class="data">06/08</td><td class="obs">Formulário com máscara de telefone (17/08) e canal de retorno preferido (03/09).</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Validação e segurança</td><td class="data">06/08</td><td class="obs">Regras conferidas no servidor e limite de envios; verificação contra robôs desde 09/10.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Armazenamento estruturado</td><td class="data">25/07</td><td class="obs">Contatos guardados no banco, sem acesso público.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Tratamento e enriquecimento</td><td class="data">15/10</td><td class="obs">E-mail padronizado, origem da visita e campanha de cada contato.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Deduplicação e controle de integridade</td><td class="data">15/10</td><td class="obs">Envios da mesma pessoa ligados pelo e-mail, com histórico de cada atendimento. Nada é fundido nem apagado.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Análise e visualização</td><td class="data">06/08</td><td class="obs">Contatos com busca, filtros e evolução mensal (06/08); métricas do site (15/08).</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Segmentação por localização</td><td class="data">15/10</td><td class="obs">País, estado e cidade das visitas e dos contatos, de forma aproximada e sem guardar o endereço de internet.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Exportação</td><td class="data">06/08</td><td class="obs">Planilha dos contatos; depois também do estande e do Encontro.</td></tr>
+      <tr><td class="marca"><i class="caixa aberto" aria-label="Depende da Media Portal"></i></td><td class="item">Integração com outras ferramentas<span class="selo mp">Media Portal</span></td><td class="data">—</td><td class="obs">Aguarda a escolha do CRM. Os dados já estão prontos para exportar.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Acompanhamento do projeto <small>seção 6</small></h3>
+  <table>
+    <thead><tr><th></th><th>Item proposto</th><th>Pronto em</th><th>Onde está</th></tr></thead>
+    <tbody>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Alinhamentos e consulta via WhatsApp</td><td class="data">22/07 – 20/10</td><td class="obs">Ao longo de todo o período, com Bruno no marketing.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Site do projeto publicado para conferência</td><td class="data">25/07</td><td class="obs">Cada alteração publicada para consulta, antes e depois de 17/08.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Ferramentas de acompanhamento de atividades</td><td class="data">25/07</td><td class="obs">Atendido com uma área própria de planejamento, que está entre os itens da seção 02.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Infraestrutura, serviços e operação <small>seção 8</small></h3>
+  <table>
+    <thead><tr><th></th><th>Item proposto</th><th>Pronto em</th><th>Onde está</th></tr></thead>
+    <tbody>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Frontend em ambiente de produção</td><td class="data">17/08</td><td class="obs">Vercel, com entrega global de conteúdo.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Domínio e DNS configurados</td><td class="data">17/08</td><td class="obs">Feito com o provedor do domínio, sem mexer no e-mail da empresa.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Backend e banco de dados gerenciados</td><td class="data">25/07</td><td class="obs">Supabase, com backup diário.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Painel administrativo e blog</td><td class="data">15/10</td><td class="obs">Painel desde 06/08; o blog completou o item em 15/10.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">APIs e serviços externos</td><td class="data">08/09</td><td class="obs">E-mails automáticos, verificação contra robôs e mapa sob demanda.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Autenticação e controles</td><td class="data">17/08</td><td class="obs">Senha na área interna (17/08), entrada pelo e-mail de cada pessoa (08/09) e senha individual (06/10).</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Proteção contra abusos</td><td class="data">06/08</td><td class="obs">Limite de tentativas desde o primeiro formulário; verificação contra robôs em 09/10.</td></tr>
+      <tr><td class="marca"><i class="caixa parcial" aria-label="Entregue em parte"></i></td><td class="item">Monitoramento contínuo<span class="selo mp">Media Portal</span></td><td class="data">15/10</td><td class="obs">O site responde se está de pé e se o banco atende. Falta cadastrar o monitor externo gratuito que avisa quando cair.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Recuperação rápida e backups automáticos</td><td class="data">15/10</td><td class="obs">Roteiro de recuperação escrito; volta da versão anterior do site em um clique. O ensaio anual fica com a empresa.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Proteção e desempenho</td><td class="data">09/10</td><td class="obs">Revisão de segurança liberada para publicação em 12/10.</td></tr>
+      <tr><td class="marca"><i class="caixa aberto" aria-label="Fica para o fechamento"></i></td><td class="item">Serviços contratados em nome da Media Portal<span class="selo mp">Media Portal</span></td><td class="data">—</td><td class="obs">Plano de 05/10: GitHub, Vercel, Supabase e Resend passam para contas da empresa, uma por vez, sem tirar o site do ar.</td></tr>
+      <tr><td class="marca"><i class="caixa aberto" aria-label="Fica para o fechamento"></i></td><td class="item">Código-fonte e repositório</td><td class="data">—</td><td class="obs">Entregue com a conta do GitHub da empresa, no mesmo passo acima.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Acessos entregues aos responsáveis</td><td class="data">03/09</td><td class="obs">Cada pessoa entra com o próprio e-mail; a equipe libera e retira acessos pela tela de acessos.</td></tr>
+      <tr><td class="marca"><i class="caixa aberto" aria-label="Fica para o fechamento"></i></td><td class="item">Orientação para uso do painel administrativo</td><td class="data">—</td><td class="obs">Sessão com a equipe no fechamento.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Contrato</h3>
+  <table>
+    <thead><tr><th></th><th>Cláusula</th><th>Pronto em</th><th>Onde está</th></tr></thead>
+    <tbody>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Escopo e cronograma nas duas primeiras semanas (cl. 2 e 7)</td><td class="data">31/07</td><td class="obs">Plano dos três meses publicado no painel, tarefa a tarefa, com as pendências de cada uma.</td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Entregas por etapas (cl. 7)</td><td class="data">25/07 – 16/10</td><td class="obs">73 marcos registrados na linha do tempo do painel, cada um com o antes e depois da tela.</td></tr>
+      <tr><td class="marca"><i class="caixa aberto" aria-label="Fica para o fechamento"></i></td><td class="item">Supabase migrado para conta da contratante (cl. 10)<span class="selo mp">Media Portal</span></td><td class="data">—</td><td class="obs">Parte do plano de contas próprias.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section aria-labelledby="s1b" class="junto">
+  <h2 id="s1b"><span class="num">01b</span>A primeira entrega de 15/08</h2>
+  <p>A proposta listava oito itens para 15 de agosto. O site foi publicado no endereço oficial em 17/08, na semana do SET EXPO. O blog e as páginas públicas dos artigos ficaram para 15/10.</p>
+  <table>
+    <thead><tr><th></th><th>Item da primeira entrega</th><th>Pronto em</th><th></th></tr></thead>
+    <tbody>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Página institucional inicial</td><td class="data">31/07</td><td class="obs"></td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Navegação principal funcional</td><td class="data">31/07</td><td class="obs"></td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Páginas entregues responsivas</td><td class="data">18/08</td><td class="obs"></td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Blog e painel de publicação</td><td class="data">15/10</td><td class="obs"><span class="selo depois">Depois de 15/08</span></td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Formulários de interação e contato</td><td class="data">06/08</td><td class="obs"></td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Instrumentação inicial de conversões</td><td class="data">12/08</td><td class="obs"></td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Ambiente de hospedagem configurado</td><td class="data">17/08</td><td class="obs"></td></tr>
+      <tr><td class="marca"><i class="caixa ok" aria-label="Entregue"></i></td><td class="item">Visualização pública das publicações</td><td class="data">15/10</td><td class="obs"><span class="selo depois">Depois de 15/08</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section aria-labelledby="s2">
+  <h2 id="s2"><span class="num">02</span>O que foi feito além do escopo</h2>
+  <p>Nenhum destes recursos estava na proposta de julho. Vieram de pedidos ao longo do projeto ou de necessidades que apareceram no caminho, como o SET EXPO e o Encontro em Recife, e foram entregues dentro do mesmo contrato, sem cobrança à parte.</p>
+
+  <div class="regua" aria-hidden="true">
+    <div class="trilho">
+      <span class="faixa" style="left:0;width:100%"></span>
+      <span class="pino alem" style="left:3.3%;height:26px"></span>
+      <span class="pino alem" style="left:22.8%;height:20px"></span>
+      <span class="pino alem" style="left:26.1%;height:26px"></span>
+      <span class="pino alem" style="left:46.7%;height:26px"></span>
+      <span class="pino alem" style="left:59.8%;height:20px"></span>
+      <span class="pino alem" style="left:63.0%;height:26px"></span>
+      <span class="pino alem" style="left:66.3%;height:20px"></span>
+      <span class="pino alem" style="left:82.6%;height:26px"></span>
+      <span class="pino alem" style="left:85.9%;height:20px"></span>
+      <span class="pino alem" style="left:89.1%;height:26px"></span>
+      <span class="pino alem" style="left:90.2%;height:20px"></span>
+      <span class="mes" style="left:0;transform:none">22/07</span>
+      <span class="mes" style="left:10.9%">Ago</span>
+      <span class="mes" style="left:44.6%">Set</span>
+      <span class="mes" style="left:77.2%">Out</span>
+      <span class="mes" style="left:auto;right:0;transform:none">22/10</span>
+    </div>
+  </div>
+  <p class="nota" style="margin-top:28px">Cada traço laranja marca uma data de entrega da lista abaixo, dentro dos três meses do contrato.</p>
+
+  <table>
+    <thead><tr><th>Data</th><th>Recurso</th><th>O que a Media Portal ganhou</th></tr></thead>
+    <tbody>
+      <tr><td class="data">25/07</td><td class="item">Área de acompanhamento do projeto</td><td class="obs">Planejamento tarefa a tarefa, pendências com campo de resposta e linha do tempo das entregas, tudo dentro do próprio site.</td></tr>
+      <tr><td class="data">12/08 · 15/08</td><td class="item">Agenda do estande no SET EXPO</td><td class="obs">Visitantes marcavam horário pelo site; a equipe via a lista por dia e período.</td></tr>
+      <tr><td class="data">15/08</td><td class="item">Liga e desliga das páginas</td><td class="obs">A empresa decide o que está no ar, oculto ou desligado, sem pedir alteração no código.</td></tr>
+      <tr><td class="data">03/09</td><td class="item">Política de Privacidade e Termos de Uso</td><td class="obs">As duas páginas no ar e editáveis pelo painel, com o original a um clique.</td></tr>
+      <tr><td class="data">15/09 · 18/09</td><td class="item">Antes e depois de cada entrega</td><td class="obs">Cada marco da linha do tempo mostra a tela de antes e a de depois, em foto e em desenho.</td></tr>
+      <tr><td class="data">21/09</td><td class="item">Endereços do site antigo</td><td class="obs">Quem chega por um link antigo do Google cai na página certa do site novo.</td></tr>
+      <tr><td class="data">06/10</td><td class="item">Versão em inglês</td><td class="obs">Todas as páginas públicas em inglês, com troca de idioma e formulários traduzidos, sob o mesmo liga e desliga.</td></tr>
+      <tr><td class="data">09/10</td><td class="item">Avisos de segurança por e-mail</td><td class="obs">Tentativas repetidas de entrada, robôs no formulário e acessos indevidos geram aviso para a equipe.</td></tr>
+      <tr><td class="data">12/10 · 13/10</td><td class="item">Dados legais e prazos de guarda</td><td class="obs">CNPJ, encarregado e prazos preenchidos no painel entram sozinhos na Política. O que vence é apagado toda madrugada.</td></tr>
+      <tr><td class="data">13/10</td><td class="item">Encontro Media Portal &amp; Parceiros</td><td class="obs">Convite, inscrições com vagas e lista de espera, e-mail de confirmação com mapa e agenda, e a lista de inscritos no painel.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Aprimoramentos dentro do escopo</h3>
+  <p class="nota">Itens previstos que foram além do mínimo. Não são apresentados como obrigação extra; ficam aqui para registro.</p>
+  <table>
+    <thead><tr><th>Data</th><th>Aprimoramento</th><th>Em relação ao proposto</th></tr></thead>
+    <tbody>
+      <tr><td class="data">03/09</td><td class="item">Mapa de atenção e tempo de permanência</td><td class="obs">Onde as pessoas clicam, até onde rolam e quanto tempo ficam, em cada página.</td></tr>
+      <tr><td class="data">11/09</td><td class="item">Métricas investigáveis</td><td class="obs">Menu lateral no painel; clicar num dia ou numa interação abre o que a compõe.</td></tr>
+      <tr><td class="data">05/10</td><td class="item">Métricas só de pessoas</td><td class="obs">Robôs e verificadores de link saem de toda conta, para o número refletir gente de verdade.</td></tr>
+      <tr><td class="data">08/09 · 06/10</td><td class="item">Entrada individual</td><td class="obs">A senha única deu lugar ao e-mail de cada pessoa, por código ou senha própria.</td></tr>
+      <tr><td class="data">10/10</td><td class="item">Estados da interface</td><td class="obs">Telas de erro, aviso sem conexão, carregamento e aviso de demora no site e no painel.</td></tr>
+      <tr><td class="data">10/10 · 13/10</td><td class="item">Testes no GitHub</td><td class="obs">Cada alteração passa por testes automáticos, inclusive de navegador no celular e no computador.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section aria-labelledby="s3">
+  <h2 id="s3"><span class="num">03</span>O que falta para fechar o ciclo</h2>
+  <p>Parte do que resta é do desenvolvimento, parte depende de material ou decisão da Media Portal. Nenhum item abaixo impede o site de funcionar.</p>
+  <table>
+    <thead><tr><th></th><th>Pendência</th><th>Responsável</th><th>Situação</th></tr></thead>
+    <tbody>
+      <tr><td class="marca"><i class="caixa aberto" aria-hidden="true"></i></td><td class="item">Homologação e aceite final</td><td class="quem">Media Portal e Matheus</td><td class="obs">Conferência deste documento e assinatura do aceite (seção 04).</td></tr>
+      <tr><td class="marca"><i class="caixa aberto" aria-hidden="true"></i></td><td class="item">Orientação da equipe no painel</td><td class="quem">Matheus</td><td class="obs">Sessão a agendar com quem vai usar o painel no dia a dia.</td></tr>
+      <tr><td class="marca"><i class="caixa aberto" aria-hidden="true"></i></td><td class="item">Contas em nome da empresa</td><td class="quem">Media Portal e Matheus</td><td class="obs">A empresa abre as contas e dá acesso; o site é transferido uma conta por vez.</td></tr>
+      <tr><td class="marca"><i class="caixa aberto" aria-hidden="true"></i></td><td class="item">Artigos do site antigo no blog</td><td class="quem">Media Portal</td><td class="obs">Aguarda a exportação do WordPress e a pasta de imagens.</td></tr>
+      <tr><td class="marca"><i class="caixa aberto" aria-hidden="true"></i></td><td class="item">Ligar o Blog</td><td class="quem">Media Portal</td><td class="obs">Em Páginas do site, quando houver artigos publicados.</td></tr>
+      <tr><td class="marca"><i class="caixa aberto" aria-hidden="true"></i></td><td class="item">Dados da empresa e revisão jurídica</td><td class="quem">Media Portal</td><td class="obs">CNPJ, encarregado, prazos de guarda e contatos do plano de incidente; depois, a revisão do advogado.</td></tr>
+      <tr><td class="marca"><i class="caixa aberto" aria-hidden="true"></i></td><td class="item">Rotina de operação</td><td class="quem">Media Portal</td><td class="obs">Monitor externo gratuito, cópia mensal das imagens do blog e ensaio anual de restauração.</td></tr>
+      <tr><td class="marca"><i class="caixa aberto" aria-hidden="true"></i></td><td class="item">Integração com CRM</td><td class="quem">Media Portal</td><td class="obs">Depende da ferramenta escolhida pela empresa.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section aria-labelledby="s4" class="quebra">
+  <h2 id="s4"><span class="num">04</span>Garantia e aceite</h2>
+  <p>Pela cláusula 7 do contrato, a garantia de três meses começa com a comunicação formal da entrega final. A assinatura abaixo registra essa comunicação e o aceite do que está marcado como entregue neste documento. As pendências da seção 03 seguem com os responsáveis indicados.</p>
+  <div class="garantia">
+    <h4>A garantia cobre</h4>
+    <ul>
+      <li>Correção de falhas do código desenvolvido.</li>
+      <li>Ajustes decorrentes de erros de implementação em funcionalidade do escopo aprovado.</li>
+    </ul>
+    <h4>A garantia não cobre</h4>
+    <ul>
+      <li>Novas funcionalidades, melhorias evolutivas e mudanças de escopo.</li>
+      <li>Ajustes de conteúdo ou de dados.</li>
+      <li>Intervenções sem autorização e falhas de serviços de terceiros.</li>
+    </ul>
+    <h4>Depois do ciclo inicial</h4>
+    <ul>
+      <li>Novas demandas seguem a evolução contínua prevista na cláusula 12, ou um novo contrato entre as partes.</li>
+    </ul>
+  </div>
+
+  <div class="assinaturas">
+  <p class="data-aceite">São Paulo, <i></i> de 2026.</p>
+  <div class="aceite">
+    <div><b>Media Portal Soluções Ltda.</b><span>Fabio de Sales Guerra Tsuzuki — CEO</span></div>
+    <div><b>Matheus Castro Nicolau da Silva</b><span>Desenvolvimento</span></div>
+  </div>
+  </div>
+</section>
+
+<footer class="fonte">
+  Fontes: contrato de 22/07/2026 e proposta comercial de 21/07/2026 (Anexo I); datas tiradas do histórico do projeto e da linha do tempo da área interna, na revisão de 20/10/2026. A data de cada item é a do dia em que ficou pronto no projeto, não a do aceite.
+</footer>
+
+</main>
+</body>
+</html>
