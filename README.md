@@ -302,13 +302,22 @@ no mesmo espírito do site (arquivo único, sem build, mesmos tokens de design).
 Reúne:
 
 - **CRM** — pipeline de propostas (contato → proposta a enviar → proposta
-  enviada → negociação → contrato fechado → concluído / perdido), com as duas
+  enviada → ajuste de proposta → negociação → contrato fechado → concluído /
+  perdido), com as duas
   condições da mesma proposta (valor cheio/parcelado, em quantas vezes, e o
   valor à vista quando há desconto no pagamento único), preço final,
   condições de pagamento, divisão de valores entre a dupla e links para a
   proposta e o contrato em HTML hospedados no próprio site.
 - **Devolutivas** — registro por projeto do que o cliente devolveu, do que foi
   combinado e das conversas.
+- **Ajustes da proposta** — tudo o que mudou na proposta, com como era e como
+  ficou, do cadastro ao contrato. A etapa *ajuste de proposta* é onde a
+  proposta enviada volta para mudar escopo, prazo ou forma; *negociação* fica
+  para valores. Os lançamentos manuais (escopo, prazo, valor, pagamento,
+  entrega, outro) se excluem, mas não se editam. O banco grava sozinho, e de
+  forma imutável, cada mudança de etapa, preço proposto, à vista, parcelas,
+  preço final e condições (trigger `amaralesilva_projects_log_adjustments`).
+  Autor, data e etapa são carimbados no banco, não vêm da tela.
 - **Financeiro** — parcelas com dia de pagamento, divisão Matheus/Bruno,
   entradas por mês, acumulado e filtros por período.
 - **Agenda** — calendário de reuniões com pauta e ata do que foi proposto.
