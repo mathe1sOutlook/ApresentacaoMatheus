@@ -2187,6 +2187,7 @@ a:hover {
   .pilar,
   .fase,
   .decisao,
+  .decisoes,
   .gantt,
   .tela,
   .ficha-linha,
@@ -2202,6 +2203,14 @@ a:hover {
   h2,
   h3 {
     break-after: avoid;
+    break-inside: avoid;
+  }
+
+  /* Chapéu e cabeçalho da seção seguem para a folha do primeiro bloco: sem
+     isto, o título fica sozinho no pé da página e o gráfico abre a seguinte. */
+  .kicker,
+  .cols-head {
+    break-after: avoid;
   }
 
   p,
@@ -2210,8 +2219,11 @@ a:hover {
     widows: 3;
   }
 
+  /* Com os 72px de tela, o respiro de baixo transbordava sozinho e abria a
+     folha seguinte com uma faixa navy. */
   .conceito {
     border-radius: 0;
+    padding-block: 32px;
   }
 
   /* Animação não roda no papel: o traço dos ícones e o anel ficam no estado
