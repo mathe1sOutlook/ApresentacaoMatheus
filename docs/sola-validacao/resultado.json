@@ -1,0 +1,39 @@
+{
+  "result": "passed",
+  "viewports": [
+    {
+      "width": 360,
+      "slides": 6,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "slides": 6,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "slides": 6,
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "slides": 6,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "slides": 6,
+      "overflow": false
+    },
+    {
+      "width": 1920,
+      "slides": 6,
+      "overflow": false
+    }
+  ],
+  "interactions": "quantidade livre acima de 6, campanhas de desconto/presente/frete, recompra, CRM incluído, avaliações com fotos e validação de arquivo, movimento por rolagem, teclado e modal",
+  "noJavaScript": "seis conceitos disponíveis",
+  "print": "todos os conceitos visíveis; paginação PDF não validada",
+  "errors": []
+}
