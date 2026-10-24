@@ -4,6 +4,7 @@
   const $ = (s) => document.querySelector(s);
   const $$ = (s) => document.querySelectorAll(s);
   const dialog = $('#cart-dialog');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const form = $('#rule-form');
   const defaults = { minimum: 4, discount: 8, kind: 'discount' };
   let rule = { ...defaults }, selected = 1, quantity = 0, activeSlide = 0, cartTrigger, toastTimer;
@@ -167,8 +168,41 @@
     notify('Campanha e sacola restauradas.');
   });
   $$('[data-print]').forEach((button) => button.addEventListener('click', () => window.print()));
+
+  /* Troca automática a cada 2 s. Para de vez quando alguém usa o carrossel
+     (clique, toque ou tecla) e pode ser retomada pelo botão. Fica parada fora
+     da tela, com a aba oculta, com a sacola aberta e com movimento reduzido. */
+  const AUTOPLAY_MS = 2000;
+  const carousel = $('.demo-carousel');
+  const autoplayToggle = $('[data-autoplay-toggle]');
+  let autoplay = !reducedMotion.matches, autoplayTimer, carouselOnScreen = false;
+  function scheduleAutoplay() {
+    clearTimeout(autoplayTimer);
+    const running = autoplay && carouselOnScreen && !document.hidden && !dialog.open && !reducedMotion.matches;
+    carousel.classList.toggle('is-autoplaying', running);
+    if (running) autoplayTimer = setTimeout(() => { showSlide(activeSlide + 1, false); scheduleAutoplay(); }, AUTOPLAY_MS);
+  }
+  function setAutoplay(on) {
+    autoplay = on;
+    autoplayToggle.setAttribute('aria-pressed', String(!on));
+    autoplayToggle.setAttribute('aria-label', on ? 'Pausar troca automática' : 'Retomar troca automática');
+    $('[data-autoplay-icon]').textContent = on ? '❚❚' : '▶';
+    scheduleAutoplay();
+  }
+  ['pointerdown', 'keydown'].forEach((type) => carousel.addEventListener(type, (event) => {
+    if (autoplay && !autoplayToggle.contains(event.target)) setAutoplay(false);
+  }, true));
+  autoplayToggle.addEventListener('click', () => setAutoplay(!autoplay));
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => { carouselOnScreen = entry.isIntersecting; scheduleAutoplay(); }, { threshold: 0.35 }).observe(carousel);
+  }
+  document.addEventListener('visibilitychange', scheduleAutoplay);
+  dialog.addEventListener('close', scheduleAutoplay);
+  reducedMotion.addEventListener('change', () => setAutoplay(autoplay && !reducedMotion.matches));
+
   render();
   showSlide(0, false);
+  setAutoplay(autoplay);
   document.documentElement.classList.add('has-js');
 })();
 

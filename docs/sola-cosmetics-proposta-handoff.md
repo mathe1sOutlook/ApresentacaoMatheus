@@ -12,7 +12,7 @@ Na revisão de copy de 23/10, os títulos em fragmentos paralelos e as frases-re
 
 ## Carrossel
 
-Seis possibilidades visualmente distintas, com seleção manual, setas e navegação por teclado (esquerda/direita, Home/End). Sem reprodução automática. Sem JavaScript, todas ficam visíveis; na impressão, as seis aparecem.
+Seis possibilidades visualmente distintas, com seleção manual, setas e navegação por teclado (esquerda/direita, Home/End). A pedido de Matheus, as telas trocam sozinhas a cada 2 segundos, com uma barra na aba ativa marcando o tempo. A troca para de vez quando alguém clica, toca ou digita no carrossel, e um botão ao lado das setas pausa ou retoma. Ela também fica parada fora da tela, com a aba do navegador oculta, com a sacola aberta e com movimento reduzido. Na troca automática, o leitor de tela não anuncia cada mudança. Sem JavaScript, todas ficam visíveis; na impressão, as seis aparecem.
 
 1. Vitrine editorial: seletor numérico de unidades, sem kits fixos e sem limite artificial de seis.
 2. Sacola com incentivo: quantidade livre, progresso e condição compartilhados com a vitrine.
@@ -29,9 +29,29 @@ Nenhum dado é persistido ou enviado. Valores e condições de compra são ilust
 
 Opção única: entrada de R$ 800,00 e saldo de R$ 2.800,00 em até 12 parcelas mensais, com quantidade de parcelas de 1 a 12 escolhida pela cliente, total de R$ 3.600,00. A redação permite o uso da solução entregue durante o parcelamento e mantém a titularidade do código-fonte desenvolvido com Matheus Silva até a quitação. Após o pagamento integral, o código será entregue e a titularidade transferida à Sola, nos termos do contrato; componentes de terceiros mantêm suas licenças.
 
-Hospedagem, banco, domínio, serviços fiscais, tarifas de pagamento e frete são custos de operação separados. Suporte, manutenção, prazo, condições de entrega e escopo definitivo precisam ser alinhados em contrato. CRM e avaliações integram o preço da loja, conforme confirmação de Matheus. Custos de armazenamento das fotos fazem parte da infraestrutura, separados do parcelamento do projeto.
+Hospedagem, banco, domínio, serviços fiscais, tarifas de pagamento e frete são custos de operação separados; a estimativa está na seção abaixo. Suporte, manutenção, prazo, condições de entrega e escopo definitivo precisam ser alinhados em contrato. CRM e avaliações integram o preço da loja, conforme confirmação de Matheus. Custos de armazenamento das fotos fazem parte da infraestrutura, separados do parcelamento do projeto.
 
 Não se afirma que Elementor impossibilita recursos equivalentes: o diferencial apresentado é o desenho próprio dos fluxos, das regras e dos dados, sem atribuir limitações absolutas ao editor.
+
+## Infraestrutura, nota fiscal e custos de operação
+
+Pedido de Matheus em 23/10: citar Bling ou Focus NFe para a nota, dizer que o banco faz backup automático, apresentar a infraestrutura e estimar o custo mensal e anual.
+
+A infraestrutura apresentada é Next.js na Vercel e PostgreSQL no Supabase, a mesma pilha da dupla. O backup automático diário com retenção de sete dias vem do plano Pro do Supabase; o plano gratuito não serve para isso, e o Hobby da Vercel é só para uso não comercial, por isso a estimativa usa os dois planos Pro.
+
+A tabela fica dentro da seção de investimento, porque tem valores em reais (regra 1). Preços consultados nos sites oficiais em 23/10/2026, pagando mês a mês:
+
+| Serviço | Preço de origem | Mensal | Anual |
+|---|---|---:|---:|
+| Vercel Pro | US$ 20/mês | R$ 104,00 | R$ 1.248,00 |
+| Supabase Pro | US$ 25/mês | R$ 130,00 | R$ 1.560,00 |
+| Bling Cobalto | R$ 60/mês, notas ilimitadas, até 200 pedidos por API | R$ 60,00 | R$ 720,00 |
+| Focus NFe Solo | R$ 94,90/mês, 100 documentos, R$ 0,11 por adicional | R$ 94,90 | R$ 1.138,80 |
+| Certificado A1 | faixa de mercado de R$ 165 a R$ 280 por ano | — | R$ 165 a R$ 280 |
+
+Câmbio de R$ 5,20 por dólar, a mediana do boletim Focus para o fim de 2026; a cotação de 7/10/2026 estava perto de R$ 5,01. Totais: R$ 294,00 por mês e R$ 3.693 a R$ 3.808 por ano com Bling; R$ 328,90 por mês e R$ 4.112 a R$ 4.227 por ano com Focus NFe. Ficam de fora as tarifas do Mercado Pago, o frete do Melhor Envio e o domínio, que já é da Sola.
+
+Fontes: [Bling](https://www.bling.com.br/planos-e-precos), [Focus NFe](https://focusnfe.com.br/precos/), [Supabase](https://supabase.com/pricing), [Vercel Pro](https://vercel.com/docs/plans/pro-plan), [certificado A1](https://www.omie.com.br/blog/quanto-custa-um-certificado-digital-e-onde-fazer/), [boletim Focus](https://www.canalrural.com.br/economia/focus-mantem-dolar-a-r-520-no-fim-de-2026-pela-quinta-semana).
 
 ## Rota e isolamento
 
