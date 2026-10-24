@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/proposta-sola-cosmetics-K7mQ4vNp9xT2rLc8",
+      "destination": "/proposta-sola-cosmetics-K7mQ4vNp9xT2rLc8/index.html"
+    },
+    {
       "source": "/proposta-mediaportal-j9dAnRpXIs2Dq6ZIENhQx2FbSDVF",
       "destination": "/proposta-mediaportal-j9dAnRpXIs2Dq6ZIENhQx2FbSDVF/index.html"
     },
