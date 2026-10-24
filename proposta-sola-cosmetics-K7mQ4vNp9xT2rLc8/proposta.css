@@ -341,3 +341,5 @@ html:not(.has-js) .demo-slide+.demo-slide{margin-top:45px}
  .story-block>p:not(.eyebrow):not(.margin-note){font-size:10pt}
  .story-block .margin-note{font-size:8pt}.story-block h3{font-size:14pt}
 }
+
+@media(max-width:760px){.cover h1 .wide-break{display:none}}
