@@ -32,7 +32,7 @@
       "overflow": false
     }
   ],
-  "interactions": "quantidade livre acima de 6, campanhas de desconto/presente/frete, recompra, CRM incluído, avaliações com fotos e validação de arquivo, bisnaga 3D por rolagem e movimento reduzido, teclado e modal",
+  "interactions": "quantidade livre acima de 6, campanhas de desconto/presente/frete, recompra, CRM incluído, avaliações com fotos e validação de arquivo, bisnaga 3D por rolagem e movimento reduzido, troca automática a cada 2 s com pausa, teclado e modal",
   "noJavaScript": "seis conceitos e foto da bisnaga disponíveis",
   "print": "todos os conceitos visíveis; paginação PDF não validada",
   "errors": []
