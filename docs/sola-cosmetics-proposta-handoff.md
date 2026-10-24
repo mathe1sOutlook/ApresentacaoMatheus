@@ -4,7 +4,7 @@ Revisão de 23/10/2026. Material local em elaboração, sem publicação. Substi
 
 ## Arquivos e direção
 
-A pasta `proposta-sola-cosmetics-K7mQ4vNp9xT2rLc8/` contém `index.html`, `proposta.css`, `proposta.js` e fotografias públicas da Sola em `assets/`. A apresentação é estática, sem framework ou nova dependência. React, Next.js e PostgreSQL são as tecnologias propostas para a futura loja.
+A pasta `proposta-sola-cosmetics-K7mQ4vNp9xT2rLc8/` contém `index.html`, `proposta.css`, `proposta.js`, `experiencias.js` (avaliações), `bisnaga-3d.js` (cena 3D), o Three.js em `vendor/` e fotografias públicas da Sola em `assets/`. A apresentação é estática, sem framework nem etapa de build; a única dependência é o Three.js da cena 3D. React, Next.js e PostgreSQL são as tecnologias propostas para a futura loja.
 
 A narrativa foi encurtada: contexto, escopo, experiências, operação/tecnologia, implantação, investimento e próximos passos. A área exclusiva e personalizada do cliente integra o escopo da loja. CRM e sistema de avaliações com notas, comentários e fotos estão incluídos no mesmo investimento.
 
@@ -44,12 +44,18 @@ Rewrite específico em `vercel.json`, recursos com caminhos reais. Prefixo de pr
 Conteúdo sem JavaScript e exibição dos seis conceitos na impressão são conferidos. Evidências em `docs/sola-validacao/`. Paginação do PDF, Safari e aparelho físico não foram validados.
 
 
-## Cena com profundidade e rolagem
+## Bisnaga em 3D no contexto
 
-O arquivo experiencias.js controla a composição visual e o formulário de avaliações. A cena usa a fotografia recortada por CSS, perspectiva, rotações e elementos em planos distintos; não é um modelo volumétrico WebGL. O produto e os detalhes mudam de posição com a rolagem normal, sem capturar ou bloquear o gesto. IntersectionObserver e requestAnimationFrame limitam o trabalho à cena visível, sem loop contínuo.
+Pedido de Matheus em 23/10: a bisnaga em 3D, com o creme saindo enquanto o texto rola ao lado. Substituiu a cena em CSS (foto recortada em perspectiva) e ocupa a seção de contexto: a bisnaga fica fixa à esquerda e os quatro blocos de texto passam à direita. No celular, a cena fica fixa no alto e o texto passa por baixo.
 
-Com movimento reduzido ou JavaScript desligado, a cena vira uma composição estática e não reserva o percurso longo de rolagem. Na impressão, também é estática.
+`bisnaga-3d.js` é um módulo que só importa o Three.js (r160, copiado em `vendor/`, com o `RoomEnvironment` para a iluminação) quando a seção se aproxima da tela. Matheus autorizou a dependência. Não há arquivo de modelo: o corpo é gerado com a largura medida na foto em cada altura e o perímetro constante, redondo junto à tampa e chato na solda. O rótulo da frente é a própria foto desenrolada sobre a frente da bisnaga, e o verso, que a foto não mostra, fica só com a cor da embalagem. A legenda da cena diz isso e chama a animação de ilustrativa.
+
+A rolagem define o progresso: a bisnaga gira até mostrar o rótulo, a tampa desenrosca e se afasta, e o creme cresce ao longo de uma curva a partir do bico enquanto o corpo se achata um pouco. A cena só desenha quando a rolagem muda, com um amortecimento curto, e para quando chega ao alvo.
+
+Sem JavaScript, sem WebGL, na impressão ou antes de o Three.js carregar, aparece a foto do produto. Com movimento reduzido, a cena fica parada no quadro final, com o creme já fora.
+
+## Avaliações
 
 O formulário demonstrativo aceita uma imagem JPEG, PNG ou WebP de até 5 MB, com object URL local e descarte da URL ao trocar a foto. Arquivos inválidos são rejeitados. O formulário usa textContent para mostrar o comentário e não faz upload, login, persistência ou publicação. A loja final prevê avaliação associada ao acesso do cliente e moderação no painel.
 
-A validação cobre mudança da transformação com a rolagem, troca da preferência de movimento, nota/comentário/foto, rejeição de arquivo incompatível e as seis prévias nas seis larguras.
+A validação cobre o progresso da bisnaga com a rolagem (creme em zero no início, parcial no meio e completo no fim), a troca da preferência de movimento, a foto no lugar do 3D sem JavaScript e na impressão, nota/comentário/foto, rejeição de arquivo incompatível e as seis prévias nas seis larguras.

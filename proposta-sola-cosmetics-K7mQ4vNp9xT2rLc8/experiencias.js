@@ -1,53 +1,6 @@
-/* Experiências locais: cena por rolagem e formulário demonstrativo de avaliação. */
+/* Formulário demonstrativo de avaliação: nada é enviado nem publicado. */
 (() => {
   'use strict';
-  const scene = document.querySelector('[data-scroll-scene]');
-  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  let visible = false;
-  let frame = 0;
-
-  function updateScene() {
-    frame = 0;
-    if (!visible || reducedMotion.matches) return;
-    const rect = scene.getBoundingClientRect();
-    const sticky = scene.querySelector('.scene-sticky');
-    const offset = parseFloat(getComputedStyle(sticky).top) || 0;
-    const travel = Math.max(1, rect.height - sticky.offsetHeight);
-    const progress = Math.max(0, Math.min(1, (offset - rect.top) / travel));
-    scene.style.setProperty('--fall-y', `${-240 + progress * 450}px`);
-    scene.style.setProperty('--fall-x', `${-55 + progress * 95}px`);
-    scene.style.setProperty('--fall-rz', `${-34 + progress * 66}deg`);
-    scene.style.setProperty('--fall-rx', `${16 - progress * 27}deg`);
-    scene.style.setProperty('--fall-ry', `${-24 + progress * 43}deg`);
-    scene.style.setProperty('--detail-y', `${progress * 130}px`);
-    scene.style.setProperty('--detail-rotate', `${-12 + progress * 32}deg`);
-    scene.style.setProperty('--orb-y', `${progress * 210}px`);
-    scene.dataset.progress = progress.toFixed(3);
-  }
-  function requestUpdate() {
-    if (!frame && visible && !reducedMotion.matches) frame = requestAnimationFrame(updateScene);
-  }
-  function configureMotion() {
-    scene.classList.toggle('motion-ready', !reducedMotion.matches);
-    if (reducedMotion.matches) {
-      cancelAnimationFrame(frame);
-      frame = 0;
-      scene.removeAttribute('style');
-      delete scene.dataset.progress;
-    } else requestUpdate();
-  }
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      requestUpdate();
-    }, { rootMargin: '100px' });
-    observer.observe(scene);
-    addEventListener('scroll', requestUpdate, { passive: true });
-    addEventListener('resize', requestUpdate, { passive: true });
-    reducedMotion.addEventListener('change', configureMotion);
-    configureMotion();
-  }
-
   const form = document.querySelector('#review-form');
   const photo = document.querySelector('#review-photo');
   const preview = document.querySelector('[data-photo-preview]');
