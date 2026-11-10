@@ -3,8 +3,10 @@
 ## Situação
 
 Implementação preparada na branch `feat/infinitepay-pix-checkout`.
-**Não há transações reais realizadas por esta implementação.** A publicação
-depende dos passos abaixo; o servidor não funciona sem as credenciais.
+**Banco migrado e Edge Function publicada em mApps em 10/11/2026.** A interface
+continua isolada no PR #78, que ainda não foi mesclado. A função precisa das
+credenciais cadastradas pelo titular para criar links; nenhuma cobrança real
+foi criada durante a implantação.
 
 ## Arquitetura
 
@@ -25,13 +27,13 @@ depende dos passos abaixo; o servidor não funciona sem as credenciais.
    - `INFINITEPAY_HANDLE`: InfiniteTag sem o símbolo `$`, exemplo
      `matheus-castro-xaq` (confirmar a grafia no app InfinitePay).
    - Não adicionar nenhuma dessas credenciais a HTML, GitHub ou Vercel.
-2. Aplicar **uma vez** `admin/infinitepay-schema.sql` com a migração Supabase
-   `amaralesilva_infinitepay_checkout`; conferir as constraints e as policies
-   antes de executar no mApps, compartilhado com outros projetos.
-3. Fazer o deploy **somente** da nova função `infinitepay-checkout` a partir
-   de `supabase/functions/infinitepay-checkout/index.ts` com
-   `verify_jwt=false` (configurado em `supabase/config.toml`). Sem isso
-   a InfinitePay não consegue entregar seu webhook.
+2. **Concluído:** migração `amaralesilva_infinitepay_checkout` aplicada no mApps,
+   com as rotinas, histórico e políticas RLS. Confirmada a ausência de acesso
+   anônimo e de execução da RPC de confirmação por usuários comuns.
+3. **Concluído:** função `infinitepay-checkout` publicada no Supabase,
+   com `verify_jwt=false` para receber webhooks e autorização interna para
+   criar cobranças. O teste de endpoint externo não foi possível no ambiente
+   de execução, que não resolveu DNS.
 4. Fazer merge do PR após conferir o estado do banco e o deploy da função.
    A Vercel então publica o painel e o retorno.
 5. Realizar cobrança de **R$ 1,00 ou mais** em uma parcela de teste para
@@ -85,8 +87,8 @@ depende dos passos abaixo; o servidor não funciona sem as credenciais.
 ## Verificação antes do merge
 
 - [ ] Secrets configurados no Supabase (não em GitHub).
-- [ ] Migração aplicada em mApps, com RLS e grants verificados.
-- [ ] Função publicada com JWT da plataforma desativado e validação própria.
+- [x] Migração aplicada em mApps, com RLS e grants verificados.
+- [x] Função publicada com JWT da plataforma desativado e validação própria.
 - [ ] Gerar checkout a partir de uma parcela de teste (sem clicar repetidamente).
 - [ ] Checkout apresenta Pix e cartão.
 - [ ] Realizar transação real de baixo valor.
