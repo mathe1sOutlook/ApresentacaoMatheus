@@ -16,7 +16,7 @@ const HANDLE = (Deno.env.get("INFINITEPAY_HANDLE") || "").replace(/^\$/, "");
 const FN_URL = SUPABASE_URL + "/functions/v1/infinitepay-checkout";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const getAdmin = () => createClient(SUPABASE_URL, SERVICE_KEY, {auth:{persistSession:false,autoRefreshToken:false}});
-const headers = { "Content-Type": "application/json", "Access-Control-Allow-Origin": CANON,
+const headers = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, apikey, content-type",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS" };
 const respond = (body: unknown, status = 200) =>
