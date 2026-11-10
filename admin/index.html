@@ -1058,6 +1058,9 @@ function installmentsLabel(p) {
 const notesOf    = (pid) => state.notes.filter((n) => n.project_id === pid);
 const meetingsOf = (pid) => state.meetings.filter((m) => m.project_id === pid);
 const paymentsOf = (pid) => state.payments.filter((p) => p.project_id === pid);
+/* Preserve o registro manual de pagamentos fora do checkout integrado. */
+const hasActiveInfinitePay = (paymentId) => state.checkouts.some((c) =>
+  c.payment_id === paymentId && (c.state === 'paid' || Date.parse(c.valid_until) > Date.now()));
 const tasksOf    = (pid) => state.tasks.filter((t) => t.project_id === pid);
 
 function payState(p) {
@@ -1570,6 +1573,7 @@ VIEWS.projeto = function (route) {
       <td><span class="chip chip--${st}">${st}</span></td>
       <td class="actions">
         ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="startInfinitePay" data-id="${x.id}">Cobrar · Pix/cartão</button>` : ''}
+        ${st !== 'pago' && !hasActiveInfinitePay(x.id) ? `<button type="button" class="btn-mini" data-action="markPaid" data-id="${x.id}">Marcar pago</button>` : ''}
         <button type="button" class="btn-mini" data-action="editPayment" data-id="${x.id}">Editar</button>
       </td>
     </tr>`;
@@ -1784,6 +1788,7 @@ VIEWS.financeiro = function () {
       <td><span class="chip chip--${st}">${st}</span></td>
       <td class="actions">
         ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="startInfinitePay" data-id="${x.id}">Cobrar · Pix/cartão</button>` : ''}
+        ${st !== 'pago' && !hasActiveInfinitePay(x.id) ? `<button type="button" class="btn-mini" data-action="markPaid" data-id="${x.id}">Marcar pago</button>` : ''}
         <button type="button" class="btn-mini" data-action="editPayment" data-id="${x.id}">Editar</button>
       </td>
     </tr>`;
