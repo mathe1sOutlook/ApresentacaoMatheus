@@ -62,8 +62,9 @@ async function ipPost(path: string,payload: object) {
 }
 async function create(paymentId: string) {
   if(!UUID.test(paymentId)) return fail("Parcela invalida.");
-  const {data: attempt,error:prepareError}=await getAdmin().rpc("amaralesilva_infinitepay_prepare",{p_payment_id:paymentId});
+  const {data: prepared,error:prepareError}=await getAdmin().rpc("amaralesilva_infinitepay_prepare",{p_payment_id:paymentId});
   if(prepareError) throw prepareError;
+  const attempt=Array.isArray(prepared) ? prepared[0] : prepared;
   if(!attempt || attempt.state==="paid") return fail("Parcela ja paga.");
   const now=Date.now();
   if(Date.parse(attempt.valid_until)<=now) return fail("Cobranca expirada. Tente novamente.");
@@ -101,18 +102,20 @@ async function create(paymentId: string) {
   }
   return respond({url,order_nsu:attempt.order_nsu});
 }
-async function verify(raw: Record<string,unknown>) {
+async function verify(raw: Record<string,unknown>, webhook = false) {
   const order=string(raw.order_nsu,128),slug=string(raw.slug || raw.invoice_slug,128),
     transaction=string(raw.transaction_nsu,128);
   if(!order || !slug || !transaction) return fail("Identificadores incompletos.");
   const attempt=await getAttempt(order);
   if(!attempt) return fail("Cobranca nao encontrada.",404);
   if(attempt.state==="paid")
-    return respond({paid:true,order_nsu:order,already_confirmed:true});
+    return respond({paid:attempt.transaction_nsu===transaction && attempt.invoice_slug===slug,
+      order_nsu:order,already_confirmed:true});
   const checked=await ipPost("/payment_check",{
     handle:HANDLE,order_nsu:order,transaction_nsu:transaction,slug
   });
-  if(checked.success!==true || checked.paid!==true) return respond({paid:false,order_nsu:order});
+  if(checked.success!==true || checked.paid!==true)
+    return respond({paid:false,order_nsu:order},webhook ? 503 : 200);
   // amount e preco original; paid_amount pode conter taxa repassada.
   const amount=Number(checked.amount),paid=Number(checked.paid_amount);
   if(!Number.isInteger(amount)||amount!==Number(attempt.amount_cents)
@@ -150,7 +153,7 @@ Deno.serve(async(req)=>{
     }
     // Webhook pode chegar sem campo action e sem assinatura. NUNCA confiar
     // no sinal 'paid' do evento: payment_check do provedor decide.
-    return verify(body);
+    return verify(body,true);
   }catch(error){
     console.error("InfinitePay edge function error",error instanceof Error?error.message:String(error));
     return fail("Nao foi possivel processar a cobranca. Verifique novamente.",502);
