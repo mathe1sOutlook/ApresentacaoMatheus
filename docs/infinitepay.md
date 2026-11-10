@@ -3,10 +3,10 @@
 ## Situação
 
 Implementação preparada na branch `feat/infinitepay-pix-checkout`.
-**Banco migrado e Edge Function publicada em mApps em 10/11/2026.** A interface
-continua isolada no PR #78, que ainda não foi mesclado. A função precisa das
-credenciais cadastradas pelo titular para criar links; nenhuma cobrança real
-foi criada durante a implantação.
+**Banco migrado e Edge Function publicada em mApps em 10/11/2026.**
+Interface implementada no PR #78 (produção após merge na branch `master`).
+A função usa as credenciais cadastradas no Supabase, sem expô-las no navegador.
+Nenhuma cobrança real foi criada durante a implantação.
 
 ## Arquitetura
 
@@ -32,10 +32,9 @@ foi criada durante a implantação.
    anônimo e de execução da RPC de confirmação por usuários comuns.
 3. **Concluído:** função `infinitepay-checkout` publicada no Supabase,
    com `verify_jwt=false` para receber webhooks e autorização interna para
-   criar cobranças. O teste de endpoint externo não foi possível no ambiente
-   de execução, que não resolveu DNS.
-4. Fazer merge do PR após conferir o estado do banco e o deploy da função.
-   A Vercel então publica o painel e o retorno.
+   criar cobranças. Testes HTTP sem movimentação financeira: 204 em OPTIONS,
+   403 ao criar sem login, 400 para IDs incompletos, 404 para cobrança inexistente.
+4. Publicação da interface: merge do PR #78 em `master` e deploy automático pela Vercel.
 5. Realizar cobrança de **R$ 1,00 ou mais** em uma parcela de teste para
    confirmar o fluxo Pix e, se necessário, cartão. Não usar uma parcela
    real de cliente como teste.
@@ -84,12 +83,12 @@ foi criada durante a implantação.
 - A validade de sete dias não substitui uma data de vencimento contratual.
 - Nenhum produto precisa estar pré-cadastrado: o item é enviado na requisição.
 
-## Verificação antes do merge
+## Verificação da implantação
 
-- [ ] Secrets configurados no Supabase (não em GitHub).
+- [x] Função online responde sem erro de configuração de secrets (valores mantidos ocultos; autenticidade da chave InfinitePay só se comprova ao criar link).
 - [x] Migração aplicada em mApps, com RLS e grants verificados.
 - [x] Função publicada com JWT da plataforma desativado e validação própria.
-- [ ] Gerar checkout a partir de uma parcela de teste (sem clicar repetidamente).
+- [ ] Gerar checkout a partir de uma parcela de teste (não utilizar parcela real do cliente).
 - [ ] Checkout apresenta Pix e cartão.
 - [ ] Realizar transação real de baixo valor.
 - [ ] Verificar `amaralesilva_infinitepay_checkouts.state = 'paid'`.
@@ -102,3 +101,12 @@ foi criada durante a implantação.
 
 - https://www.infinitepay.io/checkout-documentacao
 - https://ajuda.infinitepay.io/pt-BR/articles/10766888-como-usar-o-checkout-integrado-da-infinitepay
+
+## Testes de fumaça (10/11/2026)
+
+- Vercel: preview do PR #78, estado READY, CI status success.
+- Supabase função: `POST` para criação sem autenticação HTTP 403.
+- Retorno inválido/incompleto HTTP 400; webhook falso para cobrança inexistente HTTP 404.
+- `OPTIONS` HTTP 204 com cabeçalhos CORS. Banco sem tentativas criadas durante os testes.
+- Teste ponta a ponta de pagamento Pix/cartão ainda não realizado. A InfinitePay não tem sandbox; validar posteriormente com uma cobrança real controlada.
+- Os valores sensíveis (`INFINITEPAY_API_KEY`, etc.) não foram lidos nem copiados para o repositório.
