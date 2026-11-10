@@ -161,3 +161,25 @@ before update or delete on public.amaralesilva_payments
 for each row execute function public.amaralesilva_guard_infinitepay_payment();
 revoke all on function public.amaralesilva_guard_infinitepay_payment()
   from public, anon, authenticated;
+
+-- Impede exclusao em cascata de projeto com cobranca vinculada.
+create or replace function public.amaralesilva_guard_infinitepay_project()
+returns trigger language plpgsql security definer set search_path = public, pg_temp as $$
+begin
+  if exists (
+    select 1 from public.amaralesilva_infinitepay_checkouts c
+    join public.amaralesilva_payments p on p.id = c.payment_id
+    where p.project_id = old.id
+      and (c.state = 'paid' or c.valid_until > now())
+  ) then
+    raise exception 'Projeto com cobranca InfinitePay ativa ou quitada nao pode ser excluido';
+  end if;
+  return old;
+end;
+$$;
+drop trigger if exists amaralesilva_guard_infinitepay_project on public.amaralesilva_projects;
+create trigger amaralesilva_guard_infinitepay_project
+before delete on public.amaralesilva_projects
+for each row execute function public.amaralesilva_guard_infinitepay_project();
+revoke all on function public.amaralesilva_guard_infinitepay_project()
+  from public, anon, authenticated;
