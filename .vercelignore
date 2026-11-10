@@ -4,3 +4,8 @@ scripts/
 README.md
 docs/
 .claude/
+
+# Arquivos internos do banco/infra: nao servir como assets publicos
+admin/schema.sql
+admin/infinitepay-schema.sql
+supabase/

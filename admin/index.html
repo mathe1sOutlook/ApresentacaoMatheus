@@ -902,7 +902,7 @@ const sb = window.supabase
 const state = {
   session: null,
   members: [], me: null,
-  clients: [], projects: [], notes: [], meetings: [], payments: [], tasks: [], leads: [],
+  clients: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
 };
 const now0 = new Date();
 const ui = {
@@ -1058,6 +1058,9 @@ function installmentsLabel(p) {
 const notesOf    = (pid) => state.notes.filter((n) => n.project_id === pid);
 const meetingsOf = (pid) => state.meetings.filter((m) => m.project_id === pid);
 const paymentsOf = (pid) => state.payments.filter((p) => p.project_id === pid);
+/* Preserve o registro manual de pagamentos fora do checkout integrado. */
+const hasActiveInfinitePay = (paymentId) => state.checkouts.some((c) =>
+  c.payment_id === paymentId && (c.state === 'paid' || Date.parse(c.valid_until) > Date.now()));
 const tasksOf    = (pid) => state.tasks.filter((t) => t.project_id === pid);
 
 function payState(p) {
@@ -1098,20 +1101,21 @@ function payShareB(p) {
 
 /* ═══ Dados ════════════════════════════════════════════════════════ */
 async function fetchAll() {
-  const [clients, projects, notes, meetings, payments, tasks, members, leads] = await Promise.all([
+  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads] = await Promise.all([
     sb.from(TB('clients')).select('*').order('name'),
     sb.from(TB('projects')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('notes')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('meetings')).select('*').order('starts_at'),
     sb.from(TB('payments')).select('*').order('due_date'),
+    sb.from(TB('infinitepay_checkouts')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('tasks')).select('*').order('due_date', { ascending: true, nullsFirst: false }),
     sb.from(TB('members')).select('*').order('name'),
     sb.from(TB('leads')).select('*').order('created_at', { ascending: false }),
   ]);
-  const firstErr = [clients, projects, notes, meetings, payments, tasks, members, leads].find((r) => r.error);
+  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads].find((r) => r.error);
   if (firstErr) throw firstErr.error;
   state.clients = clients.data; state.projects = projects.data; state.notes = notes.data;
-  state.meetings = meetings.data; state.payments = payments.data; state.tasks = tasks.data;
+  state.meetings = meetings.data; state.payments = payments.data; state.checkouts = checkouts.data; state.tasks = tasks.data;
   state.members = members.data; state.leads = leads.data;
 }
 
@@ -1568,7 +1572,8 @@ VIEWS.projeto = function (route) {
       <td class="num soft" style="font-size:12px">${fmtBRL(payShareM(x))} / ${fmtBRL(payShareB(x))}</td>
       <td><span class="chip chip--${st}">${st}</span></td>
       <td class="actions">
-        ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="markPaid" data-id="${x.id}">Marcar pago</button>` : ''}
+        ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="startInfinitePay" data-id="${x.id}">Cobrar · Pix/cartão</button>` : ''}
+        ${st !== 'pago' && !hasActiveInfinitePay(x.id) ? `<button type="button" class="btn-mini" data-action="markPaid" data-id="${x.id}">Marcar pago</button>` : ''}
         <button type="button" class="btn-mini" data-action="editPayment" data-id="${x.id}">Editar</button>
       </td>
     </tr>`;
@@ -1782,7 +1787,8 @@ VIEWS.financeiro = function () {
       <td class="num soft" style="font-size:12px">${fmtBRL(payShareB(x))}</td>
       <td><span class="chip chip--${st}">${st}</span></td>
       <td class="actions">
-        ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="markPaid" data-id="${x.id}">Marcar pago</button>` : ''}
+        ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="startInfinitePay" data-id="${x.id}">Cobrar · Pix/cartão</button>` : ''}
+        ${st !== 'pago' && !hasActiveInfinitePay(x.id) ? `<button type="button" class="btn-mini" data-action="markPaid" data-id="${x.id}">Marcar pago</button>` : ''}
         <button type="button" class="btn-mini" data-action="editPayment" data-id="${x.id}">Editar</button>
       </td>
     </tr>`;
@@ -2537,6 +2543,33 @@ const ACTIONS = {
   },
 
   newPayment: (el) => { closeDrawer(); paymentModal(null, { project: el?.dataset?.project }); },
+  startInfinitePay: async (el) => {
+    if (el.disabled) return;
+    el.disabled = true;
+    const id = el.dataset.id;
+    try {
+      const {data, error} = await sb.functions.invoke('infinitepay-checkout', {
+        body: {action: 'create', payment_id: id},
+      });
+      if (error) throw error;
+      if (!data?.url || !/^https:\/\//.test(data.url)) throw new Error(data?.error || 'Checkout sem link.');
+      const ok = await copyText(data.url);
+      openModal('Cobrança InfinitePay', `
+        <p class="field__hint" style="margin-bottom:14px">O cliente pode pagar por Pix ou cartão no checkout seguro da InfinitePay.</p>
+        <div class="form-foot">
+          <a class="btn-solid" href="${esc(data.url)}" target="_blank" rel="noopener noreferrer">Abrir checkout</a>
+          <button type="button" class="btn-mini" data-action="copyInfinitePay" data-url="${esc(data.url)}">Copiar link</button>
+        </div>
+        <p class="field__hint" style="margin-top:14px">Link válido por até 7 dias. A parcela só muda para paga depois da confirmação oficial.</p>
+      `);
+      toast(ok ? 'Link de cobrança copiado.' : 'Link criado. Abra ou copie pelo botão.');
+    } catch (error) {
+      toast('Falha ao criar cobrança: ' + (error.message || error));
+    } finally { el.disabled = false; }
+  },
+  copyInfinitePay: async (el) => {
+    toast((await copyText(el.dataset.url)) ? 'Link copiado.' : 'Não foi possível copiar o link.');
+  },
   editPayment: (el) => paymentModal(state.payments.find((p) => p.id === el.dataset.id)),
   deletePayment: (el) => {
     if (!confirm('Excluir esta parcela?')) return;

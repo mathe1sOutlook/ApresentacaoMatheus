@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Confirmação do pagamento | Casa Martech</title>
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body{background:#0e141b;color:#e9e6df;min-height:100vh;display:grid;place-items:center;margin:0;padding:24px;box-sizing:border-box}
+    main{width:min(480px,100%);border:1px solid #465161;padding:36px;border-radius:16px;background:#18202a}
+    .eyebrow{font-size:.8rem;letter-spacing:.15em;color:#b8ae9c;text-transform:uppercase}
+    h1{font-size:clamp(1.4rem,4vw,2rem);line-height:1.2}
+    p{line-height:1.65;color:#d0cbd0}a{color:#cfbd96}a:focus-visible{outline:2px solid #cfbd96;outline-offset:4px}
+    [hidden]{display:none!important}
+  </style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Casa Martech · pagamentos</p>
+  <h1 id="title">Conferindo seu pagamento</h1>
+  <p id="status" role="status" aria-live="polite">Estamos consultando a confirmação da InfinitePay.</p>
+  <p id="receipt" hidden><a id="receipt-link" rel="noopener noreferrer" target="_blank">Ver comprovante InfinitePay</a></p>
+  <p>Se a confirmação não aparecer, entre em contato com o responsável pela proposta. Não realize um segundo pagamento sem verificar o primeiro.</p>
+</main>
+<script>
+(async()=>{
+  const params=new URLSearchParams(location.search);
+  const order=params.get("order_nsu"),transaction=params.get("transaction_nsu"),slug=params.get("slug");
+  const title=document.getElementById("title"),status=document.getElementById("status");
+  if(!order||!transaction||!slug){title.textContent="Confira o pagamento";status.textContent="O link de retorno está incompleto. Consulte o recibo da InfinitePay.";return;}
+  const query=new URLSearchParams({order_nsu:order,transaction_nsu:transaction,slug});
+  const receipt=params.get("receipt_url");
+  try{
+    const response=await fetch("https://wsgjbzsdewzplsnpfvdf.supabase.co/functions/v1/infinitepay-checkout?"+query.toString());
+    const result=await response.json();
+    if(response.ok&&result.paid===true){
+      title.textContent="Pagamento confirmado";
+      status.textContent="A InfinitePay confirmou o pagamento. Seu registro será atualizado no financeiro da Casa Martech.";
+      if(receipt){try{const u=new URL(receipt);if(u.protocol==="https:"){const anchor=document.getElementById("receipt-link");anchor.href=u.href;document.getElementById("receipt").hidden=false;}}catch{}}
+    }else{
+      title.textContent="Pagamento em conferência";
+      status.textContent="Ainda não foi possível confirmar. Verifique o comprovante ou consulte quem enviou a cobrança.";
+    }
+  }catch{
+    title.textContent="Pagamento em conferência";
+    status.textContent="Não foi possível consultar a InfinitePay agora. Não faça novo pagamento antes de confirmar.";
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+# Checkout InfinitePay precisa receber webhooks externos sem JWT Supabase.
+# A Edge Function valida cada aviso contra a API payment_check do provedor.
+[functions.infinitepay-checkout]
+verify_jwt = false
