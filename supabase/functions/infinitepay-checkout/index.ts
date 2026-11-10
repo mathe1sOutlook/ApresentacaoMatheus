@@ -17,8 +17,9 @@ const FN_URL = SUPABASE_URL + "/functions/v1/infinitepay-checkout";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const getAdmin = () => createClient(SUPABASE_URL, SERVICE_KEY, {auth:{persistSession:false,autoRefreshToken:false}});
 const headers = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, apikey, content-type",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS" };
+  // Browser client sends x-client-info during the preflight. Keep the allowlist in sync with the SDK.
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-retry-count, traceparent, tracestate, baggage",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS", "Cache-Control": "no-store" };
 const respond = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {status, headers});
 const fail = (message: string, status = 400) => respond({error:message},status);
@@ -148,12 +149,12 @@ Deno.serve(async(req)=>{
     const action=string(body.action);
     if(action==="create"||action==="verify"){
       if(!(await member(req))) return fail("Acesso negado.",403);
-      if(action==="create") return create(string(body.payment_id,64));
-      return verify(body);
+      if(action==="create") return await create(string(body.payment_id,64));
+      return await verify(body);
     }
     // Webhook pode chegar sem campo action e sem assinatura. NUNCA confiar
     // no sinal 'paid' do evento: payment_check do provedor decide.
-    return verify(body,true);
+    return await verify(body,true);
   }catch(error){
     console.error("InfinitePay edge function error",error instanceof Error?error.message:String(error));
     return fail("Nao foi possivel processar a cobranca. Verifique novamente.",502);
