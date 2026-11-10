@@ -15,7 +15,7 @@ const IP_KEY = Deno.env.get("INFINITEPAY_API_KEY") || "";
 const HANDLE = (Deno.env.get("INFINITEPAY_HANDLE") || "").replace(/^\$/, "");
 const FN_URL = SUPABASE_URL + "/functions/v1/infinitepay-checkout";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const admin = createClient(SUPABASE_URL, SERVICE_KEY, {auth:{persistSession:false,autoRefreshToken:false}});
+const getAdmin = () => createClient(SUPABASE_URL, SERVICE_KEY, {auth:{persistSession:false,autoRefreshToken:false}});
 const headers = { "Content-Type": "application/json", "Access-Control-Allow-Origin": CANON,
   "Access-Control-Allow-Headers": "authorization, apikey, content-type",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS" };
@@ -29,7 +29,7 @@ const receipt = (v: unknown) => {
   catch { return null; }
 };
 const getAttempt = async (order: string) => {
-  const {data,error}=await admin.from("amaralesilva_infinitepay_checkouts")
+  const {data,error}=await getAdmin().from("amaralesilva_infinitepay_checkouts")
     .select("*").eq("order_nsu",order).maybeSingle();
   if(error) throw error;
   return data;
@@ -41,7 +41,7 @@ async function member(req: Request) {
   const authClient=createClient(SUPABASE_URL,PUBLIC_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
   const {data:{user},error}=await authClient.auth.getUser(token);
   if(error || !user?.email) return false;
-  const {data, error:memberError}=await admin.from("amaralesilva_members")
+  const {data, error:memberError}=await getAdmin().from("amaralesilva_members")
     .select("id").ilike("email",user.email).limit(1);
   if(memberError) throw memberError;
   return !!data?.length;
@@ -62,7 +62,7 @@ async function ipPost(path: string,payload: object) {
 }
 async function create(paymentId: string) {
   if(!UUID.test(paymentId)) return fail("Parcela invalida.");
-  const {data: attempt,error:prepareError}=await admin.rpc("amaralesilva_infinitepay_prepare",{p_payment_id:paymentId});
+  const {data: attempt,error:prepareError}=await getAdmin().rpc("amaralesilva_infinitepay_prepare",{p_payment_id:paymentId});
   if(prepareError) throw prepareError;
   if(!attempt || attempt.state==="paid") return fail("Parcela ja paga.");
   const now=Date.now();
@@ -90,7 +90,7 @@ async function create(paymentId: string) {
       && !parsed.hostname.endsWith(".infinitepay.com.br") && parsed.hostname!=="infinitepay.com.br") {
     throw new Error("Dominio inesperado no link InfinitePay.");
   }
-  const {data:saved,error:saveError}=await admin.from("amaralesilva_infinitepay_checkouts")
+  const {data:saved,error:saveError}=await getAdmin().from("amaralesilva_infinitepay_checkouts")
     .update({checkout_url:url,state:"created"})
     .eq("id",attempt.id).eq("state","prepared").select("checkout_url").maybeSingle();
   if(saveError) throw saveError;
@@ -122,7 +122,7 @@ async function verify(raw: Record<string,unknown>) {
   }
   const capture=string(checked.capture_method,30);
   if(!["pix","credit_card"].includes(capture)) return fail("Metodo nao reconhecido.",409);
-  const {data:confirmed,error}=await admin.rpc("amaralesilva_infinitepay_confirm",{
+  const {data:confirmed,error}=await getAdmin().rpc("amaralesilva_infinitepay_confirm",{
     p_order_nsu:order,p_transaction_nsu:transaction,p_invoice_slug:slug,
     p_capture_method:capture,p_paid_amount_cents:paid,p_receipt_url:receipt(raw.receipt_url)
   });
@@ -131,7 +131,7 @@ async function verify(raw: Record<string,unknown>) {
 }
 Deno.serve(async(req)=>{
   if(req.method==="OPTIONS") return new Response(null,{status:204,headers});
-  if(!IP_KEY || !HANDLE || !SERVICE_KEY || !PUBLIC_KEY)
+  if(!IP_KEY || !HANDLE || !SERVICE_KEY || !PUBLIC_KEY || !SUPABASE_URL)
     return fail("Checkout ainda nao configurado no servidor.",503);
   try{
     if(req.method==="GET"){
