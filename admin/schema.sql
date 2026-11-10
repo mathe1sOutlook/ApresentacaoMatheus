@@ -293,8 +293,7 @@ revoke all on public.amaralesilva_clients, public.amaralesilva_projects, public.
 
 
 -- ═══ Integração InfinitePay ═══
--- Parte aditiva do esquema, correspondente à migração
--- amaralesilva_infinitepay_checkout. Configurações e fluxo em docs/infinitepay.md.
+-- Referência sincronizada com admin/infinitepay-schema.sql.
 -- InfinitePay Casa Martech: tentativas auditaveis, sem chave no navegador.
 -- Aplicar no Supabase mApps (wsgjbzsdewzplsnpfvdf).
 create table if not exists public.amaralesilva_infinitepay_checkouts (
@@ -459,3 +458,24 @@ for each row execute function public.amaralesilva_guard_infinitepay_payment();
 revoke all on function public.amaralesilva_guard_infinitepay_payment()
   from public, anon, authenticated;
 
+-- Impede exclusao em cascata de projeto com cobranca vinculada.
+create or replace function public.amaralesilva_guard_infinitepay_project()
+returns trigger language plpgsql security definer set search_path = public, pg_temp as $$
+begin
+  if exists (
+    select 1 from public.amaralesilva_infinitepay_checkouts c
+    join public.amaralesilva_payments p on p.id = c.payment_id
+    where p.project_id = old.id
+      and (c.state = 'paid' or c.valid_until > now())
+  ) then
+    raise exception 'Projeto com cobranca InfinitePay ativa ou quitada nao pode ser excluido';
+  end if;
+  return old;
+end;
+$$;
+drop trigger if exists amaralesilva_guard_infinitepay_project on public.amaralesilva_projects;
+create trigger amaralesilva_guard_infinitepay_project
+before delete on public.amaralesilva_projects
+for each row execute function public.amaralesilva_guard_infinitepay_project();
+revoke all on function public.amaralesilva_guard_infinitepay_project()
+  from public, anon, authenticated;
