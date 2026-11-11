@@ -6,6 +6,27 @@
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
 <title>Admin — CASA MARTECH</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/img/app/favicon-48.png" sizes="48x48" type="image/png" />
+
+<!-- App instalável (ver "App e notificações" no README) -->
+<link rel="manifest" href="/admin/manifest.webmanifest" />
+<meta name="theme-color" content="#0B0D12" />
+<meta name="application-name" content="CASA MARTECH" />
+<link rel="apple-touch-icon" href="/img/app/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="CASA MARTECH" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1320x2868.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1290x2796.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1284x2778.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1242x2688.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/img/app/splash-828x1792.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1206x2622.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1179x2556.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1170x2532.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1125x2436.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/img/app/splash-750x1334.png" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -168,6 +189,15 @@ button {
 .screen { display: none; }
 .screen--on { display: block; }
 
+/* Abertura: a mesma do app instalado (img/app/splash-*.png), para a troca
+   da tela do sistema para a do painel não piscar. */
+#scr-loading { background: #0B0D12; color: #F1EEE6; }
+#scr-loading .gate__card { color: var(--ink); }
+.splash { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.splash__mark { width: 112px; height: 112px; margin-bottom: 12px; }
+.splash__name { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 30px; line-height: 1; }
+.splash__note { margin: 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #A6A39B; }
+
 .gate {
   min-height: 100svh;
   display: flex;
@@ -322,6 +352,7 @@ body.drawer-open { overflow: hidden; }
 .drawer__nav a.on { color: var(--ink); border-left-color: var(--ochre); background: var(--paper-deep); }
 .drawer__nav a .cnt { color: var(--ochre); }
 .drawer__foot { margin-top: auto; padding: 18px 22px; display: flex; flex-direction: column; gap: 10px; }
+.drawer__app { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 
 /* ─── Corpo ──────────────────────────────────────────────────────── */
 /* Só vertical: o <main> também é .container, e um padding abreviado aqui
@@ -517,6 +548,8 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   border-color: var(--ink);
 }
 .field__hint { font-family: var(--mono); font-size: 10px; color: var(--ink-soft); }
+.field__hint.is-error { color: var(--red); }
+.field input[aria-invalid="true"] { border-color: var(--red); }
 .field__acao { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .form-grid .span2 { grid-column: 1 / -1; }
@@ -779,7 +812,13 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 
 <!-- ═══ Carregando ═══ -->
 <div class="screen screen--on" id="scr-loading">
-  <div class="gate"><p class="eyebrow">Carregando…</p></div>
+  <div class="gate">
+    <div class="splash" role="status">
+      <svg class="splash__mark" viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15.6 V25 H25 V15.6" stroke="#7A93E6"/><path d="M5.4 16.6 L16 7.4 L26.6 16.6" stroke="#C9A24E"/></g><circle cx="14.2" cy="20.4" r="1.1" fill="#C9A24E"/><circle cx="17.8" cy="20.4" r="1.1" fill="#7A93E6"/></svg>
+      <p class="splash__name">CASA MARTECH</p>
+      <p class="splash__note">Carregando…</p>
+    </div>
+  </div>
 </div>
 
 <!-- ═══ Login ═══ -->
@@ -859,6 +898,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
     </div>
     <div class="drawer__foot">
       <span class="label label--soft" id="drawer-user"></span>
+      <div class="drawer__app" id="app-controls" hidden></div>
       <a class="btn-link" href="/" target="_blank" rel="noopener">Ver o site ↗</a>
       <button type="button" class="btn-link" data-action="refreshData">↻ Atualizar dados</button>
       <button type="button" class="btn-ghost" data-action="signOut">Sair</button>
@@ -1660,9 +1700,14 @@ VIEWS.projeto = function (route) {
               <textarea id="pf-terms" name="payment_terms" placeholder="Ex.: 40% na assinatura, 30% na entrega intermediária, 30% na entrega final.">${esc(p.payment_terms || '')}</textarea>
               <span class="field__hint">Como cada condição é paga: vencimentos, entrada, custos à parte. Os valores ficam nos campos acima.</span></div>
             <div class="field"><label for="pf-sm">Divisão — Matheus (%)</label>
-              <input id="pf-sm" name="split_matheus" type="number" step="0.01" min="0" max="100" value="${p.split_matheus ?? 50}" data-change="splitM" /></div>
+              <input id="pf-sm" name="split_matheus" type="number" step="0.01" min="0" max="100" required value="${p.split_matheus ?? 50}" /></div>
+            <div class="field"><label for="pf-vm">Divisão — Matheus (R$)</label>
+              <input id="pf-vm" type="number" step="0.01" min="0" inputmode="decimal" /></div>
             <div class="field"><label for="pf-sb">Divisão — Bruno (%)</label>
-              <input id="pf-sb" name="split_bruno" type="number" step="0.01" min="0" max="100" value="${p.split_bruno ?? 50}" /></div>
+              <input id="pf-sb" name="split_bruno" type="number" step="0.01" min="0" max="100" required value="${p.split_bruno ?? 50}" /></div>
+            <div class="field"><label for="pf-vb">Divisão — Bruno (R$)</label>
+              <input id="pf-vb" type="number" step="0.01" min="0" inputmode="decimal" /></div>
+            <div class="field span2"><span class="field__hint" id="pf-split-note" role="status"></span></div>
             <div class="field"><label for="pf-purl">URL da proposta (HTML no site)</label>
               <input id="pf-purl" name="proposal_url" placeholder="/proposta-…" value="${esc(p.proposal_url || '')}" />
               <span class="field__acao">
@@ -2249,7 +2294,11 @@ function projectModal() {
         ${fld('pj-client', 'Cliente', sel('pj-client', 'client_id', clientOptions(), ''), false, 'Não achou? Cadastre antes em Clientes.')}
         ${fld('pj-status', 'Etapa', sel('pj-status', 'status', STATUSES.map((s) => [s, STATUS_LABEL[s]]), 'contato'))}
         ${fld('pj-price', 'Preço proposto (R$)', inp('pj-price', 'price_proposed', 'number', '', 'step="0.01" min="0"'))}
-        ${fld('pj-sm', 'Divisão Matheus (%)', inp('pj-sm', 'split_matheus', 'number', '50', 'step="0.01" min="0" max="100"'))}
+        ${fld('pj-sm', 'Divisão Matheus (%)', inp('pj-sm', 'split_matheus', 'number', '50', 'step="0.01" min="0" max="100" required'))}
+        ${fld('pj-vm', 'Divisão Matheus (R$)', '<input id="pj-vm" type="number" step="0.01" min="0" inputmode="decimal" />')}
+        ${fld('pj-sb', 'Divisão Bruno (%)', inp('pj-sb', 'split_bruno', 'number', '50', 'step="0.01" min="0" max="100" required'))}
+        ${fld('pj-vb', 'Divisão Bruno (R$)', '<input id="pj-vb" type="number" step="0.01" min="0" inputmode="decimal" />')}
+        <div class="field span2"><span class="field__hint" id="pj-split-note" role="status"></span></div>
         ${fld('pj-desc', 'Observações', txa('pj-desc', 'description', '', 'Contexto do contato, escopo inicial…'), true)}
       </div>
       <div class="form-foot"><button type="submit" class="btn-solid">Criar projeto</button></div>
@@ -2315,21 +2364,23 @@ function paymentModal(pay, presets) {
         ${fld('py-project', 'Projeto *', sel('py-project', 'project_id',
           (projId ? [] : [['', '— escolha o projeto —']]).concat(state.projects.map((p) => [p.id, p.name])), projId), true, state.projects.length ? '' : 'Crie um projeto antes.')}
         ${fld('py-desc', 'Descrição', inp('py-desc', 'description', 'text', pay?.description, 'placeholder="Entrada, parcela 2/3…"'), true)}
-        ${fld('py-amount', 'Valor (R$) *', inp('py-amount', 'amount', 'number', pay?.amount, 'required step="0.01" min="0.01" data-sync="pay"'))}
+        ${fld('py-amount', 'Valor (R$) *', inp('py-amount', 'amount', 'number', pay?.amount, 'required step="0.01" min="0.01"'))}
         ${fld('py-due', 'Dia de pagamento *', inp('py-due', 'due_date', 'date', pay?.due_date, 'required'))}
         ${fld('py-status', 'Situação', sel('py-status', 'status', [['previsto', 'Previsto'], ['pago', 'Pago']], pay?.status || 'previsto'))}
         ${fld('py-paid', 'Data do recebimento', inp('py-paid', 'paid_at', 'date', pay?.paid_at), false, 'Só se já pago.')}
         ${fld('py-sm', 'Divisão Matheus (%)', inp('py-sm', 'split_matheus', 'number', pay?.split_matheus ?? '', 'step="0.01" min="0" max="100" placeholder="herda do projeto"'))}
+        ${fld('py-am', 'Divisão Matheus (R$)', inp('py-am', 'amount_matheus', 'number', pay?.amount_matheus ?? '', 'step="0.01" min="0" inputmode="decimal"'))}
         ${fld('py-sb', 'Divisão Bruno (%)', inp('py-sb', 'split_bruno', 'number', pay?.split_bruno ?? '', 'step="0.01" min="0" max="100" placeholder="herda do projeto"'))}
-        ${fld('py-am', 'Parte Matheus (R$)', inp('py-am', 'amount_matheus', 'number', pay?.amount_matheus ?? '', 'step="0.01" min="0" placeholder="fixo, opcional" data-sync="pay"'), false, 'Valor fixo: manda no lugar do %; o outro lado recebe o restante e as porcentagens se ajustam sozinhas.')}
-        ${fld('py-ab', 'Parte Bruno (R$)', inp('py-ab', 'amount_bruno', 'number', pay?.amount_bruno ?? '', 'step="0.01" min="0" placeholder="fixo, opcional" data-sync="pay"'), false, 'Ex.: repasse fixo de R$ 1.000 por parcela.')}
+        ${fld('py-ab', 'Divisão Bruno (R$)', inp('py-ab', 'amount_bruno', 'number', pay?.amount_bruno ?? '', 'step="0.01" min="0" inputmode="decimal"'))}
+        <div class="field span2"><span class="field__hint" id="py-split-note" role="status"></span>
+          <span class="field__hint">Digitar em R$ fixa o valor daquele lado nesta parcela (ex.: repasse de R$ 1.000); digitar em % volta a valer o percentual.</span></div>
         ${fld('py-notes', 'Notas', txa('py-notes', 'notes', pay?.notes), true)}
       </div>
       <div class="form-foot">
         ${pay ? `<button type="button" class="btn-mini btn-mini--danger" data-action="deletePayment" data-id="${pay.id}" style="margin-right:auto">Excluir</button>` : ''}
         <button type="submit" class="btn-solid">${pay ? 'Salvar' : 'Cadastrar'}</button>
       </div>
-    </form>`, async (d) => {
+    </form>`, async (d, form) => {
     if (!d.project_id) { toast('Escolha o projeto.'); return false; }
     let sm = numOrNull(d.split_matheus), sbn = numOrNull(d.split_bruno);
     if (sm != null && sbn == null) sbn = Math.round((100 - sm) * 100) / 100;
@@ -2339,7 +2390,13 @@ function paymentModal(pay, presets) {
       return false;
     }
     const amt = Number(d.amount);
-    const am = numOrNull(d.amount_matheus), ab = numOrNull(d.amount_bruno);
+    /* Os campos em R$ espelham o % enquanto ele manda; só viram parte fixa
+       (amount_*) quando foi o R$ que se digitou — e só do lado digitado, para
+       o outro continuar recebendo o restante. */
+    const fixedMode = form && form.dataset.splitMode === 'amt';
+    const fixedSide = form && form.dataset.splitFixed;
+    const am = fixedMode && fixedSide === 'm' ? numOrNull(d.amount_matheus) : null;
+    const ab = fixedMode && fixedSide === 'b' ? numOrNull(d.amount_bruno) : null;
     /* dinheiro compara em centavos inteiros: qualquer diferença de 1 centavo é erro real */
     const cents = (v) => Math.round(v * 100);
     if (am != null && ab != null && cents(am) + cents(ab) !== cents(amt)) {
@@ -2361,7 +2418,6 @@ function paymentModal(pay, presets) {
     };
     return mutate(() => (pay ? dbUpdate('payments', pay.id, row) : dbInsert('payments', row)), pay ? 'Parcela atualizada.' : 'Parcela cadastrada.');
   });
-  syncPaymentSplits(); /* parcela já salva com parte fixa abre com os % coerentes */
 }
 
 /* — Tarefa — */
@@ -2654,27 +2710,6 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-/* Parcela: com uma parte fixa em R$, as porcentagens passam a ser derivadas
-   dela — recalculadas a cada digitação no valor da parcela ou nas partes. */
-function syncPaymentSplits() {
-  const amtEl = document.getElementById('py-amount');
-  const amEl = document.getElementById('py-am');
-  const abEl = document.getElementById('py-ab');
-  const smEl = document.getElementById('py-sm');
-  const sbEl = document.getElementById('py-sb');
-  if (!amtEl || !amEl || !abEl || !smEl || !sbEl) return;
-  const amt = Number(amtEl.value);
-  if (!amt || !isFinite(amt) || amt <= 0) return;
-  const am = amEl.value === '' ? null : Number(amEl.value);
-  const ab = abEl.value === '' ? null : Number(abEl.value);
-  if (am == null && ab == null) return; /* sem parte fixa: quem manda é o % */
-  const valM = am != null ? am : amt - ab;
-  if (!isFinite(valM) || valM < 0 || valM > amt) return; /* incoerente: avisa no submit */
-  const pctM = Math.round((valM / amt) * 10000) / 100;
-  smEl.value = pctM;
-  sbEl.value = Math.round((100 - pctM) * 100) / 100;
-}
-
 /* Linha derivada do parcelado: sai SEMPRE do que está na tela (pf-pp/pf-ic),
    nunca do que está gravado. Depois de um re-render com edição não salva o
    formulário volta com os valores digitados; uma dica vinda do banco
@@ -2687,8 +2722,6 @@ function refreshParcHint() {
 }
 
 document.addEventListener('input', (e) => {
-  const el = e.target.closest('[data-sync="pay"]');
-  if (el) syncPaymentSplits();
   /* recalculada a cada tecla: pega erro de digitação na hora e não grava nada */
   if (e.target.closest('[data-sync="parc"]')) refreshParcHint();
 });
@@ -2708,12 +2741,6 @@ document.addEventListener('change', (e) => {
     case 'finTo': ui.finTo = el.value; rerenderKeepFocus(el.id); break;
     case 'finStatus': ui.finStatus = el.value; rerenderKeepFocus(el.id); break;
     case 'projectStatus': mutate(() => dbUpdate('projects', el.dataset.id, { status: el.value })); break;
-    case 'splitM': {
-      /* completa automaticamente a fatia do Bruno */
-      const sb2 = $('#pf-sb');
-      if (sb2 && el.value !== '') sb2.value = Math.round((100 - Number(el.value)) * 100) / 100;
-      break;
-    }
   }
 });
 
@@ -2819,5 +2846,6 @@ if (sb) sb.auth.onAuthStateChange((event, session) => {
 })();
 </script>
   <script defer src="/assets/admin-financial-splits.js"></script>
+  <script defer src="/assets/admin-app.js"></script>
 </body>
 </html>
