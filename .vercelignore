@@ -9,3 +9,4 @@ docs/
 admin/schema.sql
 admin/infinitepay-schema.sql
 supabase/
+admin/push-schema.sql

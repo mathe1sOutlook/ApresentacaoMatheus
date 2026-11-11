@@ -6,6 +6,27 @@
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
 <title>Admin — CASA MARTECH</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/img/app/favicon-48.png" sizes="48x48" type="image/png" />
+
+<!-- App instalável (ver "App e notificações" no README) -->
+<link rel="manifest" href="/admin/manifest.webmanifest" />
+<meta name="theme-color" content="#0B0D12" />
+<meta name="application-name" content="CASA MARTECH" />
+<link rel="apple-touch-icon" href="/img/app/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="CASA MARTECH" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1320x2868.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1290x2796.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1284x2778.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1242x2688.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/img/app/splash-828x1792.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1206x2622.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1179x2556.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1170x2532.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="/img/app/splash-1125x2436.png" />
+<link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/img/app/splash-750x1334.png" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -168,6 +189,15 @@ button {
 .screen { display: none; }
 .screen--on { display: block; }
 
+/* Abertura: a mesma do app instalado (img/app/splash-*.png), para a troca
+   da tela do sistema para a do painel não piscar. */
+#scr-loading { background: #0B0D12; color: #F1EEE6; }
+#scr-loading .gate__card { color: var(--ink); }
+.splash { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.splash__mark { width: 112px; height: 112px; margin-bottom: 12px; }
+.splash__name { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 30px; line-height: 1; }
+.splash__note { margin: 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #A6A39B; }
+
 .gate {
   min-height: 100svh;
   display: flex;
@@ -322,6 +352,7 @@ body.drawer-open { overflow: hidden; }
 .drawer__nav a.on { color: var(--ink); border-left-color: var(--ochre); background: var(--paper-deep); }
 .drawer__nav a .cnt { color: var(--ochre); }
 .drawer__foot { margin-top: auto; padding: 18px 22px; display: flex; flex-direction: column; gap: 10px; }
+.drawer__app { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 
 /* ─── Corpo ──────────────────────────────────────────────────────── */
 /* Só vertical: o <main> também é .container, e um padding abreviado aqui
@@ -781,7 +812,13 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 
 <!-- ═══ Carregando ═══ -->
 <div class="screen screen--on" id="scr-loading">
-  <div class="gate"><p class="eyebrow">Carregando…</p></div>
+  <div class="gate">
+    <div class="splash" role="status">
+      <svg class="splash__mark" viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15.6 V25 H25 V15.6" stroke="#7A93E6"/><path d="M5.4 16.6 L16 7.4 L26.6 16.6" stroke="#C9A24E"/></g><circle cx="14.2" cy="20.4" r="1.1" fill="#C9A24E"/><circle cx="17.8" cy="20.4" r="1.1" fill="#7A93E6"/></svg>
+      <p class="splash__name">CASA MARTECH</p>
+      <p class="splash__note">Carregando…</p>
+    </div>
+  </div>
 </div>
 
 <!-- ═══ Login ═══ -->
@@ -861,6 +898,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
     </div>
     <div class="drawer__foot">
       <span class="label label--soft" id="drawer-user"></span>
+      <div class="drawer__app" id="app-controls" hidden></div>
       <a class="btn-link" href="/" target="_blank" rel="noopener">Ver o site ↗</a>
       <button type="button" class="btn-link" data-action="refreshData">↻ Atualizar dados</button>
       <button type="button" class="btn-ghost" data-action="signOut">Sair</button>
@@ -2808,5 +2846,6 @@ if (sb) sb.auth.onAuthStateChange((event, session) => {
 })();
 </script>
   <script defer src="/assets/admin-financial-splits.js"></script>
+  <script defer src="/assets/admin-app.js"></script>
 </body>
 </html>

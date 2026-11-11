@@ -349,6 +349,36 @@ Sem isso o retorno do login Google não volta para o painel — o `/admin` usa
 `location.origin`, então **todo endereço pelo qual o painel é aberto precisa
 estar nessa lista**. (O provider Google já está ativo no projeto.)
 
+### App e notificações
+
+O painel se instala como app (`/admin/manifest.webmanifest`, escopo `/admin`):
+no Android e no Chrome do computador aparece **Instalar como app** na gaveta;
+no iPhone é *Compartilhar → Adicionar à Tela de Início*. O site público só
+ganhou os ícones (`apple-touch-icon` e favicon PNG), sem manifest: o app é o
+painel.
+
+- **Ícones e aberturas** em `img/app/`, gerados por
+  `node scripts/build-app-icons.mjs` (Playwright). O desenho é o do
+  `favicon.svg` com os dois pontos da marca no lugar da porta; abaixo de 48 px
+  volta a ser o favicon puro. As telas de abertura do iOS
+  (`splash-*.png`) existem uma por tamanho de iPhone e são ligadas por media
+  query no `<head>` do admin — iPhone novo com tela de tamanho inédito pede
+  uma linha a mais em `SPLASHES` e outra no `<head>`. O Android monta a
+  abertura sozinho com `background_color` e o ícone do manifest.
+- **Notificações** (Web Push): cada aparelho ativa em *Ativar notificações*,
+  na gaveta, e vira uma linha em `amaralesilva_push_subscriptions`. O banco
+  avisa a Edge Function `push-notify` por `pg_net` quando chega lead pelo
+  site (todos), quando uma parcela passa a *pago* (todos menos quem marcou) e
+  quando uma tarefa é atribuída a alguém (só a pessoa). DDL em
+  `admin/push-schema.sql`. As chaves VAPID a própria função gera na primeira
+  chamada e guarda em `amaralesilva_push_config` (sem política de RLS: só o
+  service role lê) — não há secret para configurar.
+- No iPhone a notificação só existe com o app instalado (iOS 16.4+); fora
+  dele o botão explica o caminho.
+- `sw.js` fica na raiz com escopo `/admin` (o painel abre em `/admin`, sem
+  barra, que um SW em `/admin/` não alcançaria). Ele não faz cache: só
+  recebe push e abre o painel na rota da notificação.
+
 ## Pendências
 
 - **Vercel Web Analytics** — o site já carrega `/_vercel/insights/script.js`;

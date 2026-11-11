@@ -2,3 +2,8 @@
 # A Edge Function valida cada aviso contra a API payment_check do provedor.
 [functions.infinitepay-checkout]
 verify_jwt = false
+
+# Notificações do painel: chamada pelo banco (pg_net, com segredo próprio) e
+# pelo navegador; a função autentica cada caso por conta própria.
+[functions.push-notify]
+verify_jwt = false
