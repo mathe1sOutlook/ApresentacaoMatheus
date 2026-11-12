@@ -2848,7 +2848,7 @@ const ACTIONS = {
     });
     if (error) toast('Erro no login: ' + error.message);
   },
-  signOut: async () => { await sb.auth.signOut(); location.hash = ''; showScreen('login'); },
+  signOut: async () => { await sb.auth.signOut(); location.replace('/entrar'); },
   openDrawer: () => { document.body.classList.add('drawer-open'); $('.nav-toggle').setAttribute('aria-expanded', 'true'); },
   closeDrawer,
   closeModal,
@@ -3230,7 +3230,7 @@ async function enter(session) {
 }
 
 if (sb) sb.auth.onAuthStateChange((event, session) => {
-  if (event === 'SIGNED_OUT') { state.session = null; state.me = null; showScreen('login'); }
+  if (event === 'SIGNED_OUT') { state.session = null; state.me = null; location.replace('/entrar'); }
 });
 
 (async function init() {
@@ -3242,7 +3242,13 @@ if (sb) sb.auth.onAuthStateChange((event, session) => {
   }
   try {
     const { data: { session } } = await sb.auth.getSession();
-    if (!session) { showScreen('login'); return; }
+    if (!session) {
+      /* porta única: o login é em /entrar. Guarda o endereço interno
+         (#/projeto/…) para voltar a ele depois de entrar. */
+      try { sessionStorage.setItem('as_admin_hash', location.hash || ''); } catch (e) { /* modo privado */ }
+      location.replace('/entrar');
+      return;
+    }
     await enter(session);
   } catch (e) {
     toast('Erro ao iniciar: ' + (e.message || e));
@@ -3252,6 +3258,5 @@ if (sb) sb.auth.onAuthStateChange((event, session) => {
 </script>
   <script defer src="/assets/admin-financial-splits.js"></script>
   <script defer src="/assets/admin-app.js"></script>
-  <script defer src="/assets/admin-google-login.js"></script>
 </body>
 </html>
