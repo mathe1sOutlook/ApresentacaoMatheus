@@ -349,6 +349,29 @@ Sem isso o retorno do login Google não volta para o painel — o `/admin` usa
 `location.origin`, então **todo endereço pelo qual o painel é aberto precisa
 estar nessa lista**. (O provider Google já está ativo no projeto.)
 
+### Login com Google
+
+O botão de entrar é o do próprio Google (Google Identity Services,
+`assets/admin-google-login.js`): o Google autentica direto no
+`casamartech.com.br` e entrega um ID token que o Supabase aceita por
+`signInWithIdToken`. Assim a tela do Google mostra "Casa Martech" e o domínio
+do site, e não mais o endereço `…supabase.co` que o redirecionamento OAuth
+mostrava. O redirecionamento antigo continua embaixo, como alternativa.
+
+Para funcionar, no Google Cloud Console, no Client ID
+`874081383632-dktraoefi4mrg4hh4rmb9ekts9b5n5k0` (o mesmo do provedor Google no
+Supabase), em **Origens JavaScript autorizadas**:
+
+```
+https://www.casamartech.com.br
+https://casamartech.vercel.app
+https://amaralesilva.vercel.app
+```
+
+E na **tela de consentimento OAuth**: nome "Casa Martech", logo
+`img/app/icon-512.png`, domínio autorizado `casamartech.com.br`. O logo só
+aparece depois da verificação de marca do Google.
+
 ### App e notificações
 
 O painel se instala como app (`/admin/manifest.webmanifest`, escopo `/admin`):

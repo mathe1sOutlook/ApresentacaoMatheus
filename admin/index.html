@@ -230,6 +230,8 @@ button {
 .brand-dots i:first-child { background: var(--ochre); }
 .brand-dots i:last-child  { background: var(--blue); }
 .gate__note { color: var(--ink-soft); font-size: 13.5px; margin: 14px 0 28px; }
+.gate__google { display: flex; justify-content: center; min-height: 44px; }
+.gate__google + .btn-link { margin-top: 18px; }
 .gate__foot { margin-top: 26px; border-top: 1px solid var(--line); padding-top: 16px; }
 
 /* ─── Cabeçalho ──────────────────────────────────────────────────── */
@@ -828,7 +830,8 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
       <p class="eyebrow">Painel interno</p>
       <p class="gate__brand"><span class="brand-dots" aria-hidden="true"><i></i><i></i></span>CASA MARTECH</p>
       <p class="gate__note">CRM, financeiro, agenda e tarefas da dupla.<br />Acesso somente para contas autorizadas.</p>
-      <button type="button" class="btn-solid" data-action="signIn">Entrar com Google</button>
+      <div class="gate__google" id="g-signin" hidden></div>
+      <button type="button" class="btn-solid" data-action="signIn" id="g-fallback">Entrar com Google</button>
       <div class="gate__foot"><a class="btn-link" href="/">← Voltar ao site</a></div>
     </div>
   </div>
@@ -2847,5 +2850,6 @@ if (sb) sb.auth.onAuthStateChange((event, session) => {
 </script>
   <script defer src="/assets/admin-financial-splits.js"></script>
   <script defer src="/assets/admin-app.js"></script>
+  <script defer src="/assets/admin-google-login.js"></script>
 </body>
 </html>
