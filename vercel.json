@@ -45,6 +45,14 @@
       "destination": "/proposta-2jem-contrato-UVHYpwDDmPZaeH0GUWKabGAh/index.html"
     },
     {
+      "source": "/entrar",
+      "destination": "/entrar/index.html"
+    },
+    {
+      "source": "/cliente",
+      "destination": "/cliente/index.html"
+    },
+    {
       "source": "/admin",
       "destination": "/admin/index.html"
     },
@@ -64,6 +72,19 @@
         {
           "key": "X-Robots-Tag",
           "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/(entrar|cliente)(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive, nosnippet"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
         }
       ]
     },

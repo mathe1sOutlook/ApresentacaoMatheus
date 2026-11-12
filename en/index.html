@@ -370,6 +370,19 @@ button {
 .btn-ghost:hover { background: var(--ink); color: var(--bg); }
 .btn-ghost__short { display: none; }
 
+/* Entrar / conta (área do cliente). Antes do botão de conversa; sem JS fica o
+   "Entrar". O script logo após o header troca por "Minha área" ou "Painel". */
+.site-header__bar .enter-link, .site-header__bar .acct-link {
+  flex: none; display: inline-flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 500; color: var(--ink); white-space: nowrap; padding: 8px 2px;
+}
+.enter-link:hover, .acct-link:hover { color: var(--ochre); }
+.enter-link svg, .acct-link svg { color: var(--ochre); flex: none; }
+.site-header__bar .acct-link, .acct-link .acct-e { display: none; }
+.is-auth .site-header__bar .enter-link { display: none; }
+.is-auth .site-header__bar .acct-link { display: inline-flex; }
+.is-auth--cliente .acct-c, .is-auth--equipe .acct-e { display: inline; }
+
 /* ─── Hero ───────────────────────────────────────────────────────── */
 .hero {
   position: relative;
@@ -2197,6 +2210,7 @@ textarea.field__input { min-height: 120px; resize: vertical; }
 /* Abaixo de 400px o CTA do header sai: a mesma ação está no hero e no botão flutuante. */
 @media (max-width: 399px) {
   .site-header__bar { gap: 8px; }
+  .enter-link svg, .acct-link svg { display: none; }
   .brand-group { gap: 8px; }
   .brandmark { font-size: 17px; }
   .lang-toggle__sep { display: none; }
@@ -2293,9 +2307,29 @@ textarea.field__input { min-height: 120px; resize: vertical; }
       <a href="#processo" data-en="Process" data-pt="Processo">Process</a>
     </nav>
 
+    <a href="/entrar" class="enter-link" id="enter-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path></svg><span data-en="Sign in" data-pt="Entrar">Sign in</span></a>
+    <a href="/cliente" class="acct-link" id="acct-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg><span class="acct-c" data-en="My area" data-pt="Minha área">My area</span><span class="acct-e" data-en="Dashboard" data-pt="Painel">Dashboard</span></a>
+
     <a href="#contato" class="btn-ghost"><span class="btn-ghost__full" data-en="Start a conversation" data-pt="Iniciar conversa">Start a conversation</span><span class="btn-ghost__short" data-en="Talk to us" data-pt="Conversar">Talk to us</span></a>
   </div>
 </header>
+
+<script>
+/* Mostra "Minha área"/"Painel" no lugar de "Entrar" quando há sessão do
+   Supabase neste navegador. É só interface: quem decide o que cada perfil
+   enxerga é o banco (ver docs/plano-area-do-cliente.md). */
+(function () {
+  try {
+    var role = localStorage.getItem('cm_role');
+    var raw = localStorage.getItem('sb-wsgjbzsdewzplsnpfvdf-auth-token');
+    var tok = raw && JSON.parse(raw);
+    if (!role || !tok || !tok.expires_at || tok.expires_at * 1000 < Date.now()) return;
+    var h = document.querySelector('.site-header');
+    h.classList.add("is-auth", role === "equipe" ? "is-auth--equipe" : "is-auth--cliente");
+    document.getElementById('acct-link').setAttribute('href', role === 'equipe' ? '/admin' : '/cliente');
+  } catch (e) { /* sem storage: fica o "Entrar" */ }
+})();
+</script>
 
 <main id="conteudo">
 

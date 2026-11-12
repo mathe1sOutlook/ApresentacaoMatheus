@@ -62,6 +62,9 @@ proposta-2jem-*/          proposta de marca e plataforma digital da 2JEM, no
 proposta-2jem-contrato-*/ contrato da 2JEM, no mesmo molde do contrato da Media
                 Portal; a proposta entra como Anexo I
 admin/          painel interno da dupla (CRM, financeiro, agenda, tarefas)
+entrar/         login da área do cliente (e-mail, depois senha)
+cliente/        área do cliente (fase 1: só confere o acesso)
+assets/portal.css  estilos compartilhados por /entrar e /cliente
 ```
 
 Sem etapa de build e sem dependências: é HTML estático servido direto pela
@@ -378,6 +381,35 @@ painel.
 - `sw.js` fica na raiz com escopo `/admin` (o painel abre em `/admin`, sem
   barra, que um SW em `/admin/` não alcançaria). Ele não faz cache: só
   recebe push e abre o painel na rota da notificação.
+
+
+## Área do cliente (`/entrar`, `/cliente`)
+
+Plano completo em `docs/plano-area-do-cliente.md`; o desenho das telas está no
+canvas "Área do Cliente CASA MARTECH". Fase 1 pronta: login, perfis e o link no
+header. Prévias, documentos, pagamentos e arquivos vêm nas próximas fases.
+
+- **Perfis**: `amaralesilva_my_role()` devolve `equipe`, `cliente` ou nulo.
+  Equipe vai para `/admin`, cliente para `/cliente`; conta de outro app (o Auth
+  do `mApps` é compartilhado) cai em "sem acesso". Quem decide é o banco, não a
+  tela.
+- **Cadastro**: `amaralesilva_client_users` (e-mail → `client_id`), só a equipe
+  escreve. A Edge Function `portal-auth` (`supabase/functions/portal-auth`) faz
+  `action:"invite"` com o Bearer de um membro: grava o e-mail e cria a conta sem
+  senha. DDL em `admin/client-access-schema.sql`. Ainda não há tela no painel
+  para isso.
+- **Login em duas etapas**: o e-mail vai a `portal-auth` (`action:"check"`,
+  20 tentativas por IP em 10 min) e volta `nao`, `primeiro_acesso` ou `senha`.
+  Senha de no mínimo 8 caracteres (a tela exige; o Auth do projeto não foi
+  alterado por ser compartilhado). Primeiro acesso e "esqueci a senha" usam o
+  e-mail de recuperação do Supabase, em fluxo implícito para abrir em outro
+  aparelho.
+- **Header do site**: "Entrar" antes do botão de conversa; com sessão neste
+  navegador vira "Minha área" ou "Painel" (lê `cm_role` do `localStorage`, só
+  interface).
+- **Passo manual**: acrescentar `https://www.casamartech.com.br/entrar` (e os
+  dois endereços da Vercel) às **Redirect URLs** do Supabase, ao lado dos do
+  `/admin`. Sem isso o link do e-mail de senha não volta para a tela.
 
 ## Pendências
 

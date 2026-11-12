@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /proposta-
 Disallow: /admin
+Disallow: /entrar
+Disallow: /cliente
 
 Sitemap: https://www.casamartech.com.br/sitemap.xml

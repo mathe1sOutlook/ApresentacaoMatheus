@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+<meta name="theme-color" content="#0B0D12" />
+<title>Entrar — CASA MARTECH</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/img/app/favicon-48.png" sizes="48x48" type="image/png" />
+<link rel="apple-touch-icon" href="/img/app/apple-touch-icon.png" />
+<link rel="preload" href="/fonts/fraunces-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="/assets/portal.css" />
+<style>
+.page { flex: 1; display: flex; align-items: center; }
+.login { width: 100%; max-width: 1180px; margin: 0 auto; padding: 72px 32px; display: flex; align-items: center; justify-content: space-between; gap: 80px; }
+.login__text { max-width: 520px; }
+.login__title { margin: 0 0 24px; font: 300 48px/1.1 var(--serif); letter-spacing: -.01em; }
+.login__lede { margin: 0 0 14px; font-size: 17px; line-height: 1.6; color: var(--ink-soft); }
+.login__help { margin: 0; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+.login__help a { color: var(--ink); border-bottom: 1px solid var(--ochre); }
+.card { width: 420px; flex: none; background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--r-surface); padding: 32px; }
+.card h2 { margin: 0 0 24px; font: 400 22px var(--serif); }
+.who { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--r-control); background: var(--bg); }
+.who span { flex: 1; min-width: 0; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.who button { border: 0; background: transparent; color: var(--ochre); font: 400 13px var(--sans); cursor: pointer; padding: 4px; }
+.pw { position: relative; }
+.pw .field { padding-right: 96px; }
+.pw button { position: absolute; right: 6px; top: 6px; height: 36px; padding: 0 12px; border: 0; border-radius: 10px; background: transparent; color: var(--ink-soft); font: 500 12px var(--mono); cursor: pointer; }
+.hint { margin: 10px 0 0; font: 400 12px var(--mono); color: var(--ink-soft); }
+.hint.is-ok { color: var(--blue); }
+.p { margin: 0 0 20px; font-size: 15px; line-height: 1.6; color: var(--ink-soft); }
+@media (max-width: 900px) {
+  .login { flex-direction: column; align-items: stretch; gap: 40px; padding: 40px 20px 56px; }
+  .card { width: 100%; padding: 24px; }
+  .login__title { font-size: 36px; }
+  .hd__bar { padding: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="hd__bar">
+    <div class="brand"><span class="dots" aria-hidden="true"><i></i><i></i></span><a class="bm" href="/">CASA MARTECH</a></div>
+    <div class="hd__end"><a class="link-soft" href="/#contato">Iniciar conversa</a></div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="login">
+    <div class="login__text">
+      <p class="eyebrow">Área do cliente</p>
+      <h1 class="login__title">Seu projeto, do primeiro rascunho à entrega.</h1>
+      <p class="login__lede">Aqui você vê o que estamos construindo para a sua marca: as prévias do site para comentar e aprovar, a proposta e o contrato, os pagamentos e, no fim, a passagem de tudo para as suas contas.</p>
+      <p class="login__help">Ainda não recebeu o acesso? <a href="/#contato">Escreva para a gente</a>.</p>
+    </div>
+
+    <div class="card" id="card">
+      <noscript><p class="p">Esta página precisa de JavaScript para entrar.</p></noscript>
+      <h2 id="title" aria-live="polite">Entrar</h2>
+
+      <!-- 1 · e-mail -->
+      <section id="s-email">
+        <form id="f-email" novalidate>
+          <label class="lbl" for="email">E-mail</label>
+          <input class="field" id="email" type="email" inputmode="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="voce@suaempresa.com.br" required />
+          <p class="msg" id="m-email" role="alert"></p>
+          <button class="btn btn--ochre" type="submit" id="b-email" style="margin-top:16px">Continuar</button>
+        </form>
+        <div class="sep">EQUIPE</div>
+        <button class="btn btn--light" type="button" id="b-google">Entrar com Google</button>
+      </section>
+
+      <!-- 2 · senha -->
+      <section id="s-senha" hidden>
+        <form id="f-senha" novalidate>
+          <div class="who"><span class="js-email"></span><button type="button" class="js-back">Alterar</button></div>
+          <input type="text" autocomplete="username" class="js-email-val" hidden tabindex="-1" aria-hidden="true" />
+          <label class="lbl" for="senha">Senha</label>
+          <div class="pw">
+            <input class="field" id="senha" type="password" autocomplete="current-password" required />
+            <button type="button" id="b-show" aria-controls="senha">mostrar</button>
+          </div>
+          <p class="hint" id="h-senha">Mínimo de 8 caracteres</p>
+          <p class="msg" id="m-senha" role="alert"></p>
+          <button class="btn btn--ochre" type="submit" id="b-senha" style="margin-top:16px" disabled>Entrar</button>
+        </form>
+        <p class="tiny"><button type="button" id="b-forgot">Esqueci a senha</button></p>
+      </section>
+
+      <!-- 3 · primeiro acesso -->
+      <section id="s-primeiro" hidden>
+        <div class="who"><span class="js-email"></span><button type="button" class="js-back">Alterar</button></div>
+        <p class="p">Este é o seu primeiro acesso. Vamos enviar um link para o seu e-mail, e por ele você cria a sua senha.</p>
+        <p class="msg" id="m-primeiro" role="alert"></p>
+        <button class="btn btn--ochre" type="button" id="b-primeiro">Enviar link para criar a senha</button>
+      </section>
+
+      <!-- 4 · link enviado -->
+      <section id="s-enviado" hidden>
+        <p class="p">Enviamos um link para <strong class="js-email" style="color:var(--ink);font-weight:500"></strong>. Abra o e-mail neste ou em qualquer aparelho e siga o link. Se não chegar em alguns minutos, olhe a caixa de spam.</p>
+        <button class="btn btn--line js-back" type="button">Voltar</button>
+      </section>
+
+      <!-- 5 · definir senha (volta do link) -->
+      <section id="s-nova" hidden>
+        <form id="f-nova" novalidate>
+          <input type="text" autocomplete="username" class="js-email-val" hidden tabindex="-1" aria-hidden="true" />
+          <label class="lbl" for="nova">Nova senha</label>
+          <input class="field" id="nova" type="password" autocomplete="new-password" required />
+          <p class="hint" id="h-nova">Mínimo de 8 caracteres</p>
+          <p class="msg" id="m-nova" role="alert"></p>
+          <button class="btn btn--ochre" type="submit" id="b-nova" style="margin-top:16px" disabled>Salvar e entrar</button>
+        </form>
+      </section>
+
+      <!-- 6 · sem acesso -->
+      <section id="s-sem" hidden>
+        <p class="p">Esta conta não tem acesso à área do cliente. Se você deveria ter, <a href="/#contato" style="color:var(--ink);border-bottom:1px solid var(--ochre)">fale com a gente</a>.</p>
+        <button class="btn btn--line js-back" type="button">Usar outro e-mail</button>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.js" integrity="sha384-ysv13JVP3fufiEXfjML9OdCa/rRbMJvUBOWyor82wfuK8INNZAvmbxHgKIHi+oqz" crossorigin="anonymous"></script>
+<script>
+'use strict';
+/* Chave publicável: é pública por natureza. O acesso não depende de estar
+   logado (o Auth do projeto é compartilhado com outros apps) e sim de
+   amaralesilva_my_role() devolver um perfil. Ver admin/client-access-schema.sql. */
+const SUPABASE_URL = 'https://wsgjbzsdewzplsnpfvdf.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_uUuSrKXuJXalJ79WO0PxDg_QpIEOfvA';
+const MIN_PW = 8;
+
+/* implicit: o link do e-mail precisa abrir em outro aparelho sem o verificador
+   do PKCE, que só existe no navegador que pediu. */
+const sb = window.supabase
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'implicit', persistSession: true, detectSessionInUrl: true } })
+  : null;
+
+const $ = (id) => document.getElementById(id);
+const SECTIONS = ['s-email', 's-senha', 's-primeiro', 's-enviado', 's-nova', 's-sem'];
+const TITLES = { 's-email': 'Entrar', 's-senha': 'Digite sua senha', 's-primeiro': 'Primeiro acesso', 's-enviado': 'Confira o seu e-mail', 's-nova': 'Crie a sua senha', 's-sem': 'Sem acesso' };
+let email = '';
+let recovery = /type=recovery/.test(location.hash);
+
+function show(id) {
+  SECTIONS.forEach((s) => { $(s).hidden = s !== id; });
+  $('title').textContent = TITLES[id];
+  document.querySelectorAll('.js-email').forEach((n) => { n.textContent = email; });
+  document.querySelectorAll('.js-email-val').forEach((n) => { n.value = email; });
+  const first = $(id).querySelector('input:not([hidden])');
+  if (first) first.focus({ preventScroll: true });
+}
+const say = (id, text, kind) => { const n = $(id); n.textContent = text || ''; n.className = 'msg' + (kind ? ' msg--' + kind : ''); };
+const busy = (btn, on, label) => { btn.disabled = on; if (label) btn.textContent = label; };
+
+/* Guarda só para o header do site saber o que mostrar; não é segurança. */
+function remember(role, name) {
+  try { localStorage.setItem('cm_role', role); localStorage.setItem('cm_name', name || ''); } catch (e) { /* modo privado */ }
+}
+function forget() { try { localStorage.removeItem('cm_role'); localStorage.removeItem('cm_name'); } catch (e) { /* ok */ } }
+
+async function route() {
+  const { data: role, error } = await sb.rpc('amaralesilva_my_role');
+  if (error) { say('m-senha', 'Não consegui confirmar o seu acesso. Tente de novo.', 'err'); return false; }
+  if (role === 'equipe') { remember('equipe'); location.replace('/admin'); return true; }
+  if (role === 'cliente') { remember('cliente'); location.replace('/cliente'); return true; }
+  forget();
+  await sb.auth.signOut();
+  show('s-sem');
+  return false;
+}
+
+/* 1 · e-mail → função portal-auth diz se é cliente e se já tem senha */
+$('f-email').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const v = $('email').value.trim().toLowerCase();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) { say('m-email', 'Digite um e-mail válido.', 'err'); return; }
+  say('m-email', '');
+  busy($('b-email'), true, 'Verificando…');
+  try {
+    const r = await fetch(SUPABASE_URL + '/functions/v1/portal-auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: SUPABASE_KEY },
+      body: JSON.stringify({ action: 'check', email: v }),
+    });
+    if (r.status === 429) { say('m-email', 'Muitas tentativas. Espere alguns minutos e tente de novo.', 'err'); return; }
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'erro');
+    email = v;
+    if (j.status === 'senha') { show('s-senha'); }
+    else if (j.status === 'primeiro_acesso') { show('s-primeiro'); }
+    else { say('m-email', 'Não encontramos um acesso para este e-mail. Se você é cliente da CASA MARTECH, fale com a gente.', 'err'); }
+  } catch (err) {
+    say('m-email', 'Não foi possível verificar agora. Tente de novo em instantes.', 'err');
+  } finally { busy($('b-email'), false, 'Continuar'); }
+});
+
+/* 2 · senha */
+const okPw = (v) => v.length >= MIN_PW;
+function bindHint(inputId, hintId, btnId) {
+  $(inputId).addEventListener('input', () => {
+    const ok = okPw($(inputId).value);
+    $(hintId).textContent = ok ? 'Pronto' : 'Mínimo de ' + MIN_PW + ' caracteres';
+    $(hintId).classList.toggle('is-ok', ok);
+    $(btnId).disabled = !ok;
+  });
+}
+bindHint('senha', 'h-senha', 'b-senha');
+bindHint('nova', 'h-nova', 'b-nova');
+
+$('b-show').addEventListener('click', () => {
+  const t = $('senha').type === 'password';
+  $('senha').type = t ? 'text' : 'password';
+  $('b-show').textContent = t ? 'ocultar' : 'mostrar';
+});
+
+$('f-senha').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!okPw($('senha').value)) return;
+  say('m-senha', '');
+  busy($('b-senha'), true, 'Entrando…');
+  const { error } = await sb.auth.signInWithPassword({ email, password: $('senha').value });
+  if (error) {
+    say('m-senha', 'E-mail ou senha não conferem.', 'err');
+    busy($('b-senha'), false, 'Entrar');
+    return;
+  }
+  const done = await route();
+  if (!done) busy($('b-senha'), false, 'Entrar');
+});
+
+/* 3/esqueci · link para criar ou trocar a senha */
+async function sendLink(msgId, btn, label) {
+  say(msgId, '');
+  busy(btn, true, 'Enviando…');
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/entrar' });
+  busy(btn, false, label);
+  if (error) { say(msgId, 'Não foi possível enviar agora. Tente de novo em instantes.', 'err'); return; }
+  show('s-enviado');
+}
+$('b-primeiro').addEventListener('click', () => sendLink('m-primeiro', $('b-primeiro'), 'Enviar link para criar a senha'));
+$('b-forgot').addEventListener('click', () => sendLink('m-senha', $('b-forgot'), 'Esqueci a senha'));
+
+/* 5 · volta do link: define a senha e entra */
+$('f-nova').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!okPw($('nova').value)) return;
+  say('m-nova', '');
+  busy($('b-nova'), true, 'Salvando…');
+  const { error } = await sb.auth.updateUser({ password: $('nova').value });
+  if (error) {
+    say('m-nova', /same|different/i.test(error.message) ? 'Escolha uma senha diferente da anterior.' : 'Não foi possível salvar a senha. Peça um novo link.', 'err');
+    busy($('b-nova'), false, 'Salvar e entrar');
+    return;
+  }
+  recovery = false;
+  history.replaceState(null, '', location.pathname);
+  const done = await route();
+  if (!done) busy($('b-nova'), false, 'Salvar e entrar');
+});
+
+document.querySelectorAll('.js-back').forEach((b) => b.addEventListener('click', () => {
+  $('senha').value = ''; $('senha').dispatchEvent(new Event('input'));
+  say('m-email', ''); say('m-senha', ''); say('m-primeiro', '');
+  show('s-email');
+}));
+
+/* equipe: mesmo Google do painel; o retorno cai direto no /admin */
+$('b-google').addEventListener('click', async () => {
+  const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/admin' } });
+  if (error) say('m-email', 'Erro no login com Google: ' + error.message, 'err');
+});
+
+/* início: volta de link de recuperação, ou sessão que já existe */
+if (!sb) {
+  say('m-email', 'Não foi possível carregar o login. Recarregue a página.', 'err');
+} else {
+  sb.auth.onAuthStateChange((event) => {
+    if (event === 'PASSWORD_RECOVERY') { recovery = true; show('s-nova'); }
+  });
+  (async () => {
+    const { data: { session } } = await sb.auth.getSession();
+    if (recovery) { if (session) { email = session.user.email || ''; show('s-nova'); } return; }
+    if (session) await route();
+  })();
+}
+</script>
+</body>
+</html>

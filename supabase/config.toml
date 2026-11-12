@@ -7,3 +7,8 @@ verify_jwt = false
 # pelo navegador; a função autentica cada caso por conta própria.
 [functions.push-notify]
 verify_jwt = false
+
+# Área do cliente: etapa do e-mail (anônima, com limite por IP) e convite
+# (membro da equipe). A função autentica cada caso por conta própria.
+[functions.portal-auth]
+verify_jwt = false

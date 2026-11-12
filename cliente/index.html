@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+<meta name="theme-color" content="#0B0D12" />
+<title>Minha área — CASA MARTECH</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/img/app/favicon-48.png" sizes="48x48" type="image/png" />
+<link rel="apple-touch-icon" href="/img/app/apple-touch-icon.png" />
+<link rel="stylesheet" href="/assets/portal.css" />
+<style>
+.wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 72px 32px; }
+.chip { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: var(--r-control); background: transparent; color: var(--ink); font: 500 14px var(--sans); cursor: pointer; }
+h1 { margin: 0 0 14px; font: 300 44px/1.1 var(--serif); letter-spacing: -.01em; }
+.lede { margin: 0; max-width: 620px; font-size: 16px; line-height: 1.6; color: var(--ink-soft); }
+@media (max-width: 720px) { .wrap { padding: 40px 20px; } .hd__bar { padding: 0 20px; } h1 { font-size: 34px; } }
+</style>
+</head>
+<body>
+<header class="hd">
+  <div class="hd__bar">
+    <div class="brand"><span class="dots" aria-hidden="true"><i></i><i></i></span><a class="bm" href="/">CASA MARTECH</a></div>
+    <div class="hd__end"><button class="chip" type="button" id="out">Sair</button></div>
+  </div>
+</header>
+
+<main class="wrap" id="main" hidden>
+  <p class="eyebrow">Área do cliente</p>
+  <h1 id="hello">Olá.</h1>
+  <p class="lede">Seu acesso está ativo. As prévias do site, os documentos, os pagamentos e as reuniões do seu projeto passam a aparecer aqui à medida que forem sendo liberados.</p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.js" integrity="sha384-ysv13JVP3fufiEXfjML9OdCa/rRbMJvUBOWyor82wfuK8INNZAvmbxHgKIHi+oqz" crossorigin="anonymous"></script>
+<script>
+'use strict';
+const SUPABASE_URL = 'https://wsgjbzsdewzplsnpfvdf.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_uUuSrKXuJXalJ79WO0PxDg_QpIEOfvA';
+const sb = window.supabase
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'implicit', persistSession: true, detectSessionInUrl: false } })
+  : null;
+
+function forget() { try { localStorage.removeItem('cm_role'); localStorage.removeItem('cm_name'); } catch (e) { /* ok */ } }
+const toLogin = () => location.replace('/entrar');
+
+document.getElementById('out').addEventListener('click', async () => {
+  forget();
+  if (sb) await sb.auth.signOut();
+  location.replace('/');
+});
+
+(async () => {
+  if (!sb) return toLogin();
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return toLogin();
+  const { data: role, error } = await sb.rpc('amaralesilva_my_role');
+  if (error || !role) { forget(); await sb.auth.signOut(); return toLogin(); }
+  if (role === 'equipe') return location.replace('/admin');
+  const name = (session.user.user_metadata && (session.user.user_metadata.name || session.user.user_metadata.full_name)) || '';
+  try { localStorage.setItem('cm_role', 'cliente'); localStorage.setItem('cm_name', name); } catch (e) { /* ok */ }
+  document.getElementById('hello').textContent = name ? 'Olá, ' + name.split(' ')[0] + '.' : 'Olá.';
+  document.getElementById('main').hidden = false;
+})();
+</script>
+</body>
+</html>

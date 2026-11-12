@@ -1,0 +1,52 @@
+/* Área do cliente (/entrar, /cliente): mesmos tokens do site, em arquivo à parte
+   porque duas páginas usam. Ver docs/plano-area-do-cliente.md. */
+@font-face { font-family: 'Fraunces'; font-weight: 300 600; font-display: swap; src: url('/fonts/fraunces-normal-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122; }
+@font-face { font-family: 'Inter'; font-weight: 400 600; font-display: swap; src: url('/fonts/inter-normal-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122; }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 400; font-display: swap; src: url('/fonts/plex-mono-normal-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122; }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 500; font-display: swap; src: url('/fonts/plex-mono-medium-latin.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122; }
+
+:root {
+  --bg: #0B0D12; --bg-deep: #0F1218; --bg-card: #141821;
+  --ink: #F1EEE6; --ink-soft: #A6A39B;
+  --ochre: #C9A24E; --blue: #7A93E6; --warn: #E8A07A;
+  --line: #242933; --line-strong: #3A4150;
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  --r-surface: 18px; --r-control: 14px;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; }
+a { color: inherit; text-decoration: none; }
+[hidden] { display: none !important; }
+
+.hd { border-bottom: 1px solid var(--line); }
+.hd__bar { max-width: 1180px; margin: 0 auto; padding: 0 32px; min-height: 68px; display: flex; align-items: center; gap: 24px; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.dots { display: flex; gap: 4px; }
+.dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--ochre); }
+.dots i + i { background: var(--blue); }
+.bm { font: 500 13px var(--mono); letter-spacing: .14em; }
+.hd__end { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.link-soft { font-size: 14px; color: var(--ink-soft); }
+.link-soft:hover { color: var(--ink); }
+
+.eyebrow { margin: 0 0 20px; font: 500 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ochre); }
+.lbl { display: block; margin-bottom: 8px; font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.field { width: 100%; height: 48px; background: var(--bg); border: 1px solid var(--line-strong); border-radius: var(--r-control); padding: 0 16px; color: var(--ink); font: 400 15px var(--sans); }
+.field::placeholder { color: #8F8C85; }
+.field:focus-visible, .btn:focus-visible, a:focus-visible, button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 48px; border: 0; border-radius: var(--r-control); font: 500 15px var(--sans); cursor: pointer; }
+.btn--ochre { background: var(--ochre); color: var(--bg); }
+.btn--light { background: var(--ink); color: var(--bg); }
+.btn--line { background: transparent; color: var(--ink); border: 1px solid var(--line-strong); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.msg { margin: 12px 0 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); min-height: 1px; }
+.msg--err { color: var(--warn); }
+.msg--ok { color: var(--blue); }
+.sep { display: flex; align-items: center; gap: 14px; margin: 24px 0; color: var(--ink-soft); font: 400 11px var(--mono); letter-spacing: .1em; }
+.sep::before, .sep::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.tiny { margin: 18px 0 0; text-align: center; }
+.tiny a, .tiny button { font-size: 13px; color: var(--ink-soft); border: 0; border-bottom: 1px solid var(--line-strong); background: transparent; cursor: pointer; padding: 0; font-family: var(--sans); }
