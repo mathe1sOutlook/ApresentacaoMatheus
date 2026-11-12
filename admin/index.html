@@ -1694,7 +1694,7 @@ VIEWS.crm = function () {
         cash && cheio && cash !== cheio ? `ou ${fmtBRL(cash)} à vista` : '',
       ].filter(Boolean);
       return `<div class="kcard" data-action="openProject" data-id="${p.id}" role="link" tabindex="0">
-        <div class="kcard__name">${esc(p.name)}</div>
+        <div class="kcard__name">${esc(p.name)}${privTag(p.owner_email)}</div>
         ${cli ? `<div class="kcard__client">${esc(cli.name)}${cli.company ? ' · ' + esc(cli.company) : ''}</div>` : ''}
         ${val ? `<div class="kcard__value">${fmtBRL(val)}</div>` : ''}
         ${alt.length ? `<div class="kcard__alt">${esc(alt.join(' · '))}</div>` : ''}
@@ -1784,7 +1784,7 @@ VIEWS.clientes = function () {
   const rows = state.clients.map((c) => {
     const projs = state.projects.filter((p) => p.client_id === c.id);
     return `<tr class="is-clickable" data-action="editClient" data-id="${c.id}">
-      <td><b>${esc(c.name)}</b>${c.company ? `<br /><span class="mono soft" style="font-size:11px">${esc(c.company)}</span>` : ''}</td>
+      <td><b>${esc(c.name)}</b>${privTag(c.owner_email)}${c.company ? `<br /><span class="mono soft" style="font-size:11px">${esc(c.company)}</span>` : ''}</td>
       <td class="mono" style="font-size:12px">${esc(c.email || '')}${c.email && c.phone ? '<br />' : ''}${esc(c.phone || '')}</td>
       <td>${esc(c.origin || '—')}</td>
       <td class="mono" style="font-size:12px">${accessEmailOf(c.id) ? esc(accessEmailOf(c.id)) : '<span class="soft">—</span>'}</td>
@@ -2089,6 +2089,7 @@ VIEWS.projeto = function (route) {
               <input id="pf-name" name="name" required value="${esc(p.name)}" /></div>
             <div class="field"><label for="pf-client">Cliente</label>
               <select id="pf-client" name="client_id">${clientOpts}</select></div>
+            ${ownerField('pf-owner', p.owner_email, false)}
             <div class="field"><label for="pf-site">URL do site</label>
               <input id="pf-site" name="site_url" type="url" placeholder="https://…" value="${esc(p.site_url || '')}" /></div>
             <div class="field"><label for="pf-pp">Preço proposto (R$)</label>
@@ -2597,10 +2598,11 @@ VIEWS.equipe = function () {
   const rows = state.members.map((m) => `<tr>
     <td><b>${esc(m.name)}</b></td>
     <td class="mono" style="font-size:12px">${esc(m.email)}</td>
+    <td><span class="chip">${m.tier === 'dev' ? 'Dev · vê tudo' : 'Sócio · compartilhado e o que cria'}</span></td>
     <td class="mono soft" style="font-size:11px">${fmtDate(toISODate(new Date(m.created_at)))}</td>
     <td class="actions">${m.email.toLowerCase() === state.me.email.toLowerCase()
       ? '<span class="chip">você</span>'
-      : `<button type="button" class="btn-mini btn-mini--danger" data-action="removeMember" data-id="${m.id}">Remover</button>`}</td>
+      : (isDev() ? `<button type="button" class="btn-mini btn-mini--danger" data-action="removeMember" data-id="${m.id}">Remover</button>` : '')}</td>
   </tr>`).join('');
 
   return `
@@ -2610,18 +2612,18 @@ VIEWS.equipe = function () {
       <h1 class="view-title">Equipe</h1>
     </div>
     <div class="view-actions">
-      <button type="button" class="btn-solid" data-action="newMember">+ Membro</button>
+      ${isDev() ? '<button type="button" class="btn-solid" data-action="newMember">+ Membro</button>' : ''}
     </div>
   </div>
   <div class="card card__body--flush">
     <div class="tbl-wrap">
     <table class="tbl">
-      <thead><tr><th>Nome</th><th>E-mail (conta Google)</th><th>Desde</th><th></th></tr></thead>
+      <thead><tr><th>Nome</th><th>E-mail (conta Google)</th><th>Nível</th><th>Desde</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
     </div>
   </div>
-  <p class="field__hint" style="margin-top:10px">O acesso é pelo login Google: o e-mail cadastrado aqui precisa ser exatamente o da conta Google da pessoa. Para dar acesso ao Bruno, cadastre o Gmail dele.</p>`;
+  <p class="field__hint" style="margin-top:10px">O acesso é pelo login Google: o e-mail cadastrado aqui precisa ser exatamente o da conta Google da pessoa. Dev vê e mexe em tudo e é quem cadastra a equipe; sócio vê o que é compartilhado e o que ele mesmo cria.</p>`;
 };
 
 /* ═══ Modal & formulários ══════════════════════════════════════════ */
@@ -2650,6 +2652,32 @@ function closeModal() { $('#modal').classList.remove('on'); $('#modal-body').inn
 const numOrNull = (v) => (v === '' || v == null ? null : Number(v));
 const strOrNull = (v) => (v === '' || v == null ? null : v);
 
+/* ═══ Níveis de acesso ══════════════════════════════════════════════
+   'dev' vê tudo; 'socio' vê o compartilhado e o que ele mesmo criou (as
+   regras valem no banco, migração amaralesilva_niveis_de_acesso). owner_email
+   vazio = compartilhado. Só o dev escolhe a visibilidade nos formulários; para
+   o sócio o banco preenche o dono sozinho, e o que ele cria o dev já vê. */
+const isDev = () => !!(state.me && state.me.tier === 'dev');
+const myEmail = () => String(state.me?.email || '').toLowerCase();
+/* Há alguém na equipe que não vê o que é só meu? (um sócio) */
+const hasSocio = () => state.members.some((m) => m.tier !== 'dev' && m.email.toLowerCase() !== myEmail());
+function ownerField(id, owner, isNew) {
+  if (!isDev()) return '';
+  const cur = isNew ? 'me' : (owner == null ? 'team' : (String(owner).toLowerCase() === myEmail() ? 'me' : 'other'));
+  const opts = [['me', 'Só eu'], ['team', 'Toda a equipe']];
+  if (cur === 'other') opts.push(['other', 'Só ' + memberName(owner) + ' (e o dev)']);
+  return fld(id, 'Quem vê', sel(id, 'visibility', opts, cur), false, 'Só eu: o sócio não vê, nem os valores. Toda a equipe: os dois veem.');
+}
+/* Valor de owner_email a gravar; undefined = não mexer (sócio, ou dono alheio mantido). */
+function ownerFromForm(d) {
+  if (!isDev() || !d.visibility || d.visibility === 'other') return undefined;
+  return d.visibility === 'team' ? null : myEmail();
+}
+function withOwner(row, d) { const o = ownerFromForm(d); if (o !== undefined) row.owner_email = o; return row; }
+/* Marca, para o dev, o que o sócio não vê. */
+const privTag = (owner) => (isDev() && hasSocio() && owner && String(owner).toLowerCase() === myEmail())
+  ? ' <span class="chip" title="Só você vê; o sócio não">só você</span>' : '';
+
 function fld(id, label, inner, span2, hint) {
   return `<div class="field ${span2 ? 'span2' : ''}"><label for="${id}">${label}</label>${inner}${hint ? `<span class="field__hint">${hint}</span>` : ''}</div>`;
 }
@@ -2674,6 +2702,7 @@ function clientModal(c, prefill, fromLeadId) {
         ${fld('cf-phone', 'Telefone / WhatsApp', inp('cf-phone', 'phone', 'text', c?.phone))}
         ${fld('cf-access', 'E-mail de acesso à área do cliente', inp('cf-access', 'access_email', 'email', editing ? accessEmailOf(c.id) : '', 'autocapitalize="none" placeholder="deixe vazio se ainda não for liberar"'), true, 'Com este e-mail a pessoa entra em /entrar e vê o projeto dela. Pode ser diferente do e-mail de contato. Para desativar ou ver todos os acessos: Acesso dos clientes.')}
         ${fld('cf-origin', 'Origem', inp('cf-origin', 'origin', 'text', c?.origin, 'placeholder="indicação, Instagram, site…"'), true)}
+        ${ownerField('cf-owner', c?.owner_email, !editing)}
         ${fld('cf-notes', 'Notas', txa('cf-notes', 'notes', c?.notes), true)}
       </div>
       <div class="form-foot">
@@ -2681,7 +2710,7 @@ function clientModal(c, prefill, fromLeadId) {
         <button type="submit" class="btn-solid">${editing ? 'Salvar' : 'Cadastrar'}</button>
       </div>
     </form>`, async (d) => {
-    const row = { name: d.name, company: strOrNull(d.company), email: strOrNull(d.email), phone: strOrNull(d.phone), origin: strOrNull(d.origin), notes: strOrNull(d.notes) };
+    const row = withOwner({ name: d.name, company: strOrNull(d.company), email: strOrNull(d.email), phone: strOrNull(d.phone), origin: strOrNull(d.origin), notes: strOrNull(d.notes) }, d);
     const access = (d.access_email || '').toLowerCase();
     /* Cliente já salvo e acesso falhou: relê antes de avisar, para a tela não
        mostrar o estado antigo. */
@@ -2718,6 +2747,7 @@ function projectModal() {
         ${fld('pj-name', 'Nome do projeto / site *', inp('pj-name', 'name', 'text', '', 'required placeholder="Ex.: Site MediaPortal"'), true)}
         ${fld('pj-client', 'Cliente', sel('pj-client', 'client_id', clientOptions(), ''), false, 'Não achou? Cadastre antes em Clientes.')}
         ${fld('pj-status', 'Etapa', sel('pj-status', 'status', STATUSES.map((s) => [s, STATUS_LABEL[s]]), 'contato'))}
+        ${ownerField('pj-owner', null, true)}
         ${fld('pj-price', 'Preço proposto (R$)', inp('pj-price', 'price_proposed', 'number', '', 'step="0.01" min="0"'))}
         ${fld('pj-sm', 'Divisão Matheus (%)', inp('pj-sm', 'split_matheus', 'number', '50', 'step="0.01" min="0" max="100" required'))}
         ${fld('pj-vm', 'Divisão Matheus (R$)', '<input id="pj-vm" type="number" step="0.01" min="0" inputmode="decimal" />')}
@@ -2735,6 +2765,7 @@ function projectModal() {
       split_matheus: sm, split_bruno: Math.round((100 - sm) * 100) / 100,
       description: strOrNull(d.description),
     };
+    withOwner(row, d);
     let newId = null;
     const ok = await mutate(async () => {
       const { data, error } = await sb.from(TB('projects')).insert(row).select('id').single();
@@ -2758,6 +2789,7 @@ function meetingModal(m, presets) {
         ${fld('mt-end', 'Fim', inp('mt-end', 'ends_at', 'datetime-local', m?.ends_at ? toLocalInput(m.ends_at) : ''))}
         ${fld('mt-project', 'Projeto', sel('mt-project', 'project_id', projectOptions(), m?.project_id || presets.project || ''))}
         ${fld('mt-client', 'Cliente', sel('mt-client', 'client_id', clientOptions(), m?.client_id || ''))}
+        ${ownerField('mt-owner', m?.owner_email, !m)}
         ${fld('mt-location', 'Local / link', inp('mt-location', 'location', 'text', m?.location, 'placeholder="Meet, presencial…"'), true)}
         ${fld('mt-topics', 'Pauta — tópicos a tratar', txa('mt-topics', 'topics', m?.topics, 'Um tópico por linha.'), true)}
         ${fld('mt-minutes', 'Ata — o que foi proposto / decidido', txa('mt-minutes', 'minutes', m?.minutes, 'Preencha depois da reunião.'), true)}
@@ -2777,6 +2809,7 @@ function meetingModal(m, presets) {
       location: strOrNull(d.location), topics: strOrNull(d.topics), minutes: strOrNull(d.minutes),
       shared_with_client: d.shared_with_client === '1',
     };
+    withOwner(row, d);
     return mutate(() => (m ? dbUpdate('meetings', m.id, row) : dbInsert('meetings', row)), m ? 'Reunião atualizada.' : 'Reunião agendada.');
   });
 }
@@ -3042,10 +3075,11 @@ function memberModal() {
       <div class="form-grid">
         ${fld('mb-name', 'Nome *', inp('mb-name', 'name', 'text', '', 'required placeholder="Bruno Amaral"'), true)}
         ${fld('mb-email', 'E-mail Google *', inp('mb-email', 'email', 'email', '', 'required placeholder="exemplo@gmail.com"'), true, 'Precisa ser o e-mail exato da conta Google que a pessoa usa para entrar.')}
+        ${fld('mb-tier', 'Nível', sel('mb-tier', 'tier', [['socio', 'Sócio · vê o compartilhado e o que cria'], ['dev', 'Dev · vê tudo']], 'socio'), true)}
       </div>
       <div class="form-foot"><button type="submit" class="btn-solid">Dar acesso</button></div>
     </form>`, async (d) => {
-    return mutate(() => dbInsert('members', { name: d.name, email: d.email.toLowerCase() }), 'Acesso liberado para ' + d.email + '.');
+    return mutate(() => dbInsert('members', { name: d.name, email: d.email.toLowerCase(), tier: d.tier === 'dev' ? 'dev' : 'socio' }), 'Acesso liberado para ' + d.email + '.');
   });
 }
 
@@ -3419,6 +3453,7 @@ document.addEventListener('submit', async (e) => {
       proposal_url: strOrNull(d.proposal_url), contract_url: strOrNull(d.contract_url),
       description: strOrNull(d.description),
     };
+    withOwner(row, d);
     if (Math.abs(N(row.split_matheus) + N(row.split_bruno) - 100) > 0.01) {
       toast('A divisão Matheus + Bruno precisa somar 100%.');
       return;

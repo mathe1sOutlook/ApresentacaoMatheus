@@ -349,6 +349,20 @@ natureza e os dados são protegidos por RLS: só e-mails cadastrados em
 `amaralesilva_members` leem ou escrevem qualquer coisa. Novos membros são
 cadastrados na tela **Equipe** (o e-mail precisa ser o da conta Google).
 
+**Níveis de acesso** (migração `amaralesilva_niveis_de_acesso`, em
+`admin/schema.sql`). Cada membro tem um `tier`: **dev** (Matheus) vê e mexe em
+tudo e é o único que cadastra ou remove membros; **sócio** (Bruno) vê o que é
+compartilhado e o que ele mesmo criou. Clientes, projetos, reuniões e tarefas
+têm `owner_email`, preenchido sozinho com quem cria; vazio é compartilhado. O
+resto segue o registro a que pertence: parcelas, notas, prévias, migração e
+cobranças seguem o projeto; arquivos (inclusive no Storage) e acessos seguem o
+cliente. Quem vê um projeto vê tudo dele, inclusive o que o outro lançou ali. Os
+números do Financeiro e da Visão geral somam só o que cada um vê. Leads do site
+são dos dois. Nos formulários de cliente, projeto e reunião, o dev escolhe
+**Quem vê** (Só eu / Toda a equipe); o padrão é "Só eu", e o CRM e a lista de
+clientes marcam com *só você* o que o sócio não vê. As notificações (pagamento,
+arquivo e comentário do cliente) vão só para quem vê o projeto ou o cliente.
+
 ### Passo manual (uma vez)
 
 No painel do Supabase, em *Authentication → URL Configuration* do projeto

@@ -1084,3 +1084,146 @@ create trigger amaralesilva_payments_push after update of status on public.amara
   for each row execute function public.amaralesilva_push_on_payment();
 create trigger amaralesilva_tasks_push after insert or update of assignee_email on public.amaralesilva_tasks
   for each row execute function public.amaralesilva_push_on_task();
+
+
+-- ═══ Níveis de acesso no painel (migração amaralesilva_niveis_de_acesso) ═══
+-- amaralesilva_members.tier: 'dev' vê e mexe em tudo e é quem cadastra a
+-- equipe; 'socio' vê o que é compartilhado e o que ele mesmo criou.
+-- owner_email (clientes, projetos, reuniões, tarefas) é preenchido sozinho com
+-- o e-mail de quem cria; vazio = compartilhado com a equipe. No painel, só o dev
+-- escolhe "Quem vê" (Só eu / Toda a equipe).
+-- O resto segue o registro a que pertence: parcela, nota, prévia, comentário,
+-- item de migração, ajuste e cobrança seguem o projeto; arquivo (também no
+-- Storage, pela pasta do cliente) e acesso de cliente seguem o cliente; reunião
+-- segue o projeto, ou o cliente, ou o dono; tarefa sem projeto aparece para o
+-- dono e para quem a recebeu. Leads e métricas do site continuam dos dois.
+-- As políticas antigas foram alteradas (ALTER POLICY), não recriadas: os nomes
+-- "… full access" ficaram, com as regras novas.
+-- Na aplicação, o que existia ficou compartilhado, menos o cliente Carlos Lima
+-- e o projeto dele, que passaram a ser só do Matheus.
+
+alter table public.amaralesilva_members add column if not exists tier text not null default 'socio';
+alter table public.amaralesilva_members add constraint amaralesilva_members_tier_check check (tier in ('dev', 'socio'));
+update public.amaralesilva_members set tier = 'dev' where lower(email) = 'mathe1s.castro@gmail.com';
+
+alter table public.amaralesilva_clients  add column if not exists owner_email text default lower(auth.jwt() ->> 'email');
+alter table public.amaralesilva_projects add column if not exists owner_email text default lower(auth.jwt() ->> 'email');
+alter table public.amaralesilva_meetings add column if not exists owner_email text default lower(auth.jwt() ->> 'email');
+alter table public.amaralesilva_tasks    add column if not exists owner_email text default lower(auth.jwt() ->> 'email');
+update public.amaralesilva_clients  set owner_email = 'mathe1s.castro@gmail.com' where name = 'Carlos Lima';
+update public.amaralesilva_projects set owner_email = 'mathe1s.castro@gmail.com'
+  where client_id in (select id from public.amaralesilva_clients where name = 'Carlos Lima');
+
+create or replace function public.amaralesilva_my_email() returns text language sql stable set search_path = public
+as $$ select lower(coalesce(auth.jwt() ->> 'email', '')) $$;
+create or replace function public.amaralesilva_is_dev() returns boolean language sql stable security definer set search_path = public
+as $$ select exists (select 1 from public.amaralesilva_members m where lower(m.email) = public.amaralesilva_my_email() and m.tier = 'dev'); $$;
+-- Vê um registro com este dono: é membro, e o registro é compartilhado, ou é dele, ou ele é dev.
+create or replace function public.amaralesilva_sees(p_owner text) returns boolean language sql stable security definer set search_path = public
+as $$ select public.amaralesilva_is_member() and (p_owner is null or lower(p_owner) = public.amaralesilva_my_email() or public.amaralesilva_is_dev()); $$;
+create or replace function public.amaralesilva_sees_client(p_id uuid) returns boolean language sql stable security definer set search_path = public
+as $$ select exists (select 1 from public.amaralesilva_clients c where c.id = p_id and public.amaralesilva_sees(c.owner_email)) $$;
+create or replace function public.amaralesilva_sees_project(p_id uuid) returns boolean language sql stable security definer set search_path = public
+as $$ select exists (select 1 from public.amaralesilva_projects p where p.id = p_id and public.amaralesilva_sees(p.owner_email)) $$;
+create or replace function public.amaralesilva_sees_client_folder(p_folder text) returns boolean language sql stable security definer set search_path = public
+as $$ select case when p_folder ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then public.amaralesilva_sees_client(p_folder::uuid) else false end; $$;
+revoke execute on function public.amaralesilva_my_email(), public.amaralesilva_is_dev(), public.amaralesilva_sees(text), public.amaralesilva_sees_client(uuid), public.amaralesilva_sees_project(uuid), public.amaralesilva_sees_client_folder(text) from public, anon;
+grant execute on function public.amaralesilva_my_email(), public.amaralesilva_is_dev(), public.amaralesilva_sees(text), public.amaralesilva_sees_client(uuid), public.amaralesilva_sees_project(uuid), public.amaralesilva_sees_client_folder(text) to authenticated;
+
+-- Equipe: "full access" passa a ser só do dev; a leitura é de todos os membros.
+alter policy "amaralesilva members full access" on public.amaralesilva_members using (public.amaralesilva_is_dev()) with check (public.amaralesilva_is_dev());
+create policy "amaralesilva members read" on public.amaralesilva_members for select to authenticated using (public.amaralesilva_is_member());
+
+alter policy "amaralesilva members full access" on public.amaralesilva_clients using (public.amaralesilva_sees(owner_email)) with check (public.amaralesilva_sees(owner_email));
+alter policy "amaralesilva members full access" on public.amaralesilva_projects using (public.amaralesilva_sees(owner_email)) with check (public.amaralesilva_sees(owner_email));
+alter policy "amaralesilva members full access" on public.amaralesilva_meetings
+  using (case when project_id is not null then public.amaralesilva_sees_project(project_id) when client_id is not null then public.amaralesilva_sees_client(client_id) else public.amaralesilva_sees(owner_email) end)
+  with check (case when project_id is not null then public.amaralesilva_sees_project(project_id) when client_id is not null then public.amaralesilva_sees_client(client_id) else public.amaralesilva_sees(owner_email) end);
+alter policy "amaralesilva members full access" on public.amaralesilva_tasks
+  using (case when project_id is not null then public.amaralesilva_sees_project(project_id) else public.amaralesilva_sees(owner_email) or (public.amaralesilva_is_member() and lower(coalesce(assignee_email, '')) = public.amaralesilva_my_email()) end)
+  with check (case when project_id is not null then public.amaralesilva_sees_project(project_id) else public.amaralesilva_sees(owner_email) or (public.amaralesilva_is_member() and lower(coalesce(assignee_email, '')) = public.amaralesilva_my_email()) end);
+alter policy "amaralesilva members full access" on public.amaralesilva_payments using (public.amaralesilva_sees_project(project_id)) with check (public.amaralesilva_sees_project(project_id));
+alter policy "amaralesilva members full access" on public.amaralesilva_notes using (public.amaralesilva_sees_project(project_id)) with check (public.amaralesilva_sees_project(project_id));
+alter policy "amaralesilva previews members" on public.amaralesilva_previews using (public.amaralesilva_sees_project(project_id)) with check (public.amaralesilva_sees_project(project_id));
+alter policy "amaralesilva preview_comments members" on public.amaralesilva_preview_comments
+  using (exists (select 1 from public.amaralesilva_previews v where v.id = preview_id and public.amaralesilva_sees_project(v.project_id)))
+  with check (exists (select 1 from public.amaralesilva_previews v where v.id = preview_id and public.amaralesilva_sees_project(v.project_id)));
+alter policy "amaralesilva handoff members" on public.amaralesilva_handoff_items using (public.amaralesilva_sees_project(project_id)) with check (public.amaralesilva_sees_project(project_id));
+alter policy "amaralesilva client_files members" on public.amaralesilva_client_files using (public.amaralesilva_sees_client(client_id)) with check (public.amaralesilva_sees_client(client_id));
+alter policy "amaralesilva client_users members" on public.amaralesilva_client_users using (public.amaralesilva_sees_client(client_id)) with check (public.amaralesilva_sees_client(client_id));
+alter policy "amaralesilva members read adjustments" on public.amaralesilva_adjustments using (public.amaralesilva_sees_project(project_id));
+alter policy "amaralesilva members add manual adjustments" on public.amaralesilva_adjustments with check (public.amaralesilva_sees_project(project_id) and source = 'manual');
+alter policy "amaralesilva members remove manual adjustments" on public.amaralesilva_adjustments using (public.amaralesilva_sees_project(project_id) and source = 'manual');
+alter policy "amaralesilva members read checkout attempts" on public.amaralesilva_infinitepay_checkouts
+  using (exists (select 1 from public.amaralesilva_payments p where p.id = payment_id and public.amaralesilva_sees_project(p.project_id)));
+
+-- Arquivos guardados: a pasta de cima é o id do cliente.
+alter policy "amaralesilva client files select" on storage.objects
+  using (bucket_id = 'amaralesilva-client-files' and (public.amaralesilva_sees_client_folder((storage.foldername(name))[1])
+    or (storage.foldername(name))[1] in (select c::text from public.amaralesilva_my_client_ids() c)));
+alter policy "amaralesilva client files insert" on storage.objects
+  with check (bucket_id = 'amaralesilva-client-files' and (public.amaralesilva_sees_client_folder((storage.foldername(name))[1])
+    or (storage.foldername(name))[1] in (select c::text from public.amaralesilva_my_client_ids() c)));
+alter policy "amaralesilva client files delete" on storage.objects
+  using (bucket_id = 'amaralesilva-client-files' and (public.amaralesilva_sees_client_folder((storage.foldername(name))[1])
+    or (owner_id = (select auth.uid()::text) and (storage.foldername(name))[1] in (select c::text from public.amaralesilva_my_client_ids() c))));
+
+-- Notificações só para quem vê o registro: dono vazio avisa a equipe; dono
+-- preenchido avisa o dono e os devs. p_exclude é quem fez a ação.
+create or replace function public.amaralesilva_push_viewers(p_title text, p_body text, p_url text, p_tag text, p_owner text, p_exclude text)
+returns void language plpgsql security definer set search_path = public
+as $$
+declare m record;
+begin
+  for m in select email from public.amaralesilva_members
+    where (p_owner is null or tier = 'dev' or lower(email) = lower(p_owner))
+      and (p_exclude is null or lower(email) <> lower(p_exclude))
+  loop
+    perform public.amaralesilva_push(p_title, p_body, p_url, p_tag, m.email, null);
+  end loop;
+end $$;
+revoke execute on function public.amaralesilva_push_viewers(text, text, text, text, text, text) from public, anon, authenticated;
+
+create or replace function public.amaralesilva_push_on_payment() returns trigger
+language plpgsql security definer set search_path = public
+as $$
+declare proj text; own text;
+begin
+  if new.status = 'pago' and old.status is distinct from 'pago' then
+    select name, owner_email into proj, own from public.amaralesilva_projects where id = new.project_id;
+    perform public.amaralesilva_push_viewers('Pagamento recebido',
+      concat_ws(' · ', 'R$ ' || replace(replace(replace(to_char(new.amount, 'FM999G999G990D00'), ',', '#'), '.', ','), '#', '.'),
+        proj, nullif(new.description, '')),
+      '/admin#/financeiro', 'pay-' || new.id, own, nullif(auth.jwt() ->> 'email', ''));
+  end if;
+  return new;
+end $$;
+
+create or replace function public.amaralesilva_push_on_client_file() returns trigger
+language plpgsql security definer set search_path = public
+as $$
+declare cli text; own text;
+begin
+  if new.uploaded_by_role = 'cliente' then
+    select name, owner_email into cli, own from public.amaralesilva_clients where id = new.client_id;
+    perform public.amaralesilva_push_viewers('Arquivo enviado pelo cliente',
+      concat_ws(' · ', cli, left(new.name, 80)), '/admin#/arquivos', 'file-' || new.id, own, null);
+  end if;
+  return new;
+end $$;
+
+create or replace function public.amaralesilva_push_on_preview_comment() returns trigger
+language plpgsql security definer set search_path = public
+as $$
+declare proj text; ver int; own text;
+begin
+  if new.author_role = 'cliente' then
+    select p.name, v.version, p.owner_email into proj, ver, own
+    from public.amaralesilva_previews v join public.amaralesilva_projects p on p.id = v.project_id where v.id = new.preview_id;
+    perform public.amaralesilva_push_viewers(
+      case new.kind when 'aprovacao' then 'Prévia aprovada' when 'ajuste' then 'Cliente pediu ajustes' else 'Comentário na prévia' end,
+      concat_ws(' · ', proj, 'v' || ver, new.author_name, left(new.body, 80)),
+      '/admin#/previas', 'prev-' || new.preview_id, own, null);
+  end if;
+  return new;
+end $$;
