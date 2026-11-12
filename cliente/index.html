@@ -11,11 +11,34 @@
 <link rel="apple-touch-icon" href="/img/app/apple-touch-icon.png" />
 <link rel="stylesheet" href="/assets/portal.css" />
 <style>
-.wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 72px 32px; }
+.wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 56px 32px 72px; flex: 1; }
 .chip { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: var(--r-control); background: transparent; color: var(--ink); font: 500 14px var(--sans); cursor: pointer; }
 h1 { margin: 0 0 14px; font: 300 44px/1.1 var(--serif); letter-spacing: -.01em; }
+h2 { margin: 0 0 18px; font: 400 22px var(--serif); }
 .lede { margin: 0; max-width: 620px; font-size: 16px; line-height: 1.6; color: var(--ink-soft); }
-@media (max-width: 720px) { .wrap { padding: 40px 20px; } .hd__bar { padding: 0 20px; } h1 { font-size: 34px; } }
+.proj { margin-top: 56px; }
+.proj__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 20px; margin-bottom: 8px; }
+.proj__head h2 { margin: 0; font-size: 28px; }
+.status { font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ochre); }
+.cols { display: flex; flex-wrap: wrap; gap: 48px 56px; margin-top: 32px; align-items: flex-start; }
+.col { flex: 1 1 320px; min-width: 0; }
+.sh { margin: 0 0 14px; font: 500 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px; line-height: 1.45; }
+.row:last-child { border-bottom: 1px solid var(--line); }
+.row small { font: 400 12px var(--mono); color: var(--ink-soft); text-align: right; }
+.row small.ok { color: var(--blue); }
+a.row:hover { color: var(--ochre); }
+.empty { margin: 0; font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
+.meet { padding: 16px 0; border-top: 1px solid var(--line); }
+.meet:last-child { border-bottom: 1px solid var(--line); }
+.meet h3 { margin: 0 0 4px; font: 500 15px var(--sans); }
+.meet .when { margin: 0 0 10px; font: 400 12px var(--mono); color: var(--ink-soft); }
+.meet pre { margin: 8px 0 0; white-space: pre-wrap; font: 400 14px/1.55 var(--sans); color: var(--ink-soft); }
+.meet details { margin-top: 8px; }
+.meet summary { cursor: pointer; font-size: 13px; color: var(--ochre); }
+.meet__tag { color: var(--blue); }
+.foot { margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-soft); }
+@media (max-width: 720px) { .wrap { padding: 36px 20px 56px; } .hd__bar { padding: 0 20px; } h1 { font-size: 34px; } .proj__head h2 { font-size: 24px; } }
 </style>
 </head>
 <body>
@@ -27,28 +50,127 @@ h1 { margin: 0 0 14px; font: 300 44px/1.1 var(--serif); letter-spacing: -.01em; 
 </header>
 
 <main class="wrap" id="main" hidden>
-  <p class="eyebrow">Área do cliente</p>
+  <p class="eyebrow" id="who">Área do cliente</p>
   <h1 id="hello">Olá.</h1>
-  <p class="lede">Seu acesso está ativo. As prévias do site, os documentos, os pagamentos e as reuniões do seu projeto passam a aparecer aqui à medida que forem sendo liberados.</p>
+  <p class="lede" id="lede"></p>
+  <div id="projects"></div>
+  <section class="proj" id="meetings" hidden>
+    <h2>Reuniões</h2>
+    <div id="meet-list"></div>
+  </section>
+  <p class="foot">Dúvida sobre algo desta página? Responda o e-mail em que combinamos o projeto ou <a href="/#contato" style="color:var(--ink);border-bottom:1px solid var(--ochre)">fale com a gente</a>.</p>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.js" integrity="sha384-ysv13JVP3fufiEXfjML9OdCa/rRbMJvUBOWyor82wfuK8INNZAvmbxHgKIHi+oqz" crossorigin="anonymous"></script>
 <script>
 'use strict';
+/* O que aparece aqui sai de amaralesilva_portal_overview(): colunas seguras e
+   só do cliente logado. Ver admin/client-access-schema.sql. */
 const SUPABASE_URL = 'https://wsgjbzsdewzplsnpfvdf.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_uUuSrKXuJXalJ79WO0PxDg_QpIEOfvA';
 const sb = window.supabase
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'implicit', persistSession: true, detectSessionInUrl: false } })
   : null;
 
+const STATUS = { proposta_enviada: 'Proposta enviada', negociacao: 'Em negociação', fechado: 'Contrato fechado', concluido: 'Concluído' };
+const TZ = 'America/Sao_Paulo';
+const fmtDay = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: TZ });
+const fmtWhen = new Intl.DateTimeFormat('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: TZ });
+const fmtTime = new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: TZ });
+/* due_date vem como AAAA-MM-DD, sem fuso: formata sem passar por Date */
+const fmtDate = (s) => (s ? s.slice(8, 10) + '/' + s.slice(5, 7) + '/' + s.slice(0, 4) : '');
+const todayISO = () => new Date().toLocaleDateString('en-CA', { timeZone: TZ });
+
+/* só caminho do próprio site ou https; qualquer outra coisa não vira link */
+const safeUrl = (u) => (typeof u === 'string' && (/^\/(?!\/)/.test(u) || /^https:\/\//i.test(u)) ? u : null);
+
+function h(tag, props, ...kids) {
+  const n = document.createElement(tag);
+  for (const k in (props || {})) {
+    if (k === 'class') n.className = props[k];
+    else if (props[k] != null) n.setAttribute(k, props[k]);
+  }
+  kids.flat().forEach((c) => { if (c != null && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c))); });
+  return n;
+}
+const $ = (id) => document.getElementById(id);
+
 function forget() { try { localStorage.removeItem('cm_role'); localStorage.removeItem('cm_name'); } catch (e) { /* ok */ } }
 const toLogin = () => location.replace('/entrar');
 
-document.getElementById('out').addEventListener('click', async () => {
+$('out').addEventListener('click', async () => {
   forget();
   if (sb) await sb.auth.signOut();
   location.replace('/');
 });
+
+function docRow(label, url) {
+  const u = safeUrl(url);
+  return u
+    ? h('a', { class: 'row', href: u, target: '_blank', rel: 'noopener' }, h('span', null, label), h('small', null, 'abrir'))
+    : null;
+}
+
+function payRow(p) {
+  const today = todayISO();
+  let txt, cls = '';
+  if (p.status === 'pago') { txt = p.paid_at ? 'paga em ' + fmtDate(p.paid_at) : 'paga'; cls = 'ok'; }
+  else if (p.due_date < today) txt = 'venceu em ' + fmtDate(p.due_date);
+  else txt = 'vence em ' + fmtDate(p.due_date);
+  return h('div', { class: 'row' }, h('span', null, p.description || 'Parcela'), h('small', { class: cls }, txt));
+}
+
+function projectBlock(p) {
+  const docs = [docRow('Proposta', p.proposal_url), docRow('Contrato', p.contract_url)].filter(Boolean);
+  const pays = p.payments || [];
+  const cols = h('div', { class: 'cols' },
+    h('div', { class: 'col' },
+      h('p', { class: 'sh' }, 'Documentos'),
+      docs.length ? docs : h('p', { class: 'empty' }, 'Os documentos aparecem aqui quando forem enviados.')),
+    (p.status === 'fechado' || p.status === 'concluido')
+      ? h('div', { class: 'col' },
+          h('p', { class: 'sh' }, 'Pagamentos'),
+          pays.length ? pays.map(payRow) : h('p', { class: 'empty' }, 'As parcelas aparecem aqui quando forem registradas.'))
+      : null);
+  return h('section', { class: 'proj', 'aria-label': p.name },
+    h('div', { class: 'proj__head' }, h('h2', null, p.name), h('span', { class: 'status' }, STATUS[p.status] || '')),
+    cols);
+}
+
+function meetingBlock(m, projName) {
+  const start = new Date(m.starts_at);
+  const when = fmtWhen.format(start).replace(',', '') + (m.ends_at ? ' até ' + fmtTime.format(new Date(m.ends_at)) : '');
+  const parts = [when, m.location, projName].filter(Boolean);
+  const body = [];
+  if (m.topics) body.push(h('details', { open: new Date(m.starts_at) >= new Date() ? '' : null }, h('summary', null, 'Pauta'), h('pre', null, m.topics)));
+  if (m.minutes) body.push(h('details', null, h('summary', null, 'O que ficou combinado'), h('pre', null, m.minutes)));
+  return h('div', { class: 'meet' }, h('h3', null, m.title), h('p', { class: 'when' }, parts.join(' · ')), body);
+}
+
+function render(data, session) {
+  const proj = data.projects || [];
+  const client = (data.clients || [])[0];
+  const name = (session.user.user_metadata && (session.user.user_metadata.name || session.user.user_metadata.full_name)) || '';
+  const first = name ? name.split(' ')[0] : '';
+  $('who').textContent = client ? (client.company || client.name) : 'Área do cliente';
+  $('hello').textContent = first ? 'Olá, ' + first + '.' : 'Olá.';
+  $('lede').textContent = proj.length
+    ? 'Aqui estão a proposta, o contrato, os pagamentos e as reuniões do seu projeto, conforme forem sendo liberados.'
+    : 'O seu acesso está ativo. O projeto aparece aqui assim que a proposta for enviada.';
+  const box = $('projects');
+  box.replaceChildren(...proj.map(projectBlock));
+  const names = Object.fromEntries(proj.map((p) => [p.id, p.name]));
+  const meets = data.meetings || [];
+  $('meetings').hidden = !meets.length;
+  const now = Date.now() - 2 * 3600e3;
+  const next = meets.filter((m) => new Date(m.starts_at) >= now).sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at));
+  const past = meets.filter((m) => new Date(m.starts_at) < now);
+  const ml = $('meet-list');
+  ml.replaceChildren(
+    ...(next.length ? [h('p', { class: 'sh' }, 'Próximas')].concat(next.map((m) => meetingBlock(m, names[m.project_id]))) : []),
+    ...(past.length ? [h('p', { class: 'sh', style: 'margin-top:32px' }, 'Anteriores')].concat(past.map((m) => meetingBlock(m, names[m.project_id]))) : []));
+  $('main').hidden = false;
+}
 
 (async () => {
   if (!sb) return toLogin();
@@ -57,10 +179,16 @@ document.getElementById('out').addEventListener('click', async () => {
   const { data: role, error } = await sb.rpc('amaralesilva_my_role');
   if (error || !role) { forget(); await sb.auth.signOut(); return toLogin(); }
   if (role === 'equipe') return location.replace('/admin');
-  const name = (session.user.user_metadata && (session.user.user_metadata.name || session.user.user_metadata.full_name)) || '';
-  try { localStorage.setItem('cm_role', 'cliente'); localStorage.setItem('cm_name', name); } catch (e) { /* ok */ }
-  document.getElementById('hello').textContent = name ? 'Olá, ' + name.split(' ')[0] + '.' : 'Olá.';
-  document.getElementById('main').hidden = false;
+  const nm = (session.user.user_metadata && (session.user.user_metadata.name || session.user.user_metadata.full_name)) || '';
+  try { localStorage.setItem('cm_role', 'cliente'); localStorage.setItem('cm_name', nm); } catch (e) { /* ok */ }
+  const { data, error: e2 } = await sb.rpc('amaralesilva_portal_overview');
+  if (e2) {
+    $('hello').textContent = 'Olá.';
+    $('lede').textContent = 'Não foi possível carregar o seu projeto agora. Recarregue a página em instantes.';
+    $('main').hidden = false;
+    return;
+  }
+  render(data || {}, session);
 })();
 </script>
 </body>

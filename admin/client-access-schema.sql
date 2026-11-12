@@ -98,3 +98,67 @@ create table if not exists public.amaralesilva_portal_attempts (
 create index if not exists amaralesilva_portal_attempts_ip_at_idx
   on public.amaralesilva_portal_attempts (ip, at desc);
 alter table public.amaralesilva_portal_attempts enable row level security;
+
+-- ═══ Fase 2 — o que o cliente enxerga (migração amaralesilva_portal_overview) ═══
+-- O cliente não lê as tabelas internas (split_*, preços, notas). Tudo o que a
+-- área do cliente mostra sai desta função, que devolve só colunas seguras e só
+-- do(s) cliente(s) da pessoa logada:
+--   · projetos a partir de "proposta enviada" (nunca contato, proposta a enviar
+--     ou perdido);
+--   · contrato e parcelas só com o projeto fechado ou concluído; das parcelas,
+--     descrição, vencimento e situação — nunca valor nem divisão;
+--   · reuniões só com a marca shared_with_client (pauta e ata incluídas).
+alter table public.amaralesilva_meetings
+  add column if not exists shared_with_client boolean not null default false;
+
+create or replace function public.amaralesilva_portal_overview()
+returns jsonb
+language plpgsql stable security definer
+set search_path = public
+as $$
+declare
+  ids uuid[] := array(select public.amaralesilva_my_client_ids());
+  vis uuid[];
+begin
+  if coalesce(cardinality(ids), 0) = 0 then
+    return jsonb_build_object('clients', '[]'::jsonb, 'projects', '[]'::jsonb, 'meetings', '[]'::jsonb);
+  end if;
+
+  vis := array(
+    select p.id from public.amaralesilva_projects p
+    where p.client_id = any(ids)
+      and p.status in ('proposta_enviada', 'negociacao', 'fechado', 'concluido')
+  );
+
+  return jsonb_build_object(
+    'clients', (
+      select coalesce(jsonb_agg(jsonb_build_object('id', c.id, 'name', c.name, 'company', c.company) order by c.name), '[]'::jsonb)
+      from public.amaralesilva_clients c where c.id = any(ids)
+    ),
+    'projects', (
+      select coalesce(jsonb_agg(jsonb_build_object(
+        'id', p.id, 'client_id', p.client_id, 'name', p.name, 'status', p.status,
+        'proposal_url', p.proposal_url,
+        'contract_url', case when p.status in ('fechado', 'concluido') then p.contract_url end,
+        'payments', case when p.status in ('fechado', 'concluido') then (
+          select coalesce(jsonb_agg(jsonb_build_object(
+            'description', pa.description, 'due_date', pa.due_date, 'status', pa.status, 'paid_at', pa.paid_at
+          ) order by pa.due_date), '[]'::jsonb)
+          from public.amaralesilva_payments pa where pa.project_id = p.id
+        ) else '[]'::jsonb end
+      ) order by p.created_at desc), '[]'::jsonb)
+      from public.amaralesilva_projects p where p.id = any(vis)
+    ),
+    'meetings', (
+      select coalesce(jsonb_agg(jsonb_build_object(
+        'id', m.id, 'project_id', m.project_id, 'title', m.title, 'starts_at', m.starts_at,
+        'ends_at', m.ends_at, 'location', m.location, 'topics', m.topics, 'minutes', m.minutes
+      ) order by m.starts_at desc), '[]'::jsonb)
+      from public.amaralesilva_meetings m
+      where m.shared_with_client and (m.client_id = any(ids) or m.project_id = any(vis))
+    )
+  );
+end;
+$$;
+revoke execute on function public.amaralesilva_portal_overview() from public, anon;
+grant  execute on function public.amaralesilva_portal_overview() to authenticated;

@@ -2393,6 +2393,7 @@ function meetingModal(m, presets) {
         ${fld('mt-location', 'Local / link', inp('mt-location', 'location', 'text', m?.location, 'placeholder="Meet, presencial…"'), true)}
         ${fld('mt-topics', 'Pauta — tópicos a tratar', txa('mt-topics', 'topics', m?.topics, 'Um tópico por linha.'), true)}
         ${fld('mt-minutes', 'Ata — o que foi proposto / decidido', txa('mt-minutes', 'minutes', m?.minutes, 'Preencha depois da reunião.'), true)}
+        <div class="field span2"><label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" name="shared_with_client" value="1" ${m?.shared_with_client ? 'checked' : ''} style="width:auto" /> Mostrar na área do cliente</label><span class="field__hint">Libera para o cliente a pauta e a ata acima, e só se a reunião tiver cliente ou projeto dele. Deixe desmarcado se houver algo interno.</span></div>
       </div>
       <div class="form-foot">
         ${m ? `<button type="button" class="btn-mini btn-mini--danger" data-action="deleteMeeting" data-id="${m.id}" style="margin-right:auto">Excluir</button>` : ''}
@@ -2406,6 +2407,7 @@ function meetingModal(m, presets) {
       ends_at: d.ends_at ? new Date(d.ends_at).toISOString() : null,
       project_id: strOrNull(d.project_id), client_id: strOrNull(d.client_id),
       location: strOrNull(d.location), topics: strOrNull(d.topics), minutes: strOrNull(d.minutes),
+      shared_with_client: d.shared_with_client === '1',
     };
     return mutate(() => (m ? dbUpdate('meetings', m.id, row) : dbInsert('meetings', row)), m ? 'Reunião atualizada.' : 'Reunião agendada.');
   });

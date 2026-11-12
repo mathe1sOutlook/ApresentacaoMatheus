@@ -386,9 +386,18 @@ painel.
 ## Área do cliente (`/entrar`, `/cliente`)
 
 Plano completo em `docs/plano-area-do-cliente.md`; o desenho das telas está no
-canvas "Área do Cliente CASA MARTECH". Fase 1 pronta: login, perfis e o link no
-header. Prévias, documentos, pagamentos e arquivos vêm nas próximas fases.
+canvas "Área do Cliente CASA MARTECH". Fases 1 e 2 prontas: login, perfis,
+link no header e a área de leitura. Prévias, arquivos e a migração para as
+contas do cliente vêm nas próximas fases.
 
+- **O que o cliente vê** (`/cliente`): tudo sai de
+  `amaralesilva_portal_overview()`, que devolve só colunas seguras e só do
+  cliente logado. Projetos a partir de "proposta enviada" (nunca contato,
+  proposta a enviar ou perdido); contrato e parcelas só com o projeto fechado
+  ou concluído; das parcelas, descrição, vencimento e situação, nunca valor nem
+  divisão; reuniões só com a marca **Mostrar na área do cliente** (campo
+  `shared_with_client`, no modal da reunião), com pauta e ata. Nada de
+  `split_*`, preços ou notas internas chega ao navegador do cliente.
 - **Perfis**: `amaralesilva_my_role()` devolve `equipe`, `cliente` ou nulo.
   Equipe vai para `/admin`, cliente para `/cliente`; conta de outro app (o Auth
   do `mApps` é compartilhado) cai em "sem acesso". Quem decide é o banco, não a
