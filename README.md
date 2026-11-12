@@ -498,8 +498,11 @@ aprovação, arquivos nos dois sentidos e a passagem para as contas do cliente.
   programa de e-mail o abre antes da pessoa) volta com aviso para pedir outro.
 - **Cloudflare Turnstile**, só nas nossas rotas: a etapa do e-mail (`check`) e o
   envio do link de criar senha (`recover`, que agora é a própria `portal-auth`
-  quem manda, só para e-mail de cliente cadastrado). O widget só aparece se o
-  Cloudflare precisar de interação. O Auth do projeto é compartilhado com outros
+  quem manda, só para e-mail de cliente cadastrado). O widget fica **sempre
+  visível** no topo do cartão (nas telas de e-mail, senha e primeiro acesso) e
+  começa a verificar quando a página abre; cada token vale uma vez, então ao usar
+  um o widget reinicia e busca o próximo. O pedido que chegar antes do token
+  espera por ele (até 20 s). O Auth do projeto é compartilhado com outros
   apps e **não** teve o captcha nativo ligado; por isso a senha continua indo
   direto do navegador ao Supabase, que já limita por IP. Para ligar:
   1. No Cloudflare, criar um widget Turnstile com os domínios
