@@ -66,8 +66,11 @@ grant  execute on function public.amaralesilva_my_client_ids() to authenticated;
 
 -- Situação de um e-mail para a primeira etapa do login. Só a Edge Function
 -- portal-auth (service role) chama: devolve 'nao' | 'primeiro_acesso' | 'senha'.
--- 'senha' = existe conta com senha definida; 'primeiro_acesso' = cadastrado
--- mas ainda sem senha.
+-- 'senha' = a conta já entrou alguma vez e tem senha; 'primeiro_acesso' =
+-- cadastrado mas nunca entrou. O cadastro do cliente cria a conta com um hash
+-- de senha aleatório (que ninguém conhece), então "tem senha" não basta para
+-- separar os dois casos: o que vale é nunca ter entrado (last_sign_in_at).
+-- Migração amaralesilva_login_status_primeiro_acesso.
 create or replace function public.amaralesilva_client_login_status(p_email text)
 returns text
 language sql stable security definer
@@ -80,7 +83,9 @@ as $$
     ) then 'nao'
     when exists (
       select 1 from auth.users a
-      where lower(a.email) = lower(p_email) and coalesce(a.encrypted_password, '') <> ''
+      where lower(a.email) = lower(p_email)
+        and a.last_sign_in_at is not null
+        and coalesce(a.encrypted_password, '') <> ''
     ) then 'senha'
     else 'primeiro_acesso'
   end;

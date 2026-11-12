@@ -354,12 +354,25 @@ estar nessa lista**. (O provider Google já está ativo no projeto.)
 
 ### Login com Google
 
-O botão de entrar é o do próprio Google (Google Identity Services,
-`assets/admin-google-login.js`): o Google autentica direto no
-`casamartech.com.br` e entrega um ID token que o Supabase aceita por
-`signInWithIdToken`. Assim a tela do Google mostra "Casa Martech" e o domínio
-do site, e não mais o endereço `…supabase.co` que o redirecionamento OAuth
-mostrava. O redirecionamento antigo continua embaixo, como alternativa.
+A porta de entrada é **uma só: `/entrar`**, para a equipe e para os clientes.
+`/admin` não tem tela de login: sem sessão ele manda para `/entrar` (e guarda o
+endereço interno, `#/projeto/…`, para voltar a ele). Depois de entrar,
+`amaralesilva_my_role()` encaminha: quem está em `amaralesilva_members` vai para
+`/admin`, o cliente vai para `/cliente`. Quem não tem perfil nenhum é desconectado
+e vê "Sem acesso".
+
+O botão da equipe é o do próprio Google (Google Identity Services, no script de
+`entrar/index.html`): o Google autentica direto no `casamartech.com.br` e entrega
+um ID token que o Supabase aceita por `signInWithIdToken`. Assim a tela do Google
+mostra "Casa Martech" e o domínio do site, e não o endereço `…supabase.co` que o
+redirecionamento OAuth mostrava. A sessão cai no armazenamento do navegador, com a
+mesma chave que o `/admin` lê.
+
+Embaixo do botão há uma alternativa, "Não funcionou? Entrar de outro jeito": o
+redirecionamento OAuth do Supabase. Ela usa **PKCE** de propósito: o `/admin` cria o
+cliente com PKCE e só entende `?code=` na volta. O restante do `/entrar` usa fluxo
+implícito (o link de criar senha precisa abrir em outro aparelho), e o implícito
+devolveria `#access_token`, que o `/admin` ignora.
 
 Para funcionar, no Google Cloud Console, no Client ID
 `874081383632-dktraoefi4mrg4hh4rmb9ekts9b5n5k0` (o mesmo do provedor Google no
@@ -474,10 +487,15 @@ aprovação, arquivos nos dois sentidos e a passagem para as contas do cliente.
   reativa e remove os acessos.
 - **Login em duas etapas**: o e-mail vai a `portal-auth` (`action:"check"`,
   20 tentativas por IP em 10 min) e volta `nao`, `primeiro_acesso` ou `senha`.
-  Senha de no mínimo 8 caracteres (a tela exige; o Auth do projeto não foi
-  alterado por ser compartilhado). Primeiro acesso e "esqueci a senha" usam o
-  e-mail de recuperação do Supabase, em fluxo implícito para abrir em outro
-  aparelho.
+  `primeiro_acesso` é a conta que nunca entrou: o cadastro cria a conta já com
+  um hash de senha aleatório, então "tem senha" não separa os casos
+  (`amaralesilva_client_login_status`, em `admin/client-access-schema.sql`).
+  Senha de no mínimo **10** caracteres: é o mínimo do Auth do projeto, que é
+  compartilhado e não foi alterado, e a tela pede o mesmo número. Primeiro acesso
+  e "esqueci a senha" usam o e-mail de recuperação do Supabase, em fluxo
+  implícito para abrir em outro aparelho; o envio espera 1 minuto entre pedidos
+  (o Auth responde 429 antes disso). Link vencido ou já aberto (comum quando o
+  programa de e-mail o abre antes da pessoa) volta com aviso para pedir outro.
 - **Header do site**: "Entrar" antes do botão de conversa; com sessão neste
   navegador vira "Minha área" ou "Painel" (lê `cm_role` do `localStorage`, só
   interface).

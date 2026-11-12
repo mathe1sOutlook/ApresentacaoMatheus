@@ -33,7 +33,7 @@ de implementação. Nada aqui foi construído ainda.
 
 ## 2. Login em duas etapas
 
-- Supabase Auth, e-mail e senha, mínimo de 8 caracteres, cadastro público
+- Supabase Auth, e-mail e senha, mínimo de 10 caracteres (o do Auth compartilhado), cadastro público
   desligado. Equipe segue com Google.
 - Passo 1: Edge Function `auth-check` devolve `senha`, `primeiro_acesso` ou
   `nao`, com limite de tentativas por IP e sem consulta aberta ao banco pelo

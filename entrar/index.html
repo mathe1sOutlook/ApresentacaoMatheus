@@ -30,6 +30,7 @@
 .hint { margin: 10px 0 0; font: 400 12px var(--mono); color: var(--ink-soft); }
 .hint.is-ok { color: var(--blue); }
 .p { margin: 0 0 20px; font-size: 15px; line-height: 1.6; color: var(--ink-soft); }
+.gsi { display: flex; justify-content: center; min-height: 44px; color-scheme: light; }
 @media (max-width: 900px) {
   .login { flex-direction: column; align-items: stretch; gap: 40px; padding: 40px 20px 56px; }
   .card { width: 100%; padding: 24px; }
@@ -69,7 +70,10 @@
           <button class="btn btn--ochre" type="submit" id="b-email" style="margin-top:16px">Continuar</button>
         </form>
         <div class="sep">EQUIPE</div>
+        <div class="gsi" id="g-signin" hidden></div>
         <button class="btn btn--light" type="button" id="b-google">Entrar com Google</button>
+        <p class="msg" id="m-google" role="alert"></p>
+        <p class="tiny" id="alt-google" hidden><button type="button" id="b-google-alt">Não funcionou? Entrar de outro jeito</button></p>
       </section>
 
       <!-- 2 · senha -->
@@ -82,7 +86,7 @@
             <input class="field" id="senha" type="password" autocomplete="current-password" required />
             <button type="button" id="b-show" aria-controls="senha">mostrar</button>
           </div>
-          <p class="hint" id="h-senha">Mínimo de 8 caracteres</p>
+          <p class="hint" id="h-senha">Mínimo de 10 caracteres</p>
           <p class="msg" id="m-senha" role="alert"></p>
           <button class="btn btn--ochre" type="submit" id="b-senha" style="margin-top:16px" disabled>Entrar</button>
         </form>
@@ -109,7 +113,7 @@
           <input type="text" autocomplete="username" class="js-email-val" hidden tabindex="-1" aria-hidden="true" />
           <label class="lbl" for="nova">Nova senha</label>
           <input class="field" id="nova" type="password" autocomplete="new-password" required />
-          <p class="hint" id="h-nova">Mínimo de 8 caracteres</p>
+          <p class="hint" id="h-nova">Mínimo de 10 caracteres</p>
           <p class="msg" id="m-nova" role="alert"></p>
           <button class="btn btn--ochre" type="submit" id="b-nova" style="margin-top:16px" disabled>Salvar e entrar</button>
         </form>
@@ -132,7 +136,12 @@
    amaralesilva_my_role() devolver um perfil. Ver admin/client-access-schema.sql. */
 const SUPABASE_URL = 'https://wsgjbzsdewzplsnpfvdf.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_uUuSrKXuJXalJ79WO0PxDg_QpIEOfvA';
-const MIN_PW = 8;
+/* O Auth do projeto é compartilhado e exige pelo menos 10 caracteres; abaixo
+   disso o Supabase recusa a senha (422), então a tela já pede 10. */
+const MIN_PW = 10;
+/* O mesmo Client ID configurado no provedor Google do Supabase: o token
+   precisa ter esse "aud". Não é segredo. */
+const GOOGLE_CLIENT_ID = '874081383632-dktraoefi4mrg4hh4rmb9ekts9b5n5k0.apps.googleusercontent.com';
 
 /* implicit: o link do e-mail precisa abrir em outro aparelho sem o verificador
    do PKCE, que só existe no navegador que pediu. */
@@ -156,6 +165,33 @@ function show(id) {
 }
 const say = (id, text, kind) => { const n = $(id); n.textContent = text || ''; n.className = 'msg' + (kind ? ' msg--' + kind : ''); };
 const busy = (btn, on, label) => { btn.disabled = on; if (label) btn.textContent = label; };
+
+/* Traduz o erro do Auth numa frase que diz o que fazer. */
+function authMsg(error, fallback) {
+  const code = String((error && error.code) || '');
+  const status = (error && error.status) || 0;
+  const text = String((error && error.message) || '').toLowerCase();
+  if (status === 429 || /rate_limit|too many|rate limit/.test(code + ' ' + text)) {
+    return 'Muitos pedidos em pouco tempo. Espere cerca de um minuto e tente de novo.';
+  }
+  if (code === 'same_password' || /different from the old/.test(text)) return 'Escolha uma senha diferente da anterior.';
+  if (code === 'weak_password' || /password should|at least \d+ characters/.test(text)) {
+    return 'Essa senha não foi aceita. Use pelo menos ' + MIN_PW + ' caracteres e evite senhas comuns.';
+  }
+  if (status === 401 || status === 403 || /session|jwt|expired|invalid|not found/.test(code + ' ' + text)) {
+    return 'Este link já foi usado ou venceu. Volte, digite o e-mail e peça um novo.';
+  }
+  if (/failed to fetch|network|load failed/.test(text)) return 'Sem conexão com o servidor. Verifique a internet e tente de novo.';
+  return fallback;
+}
+
+/* Volta de um link que não vale mais: o Supabase devolve o erro no endereço.
+   Acontece quando o programa de e-mail abre o link antes da pessoa, ou quando
+   ele é aberto duas vezes. */
+const linkError = (() => {
+  const p = new URLSearchParams(location.hash.replace(/^#/, ''));
+  return p.get('error_code') || p.get('error') || '';
+})();
 
 /* Guarda só para o header do site saber o que mostrar; não é segurança. */
 function remember(role, name) {
@@ -193,7 +229,7 @@ $('f-email').addEventListener('submit', async (e) => {
     email = v;
     if (j.status === 'senha') { show('s-senha'); }
     else if (j.status === 'primeiro_acesso') { show('s-primeiro'); }
-    else { say('m-email', 'Não encontramos um acesso para este e-mail. Se você é cliente da CASA MARTECH, fale com a gente.', 'err'); }
+    else { say('m-email', 'Não encontramos um acesso para este e-mail. Se você é cliente da CASA MARTECH, fale com a gente. Se é da equipe, use o botão do Google abaixo.', 'err'); }
   } catch (err) {
     say('m-email', 'Não foi possível verificar agora. Tente de novo em instantes.', 'err');
   } finally { busy($('b-email'), false, 'Continuar'); }
@@ -233,13 +269,18 @@ $('f-senha').addEventListener('submit', async (e) => {
   if (!done) busy($('b-senha'), false, 'Entrar');
 });
 
-/* 3/esqueci · link para criar ou trocar a senha */
+/* 3/esqueci · link para criar ou trocar a senha. O Auth limita os envios
+   (429); esperar 1 minuto entre pedidos evita o erro e os cliques repetidos. */
+let lastSent = 0;
 async function sendLink(msgId, btn, label) {
+  const wait = 60 - Math.floor((Date.now() - lastSent) / 1000);
+  if (wait > 0) { say(msgId, 'Já enviamos um link agora há pouco. Espere ' + wait + ' s para pedir outro e confira a caixa de spam.', 'err'); return; }
   say(msgId, '');
   busy(btn, true, 'Enviando…');
   const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/entrar' });
   busy(btn, false, label);
-  if (error) { say(msgId, 'Não foi possível enviar agora. Tente de novo em instantes.', 'err'); return; }
+  if (error) { say(msgId, authMsg(error, 'Não foi possível enviar agora. Tente de novo em instantes.'), 'err'); return; }
+  lastSent = Date.now();
   show('s-enviado');
 }
 $('b-primeiro').addEventListener('click', () => sendLink('m-primeiro', $('b-primeiro'), 'Enviar link para criar a senha'));
@@ -253,7 +294,7 @@ $('f-nova').addEventListener('submit', async (e) => {
   busy($('b-nova'), true, 'Salvando…');
   const { error } = await sb.auth.updateUser({ password: $('nova').value });
   if (error) {
-    say('m-nova', /same|different/i.test(error.message) ? 'Escolha uma senha diferente da anterior.' : 'Não foi possível salvar a senha. Peça um novo link.', 'err');
+    say('m-nova', authMsg(error, 'Não foi possível salvar a senha agora. Tente de novo em instantes.'), 'err');
     busy($('b-nova'), false, 'Salvar e entrar');
     return;
   }
@@ -269,11 +310,77 @@ document.querySelectorAll('.js-back').forEach((b) => b.addEventListener('click',
   show('s-email');
 }));
 
-/* equipe: mesmo Google do painel; o retorno cai direto no /admin */
-$('b-google').addEventListener('click', async () => {
-  const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/admin' } });
-  if (error) say('m-email', 'Erro no login com Google: ' + error.message, 'err');
-});
+/* equipe · porta única. O botão é o do próprio Google (Google Identity
+   Services): o Google autentica direto no casamartech.com.br e entrega um ID
+   token que o Supabase aceita por signInWithIdToken. A tela do Google mostra
+   o nome do app e o domínio do site, e não o endereço …supabase.co do
+   redirecionamento OAuth. O token cai na sessão deste navegador, que o /admin
+   também lê (mesma chave de armazenamento), e route() encaminha a equipe. */
+let gNonce = '';
+const sha256Hex = async (text) => {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, '0')).join('');
+};
+
+async function onGoogleCredential(resp) {
+  say('m-google', '');
+  try {
+    const { error } = await sb.auth.signInWithIdToken({ provider: 'google', token: resp.credential, nonce: gNonce });
+    if (error) throw error;
+    const done = await route();
+    if (!done) initGoogle(); /* o nonce é de uso único: prepara outro */
+  } catch (e) {
+    say('m-google', 'Não foi possível entrar com o Google. Tente de novo ou use "outro jeito".', 'err');
+    initGoogle();
+  }
+}
+
+async function initGoogle() {
+  if (!window.google || !google.accounts || !google.accounts.id) return;
+  gNonce = Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, '0')).join('');
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: onGoogleCredential,
+    nonce: await sha256Hex(gNonce),
+    ux_mode: 'popup',
+    context: 'signin',
+    itp_support: true,
+    use_fedcm_for_button: true,
+    auto_select: false,
+  });
+  const box = $('g-signin');
+  box.replaceChildren();
+  box.hidden = false;
+  google.accounts.id.renderButton(box, {
+    type: 'standard', theme: 'outline', size: 'large', text: 'signin_with',
+    shape: 'rectangular', logo_alignment: 'left', locale: 'pt-BR',
+    width: Math.max(200, Math.min(356, $('card').clientWidth - 64)),
+  });
+  /* o botão antigo vira alternativa discreta */
+  $('b-google').hidden = true;
+  $('alt-google').hidden = false;
+}
+
+/* Alternativa: redirecionamento OAuth do Supabase. Usa PKCE, que é o que o
+   /admin entende na volta (?code=); com o fluxo implícito deste cliente a
+   volta seria #access_token, que o /admin ignora. O verificador do PKCE fica
+   no mesmo armazenamento, então o /admin consegue concluir a troca. */
+async function googleRedirect() {
+  say('m-google', '');
+  const pkce = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'pkce', persistSession: true, detectSessionInUrl: false, autoRefreshToken: false } });
+  const { error } = await pkce.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/admin' } });
+  if (error) say('m-google', 'Não foi possível entrar com o Google agora. Tente de novo em instantes.', 'err');
+}
+$('b-google').addEventListener('click', googleRedirect);
+$('b-google-alt').addEventListener('click', googleRedirect);
+
+if (sb) {
+  const g = document.createElement('script');
+  g.src = 'https://accounts.google.com/gsi/client';
+  g.async = true;
+  g.onload = initGoogle;
+  document.head.appendChild(g);
+}
 
 /* início: volta de link de recuperação, ou sessão que já existe */
 if (!sb) {
@@ -283,6 +390,10 @@ if (!sb) {
     if (event === 'PASSWORD_RECOVERY') { recovery = true; show('s-nova'); }
   });
   (async () => {
+    if (linkError) {
+      history.replaceState(null, '', location.pathname);
+      say('m-email', 'Este link já foi usado ou venceu. Alguns programas de e-mail abrem o link antes de você. Digite o e-mail e peça um novo.', 'err');
+    }
     const { data: { session } } = await sb.auth.getSession();
     if (recovery) { if (session) { email = session.user.email || ''; show('s-nova'); } return; }
     if (session) await route();
