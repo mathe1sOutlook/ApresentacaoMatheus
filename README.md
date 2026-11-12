@@ -386,9 +386,9 @@ painel.
 ## Área do cliente (`/entrar`, `/cliente`)
 
 Plano completo em `docs/plano-area-do-cliente.md`; o desenho das telas está no
-canvas "Área do Cliente CASA MARTECH". Fases 1 a 4 prontas: login, perfis,
-link no header, área de leitura, prévias com comentários e aprovação, e
-arquivos nos dois sentidos. A migração para as contas do cliente vem depois.
+canvas "Área do Cliente CASA MARTECH". As cinco fases do plano estão prontas:
+login, perfis, link no header, área de leitura, prévias com comentários e
+aprovação, arquivos nos dois sentidos e a passagem para as contas do cliente.
 
 - **O que o cliente vê** (`/cliente`): tudo sai de
   `amaralesilva_portal_overview()`, que devolve só colunas seguras e só do
@@ -429,6 +429,15 @@ arquivos nos dois sentidos. A migração para as contas do cliente vem depois.
   - **Aviso:** arquivo enviado pelo cliente avisa a dupla por push.
   - DDL em `admin/client-files-schema.sql`. Excluir um cliente apaga as linhas,
     mas não os objetos do Storage (a plataforma não permite apagá-los por SQL).
+- **Passagem para as suas contas** (fase 5): o site nasce hospedado de forma
+  provisória na CASA MARTECH e, aprovado, migra para as contas do cliente. Cada
+  projeto tem um checklist (`amaralesilva_handoff_items`) mantido pela equipe em
+  **Migração** no painel: item, onde está hoje, para onde vai, situação (a
+  definir, aguarda o cliente, em andamento, concluído), o que o cliente precisa
+  fazer e uma observação. "Checklist padrão" cria Site, Domínio e Código-fonte.
+  O cliente vê a lista em `/cliente` e, nos itens "aguarda o cliente", tem o
+  botão **Já fiz**, que move o item para "em andamento" e avisa a dupla por push.
+  Concluir registra a data. DDL em `admin/handoff-schema.sql`.
 - **Perfis**: `amaralesilva_my_role()` devolve `equipe`, `cliente` ou nulo.
   Equipe vai para `/admin`, cliente para `/cliente`; conta de outro app (o Auth
   do `mApps` é compartilhado) cai em "sem acesso". Quem decide é o banco, não a

@@ -883,6 +883,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
         <a href="#/acesso" data-route="acesso">Acesso dos clientes</a>
         <a href="#/previas" data-route="previas">Prévias</a>
         <a href="#/arquivos" data-route="arquivos">Arquivos dos clientes</a>
+        <a href="#/migracao" data-route="migracao">Migração</a>
         <a href="#/financeiro" data-route="financeiro">Financeiro</a>
         <a href="#/agenda" data-route="agenda">Agenda</a>
         <a href="#/tarefas" data-route="tarefas">Tarefas</a>
@@ -945,7 +946,7 @@ const sb = window.supabase
 const state = {
   session: null,
   members: [], me: null,
-  clients: [], clientUsers: [], previews: [], previewComments: [], clientFiles: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
+  clients: [], clientUsers: [], previews: [], previewComments: [], clientFiles: [], handoff: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
 };
 const now0 = new Date();
 const ui = {
@@ -1144,7 +1145,7 @@ function payShareB(p) {
 
 /* ═══ Dados ════════════════════════════════════════════════════════ */
 async function fetchAll() {
-  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles] = await Promise.all([
+  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles, handoff] = await Promise.all([
     sb.from(TB('clients')).select('*').order('name'),
     sb.from(TB('projects')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('notes')).select('*').order('created_at', { ascending: false }),
@@ -1158,12 +1159,13 @@ async function fetchAll() {
     sb.from(TB('previews')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('preview_comments')).select('id,preview_id,parent_id,kind,resolved,author_role,created_at').order('created_at'),
     sb.from(TB('client_files')).select('*').order('created_at', { ascending: false }),
+    sb.from(TB('handoff_items')).select('*').order('position').order('created_at'),
   ]);
-  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles].find((r) => r.error);
+  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles, handoff].find((r) => r.error);
   if (firstErr) throw firstErr.error;
   state.clients = clients.data; state.projects = projects.data; state.notes = notes.data;
   state.meetings = meetings.data; state.payments = payments.data; state.checkouts = checkouts.data; state.tasks = tasks.data;
-  state.members = members.data; state.leads = leads.data; state.clientUsers = clientUsers.data; state.previews = previews.data; state.previewComments = previewComments.data; state.clientFiles = clientFiles.data;
+  state.members = members.data; state.leads = leads.data; state.clientUsers = clientUsers.data; state.previews = previews.data; state.previewComments = previewComments.data; state.clientFiles = clientFiles.data; state.handoff = handoff.data;
 }
 
 /* ═══ Releitura automática ═════════════════════════════════════════
@@ -1727,6 +1729,55 @@ VIEWS.arquivos = function () {
     </div>
   </div>
   <p class="soft" style="font-size:13px;line-height:1.55;max-width:680px;margin-top:16px">O que você envia aqui aparece para o cliente em “Enviados pela CASA MARTECH”. Até 25 MB por arquivo, em imagem, PDF, Office, texto ou .zip.</p>`;
+};
+
+/* ═══ Migração para as contas do cliente (área do cliente, fase 5) ══
+   O site nasce hospedado de forma provisória na CASA MARTECH e, aprovado,
+   passa para as contas do cliente. Este checklist é o que o cliente vê em
+   "Passagem para as suas contas". */
+const HANDOFF_STATUS = { a_definir: 'A definir', aguarda_cliente: 'Aguarda o cliente', em_andamento: 'Em andamento', concluido: 'Concluído' };
+const HANDOFF_PRESETS = {
+  site: { title: 'Site', from: 'Hospedagem provisória da CASA MARTECH', to: 'Sua conta de hospedagem' },
+  dominio: { title: 'Domínio', from: 'A definir com você', to: 'Seu registro de domínio' },
+  codigo: { title: 'Código-fonte', from: 'Repositório da CASA MARTECH', to: 'Seu repositório' },
+  email: { title: 'E-mail', from: '', to: '' },
+  analytics: { title: 'Analytics', from: '', to: '' },
+  outro: { title: '', from: '', to: '' },
+};
+
+VIEWS.migracao = function () {
+  const rows = state.handoff.map((i) => {
+    const p = projById(i.project_id);
+    const c = p ? clientById(p.client_id) : null;
+    const route = [i.from_where, i.to_where].filter(Boolean).map(esc).join(' → ');
+    return `<tr class="is-clickable" data-action="editHandoff" data-id="${i.id}">
+      <td><b>${esc(p ? p.name : '—')}</b>${c ? `<br /><span class="mono soft" style="font-size:11px">${esc(c.name)}</span>` : ''}</td>
+      <td><b>${esc(i.title)}</b>${route ? `<br /><span class="soft" style="font-size:12px">${route}</span>` : ''}</td>
+      <td><span class="chip ${i.status === 'concluido' ? 'chip--pago' : i.status === 'aguarda_cliente' ? 'chip--previsto' : ''}">${esc(HANDOFF_STATUS[i.status])}</span></td>
+      <td style="font-size:12px;max-width:260px">${esc(i.client_action || '—')}</td>
+      <td class="actions"><button type="button" class="btn-mini" data-action="editHandoff" data-id="${i.id}">Editar</button></td>
+    </tr>`;
+  }).join('');
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">O que muda de mãos quando o site sai da hospedagem provisória</p>
+      <h1 class="view-title">Migração para as contas</h1>
+    </div>
+    <div class="view-actions">
+      <button type="button" class="btn-ghost" data-action="handoffTemplate">Checklist padrão…</button>
+      <button type="button" class="btn-solid" data-action="newHandoff">+ Item</button>
+    </div>
+  </div>
+  <div class="card card__body--flush">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Projeto</th><th>Item</th><th>Situação</th><th>O que o cliente precisa fazer</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="5" class="empty">Nenhum item ainda. Use “Checklist padrão” para começar um projeto com site, domínio e código-fonte.</td></tr>'}</tbody>
+    </table>
+    </div>
+  </div>
+  <p class="soft" style="font-size:13px;line-height:1.55;max-width:680px;margin-top:16px">O cliente vê estes itens na área dele. Em “Aguarda o cliente” ele ganha o botão “Já fiz”, que avisa vocês e move o item para “Em andamento”. “Concluído” registra a data.</p>`;
 };
 
 /* ═══ Projeto (detalhe) ════════════════════════════════════════════ */
@@ -2697,6 +2748,56 @@ function fileModal() {
   });
 }
 
+/* — Migração — */
+function handoffModal(it) {
+  if (!state.projects.length) { toast('Cadastre o projeto antes.'); return; }
+  const preset = (it ? null : HANDOFF_PRESETS.site);
+  openModal(it ? 'Editar item da migração' : 'Novo item da migração', `
+    <form>
+      <div class="form-grid">
+        ${fld('hf-project', 'Projeto *', sel('hf-project', 'project_id', state.projects.map((p) => [p.id, p.name + (clientById(p.client_id) ? ' · ' + clientById(p.client_id).name : '')]), it ? it.project_id : ''), true)}
+        ${it ? '' : fld('hf-preset', 'Modelo', sel('hf-preset', 'preset', [['site', 'Site'], ['dominio', 'Domínio'], ['codigo', 'Código-fonte'], ['email', 'E-mail'], ['analytics', 'Analytics'], ['outro', 'Outro']], 'site'), true)}
+        ${fld('hf-title', 'Item *', inp('hf-title', 'title', 'text', it ? it.title : preset.title, 'required maxlength="120"'), true)}
+        ${fld('hf-from', 'Hoje está em', inp('hf-from', 'from_where', 'text', it ? it.from_where : preset.from, 'maxlength="200"'))}
+        ${fld('hf-to', 'Vai para', inp('hf-to', 'to_where', 'text', it ? it.to_where : preset.to, 'maxlength="200"'))}
+        ${fld('hf-status', 'Situação', sel('hf-status', 'status', Object.entries(HANDOFF_STATUS), it ? it.status : 'a_definir'), true)}
+        ${fld('hf-action', 'O que o cliente precisa fazer', txa('hf-action', 'client_action', it ? it.client_action : '', 'Ex.: criar a conta e nos adicionar como colaboradores'), true, 'Aparece para o cliente. Com a situação “Aguarda o cliente”, ele ganha o botão “Já fiz”.')}
+        ${fld('hf-note', 'Observação para o cliente', txa('hf-note', 'note', it ? it.note : ''), true)}
+      </div>
+      <div class="form-foot">
+        ${it ? `<button type="button" class="btn-mini btn-mini--danger" data-action="deleteHandoff" data-id="${it.id}" style="margin-right:auto">Excluir</button>` : ''}
+        <button type="submit" class="btn-solid">${it ? 'Salvar' : 'Adicionar'}</button>
+      </div>
+    </form>`, async (d) => {
+    const row = { project_id: d.project_id, title: d.title, from_where: strOrNull(d.from_where), to_where: strOrNull(d.to_where), status: d.status, client_action: strOrNull(d.client_action), note: strOrNull(d.note) };
+    return mutate(() => (it ? dbUpdate('handoff_items', it.id, row) : dbInsert('handoff_items', Object.assign(row, { position: state.handoff.filter((x) => x.project_id === d.project_id).length }))), it ? 'Item atualizado.' : 'Item adicionado.');
+  });
+  const ps = document.getElementById('hf-preset');
+  if (ps) ps.addEventListener('change', () => {
+    const pr = HANDOFF_PRESETS[ps.value] || HANDOFF_PRESETS.outro;
+    document.getElementById('hf-title').value = pr.title;
+    document.getElementById('hf-from').value = pr.from;
+    document.getElementById('hf-to').value = pr.to;
+  });
+}
+
+function handoffTemplateModal() {
+  if (!state.projects.length) { toast('Cadastre o projeto antes.'); return; }
+  openModal('Checklist padrão', `
+    <form>
+      <div class="form-grid">
+        ${fld('ht-project', 'Projeto *', sel('ht-project', 'project_id', state.projects.map((p) => [p.id, p.name + (clientById(p.client_id) ? ' · ' + clientById(p.client_id).name : '')]), ''), true, 'Cria três itens: Site, Domínio e Código-fonte, todos “A definir”. Depois é só editar cada um.')}
+      </div>
+      <div class="form-foot"><button type="submit" class="btn-solid">Criar itens</button></div>
+    </form>`, async (d) => {
+    const have = new Set(state.handoff.filter((x) => x.project_id === d.project_id).map((x) => x.title));
+    const rows = ['site', 'dominio', 'codigo'].map((k, i) => HANDOFF_PRESETS[k]).filter((pr) => !have.has(pr.title))
+      .map((pr, i) => ({ project_id: d.project_id, title: pr.title, from_where: pr.from, to_where: pr.to, position: have.size + i }));
+    if (!rows.length) { toast('Este projeto já tem esses itens.'); return false; }
+    return mutate(async () => { const { error } = await sb.from(TB('handoff_items')).insert(rows); if (error) throw error; }, rows.length + ' itens criados.');
+  });
+}
+
 /* — Acesso do cliente — */
 function accessModal() {
   if (!state.clients.length) { toast('Cadastre o cliente antes de liberar o acesso.'); return; }
@@ -2854,6 +2955,15 @@ const ACTIONS = {
       if (error) throw error;
       await dbDelete('client_files', f.id);
     }, 'Arquivo excluído.');
+  },
+  newHandoff: () => { closeDrawer(); handoffModal(null); },
+  handoffTemplate: () => { closeDrawer(); handoffTemplateModal(); },
+  editHandoff: (el) => { const it = state.handoff.find((x) => x.id === el.dataset.id); if (it) handoffModal(it); },
+  deleteHandoff: (el) => {
+    const it = state.handoff.find((x) => x.id === el.dataset.id);
+    if (!it || !confirm(`Excluir o item "${it.title}"?`)) return;
+    closeModal();
+    mutate(() => dbDelete('handoff_items', it.id), 'Item excluído.');
   },
   newAccess: () => { closeDrawer(); accessModal(); },
   toggleAccess: (el) => {

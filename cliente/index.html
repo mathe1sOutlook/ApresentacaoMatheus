@@ -42,6 +42,17 @@ a.row:hover { color: var(--ochre); }
 .prev__txt b { display: block; margin-bottom: 4px; font: 400 20px var(--serif); }
 .prev__txt span { font-size: 14px; line-height: 1.5; color: var(--ink-soft); }
 .prev .btn { width: auto; padding: 0 22px; }
+.hand { margin-top: 40px; }
+.hand__row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px 24px; padding: 16px 0; border-top: 1px solid var(--line); }
+.hand__row:last-child { border-bottom: 1px solid var(--line); }
+.hand__main { flex: 1 1 300px; min-width: 0; }
+.hand__main b { display: block; font-weight: 500; font-size: 15px; }
+.hand__main small { display: block; margin-top: 4px; font: 400 12px var(--mono); color: var(--ink-soft); overflow-wrap: anywhere; }
+.hand__main p { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
+.hand__st { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); padding-top: 3px; white-space: nowrap; }
+.hand__st.is-you { color: var(--ochre); }
+.hand__st.is-ok { color: var(--blue); }
+.hand__row .btn { width: auto; min-height: 40px; padding: 0 18px; margin-top: 10px; font-size: 14px; }
 .up { margin-top: 20px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px; }
 .up label.lbl { margin-bottom: 6px; }
 .up .field { height: 44px; }
@@ -130,6 +141,7 @@ function h(tag, props, ...kids) {
   const n = document.createElement(tag);
   for (const k in (props || {})) {
     if (k === 'class') n.className = props[k];
+    else if (k.startsWith('on') && typeof props[k] === 'function') n.addEventListener(k.slice(2), props[k]);
     else if (props[k] != null) n.setAttribute(k, props[k]);
   }
   kids.flat().forEach((c) => { if (c != null && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c))); });
@@ -175,6 +187,33 @@ function previewPanel(v) {
     h('a', { class: 'btn ' + (v.status === 'publicada' || v.status === 'ajustes' ? 'btn--ochre' : 'btn--line'), href: '/cliente/previa/?id=' + encodeURIComponent(v.id) }, 'Abrir a prévia'));
 }
 
+const HAND_ST = { a_definir: 'A definir', aguarda_cliente: 'Aguarda você', em_andamento: 'Em andamento', concluido: 'Concluído' };
+async function confirmHandoff(it, btn) {
+  btn.disabled = true;
+  const { error } = await sb.rpc('amaralesilva_portal_handoff_confirm', { p_id: it.id });
+  if (error) { btn.disabled = false; alert('Não foi possível confirmar agora. Tente de novo.'); return; }
+  const { data } = await sb.rpc('amaralesilva_portal_handoff');
+  handoff = data || [];
+  render(lastData, lastSession, lastPrev);
+}
+function handoffBlock(items) {
+  if (!items.length) return null;
+  return h('div', { class: 'hand' },
+    h('p', { class: 'sh' }, 'Passagem para as suas contas'),
+    items.map((it) => {
+      const route = [it.from_where, it.to_where].filter(Boolean).join('  →  ');
+      const st = HAND_ST[it.status] + (it.status === 'concluido' && it.done_at ? ' em ' + fmtDay.format(new Date(it.done_at)) : '');
+      return h('div', { class: 'hand__row' },
+        h('div', { class: 'hand__main' },
+          h('b', null, it.title),
+          route ? h('small', null, route) : null,
+          it.client_action && it.status !== 'concluido' ? h('p', null, it.client_action) : null,
+          it.note ? h('p', null, it.note) : null,
+          it.status === 'aguarda_cliente' ? h('button', { type: 'button', class: 'btn btn--ochre', onclick: (e) => confirmHandoff(it, e.currentTarget) }, 'Já fiz') : null),
+        h('span', { class: 'hand__st' + (it.status === 'aguarda_cliente' ? ' is-you' : it.status === 'concluido' ? ' is-ok' : '') }, st));
+    }));
+}
+
 function projectBlock(p, previews) {
   const docs = [docRow('Proposta', p.proposal_url), docRow('Contrato', p.contract_url)].filter(Boolean);
   const pays = p.payments || [];
@@ -190,7 +229,8 @@ function projectBlock(p, previews) {
   return h('section', { class: 'proj', 'aria-label': p.name },
     h('div', { class: 'proj__head' }, h('h2', null, p.name), h('span', { class: 'status' }, STATUS[p.status] || '')),
     previewPanel((previews || []).find((v) => v.project_id === p.id)),
-    cols);
+    cols,
+    handoffBlock(handoff.filter((i) => i.project_id === p.id)));
 }
 
 function meetingBlock(m, projName) {
@@ -270,7 +310,9 @@ async function uploadFiles(list) {
 }
 $('up-file').addEventListener('change', (e) => uploadFiles(e.target.files));
 
+let handoff = [], lastData = null, lastSession = null, lastPrev = null;
 function render(data, session, previews) {
+  lastData = data; lastSession = session; lastPrev = previews;
   const proj = data.projects || [];
   const client = (data.clients || [])[0];
   const name = (session.user.user_metadata && (session.user.user_metadata.name || session.user.user_metadata.full_name)) || '';
@@ -312,7 +354,8 @@ function render(data, session, previews) {
   try { localStorage.setItem('cm_role', 'cliente'); localStorage.setItem('cm_name', nm); } catch (e) { /* ok */ }
   window.cmPreviewCookie.set(session);
   sb.auth.onAuthStateChange((ev, s) => { if (s) window.cmPreviewCookie.set(s); });
-  const [{ data, error: e2 }, { data: previews }] = await Promise.all([sb.rpc('amaralesilva_portal_overview'), sb.rpc('amaralesilva_portal_previews')]);
+  const [{ data, error: e2 }, { data: previews }, { data: hand }] = await Promise.all([sb.rpc('amaralesilva_portal_overview'), sb.rpc('amaralesilva_portal_previews'), sb.rpc('amaralesilva_portal_handoff')]);
+  handoff = hand || [];
   if (e2) {
     $('hello').textContent = 'Olá.';
     $('lede').textContent = 'Não foi possível carregar o seu projeto agora. Recarregue a página em instantes.';
