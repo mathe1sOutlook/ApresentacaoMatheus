@@ -62,6 +62,9 @@ proposta-2jem-*/          proposta de marca e plataforma digital da 2JEM, no
 proposta-2jem-contrato-*/ contrato da 2JEM, no mesmo molde do contrato da Media
                 Portal; a proposta entra como Anexo I
 admin/          painel interno da dupla (CRM, financeiro, agenda, tarefas)
+entrar/         login da área do cliente (e-mail, depois senha)
+cliente/        área do cliente (fase 1: só confere o acesso)
+assets/portal.css  estilos compartilhados por /entrar e /cliente
 ```
 
 Sem etapa de build e sem dependências: é HTML estático servido direto pela
@@ -401,6 +404,86 @@ painel.
 - `sw.js` fica na raiz com escopo `/admin` (o painel abre em `/admin`, sem
   barra, que um SW em `/admin/` não alcançaria). Ele não faz cache: só
   recebe push e abre o painel na rota da notificação.
+
+
+## Área do cliente (`/entrar`, `/cliente`)
+
+Plano completo em `docs/plano-area-do-cliente.md`; o desenho das telas está no
+canvas "Área do Cliente CASA MARTECH". As cinco fases do plano estão prontas:
+login, perfis, link no header, área de leitura, prévias com comentários e
+aprovação, arquivos nos dois sentidos e a passagem para as contas do cliente.
+
+- **O que o cliente vê** (`/cliente`): tudo sai de
+  `amaralesilva_portal_overview()`, que devolve só colunas seguras e só do
+  cliente logado. Projetos a partir de "proposta enviada" (nunca contato,
+  proposta a enviar ou perdido); contrato e parcelas só com o projeto fechado
+  ou concluído; das parcelas, descrição, vencimento e situação, nunca valor nem
+  divisão; reuniões só com a marca **Mostrar na área do cliente** (campo
+  `shared_with_client`, no modal da reunião), com pauta e ata. Nada de
+  `split_*`, preços ou notas internas chega ao navegador do cliente.
+- **Prévias** (`/cliente/previa/?id=…`, fase 3): o site de cada versão fica no
+  repositório em `previa/<pasta>/` (com `index.html`) e é protegido pelo
+  `middleware.js` (Routing Middleware da Vercel, sem dependência). As páginas do
+  portal gravam o access token do Supabase no cookie `cm_at` (`Path=/previa`,
+  `assets/portal-session.js`); o middleware entrega o token ao banco, que
+  responde `amaralesilva_preview_access(slug)`. Resposta guardada por 1 min.
+  Sem sessão, página vira redirecionamento para `/entrar` e arquivo vira 401.
+  - **Fluxo da equipe:** pôr a pasta em `previa/`, cadastrar a versão em
+    **Prévias** no painel (nasce como rascunho, que só a equipe abre) e
+    **Publicar**: libera para o cliente do projeto e marca as anteriores como
+    substituídas. "Abrir" mostra como o cliente vê, com os comentários.
+  - **Cliente:** navega na prévia, marca pontos na página, comenta, responde,
+    **pede ajustes** ou **aprova** a versão. A equipe responde e marca como
+    resolvido no mesmo visualizador. Comentário, pedido de ajuste e aprovação
+    avisam a dupla por push (`admin/previews-schema.sql`).
+  - **Banco:** o cliente não lê `amaralesilva_previews` nem os comentários direto;
+    tudo passa por funções `amaralesilva_portal_*` que conferem o dono do
+    projeto. `previa/demo-v1/` é uma pasta de demonstração para testar o fluxo.
+- **Arquivos** (fase 4): bucket **privado** `amaralesilva-client-files` do
+  Storage, uma pasta por cliente (`<client_id>/<project_id|geral>/…`). O cliente
+  envia o que a equipe pediu e baixa o que a equipe entrega; a equipe vê tudo em
+  **Arquivos dos clientes** no painel e envia entregas por lá. Até 25 MB por
+  arquivo, em imagem, PDF, Office, texto ou .zip (lista de tipos no bucket).
+  - **Segurança:** o Storage só deixa o cliente mexer na pasta do próprio
+    cliente, e só apagar o que ele mesmo enviou. A lista passa por
+    `amaralesilva_portal_files()`; o registro, por
+    `amaralesilva_portal_register_file()`, que confere o dono do caminho, o
+    projeto e se o objeto existe de fato. Download por link assinado de 60 s.
+  - **Aviso:** arquivo enviado pelo cliente avisa a dupla por push.
+  - DDL em `admin/client-files-schema.sql`. Excluir um cliente apaga as linhas,
+    mas não os objetos do Storage (a plataforma não permite apagá-los por SQL).
+- **Passagem para as suas contas** (fase 5): o site nasce hospedado de forma
+  provisória na CASA MARTECH e, aprovado, migra para as contas do cliente. Cada
+  projeto tem um checklist (`amaralesilva_handoff_items`) mantido pela equipe em
+  **Migração** no painel: item, onde está hoje, para onde vai, situação (a
+  definir, aguarda o cliente, em andamento, concluído), o que o cliente precisa
+  fazer e uma observação. "Checklist padrão" cria Site, Domínio e Código-fonte.
+  O cliente vê a lista em `/cliente` e, nos itens "aguarda o cliente", tem o
+  botão **Já fiz**, que move o item para "em andamento" e avisa a dupla por push.
+  Concluir registra a data. DDL em `admin/handoff-schema.sql`.
+- **Perfis**: `amaralesilva_my_role()` devolve `equipe`, `cliente` ou nulo.
+  Equipe vai para `/admin`, cliente para `/cliente`; conta de outro app (o Auth
+  do `mApps` é compartilhado) cai em "sem acesso". Quem decide é o banco, não a
+  tela.
+- **Cadastro**: `amaralesilva_client_users` (e-mail → `client_id`), só a equipe
+  escreve. A Edge Function `portal-auth` (`supabase/functions/portal-auth`) faz
+  `action:"invite"` com o Bearer de um membro: grava o e-mail e cria a conta sem
+  senha. DDL em `admin/client-access-schema.sql`. No painel, o cadastro do
+  cliente tem o campo **E-mail de acesso à área do cliente** (pode ser diferente
+  do e-mail de contato) e a tela **Acesso dos clientes** lista, desativa,
+  reativa e remove os acessos.
+- **Login em duas etapas**: o e-mail vai a `portal-auth` (`action:"check"`,
+  20 tentativas por IP em 10 min) e volta `nao`, `primeiro_acesso` ou `senha`.
+  Senha de no mínimo 8 caracteres (a tela exige; o Auth do projeto não foi
+  alterado por ser compartilhado). Primeiro acesso e "esqueci a senha" usam o
+  e-mail de recuperação do Supabase, em fluxo implícito para abrir em outro
+  aparelho.
+- **Header do site**: "Entrar" antes do botão de conversa; com sessão neste
+  navegador vira "Minha área" ou "Painel" (lê `cm_role` do `localStorage`, só
+  interface).
+- **Passo manual**: acrescentar `https://www.casamartech.com.br/entrar` (e os
+  dois endereços da Vercel) às **Redirect URLs** do Supabase, ao lado dos do
+  `/admin`. Sem isso o link do e-mail de senha não volta para a tela.
 
 ## Pendências
 

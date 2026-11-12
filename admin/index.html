@@ -883,6 +883,10 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
         <a href="#/crm" data-route="crm">CRM · Propostas</a>
         <a href="#/leads" data-route="leads">Leads do site<span class="nav-count" id="nav-leads-count" hidden></span></a>
         <a href="#/clientes" data-route="clientes">Clientes</a>
+        <a href="#/acesso" data-route="acesso">Acesso dos clientes</a>
+        <a href="#/previas" data-route="previas">Prévias</a>
+        <a href="#/arquivos" data-route="arquivos">Arquivos dos clientes</a>
+        <a href="#/migracao" data-route="migracao">Migração</a>
         <a href="#/financeiro" data-route="financeiro">Financeiro</a>
         <a href="#/agenda" data-route="agenda">Agenda</a>
         <a href="#/tarefas" data-route="tarefas">Tarefas</a>
@@ -945,7 +949,7 @@ const sb = window.supabase
 const state = {
   session: null,
   members: [], me: null,
-  clients: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
+  clients: [], clientUsers: [], previews: [], previewComments: [], clientFiles: [], handoff: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
 };
 const now0 = new Date();
 const ui = {
@@ -1144,7 +1148,7 @@ function payShareB(p) {
 
 /* ═══ Dados ════════════════════════════════════════════════════════ */
 async function fetchAll() {
-  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads] = await Promise.all([
+  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles, handoff] = await Promise.all([
     sb.from(TB('clients')).select('*').order('name'),
     sb.from(TB('projects')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('notes')).select('*').order('created_at', { ascending: false }),
@@ -1154,12 +1158,17 @@ async function fetchAll() {
     sb.from(TB('tasks')).select('*').order('due_date', { ascending: true, nullsFirst: false }),
     sb.from(TB('members')).select('*').order('name'),
     sb.from(TB('leads')).select('*').order('created_at', { ascending: false }),
+    sb.from(TB('client_users')).select('*').order('created_at', { ascending: false }),
+    sb.from(TB('previews')).select('*').order('created_at', { ascending: false }),
+    sb.from(TB('preview_comments')).select('id,preview_id,parent_id,kind,resolved,author_role,created_at').order('created_at'),
+    sb.from(TB('client_files')).select('*').order('created_at', { ascending: false }),
+    sb.from(TB('handoff_items')).select('*').order('position').order('created_at'),
   ]);
-  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads].find((r) => r.error);
+  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles, handoff].find((r) => r.error);
   if (firstErr) throw firstErr.error;
   state.clients = clients.data; state.projects = projects.data; state.notes = notes.data;
   state.meetings = meetings.data; state.payments = payments.data; state.checkouts = checkouts.data; state.tasks = tasks.data;
-  state.members = members.data; state.leads = leads.data;
+  state.members = members.data; state.leads = leads.data; state.clientUsers = clientUsers.data; state.previews = previews.data; state.previewComments = previewComments.data; state.clientFiles = clientFiles.data; state.handoff = handoff.data;
 }
 
 /* ═══ Releitura automática ═════════════════════════════════════════
@@ -1566,6 +1575,7 @@ VIEWS.clientes = function () {
       <td><b>${esc(c.name)}</b>${c.company ? `<br /><span class="mono soft" style="font-size:11px">${esc(c.company)}</span>` : ''}</td>
       <td class="mono" style="font-size:12px">${esc(c.email || '')}${c.email && c.phone ? '<br />' : ''}${esc(c.phone || '')}</td>
       <td>${esc(c.origin || '—')}</td>
+      <td class="mono" style="font-size:12px">${accessEmailOf(c.id) ? esc(accessEmailOf(c.id)) : '<span class="soft">—</span>'}</td>
       <td>${projs.length ? projs.map((p) => `<button type="button" class="btn-link" style="text-transform:none;letter-spacing:0" data-action="openProject" data-id="${p.id}">${esc(p.name)}</button>`).join('<br />') : '<span class="soft">—</span>'}</td>
       <td class="actions"><button type="button" class="btn-mini" data-action="editClient" data-id="${c.id}">Editar</button></td>
     </tr>`;
@@ -1584,11 +1594,193 @@ VIEWS.clientes = function () {
   <div class="card card__body--flush">
     <div class="tbl-wrap">
     <table class="tbl">
-      <thead><tr><th>Nome</th><th>Contato</th><th>Origem</th><th>Projetos</th><th></th></tr></thead>
-      <tbody>${rows || '<tr><td colspan="5" class="empty">Nenhum cliente ainda. Cadastre o primeiro.</td></tr>'}</tbody>
+      <thead><tr><th>Nome</th><th>Contato</th><th>Origem</th><th>Acesso à área</th><th>Projetos</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="6" class="empty">Nenhum cliente ainda. Cadastre o primeiro.</td></tr>'}</tbody>
     </table>
     </div>
   </div>`;
+};
+
+/* ═══ Acesso dos clientes (área do cliente) ════════════════════════
+   Quem está aqui entra em /entrar com o e-mail e define a própria senha no
+   primeiro acesso. A lista vive em amaralesilva_client_users; cadastrar passa
+   pela Edge Function portal-auth, que também cria a conta no Auth.
+   Ver docs/plano-area-do-cliente.md. */
+VIEWS.acesso = function () {
+  const rows = state.clientUsers.map((u) => {
+    const c = clientById(u.client_id);
+    return `<tr>
+      <td><b>${esc(c ? c.name : '—')}</b>${c && c.company ? `<br /><span class="mono soft" style="font-size:11px">${esc(c.company)}</span>` : ''}</td>
+      <td>${esc(u.name || '—')}<br /><span class="mono soft" style="font-size:12px">${esc(u.email)}</span></td>
+      <td>${u.active ? '<span class="chip">ativo</span>' : '<span class="chip" style="opacity:.6">desativado</span>'}</td>
+      <td class="mono soft" style="font-size:11px">${fmtDate(toISODate(new Date(u.created_at)))}</td>
+      <td class="actions">
+        <button type="button" class="btn-mini" data-action="toggleAccess" data-id="${u.id}">${u.active ? 'Desativar' : 'Reativar'}</button>
+        <button type="button" class="btn-mini btn-mini--danger" data-action="removeAccess" data-id="${u.id}">Remover</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">Quem entra na área do cliente</p>
+      <h1 class="view-title">Acesso dos clientes</h1>
+    </div>
+    <div class="view-actions">
+      <button type="button" class="btn-ghost" data-action="copyEntrar">Copiar endereço de entrada</button>
+      <button type="button" class="btn-solid" data-action="newAccess">+ Liberar acesso</button>
+    </div>
+  </div>
+  <div class="card card__body--flush">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Cliente</th><th>Pessoa</th><th>Situação</th><th>Liberado em</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="5" class="empty">Ninguém com acesso ainda. Libere o e-mail de quem deve ver o projeto.</td></tr>'}</tbody>
+    </table>
+    </div>
+  </div>
+  <p class="soft" style="font-size:13px;line-height:1.55;max-width:640px;margin-top:16px">A pessoa abre o endereço de entrada, digita o e-mail e, no primeiro acesso, recebe um link para criar a senha. Desativar bloqueia a entrada sem apagar o cadastro; remover apaga a linha da lista.</p>`;
+};
+
+/* ═══ Prévias (área do cliente, fase 3) ════════════════════════════
+   O cadastro e o estado de cada versão vivem em amaralesilva_previews; os
+   arquivos, no repositório, em previa/<pasta>/. O middleware.js só serve a
+   pasta a quem pode ver aquela versão. Ver docs/plano-area-do-cliente.md. */
+const PREVIEW_STATUS_LABEL = { rascunho: 'Rascunho', publicada: 'Publicada', ajustes: 'Ajustes pedidos', aprovada: 'Aprovada', substituida: 'Substituída' };
+const openCommentsOf = (id) => state.previewComments.filter((c) => c.preview_id === id && !c.parent_id && c.kind === 'comentario' && !c.resolved).length;
+const slugify = (t) => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50);
+
+VIEWS.previas = function () {
+  const rows = state.previews.map((v) => {
+    const p = projById(v.project_id);
+    const c = p ? clientById(p.client_id) : null;
+    const open = openCommentsOf(v.id);
+    return `<tr>
+      <td><b>${esc(p ? p.name : '—')}</b>${c ? `<br /><span class="mono soft" style="font-size:11px">${esc(c.name)}</span>` : ''}</td>
+      <td class="mono">v${v.version}${v.title ? `<br /><span class="soft" style="font-size:11px">${esc(v.title)}</span>` : ''}</td>
+      <td class="mono" style="font-size:12px">previa/${esc(v.slug)}/</td>
+      <td><span class="chip ${v.status === 'aprovada' ? 'chip--pago' : ''}">${esc(PREVIEW_STATUS_LABEL[v.status] || v.status)}</span></td>
+      <td class="mono" style="font-size:12px">${open ? open + ' em aberto' : '—'}</td>
+      <td class="actions">
+        <a class="btn-mini" href="/cliente/previa/?id=${v.id}" target="_blank" rel="noopener">Abrir</a>
+        ${v.status === 'rascunho' ? `<button type="button" class="btn-mini" data-action="publishPreview" data-id="${v.id}">Publicar</button>` : ''}
+        <button type="button" class="btn-mini btn-mini--danger" data-action="deletePreview" data-id="${v.id}">Excluir</button>
+      </td>
+    </tr>`;
+  }).join('');
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">Versões do site para o cliente comentar e aprovar</p>
+      <h1 class="view-title">Prévias</h1>
+    </div>
+    <div class="view-actions"><button type="button" class="btn-solid" data-action="newPreview">+ Nova versão</button></div>
+  </div>
+  <div class="card card__body--flush">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Projeto</th><th>Versão</th><th>Pasta no repositório</th><th>Situação</th><th>Comentários</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="6" class="empty">Nenhuma prévia ainda. Cadastre a primeira versão de um projeto.</td></tr>'}</tbody>
+    </table>
+    </div>
+  </div>
+  <p class="soft" style="font-size:13px;line-height:1.55;max-width:680px;margin-top:16px">Fluxo: coloque o site em <span class="mono">previa/&lt;pasta&gt;/</span> no repositório (com um <span class="mono">index.html</span>), cadastre a versão aqui e publique. Publicar libera a versão para o cliente do projeto e marca as anteriores como substituídas. “Abrir” mostra como o cliente vê, com os comentários.</p>`;
+};
+
+/* ═══ Arquivos dos clientes (área do cliente, fase 4) ═══════════════
+   Bucket privado amaralesilva-client-files, uma pasta por cliente. O cliente
+   envia o que pedimos; aqui a equipe baixa e também envia entregas. */
+const CF_BUCKET = 'amaralesilva-client-files';
+const fmtBytes = (b) => (b == null ? '—' : b < 1048576 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / 1048576).toFixed(1).replace('.', ',') + ' MB');
+const cfSafeName = (n) => {
+  const i = n.lastIndexOf('.');
+  const ext = i > 0 ? n.slice(i).toLowerCase().replace(/[^.a-z0-9]/g, '').slice(0, 10) : '';
+  const base = (i > 0 ? n.slice(0, i) : n).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'arquivo';
+  return base + ext;
+};
+
+VIEWS.arquivos = function () {
+  const rows = state.clientFiles.map((f) => {
+    const c = clientById(f.client_id), p = f.project_id ? projById(f.project_id) : null;
+    return `<tr>
+      <td><b>${esc(c ? c.name : '—')}</b>${p ? `<br /><span class="mono soft" style="font-size:11px">${esc(p.name)}</span>` : ''}</td>
+      <td>${esc(f.name)}${f.note ? `<br /><span class="soft" style="font-size:12px">${esc(f.note)}</span>` : ''}</td>
+      <td>${f.uploaded_by_role === 'cliente' ? '<span class="chip chip--pago">do cliente</span>' : '<span class="chip">da equipe</span>'}<br /><span class="mono soft" style="font-size:11px">${esc(f.uploaded_by_name || '')}</span></td>
+      <td class="mono" style="font-size:12px">${fmtBytes(f.size)}</td>
+      <td class="mono soft" style="font-size:11px">${fmtDate(toISODate(new Date(f.created_at)))}</td>
+      <td class="actions">
+        <button type="button" class="btn-mini" data-action="downloadFile" data-id="${f.id}">Baixar</button>
+        <button type="button" class="btn-mini btn-mini--danger" data-action="deleteFile" data-id="${f.id}">Excluir</button>
+      </td>
+    </tr>`;
+  }).join('');
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">O que o cliente enviou e o que entregamos a ele</p>
+      <h1 class="view-title">Arquivos dos clientes</h1>
+    </div>
+    <div class="view-actions"><button type="button" class="btn-solid" data-action="newFile">+ Enviar ao cliente</button></div>
+  </div>
+  <div class="card card__body--flush">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Cliente</th><th>Arquivo</th><th>Origem</th><th>Tamanho</th><th>Data</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="6" class="empty">Nenhum arquivo ainda. Eles chegam quando o cliente envia pela área dele.</td></tr>'}</tbody>
+    </table>
+    </div>
+  </div>
+  <p class="soft" style="font-size:13px;line-height:1.55;max-width:680px;margin-top:16px">O que você envia aqui aparece para o cliente em “Enviados pela CASA MARTECH”. Até 25 MB por arquivo, em imagem, PDF, Office, texto ou .zip.</p>`;
+};
+
+/* ═══ Migração para as contas do cliente (área do cliente, fase 5) ══
+   O site nasce hospedado de forma provisória na CASA MARTECH e, aprovado,
+   passa para as contas do cliente. Este checklist é o que o cliente vê em
+   "Passagem para as suas contas". */
+const HANDOFF_STATUS = { a_definir: 'A definir', aguarda_cliente: 'Aguarda o cliente', em_andamento: 'Em andamento', concluido: 'Concluído' };
+const HANDOFF_PRESETS = {
+  site: { title: 'Site', from: 'Hospedagem provisória da CASA MARTECH', to: 'Sua conta de hospedagem' },
+  dominio: { title: 'Domínio', from: 'A definir com você', to: 'Seu registro de domínio' },
+  codigo: { title: 'Código-fonte', from: 'Repositório da CASA MARTECH', to: 'Seu repositório' },
+  email: { title: 'E-mail', from: '', to: '' },
+  analytics: { title: 'Analytics', from: '', to: '' },
+  outro: { title: '', from: '', to: '' },
+};
+
+VIEWS.migracao = function () {
+  const rows = state.handoff.map((i) => {
+    const p = projById(i.project_id);
+    const c = p ? clientById(p.client_id) : null;
+    const route = [i.from_where, i.to_where].filter(Boolean).map(esc).join(' → ');
+    return `<tr class="is-clickable" data-action="editHandoff" data-id="${i.id}">
+      <td><b>${esc(p ? p.name : '—')}</b>${c ? `<br /><span class="mono soft" style="font-size:11px">${esc(c.name)}</span>` : ''}</td>
+      <td><b>${esc(i.title)}</b>${route ? `<br /><span class="soft" style="font-size:12px">${route}</span>` : ''}</td>
+      <td><span class="chip ${i.status === 'concluido' ? 'chip--pago' : i.status === 'aguarda_cliente' ? 'chip--previsto' : ''}">${esc(HANDOFF_STATUS[i.status])}</span></td>
+      <td style="font-size:12px;max-width:260px">${esc(i.client_action || '—')}</td>
+      <td class="actions"><button type="button" class="btn-mini" data-action="editHandoff" data-id="${i.id}">Editar</button></td>
+    </tr>`;
+  }).join('');
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">O que muda de mãos quando o site sai da hospedagem provisória</p>
+      <h1 class="view-title">Migração para as contas</h1>
+    </div>
+    <div class="view-actions">
+      <button type="button" class="btn-ghost" data-action="handoffTemplate">Checklist padrão…</button>
+      <button type="button" class="btn-solid" data-action="newHandoff">+ Item</button>
+    </div>
+  </div>
+  <div class="card card__body--flush">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Projeto</th><th>Item</th><th>Situação</th><th>O que o cliente precisa fazer</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="5" class="empty">Nenhum item ainda. Use “Checklist padrão” para começar um projeto com site, domínio e código-fonte.</td></tr>'}</tbody>
+    </table>
+    </div>
+  </div>
+  <p class="soft" style="font-size:13px;line-height:1.55;max-width:680px;margin-top:16px">O cliente vê estes itens na área dele. Em “Aguarda o cliente” ele ganha o botão “Já fiz”, que avisa vocês e move o item para “Em andamento”. “Concluído” registra a data.</p>`;
 };
 
 /* ═══ Projeto (detalhe) ════════════════════════════════════════════ */
@@ -2262,6 +2454,7 @@ function clientModal(c, prefill, fromLeadId) {
         ${fld('cf-company', 'Empresa', inp('cf-company', 'company', 'text', c?.company))}
         ${fld('cf-email', 'E-mail', inp('cf-email', 'email', 'email', c?.email))}
         ${fld('cf-phone', 'Telefone / WhatsApp', inp('cf-phone', 'phone', 'text', c?.phone))}
+        ${fld('cf-access', 'E-mail de acesso à área do cliente', inp('cf-access', 'access_email', 'email', editing ? accessEmailOf(c.id) : '', 'autocapitalize="none" placeholder="deixe vazio se ainda não for liberar"'), true, 'Com este e-mail a pessoa entra em /entrar e vê o projeto dela. Pode ser diferente do e-mail de contato. Para desativar ou ver todos os acessos: Acesso dos clientes.')}
         ${fld('cf-origin', 'Origem', inp('cf-origin', 'origin', 'text', c?.origin, 'placeholder="indicação, Instagram, site…"'), true)}
         ${fld('cf-notes', 'Notas', txa('cf-notes', 'notes', c?.notes), true)}
       </div>
@@ -2271,7 +2464,17 @@ function clientModal(c, prefill, fromLeadId) {
       </div>
     </form>`, async (d) => {
     const row = { name: d.name, company: strOrNull(d.company), email: strOrNull(d.email), phone: strOrNull(d.phone), origin: strOrNull(d.origin), notes: strOrNull(d.notes) };
-    if (editing) return mutate(() => dbUpdate('clients', c.id, row), 'Cliente atualizado.');
+    const access = (d.access_email || '').toLowerCase();
+    /* Cliente já salvo e acesso falhou: relê antes de avisar, para a tela não
+       mostrar o estado antigo. */
+    const withAccess = async (clientId, fn) => {
+      await fn();
+      if (access && access !== accessEmailOf(clientId).toLowerCase()) {
+        try { await inviteAccess(access, clientId, d.name); }
+        catch (err) { await fetchAll(); throw new Error('cliente salvo, mas o acesso não foi liberado (' + err.message + ')'); }
+      }
+    };
+    if (editing) return mutate(() => withAccess(c.id, () => dbUpdate('clients', c.id, row)), access ? 'Cliente atualizado e acesso liberado.' : 'Cliente atualizado.');
     return mutate(async () => {
       const { data, error } = await sb.from(TB('clients')).insert(row).select('id').single();
       if (error) throw error;
@@ -2284,7 +2487,8 @@ function clientModal(c, prefill, fromLeadId) {
           throw err;
         }
       }
-    }, fromLeadId ? 'Lead convertido em cliente.' : 'Cliente cadastrado.');
+      if (access) await withAccess(data.id, async () => {});
+    }, fromLeadId ? 'Lead convertido em cliente.' : (access ? 'Cliente cadastrado e acesso liberado.' : 'Cliente cadastrado.'));
   });
 }
 
@@ -2339,6 +2543,7 @@ function meetingModal(m, presets) {
         ${fld('mt-location', 'Local / link', inp('mt-location', 'location', 'text', m?.location, 'placeholder="Meet, presencial…"'), true)}
         ${fld('mt-topics', 'Pauta — tópicos a tratar', txa('mt-topics', 'topics', m?.topics, 'Um tópico por linha.'), true)}
         ${fld('mt-minutes', 'Ata — o que foi proposto / decidido', txa('mt-minutes', 'minutes', m?.minutes, 'Preencha depois da reunião.'), true)}
+        <div class="field span2"><label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" name="shared_with_client" value="1" ${m?.shared_with_client ? 'checked' : ''} style="width:auto" /> Mostrar na área do cliente</label><span class="field__hint">Libera para o cliente a pauta e a ata acima, e só se a reunião tiver cliente ou projeto dele. Deixe desmarcado se houver algo interno.</span></div>
       </div>
       <div class="form-foot">
         ${m ? `<button type="button" class="btn-mini btn-mini--danger" data-action="deleteMeeting" data-id="${m.id}" style="margin-right:auto">Excluir</button>` : ''}
@@ -2352,6 +2557,7 @@ function meetingModal(m, presets) {
       ends_at: d.ends_at ? new Date(d.ends_at).toISOString() : null,
       project_id: strOrNull(d.project_id), client_id: strOrNull(d.client_id),
       location: strOrNull(d.location), topics: strOrNull(d.topics), minutes: strOrNull(d.minutes),
+      shared_with_client: d.shared_with_client === '1',
     };
     return mutate(() => (m ? dbUpdate('meetings', m.id, row) : dbInsert('meetings', row)), m ? 'Reunião atualizada.' : 'Reunião agendada.');
   });
@@ -2473,6 +2679,144 @@ function noteModal(projectId, note) {
   });
 }
 
+/* Libera o e-mail como acesso do cliente (Edge Function portal-auth: grava em
+   client_users e cria a conta sem senha). Compartilhada pelo cadastro do
+   cliente e pela tela de Acesso. */
+async function inviteAccess(email, clientId, name) {
+  const { data: { session } } = await sb.auth.getSession();
+  const r = await fetch(SUPABASE_URL + '/functions/v1/portal-auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: SUPABASE_KEY, Authorization: 'Bearer ' + (session ? session.access_token : '') },
+    body: JSON.stringify({ action: 'invite', email, client_id: clientId, name }),
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(r.status === 403 ? 'sem permissão' : (j.error || 'falha ao liberar o acesso'));
+}
+const accessEmailOf = (clientId) => {
+  const u = state.clientUsers.find((x) => x.client_id === clientId && x.active);
+  return u ? u.email : '';
+};
+
+/* — Prévia — */
+function previewModal() {
+  if (!state.projects.length) { toast('Cadastre o projeto antes de criar a prévia.'); return; }
+  const nextV = (pid) => 1 + state.previews.filter((v) => v.project_id === pid).reduce((m, v) => Math.max(m, v.version), 0);
+  const first = state.projects[0];
+  openModal('Nova versão da prévia', `
+    <form>
+      <div class="form-grid">
+        ${fld('pv-project', 'Projeto *', sel('pv-project', 'project_id', state.projects.map((p) => [p.id, p.name + (clientById(p.client_id) ? ' · ' + clientById(p.client_id).name : '')]), first.id), true)}
+        ${fld('pv-version', 'Versão *', inp('pv-version', 'version', 'number', nextV(first.id), 'min="1" step="1" required'))}
+        ${fld('pv-title', 'Título', inp('pv-title', 'title', 'text', '', 'placeholder="Ex.: Primeira rodada"'))}
+        ${fld('pv-slug', 'Pasta em previa/ *', inp('pv-slug', 'slug', 'text', slugify(first.name) + '-v' + nextV(first.id), 'required pattern="[a-z0-9][a-z0-9\\-]{2,80}" autocapitalize="none"'), true, 'Só letras minúsculas, números e hífen. A pasta previa/&lt;isto&gt;/ precisa existir no repositório, com um index.html.')}
+      </div>
+      <div class="form-foot"><button type="submit" class="btn-solid">Cadastrar como rascunho</button></div>
+    </form>`, async (d) => {
+    return mutate(() => dbInsert('previews', {
+      project_id: d.project_id, version: Number(d.version), title: strOrNull(d.title), slug: d.slug.toLowerCase(),
+    }), 'Versão cadastrada como rascunho. Publique quando a pasta estiver no ar.');
+  });
+  /* ao trocar o projeto, sugere a próxima versão e a pasta */
+  const selp = document.getElementById('pv-project');
+  if (selp) selp.addEventListener('change', () => {
+    const p = projById(selp.value);
+    document.getElementById('pv-version').value = nextV(selp.value);
+    document.getElementById('pv-slug').value = slugify(p ? p.name : '') + '-v' + nextV(selp.value);
+  });
+}
+
+/* — Arquivo para o cliente — */
+function fileModal() {
+  if (!state.clients.length) { toast('Cadastre o cliente antes.'); return; }
+  openModal('Enviar arquivo ao cliente', `
+    <form>
+      <div class="form-grid">
+        ${fld('fl-client', 'Cliente *', sel('fl-client', 'client_id', state.clients.map((c) => [c.id, c.name + (c.company ? ' · ' + c.company : '')]), ''), true)}
+        ${fld('fl-project', 'Projeto', sel('fl-project', 'project_id', projectOptions(), ''), true, 'Opcional. Precisa ser um projeto do cliente escolhido.')}
+        ${fld('fl-file', 'Arquivo *', '<input id="fl-file" name="file" type="file" required />', true, 'Até 25 MB. Imagem, PDF, Office, texto ou .zip.')}
+        ${fld('fl-note', 'Observação', inp('fl-note', 'note', 'text', '', 'maxlength="500" placeholder="Aparece para o cliente junto do arquivo"'), true)}
+      </div>
+      <div class="form-foot"><button type="submit" class="btn-solid">Enviar</button></div>
+    </form>`, async (d) => {
+    const f = d.file;
+    if (!f || !f.name) { toast('Escolha o arquivo.'); return false; }
+    if (f.size > 25 * 1048576) { toast('O arquivo passa de 25 MB.'); return false; }
+    return mutate(async () => {
+      const path = d.client_id + '/' + (d.project_id || 'geral') + '/' + crypto.randomUUID() + '-' + cfSafeName(f.name);
+      const up = await sb.storage.from(CF_BUCKET).upload(path, f, { contentType: f.type || undefined, upsert: false });
+      if (up.error) throw up.error;
+      const { error } = await sb.rpc('amaralesilva_portal_register_file', { p_path: path, p_name: f.name, p_size: f.size, p_mime: f.type || null, p_project: d.project_id || null, p_note: d.note || null });
+      if (error) { await sb.storage.from(CF_BUCKET).remove([path]); throw error; }
+    }, 'Arquivo enviado ao cliente.');
+  });
+}
+
+/* — Migração — */
+function handoffModal(it) {
+  if (!state.projects.length) { toast('Cadastre o projeto antes.'); return; }
+  const preset = (it ? null : HANDOFF_PRESETS.site);
+  openModal(it ? 'Editar item da migração' : 'Novo item da migração', `
+    <form>
+      <div class="form-grid">
+        ${fld('hf-project', 'Projeto *', sel('hf-project', 'project_id', state.projects.map((p) => [p.id, p.name + (clientById(p.client_id) ? ' · ' + clientById(p.client_id).name : '')]), it ? it.project_id : ''), true)}
+        ${it ? '' : fld('hf-preset', 'Modelo', sel('hf-preset', 'preset', [['site', 'Site'], ['dominio', 'Domínio'], ['codigo', 'Código-fonte'], ['email', 'E-mail'], ['analytics', 'Analytics'], ['outro', 'Outro']], 'site'), true)}
+        ${fld('hf-title', 'Item *', inp('hf-title', 'title', 'text', it ? it.title : preset.title, 'required maxlength="120"'), true)}
+        ${fld('hf-from', 'Hoje está em', inp('hf-from', 'from_where', 'text', it ? it.from_where : preset.from, 'maxlength="200"'))}
+        ${fld('hf-to', 'Vai para', inp('hf-to', 'to_where', 'text', it ? it.to_where : preset.to, 'maxlength="200"'))}
+        ${fld('hf-status', 'Situação', sel('hf-status', 'status', Object.entries(HANDOFF_STATUS), it ? it.status : 'a_definir'), true)}
+        ${fld('hf-action', 'O que o cliente precisa fazer', txa('hf-action', 'client_action', it ? it.client_action : '', 'Ex.: criar a conta e nos adicionar como colaboradores'), true, 'Aparece para o cliente. Com a situação “Aguarda o cliente”, ele ganha o botão “Já fiz”.')}
+        ${fld('hf-note', 'Observação para o cliente', txa('hf-note', 'note', it ? it.note : ''), true)}
+      </div>
+      <div class="form-foot">
+        ${it ? `<button type="button" class="btn-mini btn-mini--danger" data-action="deleteHandoff" data-id="${it.id}" style="margin-right:auto">Excluir</button>` : ''}
+        <button type="submit" class="btn-solid">${it ? 'Salvar' : 'Adicionar'}</button>
+      </div>
+    </form>`, async (d) => {
+    const row = { project_id: d.project_id, title: d.title, from_where: strOrNull(d.from_where), to_where: strOrNull(d.to_where), status: d.status, client_action: strOrNull(d.client_action), note: strOrNull(d.note) };
+    return mutate(() => (it ? dbUpdate('handoff_items', it.id, row) : dbInsert('handoff_items', Object.assign(row, { position: state.handoff.filter((x) => x.project_id === d.project_id).length }))), it ? 'Item atualizado.' : 'Item adicionado.');
+  });
+  const ps = document.getElementById('hf-preset');
+  if (ps) ps.addEventListener('change', () => {
+    const pr = HANDOFF_PRESETS[ps.value] || HANDOFF_PRESETS.outro;
+    document.getElementById('hf-title').value = pr.title;
+    document.getElementById('hf-from').value = pr.from;
+    document.getElementById('hf-to').value = pr.to;
+  });
+}
+
+function handoffTemplateModal() {
+  if (!state.projects.length) { toast('Cadastre o projeto antes.'); return; }
+  openModal('Checklist padrão', `
+    <form>
+      <div class="form-grid">
+        ${fld('ht-project', 'Projeto *', sel('ht-project', 'project_id', state.projects.map((p) => [p.id, p.name + (clientById(p.client_id) ? ' · ' + clientById(p.client_id).name : '')]), ''), true, 'Cria três itens: Site, Domínio e Código-fonte, todos “A definir”. Depois é só editar cada um.')}
+      </div>
+      <div class="form-foot"><button type="submit" class="btn-solid">Criar itens</button></div>
+    </form>`, async (d) => {
+    const have = new Set(state.handoff.filter((x) => x.project_id === d.project_id).map((x) => x.title));
+    const rows = ['site', 'dominio', 'codigo'].map((k, i) => HANDOFF_PRESETS[k]).filter((pr) => !have.has(pr.title))
+      .map((pr, i) => ({ project_id: d.project_id, title: pr.title, from_where: pr.from, to_where: pr.to, position: have.size + i }));
+    if (!rows.length) { toast('Este projeto já tem esses itens.'); return false; }
+    return mutate(async () => { const { error } = await sb.from(TB('handoff_items')).insert(rows); if (error) throw error; }, rows.length + ' itens criados.');
+  });
+}
+
+/* — Acesso do cliente — */
+function accessModal() {
+  if (!state.clients.length) { toast('Cadastre o cliente antes de liberar o acesso.'); return; }
+  openModal('Liberar acesso', `
+    <form>
+      <div class="form-grid">
+        ${fld('ac-client', 'Cliente *', sel('ac-client', 'client_id', state.clients.map((c) => [c.id, c.name + (c.company ? ' · ' + c.company : '')]), ''), true)}
+        ${fld('ac-name', 'Nome de quem entra', inp('ac-name', 'name', 'text', '', 'placeholder="Marina Souza"'))}
+        ${fld('ac-email', 'E-mail *', inp('ac-email', 'email', 'email', '', 'required placeholder="marina@empresa.com.br" autocapitalize="none"'), false, 'O próprio cliente cria a senha no primeiro acesso.')}
+      </div>
+      <div class="form-foot"><button type="submit" class="btn-solid">Liberar</button></div>
+    </form>`, async (d) => {
+    return mutate(() => inviteAccess(d.email, d.client_id, d.name), 'Acesso liberado para ' + d.email + '. Avise que a entrada é em casamartech.com.br/entrar.');
+  });
+}
+
 /* — Membro — */
 function memberModal() {
   openModal('Novo membro', `
@@ -2580,6 +2924,64 @@ const ACTIONS = {
     const l = leadById(el.dataset.id);
     if (!l || !confirm(`Excluir o lead "${l.name}"?`)) return;
     mutate(() => dbDelete('leads', l.id), 'Lead excluído.');
+  },
+  newPreview: () => { closeDrawer(); previewModal(); },
+  publishPreview: (el) => {
+    const v = state.previews.find((x) => x.id === el.dataset.id);
+    if (!v) return;
+    if (!confirm(`Publicar a v${v.version}? O cliente passa a ver esta versão e as anteriores em aberto viram "substituídas". Confirme que a pasta previa/${v.slug}/ já está no ar.`)) return;
+    mutate(async () => {
+      for (const o of state.previews.filter((x) => x.project_id === v.project_id && x.id !== v.id && (x.status === 'publicada' || x.status === 'ajustes'))) {
+        await dbUpdate('previews', o.id, { status: 'substituida' });
+      }
+      await dbUpdate('previews', v.id, { status: 'publicada', published_at: new Date().toISOString() });
+    }, 'Versão publicada.');
+  },
+  deletePreview: (el) => {
+    const v = state.previews.find((x) => x.id === el.dataset.id);
+    if (!v || !confirm(`Excluir a v${v.version} e os comentários dela? Os arquivos em previa/${v.slug}/ continuam no repositório.`)) return;
+    mutate(() => dbDelete('previews', v.id), 'Versão excluída.');
+  },
+  newFile: () => { closeDrawer(); fileModal(); },
+  downloadFile: async (el) => {
+    const f = state.clientFiles.find((x) => x.id === el.dataset.id);
+    if (!f) return;
+    const { data, error } = await sb.storage.from(CF_BUCKET).createSignedUrl(f.path, 60, { download: f.name });
+    if (error || !data) { toast('Não foi possível baixar: ' + (error ? error.message : 'erro')); return; }
+    const a = document.createElement('a'); a.href = data.signedUrl; a.rel = 'noopener'; document.body.append(a); a.click(); a.remove();
+  },
+  deleteFile: (el) => {
+    const f = state.clientFiles.find((x) => x.id === el.dataset.id);
+    if (!f || !confirm(`Excluir "${f.name}"? O cliente deixa de ver o arquivo.`)) return;
+    mutate(async () => {
+      const { error } = await sb.storage.from(CF_BUCKET).remove([f.path]);
+      if (error) throw error;
+      await dbDelete('client_files', f.id);
+    }, 'Arquivo excluído.');
+  },
+  newHandoff: () => { closeDrawer(); handoffModal(null); },
+  handoffTemplate: () => { closeDrawer(); handoffTemplateModal(); },
+  editHandoff: (el) => { const it = state.handoff.find((x) => x.id === el.dataset.id); if (it) handoffModal(it); },
+  deleteHandoff: (el) => {
+    const it = state.handoff.find((x) => x.id === el.dataset.id);
+    if (!it || !confirm(`Excluir o item "${it.title}"?`)) return;
+    closeModal();
+    mutate(() => dbDelete('handoff_items', it.id), 'Item excluído.');
+  },
+  newAccess: () => { closeDrawer(); accessModal(); },
+  toggleAccess: (el) => {
+    const u = state.clientUsers.find((x) => x.id === el.dataset.id);
+    if (!u) return;
+    mutate(() => dbUpdate('client_users', u.id, { active: !u.active }), u.active ? 'Acesso desativado.' : 'Acesso reativado.');
+  },
+  removeAccess: (el) => {
+    const u = state.clientUsers.find((x) => x.id === el.dataset.id);
+    if (!u || !confirm(`Remover o acesso de ${u.email}? A pessoa deixa de entrar na área do cliente.`)) return;
+    mutate(() => dbDelete('client_users', u.id), 'Acesso removido.');
+  },
+  copyEntrar: async () => {
+    const ok = await copyText(location.origin + '/entrar');
+    toast(ok ? 'Endereço copiado.' : 'Não consegui copiar. O endereço é ' + location.origin + '/entrar');
   },
   editClient: (el) => clientModal(clientById(el.dataset.id)),
   deleteClient: (el) => {
