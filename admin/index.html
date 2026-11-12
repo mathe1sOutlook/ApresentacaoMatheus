@@ -880,6 +880,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
         <a href="#/crm" data-route="crm">CRM · Propostas</a>
         <a href="#/leads" data-route="leads">Leads do site<span class="nav-count" id="nav-leads-count" hidden></span></a>
         <a href="#/clientes" data-route="clientes">Clientes</a>
+        <a href="#/acesso" data-route="acesso">Acesso dos clientes</a>
         <a href="#/financeiro" data-route="financeiro">Financeiro</a>
         <a href="#/agenda" data-route="agenda">Agenda</a>
         <a href="#/tarefas" data-route="tarefas">Tarefas</a>
@@ -942,7 +943,7 @@ const sb = window.supabase
 const state = {
   session: null,
   members: [], me: null,
-  clients: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
+  clients: [], clientUsers: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
 };
 const now0 = new Date();
 const ui = {
@@ -1141,7 +1142,7 @@ function payShareB(p) {
 
 /* ═══ Dados ════════════════════════════════════════════════════════ */
 async function fetchAll() {
-  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads] = await Promise.all([
+  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers] = await Promise.all([
     sb.from(TB('clients')).select('*').order('name'),
     sb.from(TB('projects')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('notes')).select('*').order('created_at', { ascending: false }),
@@ -1151,12 +1152,13 @@ async function fetchAll() {
     sb.from(TB('tasks')).select('*').order('due_date', { ascending: true, nullsFirst: false }),
     sb.from(TB('members')).select('*').order('name'),
     sb.from(TB('leads')).select('*').order('created_at', { ascending: false }),
+    sb.from(TB('client_users')).select('*').order('created_at', { ascending: false }),
   ]);
-  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads].find((r) => r.error);
+  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers].find((r) => r.error);
   if (firstErr) throw firstErr.error;
   state.clients = clients.data; state.projects = projects.data; state.notes = notes.data;
   state.meetings = meetings.data; state.payments = payments.data; state.checkouts = checkouts.data; state.tasks = tasks.data;
-  state.members = members.data; state.leads = leads.data;
+  state.members = members.data; state.leads = leads.data; state.clientUsers = clientUsers.data;
 }
 
 /* ═══ Releitura automática ═════════════════════════════════════════
@@ -1563,6 +1565,7 @@ VIEWS.clientes = function () {
       <td><b>${esc(c.name)}</b>${c.company ? `<br /><span class="mono soft" style="font-size:11px">${esc(c.company)}</span>` : ''}</td>
       <td class="mono" style="font-size:12px">${esc(c.email || '')}${c.email && c.phone ? '<br />' : ''}${esc(c.phone || '')}</td>
       <td>${esc(c.origin || '—')}</td>
+      <td class="mono" style="font-size:12px">${accessEmailOf(c.id) ? esc(accessEmailOf(c.id)) : '<span class="soft">—</span>'}</td>
       <td>${projs.length ? projs.map((p) => `<button type="button" class="btn-link" style="text-transform:none;letter-spacing:0" data-action="openProject" data-id="${p.id}">${esc(p.name)}</button>`).join('<br />') : '<span class="soft">—</span>'}</td>
       <td class="actions"><button type="button" class="btn-mini" data-action="editClient" data-id="${c.id}">Editar</button></td>
     </tr>`;
@@ -1581,11 +1584,53 @@ VIEWS.clientes = function () {
   <div class="card card__body--flush">
     <div class="tbl-wrap">
     <table class="tbl">
-      <thead><tr><th>Nome</th><th>Contato</th><th>Origem</th><th>Projetos</th><th></th></tr></thead>
-      <tbody>${rows || '<tr><td colspan="5" class="empty">Nenhum cliente ainda. Cadastre o primeiro.</td></tr>'}</tbody>
+      <thead><tr><th>Nome</th><th>Contato</th><th>Origem</th><th>Acesso à área</th><th>Projetos</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="6" class="empty">Nenhum cliente ainda. Cadastre o primeiro.</td></tr>'}</tbody>
     </table>
     </div>
   </div>`;
+};
+
+/* ═══ Acesso dos clientes (área do cliente) ════════════════════════
+   Quem está aqui entra em /entrar com o e-mail e define a própria senha no
+   primeiro acesso. A lista vive em amaralesilva_client_users; cadastrar passa
+   pela Edge Function portal-auth, que também cria a conta no Auth.
+   Ver docs/plano-area-do-cliente.md. */
+VIEWS.acesso = function () {
+  const rows = state.clientUsers.map((u) => {
+    const c = clientById(u.client_id);
+    return `<tr>
+      <td><b>${esc(c ? c.name : '—')}</b>${c && c.company ? `<br /><span class="mono soft" style="font-size:11px">${esc(c.company)}</span>` : ''}</td>
+      <td>${esc(u.name || '—')}<br /><span class="mono soft" style="font-size:12px">${esc(u.email)}</span></td>
+      <td>${u.active ? '<span class="chip">ativo</span>' : '<span class="chip" style="opacity:.6">desativado</span>'}</td>
+      <td class="mono soft" style="font-size:11px">${fmtDate(toISODate(new Date(u.created_at)))}</td>
+      <td class="actions">
+        <button type="button" class="btn-mini" data-action="toggleAccess" data-id="${u.id}">${u.active ? 'Desativar' : 'Reativar'}</button>
+        <button type="button" class="btn-mini btn-mini--danger" data-action="removeAccess" data-id="${u.id}">Remover</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">Quem entra na área do cliente</p>
+      <h1 class="view-title">Acesso dos clientes</h1>
+    </div>
+    <div class="view-actions">
+      <button type="button" class="btn-ghost" data-action="copyEntrar">Copiar endereço de entrada</button>
+      <button type="button" class="btn-solid" data-action="newAccess">+ Liberar acesso</button>
+    </div>
+  </div>
+  <div class="card card__body--flush">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Cliente</th><th>Pessoa</th><th>Situação</th><th>Liberado em</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="5" class="empty">Ninguém com acesso ainda. Libere o e-mail de quem deve ver o projeto.</td></tr>'}</tbody>
+    </table>
+    </div>
+  </div>
+  <p class="soft" style="font-size:13px;line-height:1.55;max-width:640px;margin-top:16px">A pessoa abre o endereço de entrada, digita o e-mail e, no primeiro acesso, recebe um link para criar a senha. Desativar bloqueia a entrada sem apagar o cadastro; remover apaga a linha da lista.</p>`;
 };
 
 /* ═══ Projeto (detalhe) ════════════════════════════════════════════ */
@@ -2259,6 +2304,7 @@ function clientModal(c, prefill, fromLeadId) {
         ${fld('cf-company', 'Empresa', inp('cf-company', 'company', 'text', c?.company))}
         ${fld('cf-email', 'E-mail', inp('cf-email', 'email', 'email', c?.email))}
         ${fld('cf-phone', 'Telefone / WhatsApp', inp('cf-phone', 'phone', 'text', c?.phone))}
+        ${fld('cf-access', 'E-mail de acesso à área do cliente', inp('cf-access', 'access_email', 'email', editing ? accessEmailOf(c.id) : '', 'autocapitalize="none" placeholder="deixe vazio se ainda não for liberar"'), true, 'Com este e-mail a pessoa entra em /entrar e vê o projeto dela. Pode ser diferente do e-mail de contato. Para desativar ou ver todos os acessos: Acesso dos clientes.')}
         ${fld('cf-origin', 'Origem', inp('cf-origin', 'origin', 'text', c?.origin, 'placeholder="indicação, Instagram, site…"'), true)}
         ${fld('cf-notes', 'Notas', txa('cf-notes', 'notes', c?.notes), true)}
       </div>
@@ -2268,7 +2314,17 @@ function clientModal(c, prefill, fromLeadId) {
       </div>
     </form>`, async (d) => {
     const row = { name: d.name, company: strOrNull(d.company), email: strOrNull(d.email), phone: strOrNull(d.phone), origin: strOrNull(d.origin), notes: strOrNull(d.notes) };
-    if (editing) return mutate(() => dbUpdate('clients', c.id, row), 'Cliente atualizado.');
+    const access = (d.access_email || '').toLowerCase();
+    /* Cliente já salvo e acesso falhou: relê antes de avisar, para a tela não
+       mostrar o estado antigo. */
+    const withAccess = async (clientId, fn) => {
+      await fn();
+      if (access && access !== accessEmailOf(clientId).toLowerCase()) {
+        try { await inviteAccess(access, clientId, d.name); }
+        catch (err) { await fetchAll(); throw new Error('cliente salvo, mas o acesso não foi liberado (' + err.message + ')'); }
+      }
+    };
+    if (editing) return mutate(() => withAccess(c.id, () => dbUpdate('clients', c.id, row)), access ? 'Cliente atualizado e acesso liberado.' : 'Cliente atualizado.');
     return mutate(async () => {
       const { data, error } = await sb.from(TB('clients')).insert(row).select('id').single();
       if (error) throw error;
@@ -2281,7 +2337,8 @@ function clientModal(c, prefill, fromLeadId) {
           throw err;
         }
       }
-    }, fromLeadId ? 'Lead convertido em cliente.' : 'Cliente cadastrado.');
+      if (access) await withAccess(data.id, async () => {});
+    }, fromLeadId ? 'Lead convertido em cliente.' : (access ? 'Cliente cadastrado e acesso liberado.' : 'Cliente cadastrado.'));
   });
 }
 
@@ -2470,6 +2527,40 @@ function noteModal(projectId, note) {
   });
 }
 
+/* Libera o e-mail como acesso do cliente (Edge Function portal-auth: grava em
+   client_users e cria a conta sem senha). Compartilhada pelo cadastro do
+   cliente e pela tela de Acesso. */
+async function inviteAccess(email, clientId, name) {
+  const { data: { session } } = await sb.auth.getSession();
+  const r = await fetch(SUPABASE_URL + '/functions/v1/portal-auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: SUPABASE_KEY, Authorization: 'Bearer ' + (session ? session.access_token : '') },
+    body: JSON.stringify({ action: 'invite', email, client_id: clientId, name }),
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(r.status === 403 ? 'sem permissão' : (j.error || 'falha ao liberar o acesso'));
+}
+const accessEmailOf = (clientId) => {
+  const u = state.clientUsers.find((x) => x.client_id === clientId && x.active);
+  return u ? u.email : '';
+};
+
+/* — Acesso do cliente — */
+function accessModal() {
+  if (!state.clients.length) { toast('Cadastre o cliente antes de liberar o acesso.'); return; }
+  openModal('Liberar acesso', `
+    <form>
+      <div class="form-grid">
+        ${fld('ac-client', 'Cliente *', sel('ac-client', 'client_id', state.clients.map((c) => [c.id, c.name + (c.company ? ' · ' + c.company : '')]), ''), true)}
+        ${fld('ac-name', 'Nome de quem entra', inp('ac-name', 'name', 'text', '', 'placeholder="Marina Souza"'))}
+        ${fld('ac-email', 'E-mail *', inp('ac-email', 'email', 'email', '', 'required placeholder="marina@empresa.com.br" autocapitalize="none"'), false, 'O próprio cliente cria a senha no primeiro acesso.')}
+      </div>
+      <div class="form-foot"><button type="submit" class="btn-solid">Liberar</button></div>
+    </form>`, async (d) => {
+    return mutate(() => inviteAccess(d.email, d.client_id, d.name), 'Acesso liberado para ' + d.email + '. Avise que a entrada é em casamartech.com.br/entrar.');
+  });
+}
+
 /* — Membro — */
 function memberModal() {
   openModal('Novo membro', `
@@ -2577,6 +2668,21 @@ const ACTIONS = {
     const l = leadById(el.dataset.id);
     if (!l || !confirm(`Excluir o lead "${l.name}"?`)) return;
     mutate(() => dbDelete('leads', l.id), 'Lead excluído.');
+  },
+  newAccess: () => { closeDrawer(); accessModal(); },
+  toggleAccess: (el) => {
+    const u = state.clientUsers.find((x) => x.id === el.dataset.id);
+    if (!u) return;
+    mutate(() => dbUpdate('client_users', u.id, { active: !u.active }), u.active ? 'Acesso desativado.' : 'Acesso reativado.');
+  },
+  removeAccess: (el) => {
+    const u = state.clientUsers.find((x) => x.id === el.dataset.id);
+    if (!u || !confirm(`Remover o acesso de ${u.email}? A pessoa deixa de entrar na área do cliente.`)) return;
+    mutate(() => dbDelete('client_users', u.id), 'Acesso removido.');
+  },
+  copyEntrar: async () => {
+    const ok = await copyText(location.origin + '/entrar');
+    toast(ok ? 'Endereço copiado.' : 'Não consegui copiar. O endereço é ' + location.origin + '/entrar');
   },
   editClient: (el) => clientModal(clientById(el.dataset.id)),
   deleteClient: (el) => {

@@ -396,8 +396,10 @@ header. Prévias, documentos, pagamentos e arquivos vêm nas próximas fases.
 - **Cadastro**: `amaralesilva_client_users` (e-mail → `client_id`), só a equipe
   escreve. A Edge Function `portal-auth` (`supabase/functions/portal-auth`) faz
   `action:"invite"` com o Bearer de um membro: grava o e-mail e cria a conta sem
-  senha. DDL em `admin/client-access-schema.sql`. Ainda não há tela no painel
-  para isso.
+  senha. DDL em `admin/client-access-schema.sql`. No painel, o cadastro do
+  cliente tem o campo **E-mail de acesso à área do cliente** (pode ser diferente
+  do e-mail de contato) e a tela **Acesso dos clientes** lista, desativa,
+  reativa e remove os acessos.
 - **Login em duas etapas**: o e-mail vai a `portal-auth` (`action:"check"`,
   20 tentativas por IP em 10 min) e volta `nao`, `primeiro_acesso` ou `senha`.
   Senha de no mínimo 8 caracteres (a tela exige; o Auth do projeto não foi
