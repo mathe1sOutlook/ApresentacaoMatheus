@@ -4,5 +4,6 @@ Disallow: /proposta-
 Disallow: /admin
 Disallow: /entrar
 Disallow: /cliente
+Disallow: /previa
 
 Sitemap: https://www.casamartech.com.br/sitemap.xml

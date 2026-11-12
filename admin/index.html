@@ -881,6 +881,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
         <a href="#/leads" data-route="leads">Leads do site<span class="nav-count" id="nav-leads-count" hidden></span></a>
         <a href="#/clientes" data-route="clientes">Clientes</a>
         <a href="#/acesso" data-route="acesso">Acesso dos clientes</a>
+        <a href="#/previas" data-route="previas">Prévias</a>
         <a href="#/financeiro" data-route="financeiro">Financeiro</a>
         <a href="#/agenda" data-route="agenda">Agenda</a>
         <a href="#/tarefas" data-route="tarefas">Tarefas</a>
@@ -943,7 +944,7 @@ const sb = window.supabase
 const state = {
   session: null,
   members: [], me: null,
-  clients: [], clientUsers: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
+  clients: [], clientUsers: [], previews: [], previewComments: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
 };
 const now0 = new Date();
 const ui = {
@@ -1142,7 +1143,7 @@ function payShareB(p) {
 
 /* ═══ Dados ════════════════════════════════════════════════════════ */
 async function fetchAll() {
-  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers] = await Promise.all([
+  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments] = await Promise.all([
     sb.from(TB('clients')).select('*').order('name'),
     sb.from(TB('projects')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('notes')).select('*').order('created_at', { ascending: false }),
@@ -1153,12 +1154,14 @@ async function fetchAll() {
     sb.from(TB('members')).select('*').order('name'),
     sb.from(TB('leads')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('client_users')).select('*').order('created_at', { ascending: false }),
+    sb.from(TB('previews')).select('*').order('created_at', { ascending: false }),
+    sb.from(TB('preview_comments')).select('id,preview_id,parent_id,kind,resolved,author_role,created_at').order('created_at'),
   ]);
-  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers].find((r) => r.error);
+  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments].find((r) => r.error);
   if (firstErr) throw firstErr.error;
   state.clients = clients.data; state.projects = projects.data; state.notes = notes.data;
   state.meetings = meetings.data; state.payments = payments.data; state.checkouts = checkouts.data; state.tasks = tasks.data;
-  state.members = members.data; state.leads = leads.data; state.clientUsers = clientUsers.data;
+  state.members = members.data; state.leads = leads.data; state.clientUsers = clientUsers.data; state.previews = previews.data; state.previewComments = previewComments.data;
 }
 
 /* ═══ Releitura automática ═════════════════════════════════════════
@@ -1631,6 +1634,51 @@ VIEWS.acesso = function () {
     </div>
   </div>
   <p class="soft" style="font-size:13px;line-height:1.55;max-width:640px;margin-top:16px">A pessoa abre o endereço de entrada, digita o e-mail e, no primeiro acesso, recebe um link para criar a senha. Desativar bloqueia a entrada sem apagar o cadastro; remover apaga a linha da lista.</p>`;
+};
+
+/* ═══ Prévias (área do cliente, fase 3) ════════════════════════════
+   O cadastro e o estado de cada versão vivem em amaralesilva_previews; os
+   arquivos, no repositório, em previa/<pasta>/. O middleware.js só serve a
+   pasta a quem pode ver aquela versão. Ver docs/plano-area-do-cliente.md. */
+const PREVIEW_STATUS_LABEL = { rascunho: 'Rascunho', publicada: 'Publicada', ajustes: 'Ajustes pedidos', aprovada: 'Aprovada', substituida: 'Substituída' };
+const openCommentsOf = (id) => state.previewComments.filter((c) => c.preview_id === id && !c.parent_id && c.kind === 'comentario' && !c.resolved).length;
+const slugify = (t) => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50);
+
+VIEWS.previas = function () {
+  const rows = state.previews.map((v) => {
+    const p = projById(v.project_id);
+    const c = p ? clientById(p.client_id) : null;
+    const open = openCommentsOf(v.id);
+    return `<tr>
+      <td><b>${esc(p ? p.name : '—')}</b>${c ? `<br /><span class="mono soft" style="font-size:11px">${esc(c.name)}</span>` : ''}</td>
+      <td class="mono">v${v.version}${v.title ? `<br /><span class="soft" style="font-size:11px">${esc(v.title)}</span>` : ''}</td>
+      <td class="mono" style="font-size:12px">previa/${esc(v.slug)}/</td>
+      <td><span class="chip ${v.status === 'aprovada' ? 'chip--pago' : ''}">${esc(PREVIEW_STATUS_LABEL[v.status] || v.status)}</span></td>
+      <td class="mono" style="font-size:12px">${open ? open + ' em aberto' : '—'}</td>
+      <td class="actions">
+        <a class="btn-mini" href="/cliente/previa/?id=${v.id}" target="_blank" rel="noopener">Abrir</a>
+        ${v.status === 'rascunho' ? `<button type="button" class="btn-mini" data-action="publishPreview" data-id="${v.id}">Publicar</button>` : ''}
+        <button type="button" class="btn-mini btn-mini--danger" data-action="deletePreview" data-id="${v.id}">Excluir</button>
+      </td>
+    </tr>`;
+  }).join('');
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">Versões do site para o cliente comentar e aprovar</p>
+      <h1 class="view-title">Prévias</h1>
+    </div>
+    <div class="view-actions"><button type="button" class="btn-solid" data-action="newPreview">+ Nova versão</button></div>
+  </div>
+  <div class="card card__body--flush">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Projeto</th><th>Versão</th><th>Pasta no repositório</th><th>Situação</th><th>Comentários</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="6" class="empty">Nenhuma prévia ainda. Cadastre a primeira versão de um projeto.</td></tr>'}</tbody>
+    </table>
+    </div>
+  </div>
+  <p class="soft" style="font-size:13px;line-height:1.55;max-width:680px;margin-top:16px">Fluxo: coloque o site em <span class="mono">previa/&lt;pasta&gt;/</span> no repositório (com um <span class="mono">index.html</span>), cadastre a versão aqui e publique. Publicar libera a versão para o cliente do projeto e marca as anteriores como substituídas. “Abrir” mostra como o cliente vê, com os comentários.</p>`;
 };
 
 /* ═══ Projeto (detalhe) ════════════════════════════════════════════ */
@@ -2547,6 +2595,34 @@ const accessEmailOf = (clientId) => {
   return u ? u.email : '';
 };
 
+/* — Prévia — */
+function previewModal() {
+  if (!state.projects.length) { toast('Cadastre o projeto antes de criar a prévia.'); return; }
+  const nextV = (pid) => 1 + state.previews.filter((v) => v.project_id === pid).reduce((m, v) => Math.max(m, v.version), 0);
+  const first = state.projects[0];
+  openModal('Nova versão da prévia', `
+    <form>
+      <div class="form-grid">
+        ${fld('pv-project', 'Projeto *', sel('pv-project', 'project_id', state.projects.map((p) => [p.id, p.name + (clientById(p.client_id) ? ' · ' + clientById(p.client_id).name : '')]), first.id), true)}
+        ${fld('pv-version', 'Versão *', inp('pv-version', 'version', 'number', nextV(first.id), 'min="1" step="1" required'))}
+        ${fld('pv-title', 'Título', inp('pv-title', 'title', 'text', '', 'placeholder="Ex.: Primeira rodada"'))}
+        ${fld('pv-slug', 'Pasta em previa/ *', inp('pv-slug', 'slug', 'text', slugify(first.name) + '-v' + nextV(first.id), 'required pattern="[a-z0-9][a-z0-9\\-]{2,80}" autocapitalize="none"'), true, 'Só letras minúsculas, números e hífen. A pasta previa/&lt;isto&gt;/ precisa existir no repositório, com um index.html.')}
+      </div>
+      <div class="form-foot"><button type="submit" class="btn-solid">Cadastrar como rascunho</button></div>
+    </form>`, async (d) => {
+    return mutate(() => dbInsert('previews', {
+      project_id: d.project_id, version: Number(d.version), title: strOrNull(d.title), slug: d.slug.toLowerCase(),
+    }), 'Versão cadastrada como rascunho. Publique quando a pasta estiver no ar.');
+  });
+  /* ao trocar o projeto, sugere a próxima versão e a pasta */
+  const selp = document.getElementById('pv-project');
+  if (selp) selp.addEventListener('change', () => {
+    const p = projById(selp.value);
+    document.getElementById('pv-version').value = nextV(selp.value);
+    document.getElementById('pv-slug').value = slugify(p ? p.name : '') + '-v' + nextV(selp.value);
+  });
+}
+
 /* — Acesso do cliente — */
 function accessModal() {
   if (!state.clients.length) { toast('Cadastre o cliente antes de liberar o acesso.'); return; }
@@ -2670,6 +2746,23 @@ const ACTIONS = {
     const l = leadById(el.dataset.id);
     if (!l || !confirm(`Excluir o lead "${l.name}"?`)) return;
     mutate(() => dbDelete('leads', l.id), 'Lead excluído.');
+  },
+  newPreview: () => { closeDrawer(); previewModal(); },
+  publishPreview: (el) => {
+    const v = state.previews.find((x) => x.id === el.dataset.id);
+    if (!v) return;
+    if (!confirm(`Publicar a v${v.version}? O cliente passa a ver esta versão e as anteriores em aberto viram "substituídas". Confirme que a pasta previa/${v.slug}/ já está no ar.`)) return;
+    mutate(async () => {
+      for (const o of state.previews.filter((x) => x.project_id === v.project_id && x.id !== v.id && (x.status === 'publicada' || x.status === 'ajustes'))) {
+        await dbUpdate('previews', o.id, { status: 'substituida' });
+      }
+      await dbUpdate('previews', v.id, { status: 'publicada', published_at: new Date().toISOString() });
+    }, 'Versão publicada.');
+  },
+  deletePreview: (el) => {
+    const v = state.previews.find((x) => x.id === el.dataset.id);
+    if (!v || !confirm(`Excluir a v${v.version} e os comentários dela? Os arquivos em previa/${v.slug}/ continuam no repositório.`)) return;
+    mutate(() => dbDelete('previews', v.id), 'Versão excluída.');
   },
   newAccess: () => { closeDrawer(); accessModal(); },
   toggleAccess: (el) => {

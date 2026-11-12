@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+<meta name="theme-color" content="#0B0D12" />
+<title>Prévia — CASA MARTECH</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/img/app/favicon-48.png" sizes="48x48" type="image/png" />
+<link rel="stylesheet" href="/assets/portal.css" />
+<style>
+body { min-height: 100vh; }
+.top { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding: 12px 24px; border-bottom: 1px solid var(--line); min-height: 68px; }
+.back { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; color: var(--ink-soft); }
+.back:hover { color: var(--ink); }
+.ttl small { display: block; font: 400 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.ttl b { font: 400 18px var(--serif); }
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: var(--r-control); padding: 3px; gap: 2px; }
+.seg a, .seg button { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border: 0; border-radius: 11px; background: transparent; color: var(--ink-soft); font: 500 12px var(--mono); cursor: pointer; }
+.seg [aria-current="true"] { background: #1B2030; color: var(--ink); }
+.acts { margin-left: auto; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.acts .btn { width: auto; padding: 0 20px; }
+.state { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ochre); }
+.state.ok { color: var(--blue); }
+.body { display: flex; flex-wrap: wrap; align-items: stretch; flex: 1; }
+.stage { flex: 999 1 560px; min-width: 0; padding: 28px 28px 48px; background: var(--bg-deep); }
+.wrap { position: relative; margin: 0 auto; max-width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; transition: max-width .2s; }
+#frame { display: block; width: 100%; height: 600px; border: 0; background: #fff; }
+#overlay { position: absolute; inset: 0; pointer-events: none; }
+.wrap.is-pin #overlay { pointer-events: auto; cursor: crosshair; background: rgba(201,162,78,.08); }
+.pin { position: absolute; width: 28px; height: 28px; margin: -28px 0 0 -4px; border: 0; border-radius: 50% 50% 50% 4px; background: var(--ochre); color: var(--bg); font: 500 12px var(--mono); display: flex; align-items: center; justify-content: center; cursor: pointer; pointer-events: auto; z-index: 2; }
+.pin.is-done { background: var(--line-strong); color: var(--ink); }
+.pin.is-new { background: var(--blue); }
+.hint { max-width: 860px; margin: 14px auto 0; font-size: 12px; line-height: 1.5; color: var(--ink-soft); }
+.side { flex: 1 1 340px; max-width: 400px; min-width: 300px; border-left: 1px solid var(--line); padding: 24px; display: flex; flex-direction: column; gap: 18px; max-height: calc(100vh - 68px); overflow: auto; position: sticky; top: 0; align-self: flex-start; }
+.side h2 { margin: 0 0 4px; font: 400 20px var(--serif); }
+.count { margin: 0; font: 400 11px var(--mono); color: var(--ink-soft); }
+.cm { padding: 14px 0; border-top: 1px solid var(--line); }
+.cm.is-hl { background: rgba(122,147,230,.08); }
+.cm__h { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; flex-wrap: wrap; }
+.cm__h b { font-weight: 500; }
+.cm__h time { margin-left: auto; font: 400 11px var(--mono); color: var(--ink-soft); }
+.n { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50% 50% 50% 3px; background: var(--ochre); color: var(--bg); font: 500 11px var(--mono); }
+.n.is-done { background: var(--line-strong); color: var(--ink); }
+.tag { font: 500 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; border: 1px solid var(--line-strong); border-radius: 6px; padding: 2px 6px; color: var(--ink-soft); }
+.tag--team { color: var(--ochre); border-color: var(--ochre); }
+.tag--ev { color: var(--blue); border-color: var(--blue); }
+.cm p { margin: 0; font-size: 14px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cm__path { margin-top: 4px; font: 400 11px var(--mono); color: var(--ink-soft); }
+.reply { margin: 10px 0 0 22px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.mini { border: 0; background: transparent; color: var(--ochre); font: 400 12px var(--sans); cursor: pointer; padding: 6px 0; margin-right: 14px; min-height: 32px; }
+textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: vertical; }
+.pend { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; padding: 8px 12px; border: 1px solid var(--blue); border-radius: 10px; font-size: 12px; color: var(--blue); }
+.pend button { margin-left: auto; border: 0; background: transparent; color: inherit; cursor: pointer; font-size: 16px; line-height: 1; }
+dialog { border: 1px solid var(--line-strong); border-radius: var(--r-surface); background: var(--bg-card); color: var(--ink); padding: 28px; width: min(460px, calc(100vw - 32px)); }
+dialog::backdrop { background: rgba(0,0,0,.6); }
+dialog h3 { margin: 0 0 16px; font: 400 20px var(--serif); }
+.err { max-width: 520px; margin: 96px auto; padding: 0 24px; line-height: 1.6; color: var(--ink-soft); }
+@media (max-width: 900px) { .side { max-width: none; border-left: 0; border-top: 1px solid var(--line); max-height: none; position: static; } .stage { padding: 16px; } .top { padding: 12px 16px; } .acts { margin-left: 0; } }
+</style>
+</head>
+<body>
+<header class="top" id="top" hidden>
+  <a class="back" id="back" href="/cliente">← Minha área</a>
+  <div class="ttl"><small id="client">&nbsp;</small><b id="proj"></b></div>
+  <div class="seg" id="versions" role="group" aria-label="Versão"></div>
+  <div class="seg" role="group" aria-label="Tela">
+    <button type="button" id="d-desk" aria-current="true">Computador</button>
+    <button type="button" id="d-mob" aria-current="false">Celular</button>
+  </div>
+  <div class="acts">
+    <span class="state" id="state"></span>
+    <button class="btn btn--line" type="button" id="b-changes" hidden>Pedir ajustes</button>
+    <button class="btn btn--ochre" type="button" id="b-approve" hidden>Aprovar esta versão</button>
+  </div>
+</header>
+
+<div class="body" id="body" hidden>
+  <div class="stage">
+    <div class="wrap" id="wrap">
+      <iframe id="frame" title="Prévia do site" referrerpolicy="same-origin"></iframe>
+      <div id="overlay"></div>
+    </div>
+    <p class="hint">Esta é a prévia navegável do site. Para comentar um ponto, use “Marcar um ponto” ao lado e clique na página.</p>
+  </div>
+  <aside class="side" aria-label="Comentários">
+    <div><h2>Comentários</h2><p class="count" id="count"></p></div>
+    <div id="list"></div>
+    <form id="form" style="margin-top:auto" novalidate>
+      <label class="lbl" for="body-txt" id="lbl">Novo comentário</label>
+      <div id="pend" class="pend" hidden><span id="pend-txt"></span><button type="button" id="pend-x" aria-label="Remover o ponto">×</button></div>
+      <textarea class="field" id="body-txt" rows="3" maxlength="2000" placeholder="Escreva o que quer ajustar ou perguntar"></textarea>
+      <p class="msg" id="msg" role="alert"></p>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn--line" type="button" id="b-pin" style="flex:1 1 150px">Marcar um ponto</button>
+        <button class="btn btn--ochre" type="submit" id="b-send" style="flex:1 1 150px">Enviar</button>
+      </div>
+      <p class="tiny" id="cancel-reply" hidden><button type="button">Cancelar resposta</button></p>
+    </form>
+  </aside>
+</div>
+
+<p class="err" id="err" hidden></p>
+
+<dialog id="dlg">
+  <h3>Pedir ajustes</h3>
+  <form method="dialog" id="f-changes" novalidate>
+    <label class="lbl" for="ch-txt">O que precisa mudar</label>
+    <textarea class="field" id="ch-txt" rows="5" maxlength="2000" placeholder="Descreva os ajustes. Pontos marcados na página também valem."></textarea>
+    <p class="msg" id="ch-msg" role="alert"></p>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn btn--line" type="button" id="ch-cancel">Cancelar</button>
+      <button class="btn btn--ochre" type="submit" id="ch-send">Enviar pedido</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.js" integrity="sha384-ysv13JVP3fufiEXfjML9OdCa/rRbMJvUBOWyor82wfuK8INNZAvmbxHgKIHi+oqz" crossorigin="anonymous"></script>
+<script src="/assets/portal-session.js"></script>
+<script>
+'use strict';
+const SUPABASE_URL = 'https://wsgjbzsdewzplsnpfvdf.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_uUuSrKXuJXalJ79WO0PxDg_QpIEOfvA';
+const sb = window.supabase
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'implicit', persistSession: true, detectSessionInUrl: false } })
+  : null;
+const $ = (id) => document.getElementById(id);
+const TZ = 'America/Sao_Paulo';
+const fmtDT = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: TZ });
+const fmtD = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: TZ });
+const STATE_CLIENT = { publicada: 'Aguardando você', ajustes: 'Ajustes pedidos', aprovada: 'Aprovada', substituida: 'Substituída por versão mais nova', rascunho: 'Rascunho' };
+const STATE_TEAM = { publicada: 'Publicada', ajustes: 'Ajustes pedidos', aprovada: 'Aprovada', substituida: 'Substituída', rascunho: 'Rascunho (só a equipe vê)' };
+
+function h(tag, props, ...kids) {
+  const n = document.createElement(tag);
+  for (const k in (props || {})) {
+    if (k === 'class') n.className = props[k];
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), props[k]);
+    else if (props[k] != null) n.setAttribute(k, props[k]);
+  }
+  kids.flat().forEach((c) => { if (c != null && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c))); });
+  return n;
+}
+
+const id = new URLSearchParams(location.search).get('id');
+let info = null, role = null, comments = [], curPath = '', pin = null, replyTo = null, pinMode = false, hl = null, ro = null;
+
+function fail(msg) {
+  $('top').hidden = true; $('body').hidden = true;
+  $('err').textContent = msg; $('err').hidden = false;
+}
+const rpc = async (name, args) => {
+  const { data, error } = await sb.rpc(name, args);
+  if (error) throw new Error(error.message || 'erro');
+  return data;
+};
+
+/* ── cabeçalho e ações ─────────────────────────────────────────────── */
+function paintHeader() {
+  const p = info.preview, team = role === 'equipe';
+  $('client').textContent = p.client_name || '';
+  $('proj').textContent = p.project_name;
+  $('back').textContent = team ? '← Painel' : '← Minha área';
+  $('back').href = team ? '/admin#/previas' : '/cliente';
+  $('versions').replaceChildren(...info.versions.map((v) =>
+    h('a', { href: '?id=' + encodeURIComponent(v.id), 'aria-current': String(v.id === p.id) }, 'v' + v.version)));
+  const st = (team ? STATE_TEAM : STATE_CLIENT)[p.status] || '';
+  $('state').textContent = p.status === 'aprovada' && p.approved_at ? 'Aprovada em ' + fmtD.format(new Date(p.approved_at)) : st;
+  $('state').className = 'state' + (p.status === 'aprovada' ? ' ok' : '');
+  const open = !team && (p.status === 'publicada' || p.status === 'ajustes');
+  $('b-changes').hidden = !open; $('b-approve').hidden = !open;
+  document.title = p.project_name + ' · v' + p.version + ' — CASA MARTECH';
+}
+
+/* ── iframe: altura do conteúdo e caminho atual ────────────────────── */
+function fit() {
+  try {
+    const d = $('frame').contentDocument;
+    const hgt = Math.max(d.documentElement.scrollHeight, d.body ? d.body.scrollHeight : 0, 480);
+    $('frame').style.height = hgt + 'px';
+  } catch (e) { /* outro domínio: não acontece, a prévia é do próprio site */ }
+}
+$('frame').addEventListener('load', () => {
+  try {
+    curPath = $('frame').contentWindow.location.pathname;
+    fit();
+    if (ro) ro.disconnect();
+    ro = new ResizeObserver(() => { fit(); paintPins(); });
+    ro.observe($('frame').contentDocument.documentElement);
+  } catch (e) { curPath = ''; }
+  paintPins(); paintList();
+});
+function setDevice(mobile) {
+  $('wrap').style.maxWidth = mobile ? '390px' : '100%';
+  $('d-desk').setAttribute('aria-current', String(!mobile));
+  $('d-mob').setAttribute('aria-current', String(mobile));
+  setTimeout(() => { fit(); paintPins(); }, 250);
+}
+$('d-desk').addEventListener('click', () => setDevice(false));
+$('d-mob').addEventListener('click', () => setDevice(true));
+
+/* ── pontos marcados ───────────────────────────────────────────────── */
+const topLevel = () => comments.filter((c) => !c.parent_id);
+function paintPins() {
+  const ov = $('overlay');
+  ov.replaceChildren();
+  topLevel().forEach((c, i) => {
+    if (c.x == null || c.path !== curPath) return;
+    ov.append(h('button', {
+      type: 'button', class: 'pin' + (c.resolved ? ' is-done' : ''),
+      style: 'left:' + c.x + '%;top:' + c.y + 'px', 'aria-label': 'Comentário ' + (i + 1),
+      onclick: () => { hl = c.id; paintList(); const el = document.getElementById('c-' + c.id); if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' }); },
+    }, String(i + 1)));
+  });
+  if (pin && pin.path === curPath) {
+    ov.append(h('span', { class: 'pin is-new', style: 'left:' + pin.x + '%;top:' + pin.y + 'px;pointer-events:none', 'aria-hidden': 'true' }, '+'));
+  }
+}
+function setPinMode(on) {
+  pinMode = on;
+  $('wrap').classList.toggle('is-pin', on);
+  $('b-pin').textContent = on ? 'Clique na página…' : 'Marcar um ponto';
+}
+$('b-pin').addEventListener('click', () => setPinMode(!pinMode));
+$('overlay').addEventListener('click', (e) => {
+  if (!pinMode) return;
+  const r = $('overlay').getBoundingClientRect();
+  pin = { x: Math.round(((e.clientX - r.left) / r.width) * 1000) / 10, y: Math.round(e.clientY - r.top), path: curPath };
+  setPinMode(false);
+  paintPendingChip(); paintPins(); $('body-txt').focus();
+});
+function paintPendingChip() {
+  $('pend').hidden = !pin;
+  if (pin) $('pend-txt').textContent = 'Ponto marcado' + (pin.path ? ' em ' + (pin.path.replace(/^\/previa\/[^/]+/, '') || '/') : '');
+}
+$('pend-x').addEventListener('click', () => { pin = null; paintPendingChip(); paintPins(); });
+
+/* ── lista de comentários ──────────────────────────────────────────── */
+function when(c) { return fmtDT.format(new Date(c.created_at)); }
+function commentView(c, n) {
+  const replies = comments.filter((r) => r.parent_id === c.id);
+  const team = role === 'equipe';
+  const head = h('div', { class: 'cm__h' },
+    c.kind === 'comentario' ? h('span', { class: 'n' + (c.resolved ? ' is-done' : '') }, String(n)) : null,
+    h('b', null, c.author_name),
+    c.author_role === 'equipe' ? h('span', { class: 'tag tag--team' }, 'equipe') : null,
+    c.kind === 'ajuste' ? h('span', { class: 'tag tag--ev' }, 'pediu ajustes') : null,
+    c.kind === 'aprovacao' ? h('span', { class: 'tag tag--ev' }, 'aprovou') : null,
+    c.resolved ? h('span', { class: 'tag' }, 'resolvido') : null,
+    h('time', null, when(c)));
+  const actions = h('div', null,
+    c.kind === 'comentario' ? h('button', { type: 'button', class: 'mini', onclick: () => startReply(c) }, 'Responder') : null,
+    team && c.kind === 'comentario' ? h('button', { type: 'button', class: 'mini', onclick: () => toggleResolved(c) }, c.resolved ? 'Reabrir' : 'Marcar como resolvido') : null);
+  return h('div', { class: 'cm' + (hl === c.id ? ' is-hl' : ''), id: 'c-' + c.id },
+    head, h('p', null, c.body),
+    c.x != null && c.path ? h('p', { class: 'cm__path' }, 'ponto em ' + (c.path.replace(/^\/previa\/[^/]+/, '') || '/')) : null,
+    replies.map((r) => h('div', { class: 'reply' },
+      h('div', { class: 'cm__h' }, h('b', null, r.author_name), r.author_role === 'equipe' ? h('span', { class: 'tag tag--team' }, 'equipe') : null, h('time', null, when(r))),
+      h('p', null, r.body))),
+    actions);
+}
+function paintList() {
+  const tl = topLevel();
+  let n = 0;
+  $('list').replaceChildren(...(tl.length ? tl.map((c) => commentView(c, c.kind === 'comentario' ? ++n : n)) : [h('p', { class: 'msg' }, 'Nenhum comentário ainda.')]));
+  const open = tl.filter((c) => c.kind === 'comentario' && !c.resolved).length;
+  $('count').textContent = open + ' aberto' + (open === 1 ? '' : 's') + ' · ' + tl.filter((c) => c.kind === 'comentario').length + ' no total';
+}
+function startReply(c) {
+  replyTo = c; $('lbl').textContent = 'Resposta a ' + c.author_name;
+  $('cancel-reply').hidden = false; $('body-txt').focus();
+}
+$('cancel-reply').addEventListener('click', () => { replyTo = null; $('lbl').textContent = 'Novo comentário'; $('cancel-reply').hidden = true; });
+
+async function toggleResolved(c) {
+  const { error } = await sb.from('amaralesilva_preview_comments').update({ resolved: !c.resolved }).eq('id', c.id);
+  if (error) { $('msg').textContent = 'Não foi possível atualizar: ' + error.message; $('msg').className = 'msg msg--err'; return; }
+  await loadComments();
+}
+async function loadComments() {
+  try {
+    const next = await rpc('amaralesilva_portal_comments', { p_preview: id });
+    if (JSON.stringify(next) !== JSON.stringify(comments)) { comments = next; paintList(); paintPins(); }
+  } catch (e) { /* mantém o que já está na tela */ }
+}
+
+$('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const body = $('body-txt').value.trim();
+  const msg = $('msg'); msg.className = 'msg'; msg.textContent = '';
+  if (!body) { msg.textContent = 'Escreva o comentário.'; msg.className = 'msg msg--err'; return; }
+  $('b-send').disabled = true;
+  try {
+    await rpc('amaralesilva_portal_add_comment', {
+      p_preview: id, p_body: body, p_path: replyTo ? null : (pin ? pin.path : null),
+      p_x: replyTo || !pin ? null : pin.x, p_y: replyTo || !pin ? null : pin.y, p_parent: replyTo ? replyTo.id : null,
+    });
+    $('body-txt').value = ''; pin = null; replyTo = null; $('lbl').textContent = 'Novo comentário'; $('cancel-reply').hidden = true;
+    paintPendingChip(); await loadComments();
+  } catch (err) { msg.textContent = 'Não foi possível enviar: ' + err.message; msg.className = 'msg msg--err'; }
+  $('b-send').disabled = false;
+});
+
+/* ── aprovar / pedir ajustes (só cliente) ──────────────────────────── */
+$('b-approve').addEventListener('click', async () => {
+  if (!confirm('Aprovar a versão v' + info.preview.version + '? A CASA MARTECH é avisada de que o conteúdo está aprovado.')) return;
+  $('b-approve').disabled = true;
+  try { await rpc('amaralesilva_portal_approve', { p_preview: id }); await boot(); }
+  catch (err) { alert('Não foi possível aprovar: ' + err.message); }
+  $('b-approve').disabled = false;
+});
+$('b-changes').addEventListener('click', () => { $('ch-msg').textContent = ''; $('dlg').showModal(); $('ch-txt').focus(); });
+$('ch-cancel').addEventListener('click', () => $('dlg').close());
+$('f-changes').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const body = $('ch-txt').value.trim();
+  if (!body) { $('ch-msg').textContent = 'Descreva o que precisa mudar.'; $('ch-msg').className = 'msg msg--err'; return; }
+  $('ch-send').disabled = true;
+  try { await rpc('amaralesilva_portal_request_changes', { p_preview: id, p_body: body }); $('ch-txt').value = ''; $('dlg').close(); await boot(); }
+  catch (err) { $('ch-msg').textContent = 'Não foi possível enviar: ' + err.message; $('ch-msg').className = 'msg msg--err'; }
+  $('ch-send').disabled = false;
+});
+
+/* ── início ────────────────────────────────────────────────────────── */
+let firstLoad = true;
+async function boot() {
+  info = await rpc('amaralesilva_portal_preview', { p_id: id });
+  if (!info) return fail('Não encontramos esta prévia, ou ela não está liberada para a sua conta.');
+  role = info.role;
+  paintHeader();
+  $('top').hidden = false; $('body').hidden = false;
+  if (firstLoad) { firstLoad = false; $('frame').src = '/previa/' + encodeURIComponent(info.preview.slug) + '/'; }
+  await loadComments();
+}
+
+(async () => {
+  if (!sb || !id) return fail('Endereço incompleto. Abra a prévia pela sua área.');
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return location.replace('/entrar');
+  /* o cookie precisa existir ANTES de o iframe pedir a página */
+  window.cmPreviewCookie.set(session);
+  sb.auth.onAuthStateChange((ev, s) => { if (s) window.cmPreviewCookie.set(s); });
+  try { await boot(); } catch (err) { return fail('Não foi possível carregar a prévia agora. Recarregue a página em instantes.'); }
+  setInterval(loadComments, 30000);
+})();
+</script>
+</body>
+</html>

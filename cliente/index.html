@@ -37,6 +37,11 @@ a.row:hover { color: var(--ochre); }
 .meet details { margin-top: 8px; }
 .meet summary { cursor: pointer; font-size: 13px; color: var(--ochre); }
 .meet__tag { color: var(--blue); }
+.prev { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; margin-top: 28px; padding: 22px 24px; background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--r-surface); }
+.prev__txt { flex: 1 1 260px; }
+.prev__txt b { display: block; margin-bottom: 4px; font: 400 20px var(--serif); }
+.prev__txt span { font-size: 14px; line-height: 1.5; color: var(--ink-soft); }
+.prev .btn { width: auto; padding: 0 22px; }
 .foot { margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-soft); }
 @media (max-width: 720px) { .wrap { padding: 36px 20px 56px; } .hd__bar { padding: 0 20px; } h1 { font-size: 34px; } .proj__head h2 { font-size: 24px; } }
 </style>
@@ -61,6 +66,7 @@ a.row:hover { color: var(--ochre); }
   <p class="foot">Dúvida sobre algo desta página? Responda o e-mail em que combinamos o projeto ou <a href="/#contato" style="color:var(--ink);border-bottom:1px solid var(--ochre)">fale com a gente</a>.</p>
 </main>
 
+<script src="/assets/portal-session.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.js" integrity="sha384-ysv13JVP3fufiEXfjML9OdCa/rRbMJvUBOWyor82wfuK8INNZAvmbxHgKIHi+oqz" crossorigin="anonymous"></script>
 <script>
 'use strict';
@@ -100,6 +106,7 @@ const toLogin = () => location.replace('/entrar');
 
 $('out').addEventListener('click', async () => {
   forget();
+  window.cmPreviewCookie.clear();
   if (sb) await sb.auth.signOut();
   location.replace('/');
 });
@@ -120,7 +127,19 @@ function payRow(p) {
   return h('div', { class: 'row' }, h('span', null, p.description || 'Parcela'), h('small', { class: cls }, txt));
 }
 
-function projectBlock(p) {
+const PREV_STATE = {
+  publicada: 'Aguardando a sua aprovação.', ajustes: 'Você pediu ajustes; estamos trabalhando neles.',
+  aprovada: 'Aprovada por vocês.', substituida: 'Substituída por uma versão mais nova.',
+};
+function previewPanel(v) {
+  if (!v) return null;
+  const open = v.open_comments > 0 ? ' ' + v.open_comments + ' comentário' + (v.open_comments === 1 ? '' : 's') + ' em aberto.' : '';
+  return h('div', { class: 'prev' },
+    h('div', { class: 'prev__txt' }, h('b', null, 'Prévia v' + v.version + (v.title ? ' · ' + v.title : '')), h('span', null, (PREV_STATE[v.status] || '') + open)),
+    h('a', { class: 'btn ' + (v.status === 'publicada' || v.status === 'ajustes' ? 'btn--ochre' : 'btn--line'), href: '/cliente/previa/?id=' + encodeURIComponent(v.id) }, 'Abrir a prévia'));
+}
+
+function projectBlock(p, previews) {
   const docs = [docRow('Proposta', p.proposal_url), docRow('Contrato', p.contract_url)].filter(Boolean);
   const pays = p.payments || [];
   const cols = h('div', { class: 'cols' },
@@ -134,6 +153,7 @@ function projectBlock(p) {
       : null);
   return h('section', { class: 'proj', 'aria-label': p.name },
     h('div', { class: 'proj__head' }, h('h2', null, p.name), h('span', { class: 'status' }, STATUS[p.status] || '')),
+    previewPanel((previews || []).find((v) => v.project_id === p.id)),
     cols);
 }
 
@@ -147,7 +167,7 @@ function meetingBlock(m, projName) {
   return h('div', { class: 'meet' }, h('h3', null, m.title), h('p', { class: 'when' }, parts.join(' · ')), body);
 }
 
-function render(data, session) {
+function render(data, session, previews) {
   const proj = data.projects || [];
   const client = (data.clients || [])[0];
   const name = (session.user.user_metadata && (session.user.user_metadata.name || session.user.user_metadata.full_name)) || '';
@@ -158,7 +178,7 @@ function render(data, session) {
     ? 'Aqui estão a proposta, o contrato, os pagamentos e as reuniões do seu projeto, conforme forem sendo liberados.'
     : 'O seu acesso está ativo. O projeto aparece aqui assim que a proposta for enviada.';
   const box = $('projects');
-  box.replaceChildren(...proj.map(projectBlock));
+  box.replaceChildren(...proj.map((p) => projectBlock(p, previews)));
   const names = Object.fromEntries(proj.map((p) => [p.id, p.name]));
   const meets = data.meetings || [];
   $('meetings').hidden = !meets.length;
@@ -181,14 +201,16 @@ function render(data, session) {
   if (role === 'equipe') return location.replace('/admin');
   const nm = (session.user.user_metadata && (session.user.user_metadata.name || session.user.user_metadata.full_name)) || '';
   try { localStorage.setItem('cm_role', 'cliente'); localStorage.setItem('cm_name', nm); } catch (e) { /* ok */ }
-  const { data, error: e2 } = await sb.rpc('amaralesilva_portal_overview');
+  window.cmPreviewCookie.set(session);
+  sb.auth.onAuthStateChange((ev, s) => { if (s) window.cmPreviewCookie.set(s); });
+  const [{ data, error: e2 }, { data: previews }] = await Promise.all([sb.rpc('amaralesilva_portal_overview'), sb.rpc('amaralesilva_portal_previews')]);
   if (e2) {
     $('hello').textContent = 'Olá.';
     $('lede').textContent = 'Não foi possível carregar o seu projeto agora. Recarregue a página em instantes.';
     $('main').hidden = false;
     return;
   }
-  render(data || {}, session);
+  render(data || {}, session, previews || []);
 })();
 </script>
 </body>

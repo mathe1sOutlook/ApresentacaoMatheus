@@ -11,3 +11,4 @@ admin/infinitepay-schema.sql
 supabase/
 admin/push-schema.sql
 admin/client-access-schema.sql
+admin/previews-schema.sql

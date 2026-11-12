@@ -386,9 +386,9 @@ painel.
 ## Área do cliente (`/entrar`, `/cliente`)
 
 Plano completo em `docs/plano-area-do-cliente.md`; o desenho das telas está no
-canvas "Área do Cliente CASA MARTECH". Fases 1 e 2 prontas: login, perfis,
-link no header e a área de leitura. Prévias, arquivos e a migração para as
-contas do cliente vêm nas próximas fases.
+canvas "Área do Cliente CASA MARTECH". Fases 1 a 3 prontas: login, perfis,
+link no header, a área de leitura e as prévias com comentários e aprovação.
+Arquivos enviados pelo cliente e a migração para as contas dele vêm depois.
 
 - **O que o cliente vê** (`/cliente`): tudo sai de
   `amaralesilva_portal_overview()`, que devolve só colunas seguras e só do
@@ -398,6 +398,24 @@ contas do cliente vêm nas próximas fases.
   divisão; reuniões só com a marca **Mostrar na área do cliente** (campo
   `shared_with_client`, no modal da reunião), com pauta e ata. Nada de
   `split_*`, preços ou notas internas chega ao navegador do cliente.
+- **Prévias** (`/cliente/previa/?id=…`, fase 3): o site de cada versão fica no
+  repositório em `previa/<pasta>/` (com `index.html`) e é protegido pelo
+  `middleware.js` (Routing Middleware da Vercel, sem dependência). As páginas do
+  portal gravam o access token do Supabase no cookie `cm_at` (`Path=/previa`,
+  `assets/portal-session.js`); o middleware entrega o token ao banco, que
+  responde `amaralesilva_preview_access(slug)`. Resposta guardada por 1 min.
+  Sem sessão, página vira redirecionamento para `/entrar` e arquivo vira 401.
+  - **Fluxo da equipe:** pôr a pasta em `previa/`, cadastrar a versão em
+    **Prévias** no painel (nasce como rascunho, que só a equipe abre) e
+    **Publicar**: libera para o cliente do projeto e marca as anteriores como
+    substituídas. "Abrir" mostra como o cliente vê, com os comentários.
+  - **Cliente:** navega na prévia, marca pontos na página, comenta, responde,
+    **pede ajustes** ou **aprova** a versão. A equipe responde e marca como
+    resolvido no mesmo visualizador. Comentário, pedido de ajuste e aprovação
+    avisam a dupla por push (`admin/previews-schema.sql`).
+  - **Banco:** o cliente não lê `amaralesilva_previews` nem os comentários direto;
+    tudo passa por funções `amaralesilva_portal_*` que conferem o dono do
+    projeto. `previa/demo-v1/` é uma pasta de demonstração para testar o fluxo.
 - **Perfis**: `amaralesilva_my_role()` devolve `equipe`, `cliente` ou nulo.
   Equipe vai para `/admin`, cliente para `/cliente`; conta de outro app (o Auth
   do `mApps` é compartilhado) cai em "sem acesso". Quem decide é o banco, não a
