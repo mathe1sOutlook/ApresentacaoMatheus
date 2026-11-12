@@ -31,8 +31,9 @@
 .hint.is-ok { color: var(--blue); }
 .p { margin: 0 0 20px; font-size: 15px; line-height: 1.6; color: var(--ink-soft); }
 .gsi { display: flex; justify-content: center; min-height: 44px; color-scheme: light; }
-.ts { display: flex; justify-content: center; margin: 0 0 16px; }
-.ts[hidden] { display: none; }
+.ts { display: flex; justify-content: center; margin: 0 0 16px; min-height: 0; }
+.ts:empty { margin: 0; }
+.ts.is-off { height: 0; margin: 0; overflow: hidden; opacity: 0; pointer-events: none; }
 @media (max-width: 900px) {
   .login { flex-direction: column; align-items: stretch; gap: 40px; padding: 40px 20px 56px; }
   .card { width: 100%; padding: 24px; }
@@ -62,7 +63,7 @@
     <div class="card" id="card">
       <noscript><p class="p">Esta página precisa de JavaScript para entrar.</p></noscript>
       <h2 id="title" aria-live="polite">Entrar</h2>
-      <div class="ts" id="ts-box" hidden></div>
+      <div class="ts" id="ts-box"></div>
 
       <!-- 1 · e-mail -->
       <section id="s-email">
@@ -163,6 +164,9 @@ function show(id) {
   $('title').textContent = TITLES[id];
   document.querySelectorAll('.js-email').forEach((n) => { n.textContent = email; });
   document.querySelectorAll('.js-email-val').forEach((n) => { n.value = email; });
+  /* O widget do Turnstile só aparece onde um pedido o usa. Nas outras telas ele
+     fica recolhido (sem altura), mas continua ativo, para já ter o próximo token. */
+  $('ts-box').classList.toggle('is-off', !(TURNSTILE_SITE_KEY && ['s-email', 's-senha', 's-primeiro'].includes(id)));
   const first = $(id).querySelector('input:not([hidden])');
   if (first) first.focus({ preventScroll: true });
 }
@@ -222,47 +226,52 @@ const TURNSTILE_SITE_KEY = '0x4AAAAAAF9w5HYlCxsYLBPE';
 const CAPTCHA_MSG = 'Não foi possível confirmar que você não é um robô. Recarregue a página e tente de novo.';
 const PORTAL = SUPABASE_URL + '/functions/v1/portal-auth';
 
+/* O widget fica sempre visível no topo do cartão (nas telas que precisam dele)
+   e começa a verificar assim que a página abre. Cada token vale uma vez: ao
+   usar um, o widget é reiniciado e já vai buscando o próximo. Se o pedido
+   chegar antes do token, espera por ele (até 20 s). */
+let tsId = null, tsToken = '', tsWait = [];
+
+function tsTake() {
+  const t = tsToken;
+  tsToken = '';
+  try { window.turnstile.reset(tsId); } catch (e) { /* ok */ }
+  return t;
+}
+function tsOnToken(t) {
+  tsToken = t;
+  if (tsWait.length) {
+    const w = tsWait.shift();
+    clearTimeout(w.timer);
+    w.resolve(tsTake());
+  }
+}
+function tsStart() {
+  if (!TURNSTILE_SITE_KEY || tsId !== null || !window.turnstile) return;
+  tsId = window.turnstile.render($('ts-box'), {
+    sitekey: TURNSTILE_SITE_KEY, theme: 'dark', language: 'pt-br', size: 'flexible',
+    callback: tsOnToken,
+    'expired-callback': () => { tsToken = ''; }, /* o próprio widget renova */
+  });
+}
+function turnstileToken() {
+  if (!TURNSTILE_SITE_KEY) return Promise.resolve('');
+  if (tsToken) return Promise.resolve(tsTake());
+  return new Promise((resolve, reject) => {
+    const w = {
+      resolve,
+      timer: setTimeout(() => { tsWait = tsWait.filter((x) => x !== w); reject(new Error('captcha')); }, 20000),
+    };
+    tsWait.push(w);
+  });
+}
+
 if (TURNSTILE_SITE_KEY) {
   const t = document.createElement('script');
   t.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
   t.async = true;
+  t.onload = tsStart;
   document.head.appendChild(t);
-}
-
-/* Um token por pedido (cada um vale uma vez). O widget só aparece se o
-   Cloudflare precisar de interação; no resto do tempo é invisível. */
-function turnstileToken() {
-  if (!TURNSTILE_SITE_KEY) return Promise.resolve('');
-  return new Promise((resolve, reject) => {
-    const started = Date.now();
-    const run = () => {
-      const box = $('ts-box');
-      box.replaceChildren();
-      box.hidden = false;
-      let id = null;
-      const end = (fn, v) => {
-        if (id !== null) { try { window.turnstile.remove(id); } catch (e) { /* ok */ } }
-        box.replaceChildren();
-        box.hidden = true;
-        fn(v);
-      };
-      /* retry/refresh "never": o widget é de uma tentativa só. Com as repetições
-         automáticas ligadas, o Cloudflare tentava reiniciar um contêiner que já
-         tínhamos removido (erro "Nothing to reset found" no console). */
-      id = window.turnstile.render(box, {
-        sitekey: TURNSTILE_SITE_KEY, appearance: 'interaction-only', theme: 'dark', language: 'pt-br',
-        retry: 'never', 'refresh-expired': 'never', 'refresh-timeout': 'never',
-        callback: (t) => end(resolve, t),
-        'error-callback': () => { end(reject, new Error('captcha')); return true; },
-        'timeout-callback': () => end(reject, new Error('captcha')),
-      });
-    };
-    (function wait() {
-      if (window.turnstile) return run();
-      if (Date.now() - started > 8000) return reject(new Error('captcha'));
-      setTimeout(wait, 150);
-    })();
-  });
 }
 
 const portalPost = (body) => fetch(PORTAL, {
