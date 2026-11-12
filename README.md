@@ -320,12 +320,24 @@ Reúne:
 - **Leads do site** — o que chegou pelo formulário público, com situação
   (novo, em contato, convertido, descartado) e conversão em cliente.
 
+**Navegação em abas.** O painel usa o tema escuro do site (os mesmos tokens de
+cor e os raios 18/14/10) e seis abas no topo, montadas por `paintNav()` a partir
+da lista `NAV`: Visão geral, Comercial (CRM e Leads; a página de um projeto
+pertence a este grupo), Clientes (Clientes, Acesso, Prévias, Arquivos, Migração),
+Financeiro, Rotina (Agenda e Tarefas) e Equipe. A segunda linha só aparece no
+grupo que tem mais de uma tela. As rotas (`#/crm`, `#/financeiro`…) são as
+mesmas de quando a navegação era uma gaveta lateral: favoritos e links de
+notificação continuam valendo. **+ Novo** reúne os cinco cadastros e o menu da
+conta reúne instalar como app, notificações, ver o site, atualizar dados e sair.
+A Visão geral abre com um minicalendário: o mês navegável, as reuniões do dia
+escolhido e as próximas; os números do mês ficam numa lista ao lado.
+
 O painel **relê o banco sozinho**: quando a aba volta ao foco e a cada minuto
 com ela à vista, respeitando um piso de 15s entre leituras e se segurando
 enquanto há modal aberto ou cursor dentro de um campo. Antes ele só lia no
-login, depois de uma alteração e no "↻ Atualizar dados" da gaveta — deixado
+login, depois de uma alteração e no "↻ Atualizar dados" do menu da conta — deixado
 aberto, mostrava para sempre a foto do momento em que entrou. Quando chega lead
-novo, o botão **Menu** acende um ponto ocre, o item *Leads do site* mostra a
+novo, a aba **Comercial** acende um ponto ocre, o item *Leads do site* mostra a
 contagem e um aviso passa na tela.
 
 ### Backend
@@ -391,7 +403,7 @@ aparece depois da verificação de marca do Google.
 ### App e notificações
 
 O painel se instala como app (`/admin/manifest.webmanifest`, escopo `/admin`):
-no Android e no Chrome do computador aparece **Instalar como app** na gaveta;
+no Android e no Chrome do computador aparece **Instalar como app** no menu da conta;
 no iPhone é *Compartilhar → Adicionar à Tela de Início*. O site público só
 ganhou os ícones (`apple-touch-icon` e favicon PNG), sem manifest: o app é o
 painel.
@@ -405,7 +417,7 @@ painel.
   uma linha a mais em `SPLASHES` e outra no `<head>`. O Android monta a
   abertura sozinho com `background_color` e o ícone do manifest.
 - **Notificações** (Web Push): cada aparelho ativa em *Ativar notificações*,
-  na gaveta, e vira uma linha em `amaralesilva_push_subscriptions`. O banco
+  no menu da conta, e vira uma linha em `amaralesilva_push_subscriptions`. O banco
   avisa a Edge Function `push-notify` por `pg_net` quando chega lead pelo
   site (todos), quando uma parcela passa a *pago* (todos menos quem marcou) e
   quando uma tarefa é atribuída a alguém (só a pessoa). DDL em
