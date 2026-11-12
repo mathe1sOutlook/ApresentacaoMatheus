@@ -61,7 +61,7 @@ de implementação. Nada aqui foi construído ainda.
 
 Arquivo estático na Vercel é público; é preciso uma barreira.
 
-- **Recomendado:** Edge Middleware em `/previa/<cliente>/…`, validando um cookie
+- **Decidido (12/11/2026):** Edge Middleware em `/previa/<cliente>/…`, validando um cookie
   de sessão e o `client_id` do caminho. `/api/sessao` troca o login do Supabase
   pelo cookie. Custo: aparece `middleware.js` e uma função em `/api`.
 - Alternativa: pasta com nome aleatório, como as propostas. Mais simples, mas
@@ -95,6 +95,6 @@ Cada fase vai ao ar sozinha.
 - Atualizar README e CLAUDE.md: a regra "a página não linka nada interno" vale
   só para as propostas.
 
-## Decisão em aberto
+## Decisões
 
-Middleware ou link com nome aleatório para as prévias (trava a fase 3).
+- Prévias: Edge Middleware (decidido em 12/11/2026).
