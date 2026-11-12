@@ -68,7 +68,9 @@
   --sans:  'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --mono:  'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --container: 1180px;
+  /* Mais largo que o site (1180): o painel é tela de trabalho, com funil de
+     sete colunas e tabelas, e em monitor grande sobrava margem dos dois lados. */
+  --container: 1640px;
   --gutter:    32px;
   --header-h:  64px;
   color-scheme: dark;
@@ -508,7 +510,9 @@ tr.is-new td:first-child { box-shadow: inset 3px 0 0 var(--blue); }
 .kanban {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(238px, 1fr);
+  /* 7 × 184 cabe a partir de ~1340px de tela: as sete etapas à vista sem
+     rolagem lateral num notebook comum; abaixo disso a rolagem volta. */
+  grid-auto-columns: minmax(184px, 1fr);
   gap: 1px;
   background: var(--line);
   border: 1px solid var(--line);
@@ -1077,6 +1081,18 @@ const NARROW = matchMedia('(max-width: 640px)');
    estivesse sendo digitado. */
 NARROW.addEventListener('change', () => {
   if (state.me && parseRoute().name === 'financeiro') renderApp();
+});
+/* Fora do celular o desenho acompanha a largura da tela (ver renderFinChart):
+   ao redimensionar a janela, redesenha quando a largura muda de verdade. */
+let finW = 0, finTimer = 0;
+window.addEventListener('resize', () => {
+  clearTimeout(finTimer);
+  finTimer = setTimeout(() => {
+    if (!state.me || parseRoute().name !== 'financeiro' || NARROW.matches) return;
+    if (Math.abs(innerWidth - finW) < 40) return;
+    finW = innerWidth;
+    renderApp();
+  }, 200);
 });
 
 /* ═══ Utilidades ═══════════════════════════════════════════════════ */
@@ -2309,7 +2325,13 @@ function renderFinChart(from, to) {
   /* No celular o SVG é desenhado mais estreito: esticado de 760 para ~340px,
      o texto de 10 unidades virava 4px. */
   const narrow = NARROW.matches;
-  const W = narrow ? 380 : 760, H = narrow ? 240 : 264, L = narrow ? 50 : 64, R = 14, T = 22, B = 30;
+  /* Fora do celular a largura do desenho é a do espaço disponível (view
+     menos as margens e o respiro do cartão): o SVG fica em escala 1:1 e o
+     texto em 10px. Desenhado sempre a 760, ele era esticado e, com o painel
+     mais largo, letras e barras dobravam de tamanho. */
+  const view = document.getElementById('view');
+  const avail = view ? view.clientWidth - 2 * (parseFloat(getComputedStyle(view).paddingLeft) || 0) - 28 : 0;
+  const W = narrow ? 380 : Math.max(760, Math.round(avail)), H = narrow ? 240 : 280, L = narrow ? 50 : 64, R = 14, T = 22, B = 30;
   const iw = W - L - R, ih = H - T - B;
   const n = byMonth.length;
   const slot = iw / n;
