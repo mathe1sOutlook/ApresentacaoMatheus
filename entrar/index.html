@@ -241,15 +241,19 @@ function turnstileToken() {
       box.hidden = false;
       let id = null;
       const end = (fn, v) => {
-        try { window.turnstile.remove(id); } catch (e) { /* ok */ }
+        if (id !== null) { try { window.turnstile.remove(id); } catch (e) { /* ok */ } }
         box.replaceChildren();
         box.hidden = true;
         fn(v);
       };
+      /* retry/refresh "never": o widget é de uma tentativa só. Com as repetições
+         automáticas ligadas, o Cloudflare tentava reiniciar um contêiner que já
+         tínhamos removido (erro "Nothing to reset found" no console). */
       id = window.turnstile.render(box, {
         sitekey: TURNSTILE_SITE_KEY, appearance: 'interaction-only', theme: 'dark', language: 'pt-br',
+        retry: 'never', 'refresh-expired': 'never', 'refresh-timeout': 'never',
         callback: (t) => end(resolve, t),
-        'error-callback': () => end(reject, new Error('captcha')),
+        'error-callback': () => { end(reject, new Error('captcha')); return true; },
         'timeout-callback': () => end(reject, new Error('captcha')),
       });
     };
