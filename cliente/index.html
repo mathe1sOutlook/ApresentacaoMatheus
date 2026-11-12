@@ -42,6 +42,19 @@ a.row:hover { color: var(--ochre); }
 .prev__txt b { display: block; margin-bottom: 4px; font: 400 20px var(--serif); }
 .prev__txt span { font-size: 14px; line-height: 1.5; color: var(--ink-soft); }
 .prev .btn { width: auto; padding: 0 22px; }
+.up { margin-top: 20px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px; }
+.up label.lbl { margin-bottom: 6px; }
+.up .field { height: 44px; }
+.up__pick { position: relative; }
+.up__pick input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.up .btn { width: auto; padding: 0 22px; }
+.up__pick:focus-within .btn { outline: 2px solid var(--blue); outline-offset: 2px; }
+.row .rm { border: 0; background: transparent; color: var(--ink-soft); font: 400 12px var(--sans); cursor: pointer; padding: 8px; min-height: 36px; }
+.row .rm:hover { color: var(--warn); }
+.row .dl { border: 0; background: transparent; color: var(--ochre); font: 400 13px var(--sans); cursor: pointer; padding: 8px 0 8px 8px; min-height: 36px; text-align: left; }
+.row__main { min-width: 0; flex: 1; }
+.row__main span { display: block; overflow-wrap: anywhere; }
+.row__main small { display: block; margin-top: 2px; font: 400 11px var(--mono); color: var(--ink-soft); text-align: left; }
 .foot { margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-soft); }
 @media (max-width: 720px) { .wrap { padding: 36px 20px 56px; } .hd__bar { padding: 0 20px; } h1 { font-size: 34px; } .proj__head h2 { font-size: 24px; } }
 </style>
@@ -59,6 +72,29 @@ a.row:hover { color: var(--ochre); }
   <h1 id="hello">Olá.</h1>
   <p class="lede" id="lede"></p>
   <div id="projects"></div>
+  <section class="proj" id="files" hidden>
+    <h2>Arquivos</h2>
+    <p class="empty" style="max-width:620px">Envie por aqui o que a equipe pediu: logotipo, textos, imagens, acessos. Até 25 MB por arquivo, em imagem, PDF, Office, texto ou .zip.</p>
+    <div class="up">
+      <div id="up-proj-box" hidden>
+        <label class="lbl" for="up-proj">Projeto</label>
+        <select class="field" id="up-proj"></select>
+      </div>
+      <div style="flex:1 1 220px;min-width:180px">
+        <label class="lbl" for="up-note">Observação (opcional)</label>
+        <input class="field" id="up-note" type="text" maxlength="500" placeholder="Ex.: logotipo em vetor" />
+      </div>
+      <div class="up__pick">
+        <span class="btn btn--ochre" aria-hidden="true">Escolher arquivos</span>
+        <input id="up-file" type="file" multiple aria-label="Escolher arquivos para enviar" />
+      </div>
+    </div>
+    <p class="msg" id="up-msg" role="status" aria-live="polite"></p>
+    <div class="cols" style="margin-top:24px">
+      <div class="col"><p class="sh">Enviados por vocês</p><div id="f-mine"></div></div>
+      <div class="col"><p class="sh">Enviados pela CASA MARTECH</p><div id="f-team"></div></div>
+    </div>
+  </section>
   <section class="proj" id="meetings" hidden>
     <h2>Reuniões</h2>
     <div id="meet-list"></div>
@@ -167,6 +203,73 @@ function meetingBlock(m, projName) {
   return h('div', { class: 'meet' }, h('h3', null, m.title), h('p', { class: 'when' }, parts.join(' · ')), body);
 }
 
+/* ── arquivos ──────────────────────────────────────────────────────── */
+const BUCKET = 'amaralesilva-client-files';
+const MAX_BYTES = 25 * 1024 * 1024;
+let ctx = { clientId: null, projects: [] };
+
+function safeName(n) {
+  const i = n.lastIndexOf('.');
+  const ext = i > 0 ? n.slice(i).toLowerCase().replace(/[^.a-z0-9]/g, '').slice(0, 10) : '';
+  const base = (i > 0 ? n.slice(0, i) : n).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'arquivo';
+  return base + ext;
+}
+const fmtSize = (b) => (b == null ? '' : b < 1024 * 1024 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / 1024 / 1024).toFixed(1).replace('.', ',') + ' MB');
+const upMsg = (t, err) => { const m = $('up-msg'); m.textContent = t || ''; m.className = 'msg' + (err ? ' msg--err' : ''); };
+
+async function download(f) {
+  const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(f.path, 60, { download: f.name });
+  if (error || !data) { upMsg('Não foi possível baixar agora. Tente de novo.', true); return; }
+  const a = h('a', { href: data.signedUrl, rel: 'noopener' }); document.body.append(a); a.click(); a.remove();
+}
+async function removeFile(f) {
+  if (!confirm('Remover "' + f.name + '"?')) return;
+  const { error: e1 } = await sb.storage.from(BUCKET).remove([f.path]);
+  if (e1) { upMsg('Não foi possível remover agora.', true); return; }
+  const { error: e2 } = await sb.rpc('amaralesilva_portal_delete_file', { p_id: f.id });
+  if (e2) { upMsg('O arquivo foi apagado, mas a lista não atualizou. Recarregue a página.', true); return; }
+  await loadFiles();
+}
+function fileRow(f, projNames) {
+  const sub = [f.by_name, new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: TZ }).format(new Date(f.created_at)), fmtSize(f.size), f.project_id ? projNames[f.project_id] : null].filter(Boolean).join(' · ');
+  return h('div', { class: 'row' },
+    h('div', { class: 'row__main' }, h('span', null, f.name), h('small', null, sub), f.note ? h('small', { style: 'font-family:var(--sans);font-size:12px' }, f.note) : null),
+    h('button', { type: 'button', class: 'dl', onclick: () => download(f) }, 'baixar'),
+    f.mine && f.by_role === 'cliente' ? h('button', { type: 'button', class: 'rm', onclick: () => removeFile(f), 'aria-label': 'Remover ' + f.name }, 'remover') : null);
+}
+async function loadFiles() {
+  const { data, error } = await sb.rpc('amaralesilva_portal_files');
+  if (error) { upMsg('Não foi possível carregar a lista de arquivos.', true); return; }
+  const names = Object.fromEntries(ctx.projects.map((p) => [p.id, p.name]));
+  const mine = data.filter((f) => f.by_role === 'cliente'), team = data.filter((f) => f.by_role === 'equipe');
+  $('f-mine').replaceChildren(...(mine.length ? mine.map((f) => fileRow(f, names)) : [h('p', { class: 'empty' }, 'Nada enviado ainda.')]));
+  $('f-team').replaceChildren(...(team.length ? team.map((f) => fileRow(f, names)) : [h('p', { class: 'empty' }, 'Nada por aqui ainda.')]));
+}
+async function uploadFiles(list) {
+  const files = Array.from(list);
+  if (!files.length || !ctx.clientId) return;
+  const sel = $('up-proj');
+  const proj = sel && sel.value ? sel.value : '';
+  const owner = proj ? (ctx.projects.find((p) => p.id === proj) || {}).client_id || ctx.clientId : ctx.clientId;
+  const note = $('up-note').value.trim();
+  let ok = 0;
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    upMsg('Enviando ' + (i + 1) + ' de ' + files.length + ': ' + f.name + '…');
+    if (f.size > MAX_BYTES) { upMsg('"' + f.name + '" passa de 25 MB. Envie em partes ou compacte.', true); continue; }
+    const path = owner + '/' + (proj || 'geral') + '/' + crypto.randomUUID() + '-' + safeName(f.name);
+    const { error } = await sb.storage.from(BUCKET).upload(path, f, { contentType: f.type || undefined, upsert: false });
+    if (error) { upMsg('"' + f.name + '" não foi aceito. Envie em imagem, PDF, Office, texto ou .zip.', true); continue; }
+    const { error: e2 } = await sb.rpc('amaralesilva_portal_register_file', { p_path: path, p_name: f.name, p_size: f.size, p_mime: f.type || null, p_project: proj || null, p_note: note || null });
+    if (e2) { await sb.storage.from(BUCKET).remove([path]); upMsg('Não foi possível registrar "' + f.name + '". Tente de novo.', true); continue; }
+    ok++;
+  }
+  $('up-file').value = '';
+  if (ok) { upMsg(ok === 1 ? 'Arquivo enviado. A equipe foi avisada.' : ok + ' arquivos enviados. A equipe foi avisada.'); $('up-note').value = ''; await loadFiles(); }
+}
+$('up-file').addEventListener('change', (e) => uploadFiles(e.target.files));
+
 function render(data, session, previews) {
   const proj = data.projects || [];
   const client = (data.clients || [])[0];
@@ -179,6 +282,12 @@ function render(data, session, previews) {
     : 'O seu acesso está ativo. O projeto aparece aqui assim que a proposta for enviada.';
   const box = $('projects');
   box.replaceChildren(...proj.map((p) => projectBlock(p, previews)));
+  ctx = { clientId: client ? client.id : null, projects: proj };
+  const sel = $('up-proj');
+  sel.replaceChildren(h('option', { value: '' }, 'Geral (sem projeto)'), ...proj.map((p) => h('option', { value: p.id }, p.name)));
+  $('up-proj-box').hidden = !proj.length;
+  $('files').hidden = !ctx.clientId;
+  if (ctx.clientId) loadFiles();
   const names = Object.fromEntries(proj.map((p) => [p.id, p.name]));
   const meets = data.meetings || [];
   $('meetings').hidden = !meets.length;

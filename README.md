@@ -386,9 +386,9 @@ painel.
 ## Área do cliente (`/entrar`, `/cliente`)
 
 Plano completo em `docs/plano-area-do-cliente.md`; o desenho das telas está no
-canvas "Área do Cliente CASA MARTECH". Fases 1 a 3 prontas: login, perfis,
-link no header, a área de leitura e as prévias com comentários e aprovação.
-Arquivos enviados pelo cliente e a migração para as contas dele vêm depois.
+canvas "Área do Cliente CASA MARTECH". Fases 1 a 4 prontas: login, perfis,
+link no header, área de leitura, prévias com comentários e aprovação, e
+arquivos nos dois sentidos. A migração para as contas do cliente vem depois.
 
 - **O que o cliente vê** (`/cliente`): tudo sai de
   `amaralesilva_portal_overview()`, que devolve só colunas seguras e só do
@@ -416,6 +416,19 @@ Arquivos enviados pelo cliente e a migração para as contas dele vêm depois.
   - **Banco:** o cliente não lê `amaralesilva_previews` nem os comentários direto;
     tudo passa por funções `amaralesilva_portal_*` que conferem o dono do
     projeto. `previa/demo-v1/` é uma pasta de demonstração para testar o fluxo.
+- **Arquivos** (fase 4): bucket **privado** `amaralesilva-client-files` do
+  Storage, uma pasta por cliente (`<client_id>/<project_id|geral>/…`). O cliente
+  envia o que a equipe pediu e baixa o que a equipe entrega; a equipe vê tudo em
+  **Arquivos dos clientes** no painel e envia entregas por lá. Até 25 MB por
+  arquivo, em imagem, PDF, Office, texto ou .zip (lista de tipos no bucket).
+  - **Segurança:** o Storage só deixa o cliente mexer na pasta do próprio
+    cliente, e só apagar o que ele mesmo enviou. A lista passa por
+    `amaralesilva_portal_files()`; o registro, por
+    `amaralesilva_portal_register_file()`, que confere o dono do caminho, o
+    projeto e se o objeto existe de fato. Download por link assinado de 60 s.
+  - **Aviso:** arquivo enviado pelo cliente avisa a dupla por push.
+  - DDL em `admin/client-files-schema.sql`. Excluir um cliente apaga as linhas,
+    mas não os objetos do Storage (a plataforma não permite apagá-los por SQL).
 - **Perfis**: `amaralesilva_my_role()` devolve `equipe`, `cliente` ou nulo.
   Equipe vai para `/admin`, cliente para `/cliente`; conta de outro app (o Auth
   do `mApps` é compartilhado) cai em "sem acesso". Quem decide é o banco, não a

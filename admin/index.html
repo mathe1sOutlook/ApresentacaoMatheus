@@ -882,6 +882,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
         <a href="#/clientes" data-route="clientes">Clientes</a>
         <a href="#/acesso" data-route="acesso">Acesso dos clientes</a>
         <a href="#/previas" data-route="previas">Prévias</a>
+        <a href="#/arquivos" data-route="arquivos">Arquivos dos clientes</a>
         <a href="#/financeiro" data-route="financeiro">Financeiro</a>
         <a href="#/agenda" data-route="agenda">Agenda</a>
         <a href="#/tarefas" data-route="tarefas">Tarefas</a>
@@ -944,7 +945,7 @@ const sb = window.supabase
 const state = {
   session: null,
   members: [], me: null,
-  clients: [], clientUsers: [], previews: [], previewComments: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
+  clients: [], clientUsers: [], previews: [], previewComments: [], clientFiles: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
 };
 const now0 = new Date();
 const ui = {
@@ -1143,7 +1144,7 @@ function payShareB(p) {
 
 /* ═══ Dados ════════════════════════════════════════════════════════ */
 async function fetchAll() {
-  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments] = await Promise.all([
+  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles] = await Promise.all([
     sb.from(TB('clients')).select('*').order('name'),
     sb.from(TB('projects')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('notes')).select('*').order('created_at', { ascending: false }),
@@ -1156,12 +1157,13 @@ async function fetchAll() {
     sb.from(TB('client_users')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('previews')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('preview_comments')).select('id,preview_id,parent_id,kind,resolved,author_role,created_at').order('created_at'),
+    sb.from(TB('client_files')).select('*').order('created_at', { ascending: false }),
   ]);
-  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments].find((r) => r.error);
+  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles].find((r) => r.error);
   if (firstErr) throw firstErr.error;
   state.clients = clients.data; state.projects = projects.data; state.notes = notes.data;
   state.meetings = meetings.data; state.payments = payments.data; state.checkouts = checkouts.data; state.tasks = tasks.data;
-  state.members = members.data; state.leads = leads.data; state.clientUsers = clientUsers.data; state.previews = previews.data; state.previewComments = previewComments.data;
+  state.members = members.data; state.leads = leads.data; state.clientUsers = clientUsers.data; state.previews = previews.data; state.previewComments = previewComments.data; state.clientFiles = clientFiles.data;
 }
 
 /* ═══ Releitura automática ═════════════════════════════════════════
@@ -1679,6 +1681,52 @@ VIEWS.previas = function () {
     </div>
   </div>
   <p class="soft" style="font-size:13px;line-height:1.55;max-width:680px;margin-top:16px">Fluxo: coloque o site em <span class="mono">previa/&lt;pasta&gt;/</span> no repositório (com um <span class="mono">index.html</span>), cadastre a versão aqui e publique. Publicar libera a versão para o cliente do projeto e marca as anteriores como substituídas. “Abrir” mostra como o cliente vê, com os comentários.</p>`;
+};
+
+/* ═══ Arquivos dos clientes (área do cliente, fase 4) ═══════════════
+   Bucket privado amaralesilva-client-files, uma pasta por cliente. O cliente
+   envia o que pedimos; aqui a equipe baixa e também envia entregas. */
+const CF_BUCKET = 'amaralesilva-client-files';
+const fmtBytes = (b) => (b == null ? '—' : b < 1048576 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / 1048576).toFixed(1).replace('.', ',') + ' MB');
+const cfSafeName = (n) => {
+  const i = n.lastIndexOf('.');
+  const ext = i > 0 ? n.slice(i).toLowerCase().replace(/[^.a-z0-9]/g, '').slice(0, 10) : '';
+  const base = (i > 0 ? n.slice(0, i) : n).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'arquivo';
+  return base + ext;
+};
+
+VIEWS.arquivos = function () {
+  const rows = state.clientFiles.map((f) => {
+    const c = clientById(f.client_id), p = f.project_id ? projById(f.project_id) : null;
+    return `<tr>
+      <td><b>${esc(c ? c.name : '—')}</b>${p ? `<br /><span class="mono soft" style="font-size:11px">${esc(p.name)}</span>` : ''}</td>
+      <td>${esc(f.name)}${f.note ? `<br /><span class="soft" style="font-size:12px">${esc(f.note)}</span>` : ''}</td>
+      <td>${f.uploaded_by_role === 'cliente' ? '<span class="chip chip--pago">do cliente</span>' : '<span class="chip">da equipe</span>'}<br /><span class="mono soft" style="font-size:11px">${esc(f.uploaded_by_name || '')}</span></td>
+      <td class="mono" style="font-size:12px">${fmtBytes(f.size)}</td>
+      <td class="mono soft" style="font-size:11px">${fmtDate(toISODate(new Date(f.created_at)))}</td>
+      <td class="actions">
+        <button type="button" class="btn-mini" data-action="downloadFile" data-id="${f.id}">Baixar</button>
+        <button type="button" class="btn-mini btn-mini--danger" data-action="deleteFile" data-id="${f.id}">Excluir</button>
+      </td>
+    </tr>`;
+  }).join('');
+  return `
+  <div class="view-head">
+    <div>
+      <p class="eyebrow">O que o cliente enviou e o que entregamos a ele</p>
+      <h1 class="view-title">Arquivos dos clientes</h1>
+    </div>
+    <div class="view-actions"><button type="button" class="btn-solid" data-action="newFile">+ Enviar ao cliente</button></div>
+  </div>
+  <div class="card card__body--flush">
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>Cliente</th><th>Arquivo</th><th>Origem</th><th>Tamanho</th><th>Data</th><th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="6" class="empty">Nenhum arquivo ainda. Eles chegam quando o cliente envia pela área dele.</td></tr>'}</tbody>
+    </table>
+    </div>
+  </div>
+  <p class="soft" style="font-size:13px;line-height:1.55;max-width:680px;margin-top:16px">O que você envia aqui aparece para o cliente em “Enviados pela CASA MARTECH”. Até 25 MB por arquivo, em imagem, PDF, Office, texto ou .zip.</p>`;
 };
 
 /* ═══ Projeto (detalhe) ════════════════════════════════════════════ */
@@ -2623,6 +2671,32 @@ function previewModal() {
   });
 }
 
+/* — Arquivo para o cliente — */
+function fileModal() {
+  if (!state.clients.length) { toast('Cadastre o cliente antes.'); return; }
+  openModal('Enviar arquivo ao cliente', `
+    <form>
+      <div class="form-grid">
+        ${fld('fl-client', 'Cliente *', sel('fl-client', 'client_id', state.clients.map((c) => [c.id, c.name + (c.company ? ' · ' + c.company : '')]), ''), true)}
+        ${fld('fl-project', 'Projeto', sel('fl-project', 'project_id', projectOptions(), ''), true, 'Opcional. Precisa ser um projeto do cliente escolhido.')}
+        ${fld('fl-file', 'Arquivo *', '<input id="fl-file" name="file" type="file" required />', true, 'Até 25 MB. Imagem, PDF, Office, texto ou .zip.')}
+        ${fld('fl-note', 'Observação', inp('fl-note', 'note', 'text', '', 'maxlength="500" placeholder="Aparece para o cliente junto do arquivo"'), true)}
+      </div>
+      <div class="form-foot"><button type="submit" class="btn-solid">Enviar</button></div>
+    </form>`, async (d) => {
+    const f = d.file;
+    if (!f || !f.name) { toast('Escolha o arquivo.'); return false; }
+    if (f.size > 25 * 1048576) { toast('O arquivo passa de 25 MB.'); return false; }
+    return mutate(async () => {
+      const path = d.client_id + '/' + (d.project_id || 'geral') + '/' + crypto.randomUUID() + '-' + cfSafeName(f.name);
+      const up = await sb.storage.from(CF_BUCKET).upload(path, f, { contentType: f.type || undefined, upsert: false });
+      if (up.error) throw up.error;
+      const { error } = await sb.rpc('amaralesilva_portal_register_file', { p_path: path, p_name: f.name, p_size: f.size, p_mime: f.type || null, p_project: d.project_id || null, p_note: d.note || null });
+      if (error) { await sb.storage.from(CF_BUCKET).remove([path]); throw error; }
+    }, 'Arquivo enviado ao cliente.');
+  });
+}
+
 /* — Acesso do cliente — */
 function accessModal() {
   if (!state.clients.length) { toast('Cadastre o cliente antes de liberar o acesso.'); return; }
@@ -2763,6 +2837,23 @@ const ACTIONS = {
     const v = state.previews.find((x) => x.id === el.dataset.id);
     if (!v || !confirm(`Excluir a v${v.version} e os comentários dela? Os arquivos em previa/${v.slug}/ continuam no repositório.`)) return;
     mutate(() => dbDelete('previews', v.id), 'Versão excluída.');
+  },
+  newFile: () => { closeDrawer(); fileModal(); },
+  downloadFile: async (el) => {
+    const f = state.clientFiles.find((x) => x.id === el.dataset.id);
+    if (!f) return;
+    const { data, error } = await sb.storage.from(CF_BUCKET).createSignedUrl(f.path, 60, { download: f.name });
+    if (error || !data) { toast('Não foi possível baixar: ' + (error ? error.message : 'erro')); return; }
+    const a = document.createElement('a'); a.href = data.signedUrl; a.rel = 'noopener'; document.body.append(a); a.click(); a.remove();
+  },
+  deleteFile: (el) => {
+    const f = state.clientFiles.find((x) => x.id === el.dataset.id);
+    if (!f || !confirm(`Excluir "${f.name}"? O cliente deixa de ver o arquivo.`)) return;
+    mutate(async () => {
+      const { error } = await sb.storage.from(CF_BUCKET).remove([f.path]);
+      if (error) throw error;
+      await dbDelete('client_files', f.id);
+    }, 'Arquivo excluído.');
   },
   newAccess: () => { closeDrawer(); accessModal(); },
   toggleAccess: (el) => {
