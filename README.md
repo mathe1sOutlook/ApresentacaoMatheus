@@ -496,6 +496,21 @@ aprovação, arquivos nos dois sentidos e a passagem para as contas do cliente.
   implícito para abrir em outro aparelho; o envio espera 1 minuto entre pedidos
   (o Auth responde 429 antes disso). Link vencido ou já aberto (comum quando o
   programa de e-mail o abre antes da pessoa) volta com aviso para pedir outro.
+- **Cloudflare Turnstile**, só nas nossas rotas: a etapa do e-mail (`check`) e o
+  envio do link de criar senha (`recover`, que agora é a própria `portal-auth`
+  quem manda, só para e-mail de cliente cadastrado). O widget só aparece se o
+  Cloudflare precisar de interação. O Auth do projeto é compartilhado com outros
+  apps e **não** teve o captcha nativo ligado; por isso a senha continua indo
+  direto do navegador ao Supabase, que já limita por IP. Para ligar:
+  1. No Cloudflare, criar um widget Turnstile com os domínios
+     `www.casamartech.com.br`, `casamartech.vercel.app` e `amaralesilva.vercel.app`.
+  2. Gravar a **chave secreta** como segredo da função `portal-auth`, com o nome
+     `TURNSTILE_SECRET_KEY` (Supabase, *Edge Functions, Secrets*). Nunca no repositório.
+  3. Pôr a **chave do site** (pública) em `TURNSTILE_SITE_KEY`, no script de
+     `entrar/index.html`, e publicar.
+  Ordem: publicar a função antes do site. Sem o segredo, a função não exige token
+  (publicar o código não derruba o login); com o segredo e sem a chave do site, a
+  tela não envia token e o login da etapa do e-mail é recusado.
 - **Header do site**: "Entrar" antes do botão de conversa; com sessão neste
   navegador vira "Minha área" ou "Painel" (lê `cm_role` do `localStorage`, só
   interface).
