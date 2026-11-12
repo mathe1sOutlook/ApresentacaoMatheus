@@ -42,10 +42,11 @@ async function member(req: Request) {
   const authClient=createClient(SUPABASE_URL,PUBLIC_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
   const {data:{user},error}=await authClient.auth.getUser(token);
   if(error || !user?.email) return false;
-  const {data, error:memberError}=await getAdmin().from("amaralesilva_members")
-    .select("id").ilike("email",user.email).limit(1);
+  const email=user.email.toLowerCase();
+  // Igualdade exata: ilike trataria "_" e "%" do e-mail como curinga.
+  const {data, error:memberError}=await getAdmin().from("amaralesilva_members").select("email");
   if(memberError) throw memberError;
-  return !!data?.length;
+  return (data||[]).some((m:{email:string})=>m.email?.toLowerCase()===email);
 }
 async function ipPost(path: string,payload: object) {
   const controller=new AbortController();
