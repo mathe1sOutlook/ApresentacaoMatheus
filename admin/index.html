@@ -68,7 +68,9 @@
   --sans:  'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --mono:  'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --container: 1180px;
+  /* Mais largo que o site (1180): o painel é tela de trabalho, com funil de
+     sete colunas e tabelas, e em monitor grande sobrava margem dos dois lados. */
+  --container: 1640px;
   --gutter:    32px;
   --header-h:  64px;
   color-scheme: dark;
@@ -508,7 +510,9 @@ tr.is-new td:first-child { box-shadow: inset 3px 0 0 var(--blue); }
 .kanban {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(238px, 1fr);
+  /* 7 × 184 cabe a partir de ~1340px de tela: as sete etapas à vista sem
+     rolagem lateral num notebook comum; abaixo disso a rolagem volta. */
+  grid-auto-columns: minmax(184px, 1fr);
   gap: 1px;
   background: var(--line);
   border: 1px solid var(--line);
