@@ -167,3 +167,27 @@ end;
 $$;
 revoke execute on function public.amaralesilva_portal_overview() from public, anon;
 grant  execute on function public.amaralesilva_portal_overview() to authenticated;
+
+-- ═══ Visão da equipe: "Ver como cliente" (migração amaralesilva_view_as_client) ═══
+-- A equipe abre /cliente?ver=<client_id>, e a página manda o cabeçalho
+-- x-view-as-client. O PostgREST o expõe em request.headers; para quem é da
+-- equipe, amaralesilva_my_client_ids() passa a incluir esse cliente, e TODAS as
+-- funções amaralesilva_portal_* (que filtram por ela) devolvem o que o cliente
+-- vê. Para quem não é da equipe o cabeçalho é ignorado. A comparação é por texto
+-- (um valor que não é uuid cai fora em vez de dar erro). A leitura-apenas é da
+-- tela, que esconde os controles; no banco a equipe já pode escrever por
+-- direito próprio, então o cabeçalho não dá poder novo a ninguém.
+create or replace function public.amaralesilva_my_client_ids()
+returns setof uuid
+language sql stable security definer
+set search_path = public
+as $$
+  select u.client_id from public.amaralesilva_client_users u
+  where u.active and lower(u.email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+  union
+  select c.id from public.amaralesilva_clients c
+  where public.amaralesilva_is_member()
+    and c.id::text = lower(coalesce(nullif(nullif(current_setting('request.headers', true), '')::json ->> 'x-view-as-client', ''), ''));
+$$;
+revoke execute on function public.amaralesilva_my_client_ids() from public, anon;
+grant  execute on function public.amaralesilva_my_client_ids() to authenticated;
