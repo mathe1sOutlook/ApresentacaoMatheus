@@ -93,6 +93,11 @@ a.row:hover { color: var(--ochre); }
 .addshot .field { height: 40px; width: auto; font-size: 14px; }
 .addshot .up__pick .btn { min-height: 40px; font-size: 14px; padding: 0 16px; width: auto; }
 .tip { margin: 0 0 18px; max-width: 620px; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+.vb { position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 20px; padding: 10px 32px; background: var(--ochre); color: var(--bg); font-size: 13px; line-height: 1.4; }
+.vb a { color: var(--bg); font-weight: 500; border-bottom: 1px solid currentColor; }
+.view-only .up, .view-only #ch-form, .view-only #char-form, .view-only .addshot, .view-only .chap__act, .view-only .shot .mini,
+.view-only .row .rm, .view-only .hand__row .btn, .view-only #up-proj-box { display: none !important; }
+@media (max-width: 720px) { .vb { padding: 10px 20px; } }
 .foot { margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-soft); }
 @media (max-width: 720px) { .wrap { padding: 36px 20px 56px; } .hd__bar { padding: 0 20px; } h1 { font-size: 34px; } .proj__head h2 { font-size: 24px; } }
 </style>
@@ -105,6 +110,10 @@ a.row:hover { color: var(--ochre); }
   </div>
 </header>
 
+<div class="vb" id="vb" hidden role="status">
+  <span>Visão da equipe: você vê <b id="vb-who"></b> como ele vê, em modo leitura. Nada aqui altera o que o cliente tem.</span>
+  <a href="/admin#/clientes">Voltar ao painel</a>
+</div>
 <main class="wrap" id="main" hidden>
   <p class="eyebrow" id="who">Área do cliente</p>
   <h1 id="hello">Olá.</h1>
@@ -179,8 +188,16 @@ a.row:hover { color: var(--ochre); }
    só do cliente logado. Ver admin/client-access-schema.sql. */
 const SUPABASE_URL = 'https://wsgjbzsdewzplsnpfvdf.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_uUuSrKXuJXalJ79WO0PxDg_QpIEOfvA';
+/* Visão da equipe: /cliente?ver=<id do cliente>. O banco só honra o cabeçalho
+   para quem é da equipe (amaralesilva_my_client_ids); para o cliente ele é
+   ignorado. A tela fica em modo leitura. Ver admin/client-access-schema.sql. */
+const VIEW_AS = (new URLSearchParams(location.search).get('ver') || '').toLowerCase();
+const VIEW_MODE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(VIEW_AS);
 const sb = window.supabase
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'implicit', persistSession: true, detectSessionInUrl: false } })
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: { flowType: 'implicit', persistSession: true, detectSessionInUrl: false },
+      global: VIEW_MODE ? { headers: { 'x-view-as-client': VIEW_AS } } : {},
+    })
   : null;
 
 const STATUS = { proposta_enviada: 'Proposta enviada', negociacao: 'Em negociação', fechado: 'Contrato fechado', concluido: 'Concluído' };
@@ -520,8 +537,11 @@ function render(data, session, previews) {
   lastData = data; lastSession = session; lastPrev = previews;
   const proj = data.projects || [];
   const client = (data.clients || [])[0];
-  const name = (session.user.user_metadata && (session.user.user_metadata.name || session.user.user_metadata.full_name)) || '';
+  const name = VIEW_MODE
+    ? ((client && client.name) || '')
+    : ((session.user.user_metadata && (session.user.user_metadata.name || session.user.user_metadata.full_name)) || '');
   const first = name ? name.split(' ')[0] : '';
+  if (VIEW_MODE) $('vb-who').textContent = client ? (client.company || client.name) : 'este cliente';
   $('who').textContent = client ? (client.company || client.name) : 'Área do cliente';
   $('hello').textContent = first ? 'Olá, ' + first + '.' : 'Olá.';
   $('lede').textContent = proj.length
@@ -554,9 +574,16 @@ function render(data, session, previews) {
   if (!session) return toLogin();
   const { data: role, error } = await sb.rpc('amaralesilva_my_role');
   if (error || !role) { forget(); await sb.auth.signOut(); return toLogin(); }
-  if (role === 'equipe') return location.replace('/admin');
+  if (role === 'equipe' && !VIEW_MODE) return location.replace('/admin');
+  if (role !== 'equipe' && VIEW_MODE) return location.replace('/cliente');
   const nm = (session.user.user_metadata && (session.user.user_metadata.name || session.user.user_metadata.full_name)) || '';
-  try { localStorage.setItem('cm_role', 'cliente'); localStorage.setItem('cm_name', nm); } catch (e) { /* ok */ }
+  if (role === 'equipe') {
+    /* visão da equipe: não grava o papel de cliente no navegador de quem é da equipe */
+    document.body.classList.add('view-only');
+    $('vb').hidden = false; $('out').hidden = true;
+  } else {
+    try { localStorage.setItem('cm_role', 'cliente'); localStorage.setItem('cm_name', nm); } catch (e) { /* ok */ }
+  }
   window.cmPreviewCookie.set(session);
   sb.auth.onAuthStateChange((ev, s) => { if (s) window.cmPreviewCookie.set(s); });
   const [{ data, error: e2 }, { data: previews }, { data: hand }] = await Promise.all([sb.rpc('amaralesilva_portal_overview'), sb.rpc('amaralesilva_portal_previews'), sb.rpc('amaralesilva_portal_handoff')]);

@@ -491,6 +491,13 @@ aprovação, arquivos nos dois sentidos e a passagem para as contas do cliente.
   - **Aviso:** arquivo enviado pelo cliente avisa a dupla por push.
   - DDL em `admin/client-files-schema.sql`. Excluir um cliente apaga as linhas,
     mas não os objetos do Storage (a plataforma não permite apagá-los por SQL).
+- **Ver como cliente** (equipe): em **Clientes**, o botão abre
+  `/cliente?ver=<client_id>` numa aba nova, em modo leitura e com uma faixa
+  avisando. A página manda o cabeçalho `x-view-as-client`; o banco só o honra
+  para quem é da equipe (`amaralesilva_my_client_ids()`, em
+  `admin/client-access-schema.sql`), então todas as funções `portal_*` devolvem
+  o que aquele cliente vê, sem código duplicado. Para o cliente o cabeçalho não
+  faz nada. A prévia abre no visualizador da equipe, não na visão do cliente.
 - **Histórias** (projetos de livro ilustrado, hoje o do Carlos Lima): o projeto
   ganha `story_enabled = true` (hoje só por SQL) e a `/cliente` mostra a seção
   **A história**: capítulos escritos (texto colado), personagens com fotos de

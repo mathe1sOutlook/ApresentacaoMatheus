@@ -1798,7 +1798,7 @@ VIEWS.clientes = function () {
       <td>${esc(c.origin || '—')}</td>
       <td class="mono" style="font-size:12px">${accessEmailOf(c.id) ? esc(accessEmailOf(c.id)) : '<span class="soft">—</span>'}</td>
       <td>${projs.length ? projs.map((p) => `<button type="button" class="btn-link" style="text-transform:none;letter-spacing:0" data-action="openProject" data-id="${p.id}">${esc(p.name)}</button>`).join('<br />') : '<span class="soft">—</span>'}</td>
-      <td class="actions"><button type="button" class="btn-mini" data-action="editClient" data-id="${c.id}">Editar</button></td>
+      <td class="actions"><button type="button" class="btn-mini" data-action="viewAsClient" data-id="${c.id}" title="Abre a área do cliente como ele vê, só para leitura">Ver como cliente</button> <button type="button" class="btn-mini" data-action="editClient" data-id="${c.id}">Editar</button></td>
     </tr>`;
   }).join('');
 
@@ -3250,6 +3250,7 @@ const ACTIONS = {
     if (error || !data) { toast('Não foi possível baixar: ' + (error ? error.message : 'erro')); return; }
     const a = document.createElement('a'); a.href = data.signedUrl; a.rel = 'noopener'; document.body.append(a); a.click(); a.remove();
   },
+  viewAsClient: (el) => { window.open('/cliente?ver=' + encodeURIComponent(el.dataset.id), '_blank', 'noopener'); },
   newFile: () => { closeDrawer(); fileModal(); },
   downloadFile: async (el) => {
     const f = state.clientFiles.find((x) => x.id === el.dataset.id);
