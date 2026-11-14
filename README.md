@@ -491,6 +491,18 @@ aprovação, arquivos nos dois sentidos e a passagem para as contas do cliente.
   - **Aviso:** arquivo enviado pelo cliente avisa a dupla por push.
   - DDL em `admin/client-files-schema.sql`. Excluir um cliente apaga as linhas,
     mas não os objetos do Storage (a plataforma não permite apagá-los por SQL).
+- **Histórias** (projetos de livro ilustrado, hoje o do Carlos Lima): o projeto
+  ganha `story_enabled = true` (hoje só por SQL) e a `/cliente` mostra a seção
+  **A história**: capítulos escritos (texto colado), personagens com fotos de
+  rosto, perfil, corpo ou outra (mesmo bucket, em `<client_id>/personagens/…`)
+  e, vindas do livro, as escolhas de desenho. O livro é uma prévia comum
+  (`previa/sitio-encantado-v1/`) com um botão "Enviar minhas escolhas" no fim,
+  que chama `amaralesilva_portal_story_choices_save(slug, …)` com o cookie
+  `cm_at`. O cliente lê por `amaralesilva_portal_story()` e grava pelas funções
+  `amaralesilva_portal_story_*`; a equipe lê tudo em **Histórias**
+  (Clientes › Histórias no painel). Capítulo, foto e escolhas avisam a dupla por
+  push. DDL em `admin/story-schema.sql`. Nova versão do livro: pasta nova em
+  `previa/` e nova versão em **Prévias**.
 - **Passagem para as suas contas** (fase 5): o site nasce hospedado de forma
   provisória na CASA MARTECH e, aprovado, migra para as contas do cliente. Cada
   projeto tem um checklist (`amaralesilva_handoff_items`) mantido pela equipe em

@@ -66,6 +66,33 @@ a.row:hover { color: var(--ochre); }
 .row__main { min-width: 0; flex: 1; }
 .row__main span { display: block; overflow-wrap: anywhere; }
 .row__main small { display: block; margin-top: 2px; font: 400 11px var(--mono); color: var(--ink-soft); text-align: left; }
+.field--area { height: auto; min-height: 220px; padding: 12px 16px; line-height: 1.55; resize: vertical; font-family: var(--sans); }
+.sform { margin-top: 22px; display: grid; gap: 14px; }
+.sform__row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.sform .btn { width: auto; padding: 0 22px; }
+.chap { padding: 14px 0; border-top: 1px solid var(--line); }
+.chap:last-of-type { border-bottom: 1px solid var(--line); }
+.chap__top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.chap__top b { font-weight: 500; font-size: 15px; }
+.chap small { font: 400 12px var(--mono); color: var(--ink-soft); }
+.chap__act { display: flex; gap: 4px; flex-shrink: 0; }
+.mini { border: 0; background: transparent; color: var(--ochre); font: 400 13px var(--sans); cursor: pointer; padding: 8px; min-height: 36px; }
+.mini--rm { color: var(--ink-soft); }
+.mini--rm:hover { color: var(--warn); }
+.who { padding: 18px 0; border-top: 1px solid var(--line); }
+.who:last-of-type { border-bottom: 1px solid var(--line); }
+.who__top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.who__top b { font: 400 18px var(--serif); }
+.who p { margin: 6px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-soft); white-space: pre-wrap; }
+.shots { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0 6px; }
+.shot { width: 112px; }
+.shot img { display: block; width: 112px; height: 140px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-card); }
+.shot span { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font: 500 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.shot .mini { padding: 2px 4px; min-height: 28px; font-size: 12px; text-transform: none; letter-spacing: 0; }
+.addshot { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; margin-top: 8px; }
+.addshot .field { height: 40px; width: auto; font-size: 14px; }
+.addshot .up__pick .btn { min-height: 40px; font-size: 14px; padding: 0 16px; width: auto; }
+.tip { margin: 0 0 18px; max-width: 620px; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
 .foot { margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-soft); }
 @media (max-width: 720px) { .wrap { padding: 36px 20px 56px; } .hd__bar { padding: 0 20px; } h1 { font-size: 34px; } .proj__head h2 { font-size: 24px; } }
 </style>
@@ -83,6 +110,37 @@ a.row:hover { color: var(--ochre); }
   <h1 id="hello">Olá.</h1>
   <p class="lede" id="lede"></p>
   <div id="projects"></div>
+  <section class="proj" id="story" hidden>
+    <h2>A história</h2>
+    <p class="tip">Os capítulos que você escreve e as fotos de cada personagem ficam aqui. Quanto mais ângulos de uma pessoa, melhor o desenho: uma foto de rosto de frente, uma de perfil (de lado) e, se tiver, uma do corpo inteiro, com boa luz. Novos personagens entram quando a história pedir.</p>
+    <p class="msg" id="story-msg" role="status" aria-live="polite"></p>
+    <div class="cols">
+      <div class="col" style="flex-basis:420px">
+        <p class="sh">Capítulos</p>
+        <div id="chapters"></div>
+        <form class="sform" id="ch-form" autocomplete="off">
+          <p class="sh" id="ch-mode" style="margin:0">Novo capítulo</p>
+          <div class="sform__row">
+            <div style="width:96px"><label class="lbl" for="ch-num">Número</label><input class="field" id="ch-num" type="number" min="1" max="999" required /></div>
+            <div style="flex:1 1 200px"><label class="lbl" for="ch-title">Título</label><input class="field" id="ch-title" type="text" maxlength="160" required /></div>
+          </div>
+          <div><label class="lbl" for="ch-body">Texto do capítulo</label><textarea class="field field--area" id="ch-body" maxlength="200000" required placeholder="Cole ou escreva aqui. Se preferir mandar um Word ou PDF, use Arquivos, mais abaixo."></textarea></div>
+          <div class="sform__row"><button class="btn btn--ochre" type="submit" id="ch-save">Salvar capítulo</button><button class="btn btn--line" type="button" id="ch-cancel" hidden>Cancelar edição</button></div>
+        </form>
+      </div>
+      <div class="col" style="flex-basis:520px">
+        <p class="sh">Personagens</p>
+        <div id="chars"></div>
+        <form class="sform" id="char-form" autocomplete="off">
+          <p class="sh" id="char-mode" style="margin:0">Novo personagem</p>
+          <div><label class="lbl" for="char-name">Nome</label><input class="field" id="char-name" type="text" maxlength="80" required /></div>
+          <div><label class="lbl" for="char-notes">Como é (opcional)</label><textarea class="field field--area" id="char-notes" maxlength="1000" style="min-height:96px" placeholder="Idade na história, cabelo, jeito, roupa que usa sempre…"></textarea></div>
+          <div class="sform__row"><button class="btn btn--ochre" type="submit" id="char-save">Adicionar personagem</button><button class="btn btn--line" type="button" id="char-cancel" hidden>Cancelar edição</button></div>
+        </form>
+      </div>
+    </div>
+    <p class="empty" id="choices-note" style="margin-top:28px"></p>
+  </section>
   <section class="proj" id="files" hidden>
     <h2>Arquivos</h2>
     <p class="empty" style="max-width:620px">Envie por aqui o que a equipe pediu: logotipo, textos, imagens, acessos. Até 25 MB por arquivo, em imagem, PDF, Office, texto ou .zip.</p>
@@ -310,6 +368,153 @@ async function uploadFiles(list) {
 }
 $('up-file').addEventListener('change', (e) => uploadFiles(e.target.files));
 
+/* ── a história: capítulos, personagens e fotos ───────────────────── */
+let story = null, editCh = null, editChar = null;
+const ANGLES = { rosto: 'Rosto', perfil: 'Perfil', corpo: 'Corpo', outra: 'Outra' };
+const stMsg = (t, err) => { const m = $('story-msg'); m.textContent = t || ''; m.className = 'msg' + (err ? ' msg--err' : ''); };
+
+async function loadStory() {
+  const { data, error } = await sb.rpc('amaralesilva_portal_story');
+  if (error) { story = null; $('story').hidden = true; return; }
+  story = (data || [])[0] || null;
+  $('story').hidden = !story;
+  if (story) await renderStory();
+}
+
+async function renderStory() {
+  const paths = story.characters.flatMap((c) => c.photos.map((f) => f.path));
+  const urls = {};
+  if (paths.length) {
+    const { data } = await sb.storage.from(BUCKET).createSignedUrls(paths, 3600);
+    (data || []).forEach((x) => { if (x.signedUrl) urls[x.path] = x.signedUrl; });
+  }
+  $('chapters').replaceChildren(...(story.chapters.length ? story.chapters.map(chapterRow) : [h('p', { class: 'empty' }, 'Nenhum capítulo enviado ainda.')]));
+  $('chars').replaceChildren(...(story.characters.length ? story.characters.map((c) => charBlock(c, urls)) : [h('p', { class: 'empty' }, 'Nenhum personagem ainda. Adicione o primeiro abaixo e depois mande as fotos dele.')]));
+  const ch = story.choices;
+  $('choices-note').textContent = ch
+    ? 'As escolhas de desenho do livro foram enviadas em ' + fmtDay.format(new Date(ch.updated_at)) + '. Para mudar, volte à prévia e envie de novo.'
+    : 'Depois de escolher os desenhos na prévia do livro, use o botão "Enviar minhas escolhas" no fim da página dela.';
+}
+
+function chapterRow(c) {
+  const words = c.body.trim().split(/\s+/).length;
+  return h('div', { class: 'chap' },
+    h('div', { class: 'chap__top' },
+      h('b', null, 'Capítulo ' + c.number + ' · ' + c.title),
+      h('div', { class: 'chap__act' },
+        h('button', { type: 'button', class: 'mini', onclick: () => startChapterEdit(c) }, 'editar'),
+        h('button', { type: 'button', class: 'mini mini--rm', onclick: () => removeChapter(c), 'aria-label': 'Remover capítulo ' + c.number }, 'remover'))),
+    h('small', null, words + ' palavras · atualizado em ' + fmtDay.format(new Date(c.updated_at))));
+}
+
+function startChapterEdit(c) {
+  editCh = c;
+  $('ch-num').value = c.number; $('ch-title').value = c.title; $('ch-body').value = c.body;
+  $('ch-mode').textContent = 'Editando o capítulo ' + c.number; $('ch-save').textContent = 'Salvar alterações'; $('ch-cancel').hidden = false;
+  $('ch-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function resetChapterForm() {
+  editCh = null; $('ch-form').reset();
+  $('ch-num').value = story && story.chapters.length ? Math.max(...story.chapters.map((c) => c.number)) + 1 : 1;
+  $('ch-mode').textContent = 'Novo capítulo'; $('ch-save').textContent = 'Salvar capítulo'; $('ch-cancel').hidden = true;
+}
+$('ch-cancel').addEventListener('click', resetChapterForm);
+$('ch-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!story) return;
+  const btn = $('ch-save'); btn.disabled = true; stMsg('Salvando o capítulo…');
+  const { error } = await sb.rpc('amaralesilva_portal_story_chapter_save', {
+    p_project: story.project_id, p_id: editCh ? editCh.id : null,
+    p_number: Number($('ch-num').value), p_title: $('ch-title').value, p_body: $('ch-body').value });
+  btn.disabled = false;
+  if (error) { stMsg(/duplicate|unique/i.test(error.message) ? 'Já existe um capítulo com esse número.' : 'Não foi possível salvar agora. Tente de novo.', true); return; }
+  stMsg('Capítulo salvo. A equipe foi avisada.');
+  await loadStory(); resetChapterForm();
+});
+async function removeChapter(c) {
+  if (!confirm('Remover o capítulo ' + c.number + ' "' + c.title + '"?')) return;
+  const { error } = await sb.rpc('amaralesilva_portal_story_chapter_delete', { p_id: c.id });
+  if (error) { stMsg('Não foi possível remover agora.', true); return; }
+  if (editCh && editCh.id === c.id) resetChapterForm();
+  await loadStory();
+}
+
+function charBlock(c, urls) {
+  const shots = c.photos.map((f) => h('div', { class: 'shot' },
+    urls[f.path] ? h('img', { src: urls[f.path], alt: (ANGLES[f.angle] || 'Foto') + ' de ' + c.name, loading: 'lazy' }) : h('div', { class: 'empty' }, 'sem prévia'),
+    h('span', null, ANGLES[f.angle] || 'Foto', h('button', { type: 'button', class: 'mini mini--rm', onclick: () => removePhoto(f), 'aria-label': 'Remover foto ' + (ANGLES[f.angle] || '') + ' de ' + c.name }, 'remover'))));
+  const sel = h('select', { class: 'field', 'aria-label': 'Tipo da foto de ' + c.name }, ...Object.entries(ANGLES).map(([v, t]) => h('option', { value: v }, t)));
+  const pick = h('input', { type: 'file', accept: 'image/*', multiple: '', 'aria-label': 'Escolher fotos de ' + c.name });
+  pick.addEventListener('change', () => addPhotos(c, sel.value, pick));
+  return h('div', { class: 'who' },
+    h('div', { class: 'who__top' },
+      h('b', null, c.name),
+      h('div', { class: 'chap__act' },
+        h('button', { type: 'button', class: 'mini', onclick: () => startCharEdit(c) }, 'editar'),
+        h('button', { type: 'button', class: 'mini mini--rm', onclick: () => removeChar(c), 'aria-label': 'Remover ' + c.name }, 'remover'))),
+    c.notes ? h('p', null, c.notes) : null,
+    shots.length ? h('div', { class: 'shots' }, shots) : h('p', { class: 'empty', style: 'margin-top:10px' }, 'Sem fotos ainda.'),
+    h('div', { class: 'addshot' }, sel,
+      h('div', { class: 'up__pick' }, h('span', { class: 'btn btn--line', 'aria-hidden': 'true' }, 'Adicionar fotos'), pick)));
+}
+
+function startCharEdit(c) {
+  editChar = c; $('char-name').value = c.name; $('char-notes').value = c.notes || '';
+  $('char-mode').textContent = 'Editando ' + c.name; $('char-save').textContent = 'Salvar alterações'; $('char-cancel').hidden = false;
+  $('char-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function resetCharForm() {
+  editChar = null; $('char-form').reset();
+  $('char-mode').textContent = 'Novo personagem'; $('char-save').textContent = 'Adicionar personagem'; $('char-cancel').hidden = true;
+}
+$('char-cancel').addEventListener('click', resetCharForm);
+$('char-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!story) return;
+  const btn = $('char-save'); btn.disabled = true; stMsg('Salvando…');
+  const { error } = await sb.rpc('amaralesilva_portal_story_character_save', {
+    p_project: story.project_id, p_id: editChar ? editChar.id : null, p_name: $('char-name').value, p_notes: $('char-notes').value });
+  btn.disabled = false;
+  if (error) { stMsg('Não foi possível salvar agora. Tente de novo.', true); return; }
+  stMsg(editChar ? 'Personagem atualizado.' : 'Personagem adicionado. Agora mande as fotos dele.');
+  resetCharForm(); await loadStory();
+});
+async function removeChar(c) {
+  if (!confirm('Remover ' + c.name + ' e as ' + c.photos.length + ' foto(s) dele?')) return;
+  if (c.photos.length) await sb.storage.from(BUCKET).remove(c.photos.map((f) => f.path));
+  const { error } = await sb.rpc('amaralesilva_portal_story_character_delete', { p_id: c.id });
+  if (error) { stMsg('Não foi possível remover agora.', true); return; }
+  if (editChar && editChar.id === c.id) resetCharForm();
+  await loadStory();
+}
+async function addPhotos(c, angle, input) {
+  const files = Array.from(input.files || []);
+  if (!files.length) return;
+  let ok = 0;
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    stMsg('Enviando foto ' + (i + 1) + ' de ' + files.length + ' de ' + c.name + '…');
+    if (!/^image\//.test(f.type)) { stMsg('"' + f.name + '" não é uma imagem.', true); continue; }
+    if (f.size > MAX_BYTES) { stMsg('"' + f.name + '" passa de 25 MB.', true); continue; }
+    const path = story.client_id + '/personagens/' + crypto.randomUUID() + '-' + safeName(f.name);
+    const { error } = await sb.storage.from(BUCKET).upload(path, f, { contentType: f.type, upsert: false });
+    if (error) { stMsg('"' + f.name + '" não foi aceita. Envie em JPG, PNG ou WebP.', true); continue; }
+    const { error: e2 } = await sb.rpc('amaralesilva_portal_story_photo_register', { p_character: c.id, p_path: path, p_name: f.name, p_size: f.size, p_mime: f.type, p_angle: angle });
+    if (e2) { await sb.storage.from(BUCKET).remove([path]); stMsg('Não foi possível registrar "' + f.name + '". Tente de novo.', true); continue; }
+    ok++;
+  }
+  input.value = '';
+  if (ok) { stMsg(ok === 1 ? 'Foto enviada. A equipe foi avisada.' : ok + ' fotos enviadas. A equipe foi avisada.'); await loadStory(); }
+}
+async function removePhoto(f) {
+  if (!confirm('Remover esta foto?')) return;
+  const { error: e1 } = await sb.storage.from(BUCKET).remove([f.path]);
+  if (e1) { stMsg('Não foi possível remover agora.', true); return; }
+  const { error: e2 } = await sb.rpc('amaralesilva_portal_story_photo_delete', { p_id: f.id });
+  if (e2) { stMsg('A foto saiu, mas a lista não atualizou. Recarregue a página.', true); return; }
+  await loadStory();
+}
+
 let handoff = [], lastData = null, lastSession = null, lastPrev = null;
 function render(data, session, previews) {
   lastData = data; lastSession = session; lastPrev = previews;
@@ -329,7 +534,7 @@ function render(data, session, previews) {
   sel.replaceChildren(h('option', { value: '' }, 'Geral (sem projeto)'), ...proj.map((p) => h('option', { value: p.id }, p.name)));
   $('up-proj-box').hidden = !proj.length;
   $('files').hidden = !ctx.clientId;
-  if (ctx.clientId) loadFiles();
+  if (ctx.clientId) { loadFiles(); loadStory().then(resetChapterForm); }
   const names = Object.fromEntries(proj.map((p) => [p.id, p.name]));
   const meets = data.meetings || [];
   $('meetings').hidden = !meets.length;

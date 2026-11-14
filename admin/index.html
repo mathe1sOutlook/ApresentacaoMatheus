@@ -1065,7 +1065,7 @@ const sb = window.supabase
 const state = {
   session: null,
   members: [], me: null,
-  clients: [], clientUsers: [], previews: [], previewComments: [], clientFiles: [], handoff: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
+  clients: [], clientUsers: [], previews: [], previewComments: [], clientFiles: [], handoff: [], storyChars: [], storyPhotos: [], storyChapters: [], storyChoices: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
 };
 const now0 = new Date();
 const ui = {
@@ -1276,7 +1276,7 @@ function payShareB(p) {
 
 /* ═══ Dados ════════════════════════════════════════════════════════ */
 async function fetchAll() {
-  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles, handoff] = await Promise.all([
+  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles, handoff, storyChars, storyPhotos, storyChapters, storyChoices] = await Promise.all([
     sb.from(TB('clients')).select('*').order('name'),
     sb.from(TB('projects')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('notes')).select('*').order('created_at', { ascending: false }),
@@ -1291,12 +1291,17 @@ async function fetchAll() {
     sb.from(TB('preview_comments')).select('id,preview_id,parent_id,kind,resolved,author_role,created_at').order('created_at'),
     sb.from(TB('client_files')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('handoff_items')).select('*').order('position').order('created_at'),
+    sb.from(TB('story_characters')).select('*').order('created_at'),
+    sb.from(TB('story_photos')).select('*').order('created_at'),
+    sb.from(TB('story_chapters')).select('*').order('number'),
+    sb.from(TB('story_choices')).select('*'),
   ]);
-  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles, handoff].find((r) => r.error);
+  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles, handoff, storyChars, storyPhotos, storyChapters, storyChoices].find((r) => r.error);
   if (firstErr) throw firstErr.error;
   state.clients = clients.data; state.projects = projects.data; state.notes = notes.data;
   state.meetings = meetings.data; state.payments = payments.data; state.checkouts = checkouts.data; state.tasks = tasks.data;
   state.members = members.data; state.leads = leads.data; state.clientUsers = clientUsers.data; state.previews = previews.data; state.previewComments = previewComments.data; state.clientFiles = clientFiles.data; state.handoff = handoff.data;
+  state.storyChars = storyChars.data; state.storyPhotos = storyPhotos.data; state.storyChapters = storyChapters.data; state.storyChoices = storyChoices.data;
 }
 
 /* ═══ Releitura automática ═════════════════════════════════════════
@@ -1332,7 +1337,7 @@ function paintLeadSignal() {
 const NAV = [
   { id: 'visao', label: 'Visão geral', routes: [['dashboard', 'Visão geral']] },
   { id: 'comercial', label: 'Comercial', routes: [['crm', 'CRM · Propostas'], ['leads', 'Leads do site']], also: ['projeto'] },
-  { id: 'clientes', label: 'Clientes', routes: [['clientes', 'Clientes'], ['acesso', 'Acesso'], ['previas', 'Prévias'], ['arquivos', 'Arquivos'], ['migracao', 'Migração']] },
+  { id: 'clientes', label: 'Clientes', routes: [['clientes', 'Clientes'], ['acesso', 'Acesso'], ['previas', 'Prévias'], ['arquivos', 'Arquivos'], ['historias', 'Histórias'], ['migracao', 'Migração']] },
   { id: 'financeiro', label: 'Financeiro', routes: [['financeiro', 'Financeiro']] },
   { id: 'rotina', label: 'Rotina', routes: [['agenda', 'Agenda'], ['tarefas', 'Tarefas']] },
   { id: 'equipe', label: 'Equipe', routes: [['equipe', 'Equipe']] },
@@ -1465,6 +1470,10 @@ function renderApp() {
 
 /* pós-render: liga comportamentos que delegação de clique não cobre */
 function afterRender(route) {
+  const sp = $$('#view img[data-story-path]');
+  if (sp.length) sb.storage.from(CF_BUCKET).createSignedUrls(sp.map((i) => i.dataset.storyPath), 3600).then(({ data }) => {
+    (data || []).forEach((x) => { const im = sp.find((i) => i.dataset.storyPath === x.path); if (im && x.signedUrl) im.src = x.signedUrl; });
+  });
   const chart = $('#fin-chart');
   if (chart) bindChartTooltip(chart);
   /* rótulo de cada célula para a tabela-em-cartões do celular */
@@ -1944,6 +1953,38 @@ VIEWS.arquivos = function () {
     </div>
   </div>
   <p class="soft" style="font-size:13px;line-height:1.55;max-width:680px;margin-top:16px">O que você envia aqui aparece para o cliente em “Enviados pela CASA MARTECH”. Até 25 MB por arquivo, em imagem, PDF, Office, texto ou .zip.</p>`;
+};
+
+/* ═══ Histórias (projetos de livro: capítulos, personagens e escolhas) ══
+   O cliente escreve os capítulos, manda as fotos de cada personagem e as
+   escolhas de desenho pela área dele. Aqui a equipe lê tudo. Um projeto entra
+   nesta tela quando story_enabled = true (admin/story-schema.sql). */
+VIEWS.historias = function () {
+  const lbl = 'font-size:11px;letter-spacing:.1em;text-transform:uppercase';
+  const blocks = state.projects.filter((p) => p.story_enabled).map((p) => {
+    const c = clientById(p.client_id);
+    const chaps = state.storyChapters.filter((x) => x.project_id === p.id);
+    const chars = state.storyChars.filter((x) => x.project_id === p.id);
+    const choice = state.storyChoices.find((x) => x.project_id === p.id);
+    const chapHtml = chaps.map((x) => `<details class="story-chap"><summary><b>Capítulo ${x.number} · ${esc(x.title)}</b> <span class="mono soft" style="font-size:11px">${x.body.trim().split(/\s+/).length} palavras · ${fmtDate(toISODate(new Date(x.updated_at)))}</span></summary><pre class="story-body">${esc(x.body)}</pre></details>`).join('') || '<p class="soft">Nenhum capítulo enviado.</p>';
+    const charHtml = chars.map((x) => {
+      const ph = state.storyPhotos.filter((f) => f.character_id === x.id);
+      const shots = ph.map((f) => `<figure><img data-story-path="${esc(f.path)}" alt="${esc(f.angle)} de ${esc(x.name)}" /><figcaption class="mono soft" style="font-size:10px;text-transform:uppercase">${esc(f.angle)} · <a href="#" data-action="downloadStoryPhoto" data-id="${f.id}">baixar</a></figcaption></figure>`).join('');
+      return `<div class="story-char"><b>${esc(x.name)}</b>${x.notes ? `<p class="soft" style="margin:4px 0 0;font-size:13px;white-space:pre-wrap">${esc(x.notes)}</p>` : ''}<div class="story-shots">${shots || '<span class="soft" style="font-size:13px">Sem fotos ainda.</span>'}</div></div>`;
+    }).join('') || '<p class="soft">Nenhum personagem cadastrado.</p>';
+    const picks = choice ? Object.entries(choice.selection || {}).map(([k, v]) => `<span class="chip">${esc(k)}: ${esc(v)}</span>`).join(' ') : '';
+    return `<div class="card" style="margin-bottom:18px"><div class="card__body">
+      <p class="eyebrow">${esc(c ? c.name : '—')}</p><h2 style="margin:0 0 14px">${esc(p.name)}</h2>
+      <p class="mono soft" style="${lbl}">Capítulos</p>${chapHtml}
+      <p class="mono soft" style="${lbl};margin-top:22px">Personagens</p>${charHtml}
+      <p class="mono soft" style="${lbl};margin-top:22px">Escolhas de desenho no livro</p>
+      ${choice ? `<p class="soft" style="font-size:12px">Enviadas em ${fmtDate(toISODate(new Date(choice.updated_at)))} por ${esc(choice.updated_by_email)}${choice.model ? ' · modelo ' + esc(choice.model) : ''}</p><div style="display:flex;flex-wrap:wrap;gap:6px">${picks}</div>` : '<p class="soft">Ainda não enviou.</p>'}
+    </div></div>`;
+  }).join('');
+  return `
+  <style>.story-chap{border-top:1px solid var(--line);padding:10px 0}.story-chap summary{cursor:pointer}.story-body{white-space:pre-wrap;font:inherit;font-size:14px;line-height:1.6;margin:10px 0 0}.story-char{padding:12px 0;border-top:1px solid var(--line)}.story-shots{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}.story-shots figure{margin:0;width:120px}.story-shots img{display:block;width:120px;height:150px;object-fit:cover;border-radius:8px;background:var(--line)}</style>
+  <div class="view-head"><div><p class="eyebrow">O que o cliente enviou para o livro</p><h1 class="view-title">Histórias</h1></div></div>
+  ${blocks || '<div class="card"><div class="card__body"><p class="soft">Nenhum projeto com história ligada. Marque story_enabled no projeto para a área do cliente mostrar capítulos e personagens.</p></div></div>'}`;
 };
 
 /* ═══ Migração para as contas do cliente (área do cliente, fase 5) ══
@@ -3200,6 +3241,14 @@ const ACTIONS = {
     const v = state.previews.find((x) => x.id === el.dataset.id);
     if (!v || !confirm(`Excluir a v${v.version} e os comentários dela? Os arquivos em previa/${v.slug}/ continuam no repositório.`)) return;
     mutate(() => dbDelete('previews', v.id), 'Versão excluída.');
+  },
+  downloadStoryPhoto: async (el, e) => {
+    if (e) e.preventDefault();
+    const f = state.storyPhotos.find((x) => x.id === el.dataset.id);
+    if (!f) return;
+    const { data, error } = await sb.storage.from(CF_BUCKET).createSignedUrl(f.path, 60, { download: f.name });
+    if (error || !data) { toast('Não foi possível baixar: ' + (error ? error.message : 'erro')); return; }
+    const a = document.createElement('a'); a.href = data.signedUrl; a.rel = 'noopener'; document.body.append(a); a.click(); a.remove();
   },
   newFile: () => { closeDrawer(); fileModal(); },
   downloadFile: async (el) => {

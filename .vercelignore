@@ -14,3 +14,4 @@ admin/client-access-schema.sql
 admin/previews-schema.sql
 admin/client-files-schema.sql
 admin/handoff-schema.sql
+admin/story-schema.sql
