@@ -1065,7 +1065,7 @@ const sb = window.supabase
 const state = {
   session: null,
   members: [], me: null,
-  clients: [], clientUsers: [], previews: [], previewComments: [], clientFiles: [], handoff: [], storyChars: [], storyPhotos: [], storyChapters: [], storyChoices: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
+  clients: [], clientUsers: [], previews: [], previewComments: [], clientFiles: [], handoff: [], storyChars: [], storyPhotos: [], storyChapters: [], storyChoices: [], storyLinks: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
 };
 const now0 = new Date();
 const ui = {
@@ -1276,7 +1276,7 @@ function payShareB(p) {
 
 /* ═══ Dados ════════════════════════════════════════════════════════ */
 async function fetchAll() {
-  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles, handoff, storyChars, storyPhotos, storyChapters, storyChoices] = await Promise.all([
+  const [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles, handoff, storyChars, storyPhotos, storyChapters, storyChoices, storyLinks] = await Promise.all([
     sb.from(TB('clients')).select('*').order('name'),
     sb.from(TB('projects')).select('*').order('created_at', { ascending: false }),
     sb.from(TB('notes')).select('*').order('created_at', { ascending: false }),
@@ -1295,13 +1295,14 @@ async function fetchAll() {
     sb.from(TB('story_photos')).select('*').order('created_at'),
     sb.from(TB('story_chapters')).select('*').order('number'),
     sb.from(TB('story_choices')).select('*'),
+    sb.from(TB('story_chapter_characters')).select('*').order('created_at'),
   ]);
-  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles, handoff, storyChars, storyPhotos, storyChapters, storyChoices].find((r) => r.error);
+  const firstErr = [clients, projects, notes, meetings, payments, checkouts, tasks, members, leads, clientUsers, previews, previewComments, clientFiles, handoff, storyChars, storyPhotos, storyChapters, storyChoices, storyLinks].find((r) => r.error);
   if (firstErr) throw firstErr.error;
   state.clients = clients.data; state.projects = projects.data; state.notes = notes.data;
   state.meetings = meetings.data; state.payments = payments.data; state.checkouts = checkouts.data; state.tasks = tasks.data;
   state.members = members.data; state.leads = leads.data; state.clientUsers = clientUsers.data; state.previews = previews.data; state.previewComments = previewComments.data; state.clientFiles = clientFiles.data; state.handoff = handoff.data;
-  state.storyChars = storyChars.data; state.storyPhotos = storyPhotos.data; state.storyChapters = storyChapters.data; state.storyChoices = storyChoices.data;
+  state.storyChars = storyChars.data; state.storyPhotos = storyPhotos.data; state.storyChapters = storyChapters.data; state.storyChoices = storyChoices.data; state.storyLinks = storyLinks.data;
 }
 
 /* ═══ Releitura automática ═════════════════════════════════════════
@@ -1966,7 +1967,11 @@ VIEWS.historias = function () {
     const chaps = state.storyChapters.filter((x) => x.project_id === p.id);
     const chars = state.storyChars.filter((x) => x.project_id === p.id);
     const choice = state.storyChoices.find((x) => x.project_id === p.id);
-    const chapHtml = chaps.map((x) => `<details class="story-chap"><summary><b>Capítulo ${x.number} · ${esc(x.title)}</b> <span class="mono soft" style="font-size:11px">${x.body.trim().split(/\s+/).length} palavras · ${fmtDate(toISODate(new Date(x.updated_at)))}</span></summary><pre class="story-body">${esc(x.body)}</pre></details>`).join('') || '<p class="soft">Nenhum capítulo enviado.</p>';
+    const chapHtml = chaps.map((x) => {
+      const n = x.body.trim() ? x.body.trim().split(/\s+/).length : 0;
+      const who = state.storyLinks.filter((l) => l.chapter_id === x.id).map((l) => (state.storyChars.find((c) => c.id === l.character_id) || {}).name).filter(Boolean);
+      return `<details class="story-chap"><summary><b>Capítulo ${x.number}${x.title ? ' · ' + esc(x.title) : ''}</b> <span class="mono soft" style="font-size:11px">${n ? n + ' palavras' : 'sem texto'} · ${fmtDate(toISODate(new Date(x.updated_at)))}</span>${who.length ? `<span class="soft" style="display:block;font-size:12px;margin-top:2px">Personagens: ${who.map(esc).join(', ')}</span>` : ''}</summary>${n ? `<pre class="story-body">${esc(x.body)}</pre>` : ''}</details>`;
+    }).join('') || '<p class="soft">Nenhum capítulo enviado.</p>';
     const charHtml = chars.map((x) => {
       const ph = state.storyPhotos.filter((f) => f.character_id === x.id);
       const shots = ph.map((f) => `<figure><img data-story-path="${esc(f.path)}" alt="${esc(f.angle)} de ${esc(x.name)}" /><figcaption class="mono soft" style="font-size:10px;text-transform:uppercase">${esc(f.angle)} · <a href="#" data-action="downloadStoryPhoto" data-id="${f.id}">baixar</a></figcaption></figure>`).join('');

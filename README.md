@@ -500,9 +500,17 @@ aprovação, arquivos nos dois sentidos e a passagem para as contas do cliente.
   faz nada. A prévia abre no visualizador da equipe, não na visão do cliente.
 - **Histórias** (projetos de livro ilustrado, hoje o do Carlos Lima): o projeto
   ganha `story_enabled = true` (hoje só por SQL) e a `/cliente` mostra a seção
-  **A história**: capítulos escritos (texto colado), personagens com fotos de
-  rosto, perfil, corpo ou outra (mesmo bucket, em `<client_id>/personagens/…`)
-  e, vindas do livro, as escolhas de desenho. O livro é uma prévia comum
+  **A história**, organizada por capítulo: lista de capítulos à esquerda e, no
+  capítulo aberto, o título, o texto e quem aparece nele
+  (`amaralesilva_story_chapter_characters`). O texto é colado numa caixa e,
+  salvo, aparece como o arquivo `capitulo-N.md` (o conteúdo fica no banco, em
+  `body`; o `.md` é gerado no navegador para baixar); clicar nele abre uma
+  janela para ler e editar. As fotos são do personagem, não do capítulo: três
+  espaços (rosto de frente, rosto de lado, corpo inteiro), pedidos na primeira
+  vez que a pessoa aparece; nos capítulos seguintes ela mostra "Fotos recebidas
+  no capítulo N". As roupas de cada cena são geradas a partir dessas fotos, por
+  isso a tela não pede foto nova por capítulo. Fotos no mesmo bucket, em
+  `<client_id>/personagens/…`. Vindas do livro, as escolhas de desenho. O livro é uma prévia comum
   (`previa/sitio-encantado-v1/`) com um botão "Enviar minhas escolhas" no fim,
   que chama `amaralesilva_portal_story_choices_save(slug, …)` com o cookie
   `cm_at`. O cliente lê por `amaralesilva_portal_story()` e grava pelas funções

@@ -67,35 +67,79 @@ a.row:hover { color: var(--ochre); }
 .row__main span { display: block; overflow-wrap: anywhere; }
 .row__main small { display: block; margin-top: 2px; font: 400 11px var(--mono); color: var(--ink-soft); text-align: left; }
 .field--area { height: auto; min-height: 220px; padding: 12px 16px; line-height: 1.55; resize: vertical; font-family: var(--sans); }
-.sform { margin-top: 22px; display: grid; gap: 14px; }
-.sform__row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
-.sform .btn { width: auto; padding: 0 22px; }
-.chap { padding: 14px 0; border-top: 1px solid var(--line); }
-.chap:last-of-type { border-bottom: 1px solid var(--line); }
-.chap__top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-.chap__top b { font-weight: 500; font-size: 15px; }
-.chap small { font: 400 12px var(--mono); color: var(--ink-soft); }
-.chap__act { display: flex; gap: 4px; flex-shrink: 0; }
+.tip { margin: 0 0 18px; max-width: 680px; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.st { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; margin-top: 24px; }
+.st__nav { flex: 1 1 240px; max-width: 320px; display: grid; gap: 8px; }
+.st__nav .sh { margin-bottom: 6px; }
+.st__ch { display: flex; gap: 12px; align-items: flex-start; width: 100%; min-height: 72px; padding: 14px 16px; text-align: left; background: transparent; border: 1px solid var(--line); border-radius: var(--r-control); color: var(--ink); font: inherit; cursor: pointer; }
+.st__ch:hover { border-color: var(--line-strong); }
+.st__ch[aria-current="true"] { background: var(--bg-card); border-color: var(--ochre); }
+.st__n { width: 22px; flex-shrink: 0; padding-top: 2px; font: 400 13px var(--mono); color: var(--ink-soft); }
+.st__t { display: block; font-size: 15px; font-weight: 500; overflow-wrap: anywhere; }
+.st__meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin-top: 6px; font-size: 13px; color: var(--ink-soft); }
+.pill { font: 500 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; border-radius: 999px; padding: 3px 8px; }
+.pill--ok { background: var(--ochre); color: var(--bg); }
+.pill--wait { border: 1px solid var(--line-strong); color: var(--ink-soft); }
+.st__new { margin-top: 4px; min-height: 48px; border: 1px dashed var(--line-strong); background: transparent; color: var(--ink); border-radius: var(--r-control); font: 500 15px var(--sans); cursor: pointer; }
+.st__main { flex: 999 1 520px; min-width: 0; display: grid; gap: 24px; padding: 28px; background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--r-surface); }
+.st__main h3 { margin: 0; font: 400 21px var(--serif); }
+.st__main .tip { margin: 6px 0 0; }
+.st__hr { height: 1px; background: var(--line); }
+.st__row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.st__lblrow { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 12px; margin-bottom: 8px; }
+.st__lblrow .sh { margin: 0; }
+.st .btn { width: auto; padding: 0 20px; }
+.file { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; width: 100%; padding: 16px 18px; text-align: left; background: var(--bg); border: 1px solid var(--line-strong); border-radius: var(--r-control); color: var(--ink); font: inherit; cursor: pointer; }
+.file:hover { border-color: var(--ochre); }
+.file__ic { width: 42px; height: 52px; flex-shrink: 0; box-sizing: border-box; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 7px; background: var(--bg-deep); border: 1px solid var(--line-strong); border-radius: 6px 14px 6px 6px; font: 500 10px var(--mono); color: var(--ochre); }
+.file__txt { flex: 1 1 200px; min-width: 0; display: grid; gap: 4px; }
+.file__name { font: 500 15px var(--mono); }
+.file__meta { font-size: 13px; color: var(--ink-soft); }
+.file__ex { font-size: 14px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file__go { font-size: 14px; color: var(--ochre); }
+.pc { display: grid; gap: 14px; padding: 18px; background: var(--bg); border: 1px solid var(--line); border-radius: 16px; }
+.pc__top { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.pc__av { width: 42px; height: 42px; flex-shrink: 0; border-radius: 50%; background: var(--line); color: var(--ochre); display: flex; align-items: center; justify-content: center; font: 400 18px var(--serif); }
+.pc__name { flex: 1 1 160px; min-width: 0; }
+.pc__name b { display: block; font-size: 16px; font-weight: 600; overflow-wrap: anywhere; }
+.pc__name span { font-size: 13px; color: var(--ink-soft); }
+.pc__count { font-size: 13px; border-radius: 999px; padding: 4px 12px; border: 1px solid; }
+.pc__count--ok { color: var(--ochre); border-color: rgba(201, 162, 78, .45); }
+.pc__count--wait { color: var(--warn); border-color: rgba(232, 160, 122, .45); }
+.pc__done { display: flex; gap: 10px; align-items: center; padding: 12px 14px; background: var(--bg-card); border-radius: 12px; font-size: 14px; line-height: 1.5; }
+.slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.slot { position: relative; aspect-ratio: 4 / 5; border-radius: 14px; overflow: hidden; }
+.slot input[type=file] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.slot--empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 10px; text-align: center; border: 1px dashed var(--line-strong); }
+.slot--empty:hover { border-color: var(--ochre); }
+.slot--empty:focus-within, .slot__swap:focus-within { outline: 2px solid var(--blue); outline-offset: 2px; }
+.slot--empty b { font-size: 14px; font-weight: 500; }
+.slot--empty small { font-size: 12px; color: var(--ochre); }
+.slot--full { border: 1px solid var(--line-strong); background: var(--bg-card); }
+.slot--full img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.slot__cap { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 6px 8px 6px 10px; background: rgba(11, 13, 18, .86); font: 500 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.slot__swap { position: relative; font: 400 12px var(--sans); color: var(--ochre); padding: 6px 4px; text-transform: none; letter-spacing: 0; cursor: pointer; }
+.slot__busy { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(11, 13, 18, .7); font-size: 13px; }
 .mini { border: 0; background: transparent; color: var(--ochre); font: 400 13px var(--sans); cursor: pointer; padding: 8px; min-height: 36px; }
 .mini--rm { color: var(--ink-soft); }
 .mini--rm:hover { color: var(--warn); }
-.who { padding: 18px 0; border-top: 1px solid var(--line); }
-.who:last-of-type { border-bottom: 1px solid var(--line); }
-.who__top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-.who__top b { font: 400 18px var(--serif); }
-.who p { margin: 6px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-soft); white-space: pre-wrap; }
-.shots { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0 6px; }
-.shot { width: 112px; }
-.shot img { display: block; width: 112px; height: 140px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-card); }
-.shot span { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font: 500 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
-.shot .mini { padding: 2px 4px; min-height: 28px; font-size: 12px; text-transform: none; letter-spacing: 0; }
-.addshot { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; margin-top: 8px; }
-.addshot .field { height: 40px; width: auto; font-size: 14px; }
-.addshot .up__pick .btn { min-height: 40px; font-size: 14px; padding: 0 16px; width: auto; }
-.tip { margin: 0 0 18px; max-width: 620px; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+.st__add { display: grid; gap: 12px; }
+.st__add .sh { margin: 0; }
+.st__add .field { flex: 1 1 220px; }
+dialog.ed { width: min(780px, calc(100% - 32px)); max-height: calc(100% - 48px); padding: 0; background: var(--bg-card); color: var(--ink); border: 1px solid var(--line-strong); border-radius: var(--r-surface); }
+dialog.ed::backdrop { background: rgba(5, 6, 9, .78); }
+.ed__form { display: flex; flex-direction: column; max-height: calc(100vh - 48px); }
+.ed__hd, .ed__ft { display: flex; align-items: center; gap: 12px; padding: 14px 18px 14px 24px; }
+.ed__hd { border-bottom: 1px solid var(--line); }
+.ed__ft { border-top: 1px solid var(--line); flex-wrap: wrap; }
+.ed__ft .btn { width: auto; min-height: 44px; padding: 0 20px; }
+.ed textarea { flex: 1; min-height: 55vh; border: 0; background: var(--bg); color: var(--ink); padding: 22px 24px; font: 400 17px/1.75 var(--serif); resize: none; }
+.ed textarea:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+@media (max-width: 720px) { .st__main { padding: 20px; } .slots { gap: 8px; } .slot__cap { flex-direction: column; align-items: flex-start; gap: 0; padding: 6px 8px; } .slot__swap { padding: 4px 0 0; } }
 .vb { position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 20px; padding: 10px 32px; background: var(--ochre); color: var(--bg); font-size: 13px; line-height: 1.4; }
 .vb a { color: var(--bg); font-weight: 500; border-bottom: 1px solid currentColor; }
-.view-only .up, .view-only #ch-form, .view-only #char-form, .view-only .addshot, .view-only .chap__act, .view-only .shot .mini,
+.view-only .up, .view-only #ch-new,
 .view-only .row .rm, .view-only .hand__row .btn, .view-only #up-proj-box { display: none !important; }
 @media (max-width: 720px) { .vb { padding: 10px 20px; } }
 .foot { margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-soft); }
@@ -121,35 +165,33 @@ a.row:hover { color: var(--ochre); }
   <div id="projects"></div>
   <section class="proj" id="story" hidden>
     <h2>A história</h2>
-    <p class="tip">Os capítulos que você escreve e as fotos de cada personagem ficam aqui. Quanto mais ângulos de uma pessoa, melhor o desenho: uma foto de rosto de frente, uma de perfil (de lado) e, se tiver, uma do corpo inteiro, com boa luz. Novos personagens entram quando a história pedir.</p>
+    <p class="tip">Mande um capítulo de cada vez e, dentro dele, marque quem aparece. As fotos de cada pessoa são pedidas uma vez só, na primeira vez que ela aparece.</p>
     <p class="msg" id="story-msg" role="status" aria-live="polite"></p>
-    <div class="cols">
-      <div class="col" style="flex-basis:420px">
+    <div class="st">
+      <nav class="st__nav" aria-label="Capítulos">
         <p class="sh">Capítulos</p>
-        <div id="chapters"></div>
-        <form class="sform" id="ch-form" autocomplete="off">
-          <p class="sh" id="ch-mode" style="margin:0">Novo capítulo</p>
-          <div class="sform__row">
-            <div style="width:96px"><label class="lbl" for="ch-num">Número</label><input class="field" id="ch-num" type="number" min="1" max="999" required /></div>
-            <div style="flex:1 1 200px"><label class="lbl" for="ch-title">Título</label><input class="field" id="ch-title" type="text" maxlength="160" required /></div>
-          </div>
-          <div><label class="lbl" for="ch-body">Texto do capítulo</label><textarea class="field field--area" id="ch-body" maxlength="200000" required placeholder="Cole ou escreva aqui. Se preferir mandar um Word ou PDF, use Arquivos, mais abaixo."></textarea></div>
-          <div class="sform__row"><button class="btn btn--ochre" type="submit" id="ch-save">Salvar capítulo</button><button class="btn btn--line" type="button" id="ch-cancel" hidden>Cancelar edição</button></div>
-        </form>
-      </div>
-      <div class="col" style="flex-basis:520px">
-        <p class="sh">Personagens</p>
-        <div id="chars"></div>
-        <form class="sform" id="char-form" autocomplete="off">
-          <p class="sh" id="char-mode" style="margin:0">Novo personagem</p>
-          <div><label class="lbl" for="char-name">Nome</label><input class="field" id="char-name" type="text" maxlength="80" required /></div>
-          <div><label class="lbl" for="char-notes">Como é (opcional)</label><textarea class="field field--area" id="char-notes" maxlength="1000" style="min-height:96px" placeholder="Idade na história, cabelo, jeito, roupa que usa sempre…"></textarea></div>
-          <div class="sform__row"><button class="btn btn--ochre" type="submit" id="char-save">Adicionar personagem</button><button class="btn btn--line" type="button" id="char-cancel" hidden>Cancelar edição</button></div>
-        </form>
-      </div>
+        <div id="ch-list" style="display:grid;gap:8px"></div>
+        <button type="button" class="st__new" id="ch-new">+ Novo capítulo</button>
+      </nav>
+      <div class="st__main" id="ch-main"></div>
     </div>
     <p class="empty" id="choices-note" style="margin-top:28px"></p>
   </section>
+  <dialog class="ed" id="ed" aria-labelledby="ed-title">
+    <form class="ed__form" id="ed-form">
+      <div class="ed__hd">
+        <div style="flex:1;min-width:0"><h2 id="ed-title" style="margin:0;font:500 15px var(--mono)"></h2><span id="ed-sub" style="font-size:13px;color:var(--ink-soft)"></span></div>
+        <button type="button" class="mini mini--rm" id="ed-x">Fechar</button>
+      </div>
+      <label class="sr" for="ed-text">Texto do capítulo</label>
+      <textarea id="ed-text" maxlength="200000"></textarea>
+      <div class="ed__ft">
+        <span id="ed-words" style="flex:1;min-width:140px;font-size:13px;color:var(--ink-soft)"></span>
+        <button type="button" class="btn btn--line" id="ed-cancel">Cancelar</button>
+        <button type="submit" class="btn btn--ochre" id="ed-save">Salvar alterações</button>
+      </div>
+    </form>
+  </dialog>
   <section class="proj" id="files" hidden>
     <h2>Arquivos</h2>
     <p class="empty" style="max-width:620px">Envie por aqui o que a equipe pediu: logotipo, textos, imagens, acessos. Até 25 MB por arquivo, em imagem, PDF, Office, texto ou .zip.</p>
@@ -385,152 +427,288 @@ async function uploadFiles(list) {
 }
 $('up-file').addEventListener('change', (e) => uploadFiles(e.target.files));
 
-/* ── a história: capítulos, personagens e fotos ───────────────────── */
-let story = null, editCh = null, editChar = null;
-const ANGLES = { rosto: 'Rosto', perfil: 'Perfil', corpo: 'Corpo', outra: 'Outra' };
+/* ── a história: por capítulo ─────────────────────────────────────────
+   Cada capítulo tem o texto (mostrado como o arquivo capitulo-N.md, que abre
+   numa janela para ler e editar) e a lista de quem aparece nele. As fotos são
+   do personagem, não do capítulo: pedidas na primeira vez que ele aparece
+   (rosto de frente, rosto de lado, corpo inteiro) e reaproveitadas depois. */
+let story = null, curCh = null, photoUrls = {}, edCh = null;
+const drafts = {};
+const SLOTS = [['rosto', 'Rosto de frente'], ['perfil', 'Rosto de lado'], ['corpo', 'Corpo inteiro']];
+const SLOT_ICON = {
+  rosto: 'M17 7a6 6 0 1 1 0 12a6 6 0 0 1 0-12ZM7 29c1.5-4.5 5.5-7 10-7s8.5 2.5 10 7',
+  perfil: 'M14 8c4-1.5 9 1 9 6c0 2-1 3.5 0 5l-3 1v3h-4M14 8c-3 1.5-4 5-3 8M11 29c1-3.5 3.5-5.5 6-6',
+  corpo: 'M17 4a3.5 3.5 0 1 1 0 7a3.5 3.5 0 0 1 0-7ZM11 30l2-11l-3 3M23 30l-2-11l3 3M13 15h8'
+};
 const stMsg = (t, err) => { const m = $('story-msg'); m.textContent = t || ''; m.className = 'msg' + (err ? ' msg--err' : ''); };
+const nWords = (t) => ((t || '').trim() ? t.trim().split(/\s+/).length : 0);
+const wordsLabel = (t) => { const n = nWords(t); return n.toLocaleString('pt-BR') + (n === 1 ? ' palavra' : ' palavras'); };
+const fileNameOf = (c) => 'capitulo-' + c.number + '.md';
+const chapOf = (id) => story.chapters.find((c) => c.id === id);
+const charOf = (id) => story.characters.find((c) => c.id === id);
+const firstChapterOf = (pid) => story.chapters.find((c) => c.character_ids.includes(pid)) || null;
+const photoOf = (p, angle) => p.photos.filter((f) => f.angle === angle).pop() || null;
+const photoCount = (p) => SLOTS.filter(([a]) => photoOf(p, a)).length;
+const svgIcon = (d, size, stroke) => {
+  const ns = 'http://www.w3.org/2000/svg';
+  const s = document.createElementNS(ns, 'svg');
+  s.setAttribute('width', size); s.setAttribute('height', size); s.setAttribute('viewBox', '0 0 ' + (size === 34 ? 34 : 18) + ' ' + (size === 34 ? 34 : 18));
+  s.setAttribute('fill', 'none'); s.setAttribute('stroke', stroke); s.setAttribute('stroke-width', '1.5'); s.setAttribute('aria-hidden', 'true');
+  const p = document.createElementNS(ns, 'path'); p.setAttribute('d', d); s.append(p);
+  return s;
+};
 
 async function loadStory() {
   const { data, error } = await sb.rpc('amaralesilva_portal_story');
   if (error) { story = null; $('story').hidden = true; return; }
   story = (data || [])[0] || null;
   $('story').hidden = !story;
-  if (story) await renderStory();
+  if (!story) return;
+  if (!story.chapters.some((c) => c.id === curCh)) curCh = story.chapters.length ? story.chapters[story.chapters.length - 1].id : null;
+  const paths = story.characters.flatMap((c) => c.photos.map((f) => f.path)).filter((p) => !photoUrls[p]);
+  if (paths.length) {
+    const { data: signed } = await sb.storage.from(BUCKET).createSignedUrls(paths, 3600);
+    (signed || []).forEach((x) => { if (x.signedUrl) photoUrls[x.path] = x.signedUrl; });
+  }
+  renderStory();
 }
 
-async function renderStory() {
-  const paths = story.characters.flatMap((c) => c.photos.map((f) => f.path));
-  const urls = {};
-  if (paths.length) {
-    const { data } = await sb.storage.from(BUCKET).createSignedUrls(paths, 3600);
-    (data || []).forEach((x) => { if (x.signedUrl) urls[x.path] = x.signedUrl; });
-  }
-  $('chapters').replaceChildren(...(story.chapters.length ? story.chapters.map(chapterRow) : [h('p', { class: 'empty' }, 'Nenhum capítulo enviado ainda.')]));
-  $('chars').replaceChildren(...(story.characters.length ? story.characters.map((c) => charBlock(c, urls)) : [h('p', { class: 'empty' }, 'Nenhum personagem ainda. Adicione o primeiro abaixo e depois mande as fotos dele.')]));
+function renderStory() {
+  $('ch-list').replaceChildren(...(story.chapters.length ? story.chapters.map(chapItem) : [h('p', { class: 'empty' }, 'Nenhum capítulo ainda.')]));
+  const c = chapOf(curCh);
+  $('ch-main').replaceChildren(...(c ? chapMain(c) : [h('p', { class: 'empty' }, VIEW_MODE ? 'O cliente ainda não começou nenhum capítulo.' : 'Clique em "Novo capítulo" para começar. Depois cole o texto e marque quem aparece nele.')]));
   const ch = story.choices;
   $('choices-note').textContent = ch
     ? 'As escolhas de desenho do livro foram enviadas em ' + fmtDay.format(new Date(ch.updated_at)) + '. Para mudar, volte à prévia e envie de novo.'
     : 'Depois de escolher os desenhos na prévia do livro, use o botão "Enviar minhas escolhas" no fim da página dela.';
 }
 
-function chapterRow(c) {
-  const words = c.body.trim().split(/\s+/).length;
-  return h('div', { class: 'chap' },
-    h('div', { class: 'chap__top' },
-      h('b', null, 'Capítulo ' + c.number + ' · ' + c.title),
-      h('div', { class: 'chap__act' },
-        h('button', { type: 'button', class: 'mini', onclick: () => startChapterEdit(c) }, 'editar'),
-        h('button', { type: 'button', class: 'mini mini--rm', onclick: () => removeChapter(c), 'aria-label': 'Remover capítulo ' + c.number }, 'remover'))),
-    h('small', null, words + ' palavras · atualizado em ' + fmtDay.format(new Date(c.updated_at))));
+function chapItem(c) {
+  const n = c.character_ids.length;
+  const ok = c.character_ids.filter((id) => { const p = charOf(id); return p && photoCount(p) === SLOTS.length; }).length;
+  const hasText = !!c.body.trim();
+  return h('button', { type: 'button', class: 'st__ch', 'aria-current': c.id === curCh ? 'true' : 'false', onclick: () => { curCh = c.id; stMsg(''); renderStory(); } },
+    h('span', { class: 'st__n' }, String(c.number)),
+    h('span', { style: 'flex:1;min-width:0' },
+      h('span', { class: 'st__t' }, c.title || 'Sem título'),
+      h('span', { class: 'st__meta' },
+        h('span', { class: 'pill ' + (hasText ? 'pill--ok' : 'pill--wait') }, hasText ? 'Texto salvo' : 'Sem texto'),
+        h('span', null, n ? n + (n === 1 ? ' personagem' : ' personagens') + ' · ' + ok + ' com fotos' : 'ninguém ainda'))));
 }
 
-function startChapterEdit(c) {
-  editCh = c;
-  $('ch-num').value = c.number; $('ch-title').value = c.title; $('ch-body').value = c.body;
-  $('ch-mode').textContent = 'Editando o capítulo ' + c.number; $('ch-save').textContent = 'Salvar alterações'; $('ch-cancel').hidden = false;
-  $('ch-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+function chapMain(c) {
+  const title = h('input', { class: 'field', id: 'ch-title', type: 'text', maxlength: '160', value: c.title, placeholder: 'Como se chama este capítulo', autocomplete: 'off' });
+  if (VIEW_MODE) title.readOnly = true;
+  else title.addEventListener('change', () => saveChapter(c, { title: title.value }, 'Título salvo.'));
+
+  const head = h('div', { class: 'st__row' },
+    h('div', { style: 'flex:1 1 260px' }, h('label', { class: 'sh', for: 'ch-title', style: 'display:block;margin-bottom:8px' }, 'Capítulo ' + c.number + ' · título'), title),
+    VIEW_MODE ? null : h('button', { type: 'button', class: 'mini mini--rm', onclick: () => removeChapter(c) }, 'remover capítulo'));
+
+  let textBlock;
+  if (c.body.trim()) {
+    textBlock = h('div', null,
+      h('div', { class: 'st__lblrow' }, h('p', { class: 'sh' }, 'Texto do capítulo'),
+        h('button', { type: 'button', class: 'mini', onclick: () => downloadChapter(c) }, 'baixar ' + fileNameOf(c))),
+      h('button', { type: 'button', class: 'file', onclick: () => openEditor(c), 'aria-label': 'Abrir ' + fileNameOf(c) + (VIEW_MODE ? ' para ler' : ' para ler e editar') },
+        h('span', { class: 'file__ic', 'aria-hidden': 'true' }, 'MD'),
+        h('span', { class: 'file__txt' },
+          h('span', { class: 'file__name' }, fileNameOf(c)),
+          h('span', { class: 'file__meta' }, wordsLabel(c.body) + ' · salvo em ' + fmtDay.format(new Date(c.updated_at))),
+          h('span', { class: 'file__ex' }, c.body.replace(/\s+/g, ' ').slice(0, 160))),
+        h('span', { class: 'file__go' }, VIEW_MODE ? 'Abrir' : 'Abrir e editar')));
+  } else if (VIEW_MODE) {
+    textBlock = h('div', null, h('p', { class: 'sh' }, 'Texto do capítulo'), h('p', { class: 'empty' }, 'Sem texto ainda.'));
+  } else {
+    const ta = h('textarea', { class: 'field field--area', id: 'ch-draft', maxlength: '200000', placeholder: 'Cole ou escreva aqui. Ao salvar, o texto vira o arquivo ' + fileNameOf(c) + '.' });
+    ta.value = drafts[c.id] || '';
+    ta.addEventListener('input', () => { drafts[c.id] = ta.value; });
+    const save = h('button', { type: 'button', class: 'btn btn--ochre', onclick: async () => {
+      if (!ta.value.trim()) { stMsg('Cole o texto do capítulo antes de salvar.', true); ta.focus(); return; }
+      save.disabled = true;
+      const ok = await saveChapter(c, { body: ta.value }, 'Texto salvo como ' + fileNameOf(c) + '. A equipe foi avisada.');
+      save.disabled = false;
+      if (ok) delete drafts[c.id];
+    } }, 'Salvar texto');
+    textBlock = h('div', null,
+      h('div', { class: 'st__lblrow' }, h('label', { class: 'sh', for: 'ch-draft' }, 'Texto do capítulo'),
+        h('span', { style: 'font-size:13px;color:var(--ink-soft)' }, 'Word ou PDF? Use Arquivos, mais abaixo.')),
+      ta, h('div', { style: 'display:flex;justify-content:flex-end;margin-top:12px' }, save));
+  }
+
+  const people = c.character_ids.map(charOf).filter(Boolean);
+  const out = [head, textBlock, h('div', { class: 'st__hr' }),
+    h('div', null,
+      h('h3', null, 'Quem aparece neste capítulo'),
+      h('p', { class: 'tip' }, 'Na primeira vez que alguém aparece, mande três fotos com boa luz: o rosto de frente, o rosto de lado e uma de corpo inteiro, que mostra o porte e o estilo da pessoa. As roupas de cada cena são desenhadas a partir delas, então não precisa mandar outras depois.')),
+    ...(people.length ? people.map((p) => personCard(p, c)) : [h('p', { class: 'empty', style: 'padding:18px;border:1px dashed var(--line-strong);border-radius:14px' }, VIEW_MODE ? 'Ninguém marcado neste capítulo.' : 'Ninguém neste capítulo ainda. Escolha abaixo quem aparece nele.')])];
+  if (!VIEW_MODE) out.push(addArea(c));
+  return out;
 }
-function resetChapterForm() {
-  editCh = null; $('ch-form').reset();
-  $('ch-num').value = story && story.chapters.length ? Math.max(...story.chapters.map((c) => c.number)) + 1 : 1;
-  $('ch-mode').textContent = 'Novo capítulo'; $('ch-save').textContent = 'Salvar capítulo'; $('ch-cancel').hidden = true;
+
+function personCard(p, c) {
+  const first = firstChapterOf(p.id);
+  const isFirst = !first || first.id === c.id;
+  const n = photoCount(p);
+  const complete = n === SLOTS.length;
+  const top = h('div', { class: 'pc__top' },
+    h('span', { class: 'pc__av', 'aria-hidden': 'true' }, (p.name.trim()[0] || '?').toUpperCase()),
+    h('span', { class: 'pc__name' }, h('b', null, p.name), h('span', null, isFirst ? 'Aparece pela primeira vez aqui' : 'Já apareceu no capítulo ' + first.number)),
+    h('span', { class: 'pc__count ' + (complete ? 'pc__count--ok' : 'pc__count--wait') }, complete && !isFirst ? 'Fotos do cap. ' + first.number : n + ' de 3 fotos'),
+    VIEW_MODE ? null : h('button', { type: 'button', class: 'mini mini--rm', onclick: () => linkChar(c, p, false), 'aria-label': 'Tirar ' + p.name + ' deste capítulo' }, 'tirar do capítulo'));
+  if (complete && !isFirst) {
+    return h('article', { class: 'pc' }, top,
+      h('div', { class: 'pc__done' }, svgIcon('m4 9.5 3 3 7-7', 18, '#C9A24E'), h('span', null, 'Fotos recebidas no capítulo ' + first.number + '. Não precisa mandar de novo.')));
+  }
+  return h('article', { class: 'pc' }, top, h('div', { class: 'slots' }, ...SLOTS.map(([angle, label]) => slot(p, angle, label))));
 }
-$('ch-cancel').addEventListener('click', resetChapterForm);
-$('ch-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
+
+function slot(p, angle, label) {
+  const f = photoOf(p, angle);
+  const pick = () => {
+    const inp = h('input', { type: 'file', accept: 'image/*' });
+    inp.addEventListener('change', () => { if (inp.files && inp.files[0]) uploadSlot(p, angle, label, inp.files[0], f); });
+    return inp;
+  };
+  if (f) {
+    const url = photoUrls[f.path];
+    return h('div', { class: 'slot slot--full' },
+      url ? h('img', { src: url, alt: label + ' de ' + p.name, loading: 'lazy' }) : h('span', { class: 'slot__busy' }, 'sem prévia'),
+      h('div', { class: 'slot__cap' }, h('span', null, label),
+        VIEW_MODE ? null : h('label', { class: 'slot__swap' }, 'trocar', h('span', { class: 'sr' }, ' ' + label.toLowerCase() + ' de ' + p.name), pick())));
+  }
+  if (VIEW_MODE) {
+    return h('div', { class: 'slot slot--empty' }, svgIcon(SLOT_ICON[angle], 34, '#A6A39B'), h('b', null, label), h('small', { style: 'color:var(--ink-soft)' }, 'ainda não enviada'));
+  }
+  const el = h('label', { class: 'slot slot--empty' },
+    svgIcon(SLOT_ICON[angle], 34, '#A6A39B'), h('b', null, label), h('small', null, 'Anexar'),
+    h('span', { class: 'sr' }, ' foto de ' + p.name), pick());
+  return el;
+}
+
+function addArea(c) {
+  const others = story.characters.filter((p) => !c.character_ids.includes(p.id));
+  const name = h('input', { class: 'field', id: 'ch-newchar', type: 'text', maxlength: '80', placeholder: 'Alguém novo? Escreva o nome', autocomplete: 'off' });
+  const add = h('button', { type: 'button', class: 'btn btn--ochre', onclick: () => addNewChar(c, name, add) }, 'Adicionar ao capítulo');
+  name.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); add.click(); } });
+  return h('div', { class: 'st__add' },
+    h('p', { class: 'sh' }, 'Quem mais aparece?'),
+    others.length ? h('div', { style: 'display:flex;flex-wrap:wrap;gap:8px' }, ...others.map((p) =>
+      h('button', { type: 'button', class: 'chip', onclick: () => linkChar(c, p, true) }, '+ ' + p.name))) : null,
+    h('div', { class: 'st__row' }, h('label', { class: 'sr', for: 'ch-newchar' }, 'Nome de um personagem novo'), name, add));
+}
+
+async function saveChapter(c, patch, okMsg) {
+  const title = patch.title != null ? patch.title : c.title;
+  const body = patch.body != null ? patch.body : c.body;
+  stMsg('Salvando…');
+  const { error } = await sb.rpc('amaralesilva_portal_story_chapter_save', { p_project: story.project_id, p_id: c.id, p_number: c.number, p_title: title, p_body: body });
+  if (error) { stMsg('Não foi possível salvar agora. Tente de novo.', true); return false; }
+  stMsg(okMsg || 'Salvo.');
+  await loadStory();
+  return true;
+}
+
+$('ch-new').addEventListener('click', async () => {
   if (!story) return;
-  const btn = $('ch-save'); btn.disabled = true; stMsg('Salvando o capítulo…');
-  const { error } = await sb.rpc('amaralesilva_portal_story_chapter_save', {
-    p_project: story.project_id, p_id: editCh ? editCh.id : null,
-    p_number: Number($('ch-num').value), p_title: $('ch-title').value, p_body: $('ch-body').value });
+  const btn = $('ch-new'); btn.disabled = true;
+  const next = story.chapters.length ? Math.max(...story.chapters.map((c) => c.number)) + 1 : 1;
+  const { data, error } = await sb.rpc('amaralesilva_portal_story_chapter_save', { p_project: story.project_id, p_id: null, p_number: next, p_title: '', p_body: '' });
   btn.disabled = false;
-  if (error) { stMsg(/duplicate|unique/i.test(error.message) ? 'Já existe um capítulo com esse número.' : 'Não foi possível salvar agora. Tente de novo.', true); return; }
-  stMsg('Capítulo salvo. A equipe foi avisada.');
-  await loadStory(); resetChapterForm();
+  if (error) { stMsg('Não foi possível criar o capítulo agora. Tente de novo.', true); return; }
+  curCh = data; stMsg('');
+  await loadStory();
+  const t = $('ch-title'); if (t) t.focus();
 });
+
 async function removeChapter(c) {
-  if (!confirm('Remover o capítulo ' + c.number + ' "' + c.title + '"?')) return;
+  if (!confirm('Remover o capítulo ' + c.number + (c.title ? ' "' + c.title + '"' : '') + '? O texto sai junto. Os personagens e as fotos ficam.')) return;
   const { error } = await sb.rpc('amaralesilva_portal_story_chapter_delete', { p_id: c.id });
   if (error) { stMsg('Não foi possível remover agora.', true); return; }
-  if (editCh && editCh.id === c.id) resetChapterForm();
+  delete drafts[c.id]; curCh = null; stMsg('Capítulo removido.');
   await loadStory();
 }
 
-function charBlock(c, urls) {
-  const shots = c.photos.map((f) => h('div', { class: 'shot' },
-    urls[f.path] ? h('img', { src: urls[f.path], alt: (ANGLES[f.angle] || 'Foto') + ' de ' + c.name, loading: 'lazy' }) : h('div', { class: 'empty' }, 'sem prévia'),
-    h('span', null, ANGLES[f.angle] || 'Foto', h('button', { type: 'button', class: 'mini mini--rm', onclick: () => removePhoto(f), 'aria-label': 'Remover foto ' + (ANGLES[f.angle] || '') + ' de ' + c.name }, 'remover'))));
-  const sel = h('select', { class: 'field', 'aria-label': 'Tipo da foto de ' + c.name }, ...Object.entries(ANGLES).map(([v, t]) => h('option', { value: v }, t)));
-  const pick = h('input', { type: 'file', accept: 'image/*', multiple: '', 'aria-label': 'Escolher fotos de ' + c.name });
-  pick.addEventListener('change', () => addPhotos(c, sel.value, pick));
-  return h('div', { class: 'who' },
-    h('div', { class: 'who__top' },
-      h('b', null, c.name),
-      h('div', { class: 'chap__act' },
-        h('button', { type: 'button', class: 'mini', onclick: () => startCharEdit(c) }, 'editar'),
-        h('button', { type: 'button', class: 'mini mini--rm', onclick: () => removeChar(c), 'aria-label': 'Remover ' + c.name }, 'remover'))),
-    c.notes ? h('p', null, c.notes) : null,
-    shots.length ? h('div', { class: 'shots' }, shots) : h('p', { class: 'empty', style: 'margin-top:10px' }, 'Sem fotos ainda.'),
-    h('div', { class: 'addshot' }, sel,
-      h('div', { class: 'up__pick' }, h('span', { class: 'btn btn--line', 'aria-hidden': 'true' }, 'Adicionar fotos'), pick)));
+function downloadChapter(c) {
+  const head = '# Capítulo ' + c.number + (c.title ? ' — ' + c.title : '') + '\n\n';
+  const url = URL.createObjectURL(new Blob([head + c.body.replace(/\s+$/, '') + '\n'], { type: 'text/markdown;charset=utf-8' }));
+  const a = h('a', { href: url, download: fileNameOf(c) });
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function startCharEdit(c) {
-  editChar = c; $('char-name').value = c.name; $('char-notes').value = c.notes || '';
-  $('char-mode').textContent = 'Editando ' + c.name; $('char-save').textContent = 'Salvar alterações'; $('char-cancel').hidden = false;
-  $('char-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+async function linkChar(c, p, on) {
+  const { error } = await sb.rpc('amaralesilva_portal_story_chapter_character', { p_chapter: c.id, p_character: p.id, p_on: on });
+  if (error) { stMsg('Não foi possível atualizar agora. Tente de novo.', true); return; }
+  stMsg(on ? p.name + ' entrou no capítulo ' + c.number + '.' : p.name + ' saiu do capítulo ' + c.number + '. As fotos continuam guardadas.');
+  await loadStory();
 }
-function resetCharForm() {
-  editChar = null; $('char-form').reset();
-  $('char-mode').textContent = 'Novo personagem'; $('char-save').textContent = 'Adicionar personagem'; $('char-cancel').hidden = true;
-}
-$('char-cancel').addEventListener('click', resetCharForm);
-$('char-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (!story) return;
-  const btn = $('char-save'); btn.disabled = true; stMsg('Salvando…');
-  const { error } = await sb.rpc('amaralesilva_portal_story_character_save', {
-    p_project: story.project_id, p_id: editChar ? editChar.id : null, p_name: $('char-name').value, p_notes: $('char-notes').value });
+
+async function addNewChar(c, input, btn) {
+  const nm = input.value.trim();
+  if (!nm) { stMsg('Escreva o nome do personagem.', true); input.focus(); return; }
+  if (story.characters.some((p) => p.name.trim().toLowerCase() === nm.toLowerCase())) { stMsg(nm + ' já está cadastrado. Use o botão com o nome dele.', true); return; }
+  btn.disabled = true; stMsg('Salvando…');
+  const { data, error } = await sb.rpc('amaralesilva_portal_story_character_save', { p_project: story.project_id, p_id: null, p_name: nm, p_notes: null });
+  if (error) { btn.disabled = false; stMsg('Não foi possível salvar agora. Tente de novo.', true); return; }
+  const { error: e2 } = await sb.rpc('amaralesilva_portal_story_chapter_character', { p_chapter: c.id, p_character: data, p_on: true });
   btn.disabled = false;
-  if (error) { stMsg('Não foi possível salvar agora. Tente de novo.', true); return; }
-  stMsg(editChar ? 'Personagem atualizado.' : 'Personagem adicionado. Agora mande as fotos dele.');
-  resetCharForm(); await loadStory();
-});
-async function removeChar(c) {
-  if (!confirm('Remover ' + c.name + ' e as ' + c.photos.length + ' foto(s) dele?')) return;
-  if (c.photos.length) await sb.storage.from(BUCKET).remove(c.photos.map((f) => f.path));
-  const { error } = await sb.rpc('amaralesilva_portal_story_character_delete', { p_id: c.id });
-  if (error) { stMsg('Não foi possível remover agora.', true); return; }
-  if (editChar && editChar.id === c.id) resetCharForm();
+  if (e2) { stMsg('O personagem foi salvo, mas não entrou no capítulo. Tente de novo pelo botão com o nome dele.', true); await loadStory(); return; }
+  stMsg(nm + ' entrou no capítulo ' + c.number + '. Agora mande as fotos.');
   await loadStory();
 }
-async function addPhotos(c, angle, input) {
-  const files = Array.from(input.files || []);
-  if (!files.length) return;
-  let ok = 0;
-  for (let i = 0; i < files.length; i++) {
-    const f = files[i];
-    stMsg('Enviando foto ' + (i + 1) + ' de ' + files.length + ' de ' + c.name + '…');
-    if (!/^image\//.test(f.type)) { stMsg('"' + f.name + '" não é uma imagem.', true); continue; }
-    if (f.size > MAX_BYTES) { stMsg('"' + f.name + '" passa de 25 MB.', true); continue; }
-    const path = story.client_id + '/personagens/' + crypto.randomUUID() + '-' + safeName(f.name);
-    const { error } = await sb.storage.from(BUCKET).upload(path, f, { contentType: f.type, upsert: false });
-    if (error) { stMsg('"' + f.name + '" não foi aceita. Envie em JPG, PNG ou WebP.', true); continue; }
-    const { error: e2 } = await sb.rpc('amaralesilva_portal_story_photo_register', { p_character: c.id, p_path: path, p_name: f.name, p_size: f.size, p_mime: f.type, p_angle: angle });
-    if (e2) { await sb.storage.from(BUCKET).remove([path]); stMsg('Não foi possível registrar "' + f.name + '". Tente de novo.', true); continue; }
-    ok++;
+
+async function uploadSlot(p, angle, label, f, old) {
+  if (!/^image\//.test(f.type)) { stMsg('"' + f.name + '" não é uma imagem.', true); return; }
+  if (f.size > MAX_BYTES) { stMsg('"' + f.name + '" passa de 25 MB.', true); return; }
+  stMsg('Enviando ' + label.toLowerCase() + ' de ' + p.name + '…');
+  const path = story.client_id + '/personagens/' + crypto.randomUUID() + '-' + safeName(f.name);
+  const { error } = await sb.storage.from(BUCKET).upload(path, f, { contentType: f.type, upsert: false });
+  if (error) { stMsg('"' + f.name + '" não foi aceita. Envie em JPG, PNG ou WebP.', true); return; }
+  const { error: e2 } = await sb.rpc('amaralesilva_portal_story_photo_register', { p_character: p.id, p_path: path, p_name: f.name, p_size: f.size, p_mime: f.type, p_angle: angle });
+  if (e2) { await sb.storage.from(BUCKET).remove([path]); stMsg('Não foi possível registrar a foto. Tente de novo.', true); return; }
+  if (old) {
+    /* Troca: a foto anterior sai. Se foi a equipe que enviou, o cliente não
+       pode apagá-la; aí ela fica guardada e a nova passa a valer. */
+    const { error: e3 } = await sb.storage.from(BUCKET).remove([old.path]);
+    if (!e3) await sb.rpc('amaralesilva_portal_story_photo_delete', { p_id: old.id });
   }
-  input.value = '';
-  if (ok) { stMsg(ok === 1 ? 'Foto enviada. A equipe foi avisada.' : ok + ' fotos enviadas. A equipe foi avisada.'); await loadStory(); }
-}
-async function removePhoto(f) {
-  if (!confirm('Remover esta foto?')) return;
-  const { error: e1 } = await sb.storage.from(BUCKET).remove([f.path]);
-  if (e1) { stMsg('Não foi possível remover agora.', true); return; }
-  const { error: e2 } = await sb.rpc('amaralesilva_portal_story_photo_delete', { p_id: f.id });
-  if (e2) { stMsg('A foto saiu, mas a lista não atualizou. Recarregue a página.', true); return; }
+  stMsg('Foto enviada. A equipe foi avisada.');
   await loadStory();
 }
+
+/* Janela do arquivo do capítulo: lê e edita o texto inteiro. */
+function openEditor(c) {
+  edCh = c;
+  $('ed-title').textContent = fileNameOf(c);
+  $('ed-sub').textContent = 'Capítulo ' + c.number + (c.title ? ' · ' + c.title : '');
+  const ta = $('ed-text');
+  ta.value = c.body; ta.readOnly = VIEW_MODE;
+  $('ed-words').textContent = wordsLabel(c.body);
+  $('ed-save').hidden = VIEW_MODE;
+  $('ed-cancel').textContent = VIEW_MODE ? 'Fechar' : 'Cancelar';
+  $('ed').showModal();
+  ta.scrollTop = 0;
+}
+function closeEditor() {
+  if (edCh && !VIEW_MODE && $('ed-text').value !== edCh.body && !confirm('Fechar sem salvar as alterações?')) return false;
+  $('ed').close(); edCh = null; return true;
+}
+$('ed-text').addEventListener('input', () => { $('ed-words').textContent = wordsLabel($('ed-text').value); });
+$('ed-x').addEventListener('click', closeEditor);
+$('ed-cancel').addEventListener('click', closeEditor);
+$('ed').addEventListener('cancel', (e) => { e.preventDefault(); closeEditor(); });
+$('ed-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!edCh || VIEW_MODE) return;
+  const text = $('ed-text').value;
+  if (!text.trim()) { alert('O capítulo não pode ficar sem texto. Para tirá-lo, use "remover capítulo".'); return; }
+  const btn = $('ed-save'); btn.disabled = true;
+  const c = edCh;
+  const ok = await saveChapter(c, { body: text }, fileNameOf(c) + ' atualizado. A equipe foi avisada.');
+  btn.disabled = false;
+  if (ok) { $('ed').close(); edCh = null; }
+});
 
 let handoff = [], lastData = null, lastSession = null, lastPrev = null;
 function render(data, session, previews) {
@@ -554,7 +732,7 @@ function render(data, session, previews) {
   sel.replaceChildren(h('option', { value: '' }, 'Geral (sem projeto)'), ...proj.map((p) => h('option', { value: p.id }, p.name)));
   $('up-proj-box').hidden = !proj.length;
   $('files').hidden = !ctx.clientId;
-  if (ctx.clientId) { loadFiles(); loadStory().then(resetChapterForm); }
+  if (ctx.clientId) { loadFiles(); loadStory(); }
   const names = Object.fromEntries(proj.map((p) => [p.id, p.name]));
   const meets = data.meetings || [];
   $('meetings').hidden = !meets.length;
