@@ -324,3 +324,122 @@ grant execute on function
   public.amaralesilva_portal_story_photo_delete(uuid),
   public.amaralesilva_portal_story_choices_save(text, jsonb, text)
   to authenticated;
+
+
+-- ═══ Histórias por capítulo (migração amaralesilva_story_por_capitulo) ═══
+-- A tela do cliente passou a ser organizada por capítulo: cada capítulo tem o
+-- texto (mostrado como o arquivo capitulo-N.md) e a lista de quem aparece nele.
+-- As fotos continuam do personagem, não do capítulo: são pedidas uma vez, na
+-- primeira vez que a pessoa aparece, e servem de base para todas as cenas.
+-- O capítulo nasce vazio (título e texto em branco) quando o cliente clica em
+-- "Novo capítulo"; por isso as duas checagens aceitam texto vazio. O aviso por
+-- push só sai quando o capítulo salvo tem texto.
+
+alter table public.amaralesilva_story_chapters drop constraint if exists amaralesilva_story_chapters_title_check;
+alter table public.amaralesilva_story_chapters add constraint amaralesilva_story_chapters_title_check check (char_length(title) <= 160);
+alter table public.amaralesilva_story_chapters drop constraint if exists amaralesilva_story_chapters_body_check;
+alter table public.amaralesilva_story_chapters add constraint amaralesilva_story_chapters_body_check check (char_length(body) <= 200000);
+
+create table if not exists public.amaralesilva_story_chapter_characters (
+  chapter_id    uuid not null references public.amaralesilva_story_chapters(id) on delete cascade,
+  character_id  uuid not null references public.amaralesilva_story_characters(id) on delete cascade,
+  created_at    timestamptz not null default now(),
+  primary key (chapter_id, character_id)
+);
+create index if not exists amaralesilva_story_chapter_characters_char_idx
+  on public.amaralesilva_story_chapter_characters (character_id);
+alter table public.amaralesilva_story_chapter_characters enable row level security;
+drop policy if exists "amaralesilva story_chapter_characters members" on public.amaralesilva_story_chapter_characters;
+create policy "amaralesilva story_chapter_characters members" on public.amaralesilva_story_chapter_characters
+  for all to authenticated using (public.amaralesilva_is_member()) with check (public.amaralesilva_is_member());
+
+create or replace function public.amaralesilva_portal_story()
+returns jsonb
+language sql stable security definer
+set search_path = public
+as $$
+  select coalesce(jsonb_agg(jsonb_build_object(
+    'project_id', p.id,
+    'project_name', p.name,
+    'client_id', p.client_id,
+    'characters', (select coalesce(jsonb_agg(jsonb_build_object(
+        'id', c.id, 'name', c.name, 'notes', c.notes,
+        'photos', (select coalesce(jsonb_agg(jsonb_build_object(
+            'id', f.id, 'path', f.path, 'name', f.name, 'angle', f.angle, 'size', f.size,
+            'created_at', f.created_at) order by f.created_at), '[]'::jsonb)
+          from public.amaralesilva_story_photos f where f.character_id = c.id)
+      ) order by c.created_at), '[]'::jsonb)
+      from public.amaralesilva_story_characters c where c.project_id = p.id),
+    'chapters', (select coalesce(jsonb_agg(jsonb_build_object(
+        'id', h.id, 'number', h.number, 'title', h.title, 'body', h.body,
+        'updated_at', h.updated_at,
+        'character_ids', (select coalesce(jsonb_agg(l.character_id order by l.created_at), '[]'::jsonb)
+          from public.amaralesilva_story_chapter_characters l where l.chapter_id = h.id)
+      ) order by h.number), '[]'::jsonb)
+      from public.amaralesilva_story_chapters h where h.project_id = p.id),
+    'choices', (select jsonb_build_object('selection', s.selection, 'model', s.model, 'updated_at', s.updated_at)
+      from public.amaralesilva_story_choices s where s.project_id = p.id)
+  ) order by p.created_at), '[]'::jsonb)
+  from public.amaralesilva_projects p
+  where p.story_enabled and p.client_id in (select public.amaralesilva_my_client_ids());
+$$;
+
+create or replace function public.amaralesilva_portal_story_chapter_save(
+  p_project uuid, p_id uuid, p_number int, p_title text, p_body text)
+returns uuid
+language plpgsql security definer
+set search_path = public
+as $$
+declare
+  em text := lower(coalesce(auth.jwt() ->> 'email', ''));
+  cid uuid := public.amaralesilva_story_guard(p_project);
+  new_id uuid;
+  cli text;
+begin
+  if p_id is null then
+    insert into public.amaralesilva_story_chapters (project_id, number, title, body, created_by_email)
+    values (p_project, p_number, left(btrim(coalesce(p_title, '')), 160), coalesce(p_body, ''), em)
+    returning id into new_id;
+  else
+    update public.amaralesilva_story_chapters
+       set number = p_number, title = left(btrim(coalesce(p_title, '')), 160), body = coalesce(p_body, ''), updated_at = now()
+     where id = p_id and project_id = p_project
+    returning id into new_id;
+    if new_id is null then raise exception 'capítulo não encontrado'; end if;
+  end if;
+  if public.amaralesilva_my_role() = 'cliente' and btrim(coalesce(p_body, '')) <> '' then
+    select name into cli from public.amaralesilva_clients where id = cid;
+    perform public.amaralesilva_push('Capítulo enviado pelo cliente',
+      concat_ws(' · ', cli, 'Capítulo ' || p_number, nullif(left(btrim(coalesce(p_title, '')), 80), '')),
+      '/admin#/historias', 'story-chapter-' || new_id);
+  end if;
+  return new_id;
+end;
+$$;
+
+-- Põe (p_on = true) ou tira um personagem de um capítulo. Os dois têm de ser do
+-- mesmo projeto. Tirar do capítulo não apaga o personagem nem as fotos.
+create or replace function public.amaralesilva_portal_story_chapter_character(
+  p_chapter uuid, p_character uuid, p_on boolean)
+returns void
+language plpgsql security definer
+set search_path = public
+as $$
+declare pid uuid;
+begin
+  select project_id into pid from public.amaralesilva_story_chapters where id = p_chapter;
+  if pid is null then raise exception 'capítulo não encontrado'; end if;
+  if not exists (select 1 from public.amaralesilva_story_characters where id = p_character and project_id = pid) then
+    raise exception 'personagem não encontrado';
+  end if;
+  perform public.amaralesilva_story_guard(pid);
+  if p_on then
+    insert into public.amaralesilva_story_chapter_characters (chapter_id, character_id)
+    values (p_chapter, p_character) on conflict do nothing;
+  else
+    delete from public.amaralesilva_story_chapter_characters where chapter_id = p_chapter and character_id = p_character;
+  end if;
+end;
+$$;
+revoke execute on function public.amaralesilva_portal_story_chapter_character(uuid, uuid, boolean) from public, anon;
+grant  execute on function public.amaralesilva_portal_story_chapter_character(uuid, uuid, boolean) to authenticated;
