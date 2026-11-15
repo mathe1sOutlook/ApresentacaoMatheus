@@ -244,8 +244,9 @@ function stone(o={}){
 window.BookCharacters={person,pipoca,stone};
 })();
 </script>
-<script src="character-atlases.js?v=guache-1"></script>
-<script src="guache-characters.js?v=guache-1"></script>
+<script src="character-atlases.js?v=guache-car-1"></script>
+<script src="guache-characters.js?v=guache-car-1"></script>
+<script src="car-scene.js?v=guache-car-1"></script>
 <script>/* Cenários vetoriais com personagens ilustrados em guache. */
 (function(){
 'use strict';
@@ -318,7 +319,7 @@ function render(scene,style='soft',pageNumber=0){
   art+=person('carlos',110,246,1.08,'wave')+person('noeli',558,245,1.08,'stand')+person('maria',353,350,.91,'wave')+butterfly(471,248,.45)+fore();
  }else if(scene==='road'){
   art=bg({home:false,largeTree:false})+path('M128 720Q300 598 554 483Q709 410 749 324L802 324Q810 449 647 551Q537 620 573 720Z',p.road)+tree(95,450,.76)+tree(841,401,.62,true)+tree(558,364,.31)+fence(684,389,.5,11);
-  art+=`<g transform="translate(126 270) scale(1.08)"><ellipse cx="316" cy="299" rx="315" ry="31" fill="${p.dark}" opacity=".15"/><path d="M33 180L77 66Q88 38 135 35H397Q441 37 470 93L509 165L571 192Q587 200 587 227V274H6V215Q8 186 33 180Z" fill="${p.coral}" ${stroke()}/><path d="M88 164L117 80Q122 66 143 65H390Q409 65 429 97L464 164Z" fill="#CBE5DB" ${stroke()}/><clipPath id="${uid}carwin"><path d="M88 164L117 80Q122 66 143 65H390Q409 65 429 97L464 164Z"/></clipPath><g clip-path="url(#${uid}carwin)">${person('noeli',108,61,.55,'stand')}${person('maria',223,62,.56,'wave')}${person('carlos',341,60,.56,'stand')}</g><path d="M208 65V165M332 65V165" stroke="${p.coral}" stroke-width="14"/><path d="M31 187H549Q575 190 582 210H16Z" fill="${p.sun}" opacity=".2"/><path d="M192 180V272M339 178V273" fill="none" ${stroke(2,p.roof)}/><rect x="216" y="187" width="36" height="9" rx="4" fill="${p.cream}"/><rect x="363" y="187" width="36" height="9" rx="4" fill="${p.cream}"/><circle cx="115" cy="267" r="48" fill="${p.ink}"/><circle cx="115" cy="267" r="24" fill="${p.cream}"/><circle cx="115" cy="267" r="10" fill="${p.trunk}"/><circle cx="476" cy="267" r="48" fill="${p.ink}"/><circle cx="476" cy="267" r="24" fill="${p.cream}"/><circle cx="476" cy="267" r="10" fill="${p.trunk}"/><rect x="550" y="209" width="32" height="20" rx="6" fill="${p.sun}"/><rect x="11" y="206" width="13" height="23" rx="5" fill="#B04D55"/><path d="M22 250H64M529 250H582" ${stroke(7,p.cream)} fill="none"/></g>`+flower(97,665,.7,p.coral)+flower(836,630,.7,p.cream)+fore();
+  art+=`<g transform="translate(90 275) scale(1.08)">${window.BookCar.render(p,uid)}</g>`+flower(97,665,.7,p.coral)+flower(836,630,.7,p.cream)+fore();
  }else{
  art=bg({home:true,largeTree:true});
  if(scene==='cover'){
