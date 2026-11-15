@@ -293,3 +293,5 @@ window.BookCharacterAtlases = {
   }
 };
 window.BookCharacterSleepAtlas = {"file": "assets/maria-descanso.png", "width": 2172, "height": 724, "frames": [[53, 68, 605, 591], [771, 64, 614, 600], [1463, 70, 649, 590]]};
+/* Poses sentadas: linhas guache, suave e brincante; colunas Noeli, Maria e Carlos. */
+window.BookCharacterCarAtlas = {"file": "assets/familia-no-carro.png", "width": 1536, "height": 1024, "frames": [[151, 12, 313, 327], [630, 57, 263, 282], [1096, 14, 310, 325], [144, 351, 318, 326], [621, 389, 270, 287], [1102, 353, 302, 324], [120, 687, 364, 329], [603, 720, 300, 295], [1091, 689, 335, 326]]};

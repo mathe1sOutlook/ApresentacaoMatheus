@@ -35,7 +35,16 @@ for (const choice of variants.choices) {
   for (const model of ['soft', 'paper', 'botanical', 'comic', 'dream']) {
     for (const page of getData(html)) {
       const markup = pages.render(model, page);
-      assert(markup.includes('assets/' + choice.id + '.png'), `${choice.id}/${model}/${page.id}`);
+      assert(markup.includes(page.scene === 'road' ? 'assets/familia-no-carro.png' : 'assets/' + choice.id + '.png'), `${choice.id}/${model}/${page.id}`);
+      if (page.scene === 'road') {
+        assert(markup.includes('data-part="steering-wheel"'), 'Volante deve estar visível na cena do carro');
+        assert(markup.includes('data-part="dashboard"'));
+        assert(markup.includes('data-seat="child"'));
+        assert.equal((markup.match(/data-pose="driving"/g) || []).length, 1);
+        assert.equal((markup.match(/data-pose="seated"/g) || []).length, 2);
+        assert.equal((markup.match(/data-variant="/g) || []).length, 3);
+        assert.equal((markup.match(new RegExp('data-variant="' + choice.id + '"', 'g')) || []).length, 3);
+      }
       assert(!/NaN|undefined/.test(markup));
       assert(!markup.includes('data-variant="original"'));
       const ids = [...markup.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
@@ -58,6 +67,17 @@ for (const atlas of Object.values(context.window.BookCharacterAtlases)) {
 }
 assert(fs.existsSync(root + context.window.BookCharacterSleepAtlas.file));
 assert.equal(context.window.BookCharacterSleepAtlas.frames.length, 3);
+assert(fs.existsSync(root + context.window.BookCharacterCarAtlas.file));
+assert.equal(context.window.BookCharacterCarAtlas.frames.length, 9);
+for (const atlas of [context.window.BookCharacterCarAtlas, context.window.BookCharacterSleepAtlas]) {
+  for (const [x, y, w, h] of atlas.frames) assert(x >= 0 && y >= 0 && w > 0 && h > 0 && x + w <= atlas.width && y + h <= atlas.height);
+}
+variants.setSelection('carlos', 'guache-ludico');
+variants.setSelection('noeli', 'guache-suave');
+const mixedCar = context.window.BookCar.render({ coral: '#d88867', dark: '#405544' }, 'mixed-car-');
+assert(mixedCar.includes('data-character="carlos" data-variant="guache-ludico"'));
+assert(mixedCar.includes('data-character="noeli" data-variant="guache-suave"'));
+assert(mixedCar.includes('data-character="maria" data-variant="guache"'));
 assert(chars.person('maria', { pose: 'sleep' }).includes('assets/maria-descanso.png'));
 assert(html.includes('sitio-personagens-guache-v1'));
 assert(!html.includes('sitio-personagens-v2'));
