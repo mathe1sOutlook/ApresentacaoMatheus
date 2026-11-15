@@ -35,7 +35,17 @@ for (const choice of variants.choices) {
   for (const model of ['soft', 'paper', 'botanical', 'comic', 'dream']) {
     for (const page of getData(html)) {
       const markup = pages.render(model, page);
-      assert(markup.includes(page.scene === 'road' ? 'assets/familia-no-carro.png' : 'assets/' + choice.id + '.png'), `${choice.id}/${model}/${page.id}`);
+      const expectedArt = page.pageNumber === 2 ? 'familia-no-carro' : page.pageNumber === 3 ? 'narrativa-embrace' : page.pageNumber === 20 ? 'maria-descanso' : page.pageNumber >= 18 ? 'narrativa-bedtime' : page.pageNumber <= 1 ? choice.id : 'narrativa-maria';
+      assert(markup.includes('assets/' + expectedArt + '.png'), `${choice.id}/${model}/${page.id}`);
+      for (const [name, pose] of Object.entries(context.window.BookScenePoses.pages[page.pageNumber] || {})) {
+        if (pose === 'embrace') {
+          assert(markup.includes('data-pose="embrace"'));
+          continue;
+        }
+        const found = markup.match(new RegExp('data-character="' + name + '"[^>]*data-pose="([^"]+)"'));
+        assert(found, `${page.id}/${name} deve estar presente na cena`);
+        assert.equal(found[1], pose, `${page.id}/${name} deve acompanhar a ação do texto`);
+      }
       if (page.scene === 'road') {
         assert(markup.includes('data-part="steering-wheel"'), 'Volante deve estar visível na cena do carro');
         assert(markup.includes('data-part="dashboard"'));
@@ -79,6 +89,28 @@ assert(mixedCar.includes('data-character="carlos" data-variant="guache-ludico"')
 assert(mixedCar.includes('data-character="noeli" data-variant="guache-suave"'));
 assert(mixedCar.includes('data-character="maria" data-variant="guache"'));
 assert(chars.person('maria', { pose: 'sleep' }).includes('assets/maria-descanso.png'));
+for (const atlas of [...Object.values(context.window.BookNarrativeAtlases), context.window.BookEmbraceAtlas, context.window.BookBedtimeAtlas]) {
+  assert(fs.existsSync(root + atlas.file));
+  for (const [x, y, w, h] of atlas.frames) assert(x >= 0 && y >= 0 && w > 0 && h > 0 && x + w <= atlas.width && y + h <= atlas.height);
+}
+assert.equal(context.window.BookNarrativeAtlases.pipoca.poses.length, 10);
+assert(chars.pipoca({ view: 'front' }).includes('assets/narrativa-pipoca.png'));
+variants.setSelection('maria', 'guache-suave');
+variants.setSelection('vovo', 'guache-ludico');
+const hug = chars.embrace();
+assert(hug.includes('data-maria-variant="guache-suave"'));
+assert(hug.includes('data-vovo-variant="guache-ludico"'));
+for (const grandma of variants.choices) for (const girl of variants.choices) {
+  variants.setSelection('vovo', grandma.id);
+  variants.setSelection('maria', girl.id);
+  const pair = chars.embrace();
+  assert(pair.includes(`data-vovo-variant="${grandma.id}"`) && pair.includes(`data-maria-variant="${girl.id}"`));
+  assert(!/NaN|undefined/.test(pair));
+}
+const surprise = context.window.BookScenes.render('sneeze', 'comic', 6);
+assert.equal((surprise.match(/data-pose="startled"/g) || []).length, 2);
+const riddle = context.window.BookScenes.render('riddle', 'comic', 15);
+assert(riddle.includes('data-pose="read"') && riddle.includes('data-pose="think"'));
 assert(html.includes('sitio-personagens-guache-v1'));
 assert(!html.includes('sitio-personagens-v2'));
 assert(html.includes('sel=window.BookVariants.getSelections()'));

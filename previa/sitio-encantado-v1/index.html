@@ -244,8 +244,10 @@ function stone(o={}){
 window.BookCharacters={person,pipoca,stone};
 })();
 </script>
-<script src="character-atlases.js?v=guache-car-1"></script>
-<script src="guache-characters.js?v=guache-car-1"></script>
+<script src="character-atlases.js?v=poses-1"></script>
+<script src="narrative-atlases.js?v=poses-1"></script>
+<script src="scene-poses.js?v=poses-1"></script>
+<script src="guache-characters.js?v=poses-1"></script>
 <script src="car-scene.js?v=guache-car-1"></script>
 <script>/* Cenários vetoriais com personagens ilustrados em guache. */
 (function(){
@@ -269,8 +271,8 @@ function render(scene,style='soft',pageNumber=0){
  const path=(d,f,extra='')=>`<path d="${d}" fill="${f}" ${extra}/>`;
  const group=(x,y,s,body,rot=0)=>`<g transform="translate(${x} ${y}) scale(${s}) rotate(${rot})">${body}</g>`;
  const line=(d,col=p.ink,w=2,extra='')=>path(d,'none',stroke(w,col)+' '+extra);
- const person=(name,x,y,s=1,pose='stand',flip=false)=>c.person(name,{x,y,scale:s,pose,style,flip:scene==='cover'?false:scene==='road'?false:(flip||x>450),view:scene==='cover'?'front':scene==='road'?'profile':scene==='welcome'?'action':pose==='stand'?'profile':'action'});
- const pony=(x,y,s=1,pose='stand',flip=false)=>c.pipoca({x,y,scale:s,pose,style,flip:scene==='cover'?false:(flip||x>450),view:scene==='cover'?'front':['stand','sleep'].includes(pose)?'profile':'action'});
+ const person=(name,x,y,s=1,pose='stand',flip=false)=>c.person(name,{x,y,scale:s,pose,style,narrativePose:window.BookScenePoses.forPage(name,pageNumber),flip:scene==='cover'?false:scene==='road'?false:(flip||x>450),view:scene==='cover'||pageNumber===0?'front':scene==='road'?'profile':scene==='welcome'?'action':pose==='stand'?'profile':'action'});
+ const pony=(x,y,s=1,pose='stand',flip=false)=>c.pipoca({x,y,scale:s,pose,style,narrativePose:window.BookScenePoses.forPage('pipoca',pageNumber),flip:scene==='cover'||pageNumber===0?false:(flip||x>450),view:scene==='cover'||pageNumber===0?'front':['stand','sleep'].includes(pose)?'profile':'action'});
  const gem=(x,y,s=1,heart=false)=>c.stone({x,y,scale:s,lit:pageNumber>=17?1:0,heart,style});
  function star(x,y,r=8,col=p.sun,rot=0){let q=[];for(let i=0;i<10;i++){let a=-Math.PI/2+i*Math.PI/5, rr=i%2?r*.43:r;q.push(`${Math.cos(a)*rr},${Math.sin(a)*rr}`)}return group(x,y,1,`<polygon points="${q.join(' ')}" fill="${col}" ${style==='comic'?stroke(1.2):''}/>`,rot)}
  function sparkle(x,y,s=1,col=p.sun){return group(x,y,s,path('M0 -13 Q2 -2 13 0 Q2 2 0 13 Q-2 2 -13 0 Q-2 -2 0 -13Z',col));}
@@ -302,7 +304,7 @@ function render(scene,style='soft',pageNumber=0){
  function moon(x,y,s=1){return group(x,y,s,path('M25 -50C-38 -57 -70 4 -35 45C-8 76 38 62 57 28C7 51 -29 -1 25 -50Z','#F9E6AB'));}
  function room(last=false){let b=`<rect width="900" height="720" fill="${night?'#DECFDA':p.cream}"/>`+path('M0 560H900V720H0Z','#AE9492')+line('M0 599H900M0 661H900M123 560L83 720M350 560L333 720M601 560L617 720M819 560L862 720','#917D86',1.5,'opacity=".5"');b+=`<rect x="495" y="58" width="330" height="406" rx="152" fill="#BAA3B2"/><rect x="512" y="76" width="295" height="368" rx="141" fill="url(#${uid}night)"/>`+moon(708,182,.56);for(let i=0;i<21;i++){let x=538+(i*67)%249,y=111+(i*53)%285;b+=i%4?circle(x,y,1.5,'#F9E7C7'):star(x,y,4.5,'#F9E7C7')}b+=path('M513 330Q607 291 680 329Q759 295 807 317V444H513Z','#54796F')+house(628,318,.3,true)+line('M661 80V447M513 276H807','#EDE0D6',9)+`<rect x="480" y="436" width="355" height="22" rx="11" fill="#C5AEAA"/>`;b+=path('M492 61C525 66 543 74 566 88Q535 197 532 312L486 335Q467 203 492 61Z',p.green,stroke())+path('M820 63Q783 75 762 89Q802 234 790 313L833 332Q851 187 820 63Z',p.green,stroke())+path('M485 320Q510 305 532 312L532 326Q507 322 487 335Z',p.sun)+path('M791 311Q814 307 834 322L832 336Q814 323 791 326Z',p.sun)+line('M501 83Q490 192 504 301M807 87Q827 180 815 302',p.cream,2,'opacity=".35"');
  b+=`<rect x="75" y="315" width="391" height="301" rx="49" fill="#B57C73" ${stroke()}/><rect x="91" y="333" width="359" height="251" rx="36" fill="#CF9C89"/><path d="M91 358H450M91 394H450" stroke="#B57C73" stroke-width="2" opacity=".6"/><rect x="105" y="397" width="425" height="216" rx="44" fill="#FCEDD8"/><rect x="143" y="410" width="180" height="84" rx="40" fill="#FCF6E9" transform="rotate(-7 233 452)"/>`;
- b+=person('maria',203,337,.81,pageNumber===19?'stand':'sleep');
+ b+=person('maria',203,337,.81,pageNumber===20?'sleep':'stand');
  b+=path('M103 494Q282 467 530 499V623Q304 654 107 619Z',p.lavender,stroke())+path('M107 495Q308 472 530 500L526 533Q295 509 108 531Z','#D8CAE8');for(let i=0;i<17;i++)b+=star(135+(i*67)%370,550+(i%3)*23,5+(i%2),'#EEE1EF',i*14);b+=`<rect x="93" y="608" width="453" height="24" rx="10" fill="#A5706C" ${stroke()}/><rect x="109" y="628" width="24" height="44" rx="5" fill="#A5706C"/><rect x="501" y="628" width="24" height="44" rx="5" fill="#A5706C"/>`;
  b+=`<ellipse cx="660" cy="630" rx="85" ry="18" fill="#8C7582" opacity=".17"/><path d="M613 574L603 654M710 574L723 654" stroke="#916C65" stroke-width="13" stroke-linecap="round"/><rect x="585" y="559" width="156" height="21" rx="9" fill="#B48775" ${stroke()}/>`+(last?circle(679,493,113,'url(#'+uid+'redglow)')+gem(621,430,.72,true):gem(632,483,.45,false));
  b+=cloud(604,last?348:411,last?.74:.83,'#F5E5F2')+pony(635,last?231:281,last?.49:.55,pageNumber===19?'stand':'sleep');
@@ -327,7 +329,7 @@ function render(scene,style='soft',pageNumber=0){
  }else if(scene==='garden'||scene==='discovery-cover'){
   art+=ellipse(455,637,286,33,p.green,'opacity=".15"')+person('vovo',169,257,1.03,'wave')+person('maria',368,348,.87,'hold')+pony(575,405,.97,'stand')+box(501,624,.55)+gem(461,491,.47)+butterfly(493,275,.69)+sparkles(2);
  }else if(scene==='welcome'){
-  art+=person('vovo',398,252,1.1,'hug',true)+person('maria',301,386,.76,'hug')+cow(735,487,.69)+pig(154,588,.7,false)+butterfly(632,229,.47)+ellipse(425,662,168,20,p.green,'opacity=".15"');
+  art+=c.embrace({x:286,y:260,scale:1.02})+cow(735,487,.69)+pig(154,588,.7,false)+butterfly(632,229,.47)+ellipse(425,662,168,20,p.green,'opacity=".15"');
  }else if(scene==='butterfly'){
   art+=person('vovo',623,261,.95,'stand',true)+person('maria',249,326,.96,'wonder')+line('M514 385C390 345 592 299 489 247C414 210 372 261 438 280C524 304 601 225 566 190',p.coral,2,'stroke-dasharray="5 11" opacity=".7"')+butterfly(510,310,.88)+leaf(546,549,1.45,12,p.sun)+sparkle(509,475,.7)+sparkle(546,407,.5)+flower(185,626,.7,p.coral);
  }else if(scene==='box'||scene==='sneeze'){
@@ -337,24 +339,24 @@ function render(scene,style='soft',pageNumber=0){
   art+=person('maria',139,346,.89,'laugh')+person('vovo',664,260,.99,'wonder',true)+cloud(342,240,1.65,p.pink)+cloud(382,341,1.25,'#F5D4D4')+box(476,570,1.16,true)+pony(355,165,1.09,'tumble')+sparkles(3)+line('M346 203L327 185M603 221L625 209M364 437L346 452',p.coral,3.5);
  }else if(scene==='laughter'){
   art+=person('vovo',93,271,.99,'laugh');
-  art+=person('maria',316,pageNumber===9?398:338,pageNumber===9?.82:.91,pageNumber===9?'sit':'laugh')+pony(540,407,1.05,pageNumber===9?'stand':'bow')+sparkles(7)+butterfly(565,249,.47);
+  art+=(pageNumber===9?person('maria',480,340,.95,'sit',true)+pony(210,395,.96,'stand'):person('maria',275,335,.98,'laugh')+pony(570,400,1.05,'bow'))+sparkles(7)+butterfly(565,249,.47);
  }else if(scene==='stone'){
   art+=person('maria',154,324,.92,'wonder')+pony(604,407,.95,'stand');
   for(let i=0;i<9;i++){let a=i*Math.PI*2/9;art+=leaf(467,608,1.2,i*40,p.coral)}
   art+=ellipse(468,618,129,30,p.dark,'opacity=".18"')+circle(471,452,144,'url(#'+uid+'redglow)')+gem(390,368,1.03)+sparkles(8)+line('M401 590L386 562M537 583L551 551',p.coral,3);
  }else if(scene==='stars'){
-  if(pageNumber===12){art+=person('maria',107,403,.71,'laugh')+pony(638,422,.88,'stand')+circle(461,400,193,'url(#'+uid+'redglow)')+gem(338,238,1.6)+sparkles(9);}else{art+=person('maria',306,291,1.06,'hold')+pony(586,407,1,'stand')+person('vovo',91,267,.96,'stand')+gem(383,459,.58)+sparkles(10);}
+  if(pageNumber===12){art+=person('maria',107,403,.71,'laugh')+pony(638,422,.88,'stand')+circle(461,400,193,'url(#'+uid+'redglow)')+gem(338,238,1.6)+sparkles(9);}else{art+=person('maria',306,291,1.06,'hold')+pony(586,407,1,'stand')+person('vovo',91,267,.96,'stand')+sparkles(10);}
  }else if(scene==='promise'){
-  art+=circle(455,488,214,'url(#'+uid+'redglow)')+person('vovo',195,260,1.07,'hug')+person('maria',375,354,.87,'hold')+pony(599,403,.98,'jump')+gem(446,493,.54)+sparkles(11);
+  art+=circle(455,488,214,'url(#'+uid+'redglow)')+person('vovo',195,260,1.07,'hug')+person('maria',375,354,.87,'hold')+pony(599,403,.98,'jump')+sparkles(11);
  }else if(scene==='animals'){
   art+=cow(291,407,1.06)+cow(478,398,.65)+note(240,290,.7,-15)+note(355,289,.5,19)+person('maria',617,276,.95,'laugh')+pig(206,564,1.03)+pig(399,581,.87)+pig(554,607,.69)+scroll(548,634,.32)+butterfly(518,222,.42);
   art+=circle(78,584,29,p.sun,stroke())+path('M57 567Q82 572 87 608M64 606Q76 579 101 578','none',stroke(3,p.coral))+path('M327 604L354 643L382 604Z',p.coral,stroke())+ellipse(354,605,28,9,p.sun,stroke())+line('M354 592V604',p.ink,4)+line('M321 628Q301 637 317 652M384 624Q407 635 390 651',p.ink,2);
  }else if(scene==='riddle'){
-  art+=person('maria',112,332,.88,'wonder')+person('vovo',696,274,.95,'stand',true)+pony(402,295,1.17,'stand')+scroll(528,554,.86)+pig(256,615,.7)+pig(729,620,.64)+pig(348,632,.52)+sparkle(456,284,.5);
+  art+=person('maria',112,332,.88,'wonder')+person('vovo',696,274,.95,'stand',true)+pony(402,295,1.17,'stand')+pig(256,615,.7)+pig(729,620,.64)+pig(348,632,.52)+sparkle(456,284,.5);
  }else if(scene==='friendship'){
-  art+=person('vovo',265,264,1.06,'hug')+person('maria',410,365,.82,'hug',true)+pony(615,411,.92,'jump')+pig(113,606,.65)+pig(197,643,.55)+pig(769,639,.52)+gem(475,510,.43)+sparkles(2);
+  art+=person('vovo',265,264,1.06,'hug')+person('maria',410,365,.82,'hug',true)+pony(615,411,.92,'jump')+pig(113,606,.65)+pig(197,643,.55)+pig(769,639,.52)+gem(545,320,.45)+sparkles(2);
  }else if(scene==='celebration'){
-  art+=person('vovo',185,268,1.04,'laugh')+person('maria',402,352,.88,'hold')+cloud(557,251,1.26,p.cream)+pony(579,83,.92,'jump')+gem(468,490,.6)+sparkles(9)+star(580,477,18,p.sun)+star(398,484,14,p.sun)+line('M636 447Q705 408 726 361M610 434Q633 416 642 392',p.coral,2.4,'stroke-dasharray="7 9"');
+  art+=person('vovo',185,268,1.04,'laugh')+person('maria',402,352,.88,'hold')+cloud(557,251,1.26,p.cream)+pony(579,83,.92,'jump')+gem(430,310,.5)+sparkles(9)+star(580,477,18,p.sun)+star(398,484,14,p.sun)+line('M636 447Q705 408 726 361M610 434Q633 416 642 392',p.coral,2.4,'stroke-dasharray="7 9"');
  }else art+=person('maria',335,330,.95,'wave');
  art+=fore();
  }

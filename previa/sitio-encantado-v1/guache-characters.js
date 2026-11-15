@@ -18,30 +18,46 @@
   function figure(name, options = {}) {
     if (!cast.includes(name)) throw new Error('Personagem desconhecido: ' + name);
     const variant = ids.has(options.variant) ? options.variant : selection[name];
-    const sleeping = name === 'maria' && options.pose === 'sleep';
+    const view = options.view || (options.pose === 'stand' || options.pose === 'sleep' ? 'profile' : 'action');
+    const storyPose = options.narrativePose || (name === 'pipoca' ? { front: 'front', profile: 'profile', action: 'hop' }[view] : undefined);
+    const sleeping = name === 'maria' && (storyPose === 'sleep' || options.pose === 'sleep' && !storyPose);
+    const bedtime = name === 'maria' && ['bed-ask', 'bed-wave'].includes(storyPose);
     const carColumn = ['noeli', 'maria', 'carlos'].indexOf(name);
     const inCar = carColumn >= 0 && ['seated', 'driving'].includes(options.pose);
-    const atlas = inCar ? window.BookCharacterCarAtlas : sleeping ? window.BookCharacterSleepAtlas : atlases[variant];
-    const view = options.view || (options.pose === 'stand' || options.pose === 'sleep' ? 'profile' : 'action');
+    const storyAtlas = window.BookNarrativeAtlases[name];
+    const narrative = !inCar && !sleeping && !bedtime && storyAtlas?.poses.includes(storyPose);
+    const atlas = inCar ? window.BookCharacterCarAtlas : sleeping ? window.BookCharacterSleepAtlas : bedtime ? window.BookBedtimeAtlas : narrative ? storyAtlas : atlases[variant];
     const row = { front: 0, profile: 1, action: 2 }[view] ?? 2;
     const styleIndex = choices.findIndex(choice => choice.id === variant);
-    const frame = inCar ? styleIndex * 3 + carColumn : sleeping ? styleIndex : row * 5 + cast.indexOf(name);
+    const frame = inCar ? styleIndex * 3 + carColumn : sleeping ? styleIndex : bedtime ? (storyPose === 'bed-wave' ? 3 : 0) + styleIndex : narrative ? styleIndex * storyAtlas.poses.length + storyAtlas.poses.indexOf(storyPose) : row * 5 + cast.indexOf(name);
     const crop = atlas.frames[frame];
     const width = name === 'pipoca' ? 240 : 200;
-    const height = inCar ? 245 : sleeping ? 200 : name === 'pipoca' ? 270 : 350;
+    const height = inCar ? 245 : sleeping || bedtime ? 200 : narrative ? window.BookScenePoses.height(name, storyPose) : name === 'pipoca' ? 270 : 350;
+    const floorOffset = narrative ? (name === 'pipoca' ? 270 : 350) - height : 0;
     const x = Number(options.x) || 0;
     const y = Number(options.y) || 0;
     const scale = options.scale == null ? 1 : Number(options.scale);
     const clip = 'guache-frame-' + (++serial);
     const renderWidth = crop[2] / crop[3] * height;
-    let sprite = `<svg x="${(width - renderWidth) / 2}" width="${renderWidth}" height="${height}" viewBox="${crop.join(' ')}" preserveAspectRatio="xMidYMax meet" overflow="hidden"><defs><clipPath id="${clip}"><rect x="${crop[0]}" y="${crop[1]}" width="${crop[2]}" height="${crop[3]}"/></clipPath></defs><image clip-path="url(#${clip})" href="${new URL(atlas.file, root).href}" width="${atlas.width}" height="${atlas.height}"/></svg>`;
+    let sprite = `<svg x="${(width - renderWidth) / 2}" y="${floorOffset}" width="${renderWidth}" height="${height}" viewBox="${crop.join(' ')}" preserveAspectRatio="xMidYMax meet" overflow="hidden"><defs><clipPath id="${clip}"><rect x="${crop[0]}" y="${crop[1]}" width="${crop[2]}" height="${crop[3]}"/></clipPath></defs><image clip-path="url(#${clip})" href="${new URL(atlas.file, root).href}" width="${atlas.width}" height="${atlas.height}"/></svg>`;
+    if (name === 'maria' && narrative && storyPose === 'cradle') {
+      sprite += window.BookCharacters.stone({ x: 119, y: 110, scale: .38, lit: 0, style: options.style });
+    }
     if (options.flip) sprite = `<g transform="translate(${width} 0) scale(-1 1)">${sprite}</g>`;
-    if (options.pose === 'tumble') sprite = `<g transform="rotate(180 ${width / 2} ${height / 2})">${sprite}</g>`;
-    return `<g transform="translate(${x} ${y}) scale(${scale})" data-character="${name}" data-variant="${variant}" data-view="${view}" data-pose="${inCar ? options.pose : sleeping ? 'sleep' : view}">${sprite}</g>`;
+    if (options.pose === 'tumble' && !narrative) sprite = `<g transform="rotate(180 ${width / 2} ${height / 2})">${sprite}</g>`;
+    return `<g transform="translate(${x} ${y}) scale(${scale})" data-character="${name}" data-variant="${variant}" data-view="${view}" data-pose="${inCar ? options.pose : sleeping ? 'sleep' : narrative || bedtime ? storyPose : view}">${sprite}</g>`;
   }
 
   window.BookCharacters.person = figure;
   window.BookCharacters.pipoca = options => figure('pipoca', options);
+  /** O abraço usa a combinação dos traços escolhidos para a avó e para a menina. */
+  window.BookCharacters.embrace = (options = {}) => {
+    const atlas = window.BookEmbraceAtlas;
+    const crop = atlas.frames[choices.findIndex(c => c.id === selection.vovo) * 3 + choices.findIndex(c => c.id === selection.maria)];
+    const clip = 'guache-frame-' + (++serial);
+    const width = crop[2] / crop[3] * 385;
+    return `<g transform="translate(${options.x || 0} ${options.y || 0}) scale(${options.scale || 1})" data-pose="embrace" data-maria-variant="${selection.maria}" data-vovo-variant="${selection.vovo}"><svg width="${width}" height="385" viewBox="${crop.join(' ')}"><defs><clipPath id="${clip}"><rect x="${crop[0]}" y="${crop[1]}" width="${crop[2]}" height="${crop[3]}"/></clipPath></defs><image clip-path="url(#${clip})" href="${new URL(atlas.file, root).href}" width="${atlas.width}" height="${atlas.height}"/></svg></g>`;
+  };
   window.BookVariants = {
     choices,
     setSelection(name, id) {
@@ -54,8 +70,8 @@
       cast.forEach(name => { selection[name] = 'guache'; });
       return { ...selection };
     },
-    /** Pré-carrega as três artes para troca de estilo e impressão sem imagens pendentes. */
-    ready: Promise.all([...choices.map(({ id }) => assetURL(id)), ...[window.BookCharacterSleepAtlas, window.BookCharacterCarAtlas].map(atlas => new URL(atlas.file, root).href)].map(url => new Promise((resolve, reject) => {
+    /** Pré-carrega as artes para troca de estilo e impressão sem imagens pendentes. */
+    ready: Promise.all([...choices.map(({ id }) => assetURL(id)), ...[window.BookCharacterSleepAtlas, window.BookCharacterCarAtlas, window.BookBedtimeAtlas, window.BookEmbraceAtlas, ...Object.values(window.BookNarrativeAtlases)].map(atlas => new URL(atlas.file, root).href)].map(url => new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = resolve;
       img.onerror = () => reject(new Error('Não foi possível carregar uma ilustração'));
