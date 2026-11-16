@@ -191,6 +191,15 @@ $('frame').addEventListener('load', () => {
   } catch (e) { curPath = ''; }
   paintPins(); paintList();
 });
+/* Site com roteador no cliente (ex. Next.js, repassado pelo middleware) troca
+   de página sem novo "load": confere o caminho do iframe a cada meio segundo.
+   Raiz com e sem barra final é a mesma página. */
+const samePath = (a, b) => String(a || '').replace(/\/+$/, '') === String(b || '').replace(/\/+$/, '');
+setInterval(() => {
+  let p = '';
+  try { p = $('frame').contentWindow.location.pathname; } catch (e) { return; }
+  if (p && p !== curPath) { curPath = p; fit(); paintPins(); paintList(); }
+}, 500);
 function setDevice(mobile) {
   $('wrap').style.maxWidth = mobile ? '390px' : '100%';
   $('d-desk').setAttribute('aria-current', String(!mobile));
@@ -206,14 +215,14 @@ function paintPins() {
   const ov = $('overlay');
   ov.replaceChildren();
   topLevel().forEach((c, i) => {
-    if (c.x == null || c.path !== curPath) return;
+    if (c.x == null || !samePath(c.path, curPath)) return;
     ov.append(h('button', {
       type: 'button', class: 'pin' + (c.resolved ? ' is-done' : ''),
       style: 'left:' + c.x + '%;top:' + c.y + 'px', 'aria-label': 'Comentário ' + (i + 1),
       onclick: () => { hl = c.id; paintList(); const el = document.getElementById('c-' + c.id); if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' }); },
     }, String(i + 1)));
   });
-  if (pin && pin.path === curPath) {
+  if (pin && samePath(pin.path, curPath)) {
     ov.append(h('span', { class: 'pin is-new', style: 'left:' + pin.x + '%;top:' + pin.y + 'px;pointer-events:none', 'aria-hidden': 'true' }, '+'));
   }
 }

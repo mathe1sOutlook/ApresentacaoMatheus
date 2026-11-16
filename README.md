@@ -478,6 +478,17 @@ aprovação, arquivos nos dois sentidos e a passagem para as contas do cliente.
   - **Banco:** o cliente não lê `amaralesilva_previews` nem os comentários direto;
     tudo passa por funções `amaralesilva_portal_*` que conferem o dono do
     projeto. `previa/demo-v1/` é uma pasta de demonstração para testar o fluxo.
+  - **Site externo** (site com servidor, ex. o Next.js da Pedralum): em vez da
+    pasta, a versão guarda `upstream_url` (um deploy `*.vercel.app` do projeto
+    do cliente) e `bypass_env` (o **nome** de uma variável `PREVIA_BYPASS_*` do
+    projeto casamartech na Vercel, com o segredo *Protection Bypass for
+    Automation* do projeto de destino). O middleware confere a sessão como
+    sempre (`amaralesilva_preview_route(slug)`) e repassa o pedido para o deploy
+    pela mesma origem, sem o cookie `cm_at`, com o bypass no cabeçalho e
+    resposta `private, no-store`; o visualizador segue lendo o iframe e marcando
+    pontos. O deploy precisa ser gerado com basePath `/previa/<slug>` e iframe
+    liberado para `'self'` — no Pedrosa, `pnpm deploy:previa-casamartech`
+    (ver o `AGENTS.md` de lá). Uma versão nova é um deploy novo, com slug novo.
 - **Arquivos** (fase 4): bucket **privado** `amaralesilva-client-files` do
   Storage, uma pasta por cliente (`<client_id>/<project_id|geral>/…`). O cliente
   envia o que a equipe pediu e baixa o que a equipe entrega; a equipe vê tudo em

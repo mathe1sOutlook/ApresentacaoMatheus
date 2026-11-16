@@ -1881,7 +1881,7 @@ VIEWS.previas = function () {
     return `<tr>
       <td><b>${esc(p ? p.name : '—')}</b>${c ? `<br /><span class="mono soft" style="font-size:11px">${esc(c.name)}</span>` : ''}</td>
       <td class="mono">v${v.version}${v.title ? `<br /><span class="soft" style="font-size:11px">${esc(v.title)}</span>` : ''}</td>
-      <td class="mono" style="font-size:12px">previa/${esc(v.slug)}/</td>
+      <td class="mono" style="font-size:12px">previa/${esc(v.slug)}/${v.upstream_url ? `<br /><span class="soft" style="font-size:11px">→ ${esc(v.upstream_url.replace(/^https:\/\//, ''))}</span>` : ''}</td>
       <td><span class="chip ${v.status === 'aprovada' ? 'chip--pago' : ''}">${esc(PREVIEW_STATUS_LABEL[v.status] || v.status)}</span></td>
       <td class="mono" style="font-size:12px">${open ? open + ' em aberto' : '—'}</td>
       <td class="actions">
@@ -1902,7 +1902,7 @@ VIEWS.previas = function () {
   <div class="card card__body--flush">
     <div class="tbl-wrap">
     <table class="tbl">
-      <thead><tr><th>Projeto</th><th>Versão</th><th>Pasta no repositório</th><th>Situação</th><th>Comentários</th><th></th></tr></thead>
+      <thead><tr><th>Projeto</th><th>Versão</th><th>Endereço</th><th>Situação</th><th>Comentários</th><th></th></tr></thead>
       <tbody>${rows || '<tr><td colspan="6" class="empty">Nenhuma prévia ainda. Cadastre a primeira versão de um projeto.</td></tr>'}</tbody>
     </table>
     </div>
@@ -3006,11 +3006,15 @@ function previewModal() {
         ${fld('pv-version', 'Versão *', inp('pv-version', 'version', 'number', nextV(first.id), 'min="1" step="1" required'))}
         ${fld('pv-title', 'Título', inp('pv-title', 'title', 'text', '', 'placeholder="Ex.: Primeira rodada"'))}
         ${fld('pv-slug', 'Pasta em previa/ *', inp('pv-slug', 'slug', 'text', slugify(first.name) + '-v' + nextV(first.id), 'required pattern="[a-z0-9][a-z0-9\\-]{2,80}" autocapitalize="none"'), true, 'Só letras minúsculas, números e hífen. A pasta previa/&lt;isto&gt;/ precisa existir no repositório, com um index.html.')}
+        ${fld('pv-upstream', 'Site externo (opcional)', inp('pv-upstream', 'upstream_url', 'url', '', 'placeholder="https://pedrosa-abc123-equipe.vercel.app" pattern="https://[a-z0-9]([a-z0-9\\-]{0,61}[a-z0-9])?\\.vercel\\.app" autocapitalize="none"'), true, 'Para site com servidor (ex. Next.js): o deploy da Vercel gerado com basePath /previa/&lt;pasta&gt;. Aí não precisa de pasta no repositório: o middleware repassa o pedido para lá.')}
+        ${fld('pv-bypass', 'Variável do bypass', inp('pv-bypass', 'bypass_env', 'text', '', 'placeholder="PREVIA_BYPASS_PEDROSA" pattern="PREVIA_BYPASS_[A-Z0-9_]{1,40}" autocapitalize="characters"'), true, 'Nome da variável, no projeto casamartech da Vercel, com o segredo "Protection Bypass for Automation" do projeto de destino. Só o nome fica no banco.')}
       </div>
       <div class="form-foot"><button type="submit" class="btn-solid">Cadastrar como rascunho</button></div>
     </form>`, async (d) => {
     return mutate(() => dbInsert('previews', {
       project_id: d.project_id, version: Number(d.version), title: strOrNull(d.title), slug: d.slug.toLowerCase(),
+      upstream_url: strOrNull((d.upstream_url || '').trim().replace(/\/+$/, '').toLowerCase()),
+      bypass_env: strOrNull((d.bypass_env || '').trim().toUpperCase()),
     }), 'Versão cadastrada como rascunho. Publique quando a pasta estiver no ar.');
   });
   /* ao trocar o projeto, sugere a próxima versão e a pasta */
