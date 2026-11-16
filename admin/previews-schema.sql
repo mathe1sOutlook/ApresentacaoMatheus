@@ -247,3 +247,38 @@ grant execute on function public.amaralesilva_preview_visible(uuid), public.amar
   public.amaralesilva_portal_previews(), public.amaralesilva_portal_preview(uuid), public.amaralesilva_portal_comments(uuid),
   public.amaralesilva_portal_add_comment(uuid, text, text, numeric, numeric, uuid),
   public.amaralesilva_portal_approve(uuid), public.amaralesilva_portal_request_changes(uuid, text) to authenticated;
+
+-- ═══ Prévia de site externo (app com servidor, ex. Next.js) ═══
+-- Um site que não cabe numa pasta estática (o da Pedralum é Next.js com banco)
+-- fica num deploy da Vercel do próprio projeto, e o middleware.js repassa
+-- /previa/<slug>/… para lá, depois de conferir a sessão como sempre. O deploy
+-- precisa ter sido gerado com basePath /previa/<slug> e liberar o iframe para
+-- 'self' (no Pedrosa: PREVIA_CAMINHO_BASE e PREVIA_ORIGENS no build).
+-- upstream_url: origem do deploy, só *.vercel.app (o middleware não segue
+-- outro destino). bypass_env: NOME da variável de ambiente do projeto
+-- casamartech na Vercel que guarda o segredo "Protection Bypass for
+-- Automation" do projeto de destino; o valor nunca passa pelo banco.
+alter table public.amaralesilva_previews
+  add column if not exists upstream_url text
+    check (upstream_url is null or upstream_url ~ '^https://[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.vercel\.app$'),
+  add column if not exists bypass_env text
+    check (bypass_env is null or bypass_env ~ '^PREVIA_BYPASS_[A-Z0-9_]{1,40}$');
+alter table public.amaralesilva_previews drop constraint if exists amaralesilva_previews_bypass_needs_upstream;
+alter table public.amaralesilva_previews add constraint amaralesilva_previews_bypass_needs_upstream
+  check (bypass_env is null or upstream_url is not null);
+
+-- Chamada pelo middleware.js no lugar de amaralesilva_preview_access: devolve
+-- null sem acesso; {} para pasta estática; {upstream, bypass_env} para site
+-- externo.
+create or replace function public.amaralesilva_preview_route(p_slug text)
+returns jsonb
+language sql stable security definer
+set search_path = public
+as $$
+  select case when public.amaralesilva_preview_visible(v.id)
+    then jsonb_strip_nulls(jsonb_build_object('upstream', v.upstream_url, 'bypass_env', v.bypass_env))
+  end
+  from public.amaralesilva_previews v where v.slug = p_slug;
+$$;
+revoke execute on function public.amaralesilva_preview_route(text) from public, anon;
+grant execute on function public.amaralesilva_preview_route(text) to authenticated;
