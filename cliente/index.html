@@ -108,18 +108,23 @@ a.row:hover { color: var(--ochre); }
 .pc__count--ok { color: var(--ochre); border-color: rgba(201, 162, 78, .45); }
 .pc__count--wait { color: var(--warn); border-color: rgba(232, 160, 122, .45); }
 .pc__done { display: flex; gap: 10px; align-items: center; padding: 12px 14px; background: var(--bg-card); border-radius: 12px; font-size: 14px; line-height: 1.5; }
-.slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.slots { display: grid; gap: 18px; }
+.ang__head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+.ang__head b { font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.ang__head span { font-size: 13px; color: var(--ink-soft); }
+.ang__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
 .slot { position: relative; aspect-ratio: 4 / 5; border-radius: 14px; overflow: hidden; }
 .slot input[type=file] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-.slot--empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 10px; text-align: center; border: 1px dashed var(--line-strong); }
+.slot--empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 10px; text-align: center; border: 1px dashed var(--line-strong); }
 .slot--empty:hover { border-color: var(--ochre); }
-.slot--empty:focus-within, .slot__swap:focus-within { outline: 2px solid var(--blue); outline-offset: 2px; }
+.slot--empty:focus-within { outline: 2px solid var(--blue); outline-offset: 2px; }
 .slot--empty b { font-size: 14px; font-weight: 500; }
 .slot--empty small { font-size: 12px; color: var(--ochre); }
 .slot--full { border: 1px solid var(--line-strong); background: var(--bg-card); }
 .slot--full img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.slot__cap { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 6px 8px 6px 10px; background: rgba(11, 13, 18, .86); font: 500 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
-.slot__swap { position: relative; font: 400 12px var(--sans); color: var(--ochre); padding: 6px 4px; text-transform: none; letter-spacing: 0; cursor: pointer; }
+.slot__rm { position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; border: 0; border-radius: 999px; background: rgba(11, 13, 18, .82); color: var(--ink); font: 400 18px/1 var(--sans); cursor: pointer; }
+.slot__rm:hover { color: var(--warn); }
+.slot__rm:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 .slot__busy { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(11, 13, 18, .7); font-size: 13px; }
 .mini { border: 0; background: transparent; color: var(--ochre); font: 400 13px var(--sans); cursor: pointer; padding: 8px; min-height: 36px; }
 .mini--rm { color: var(--ink-soft); }
@@ -136,7 +141,7 @@ dialog.ed::backdrop { background: rgba(5, 6, 9, .78); }
 .ed__ft .btn { width: auto; min-height: 44px; padding: 0 20px; }
 .ed textarea { flex: 1; min-height: 55vh; border: 0; background: var(--bg); color: var(--ink); padding: 22px 24px; font: 400 17px/1.75 var(--serif); resize: none; }
 .ed textarea:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
-@media (max-width: 720px) { .st__main { padding: 20px; } .slots { gap: 8px; } .slot__cap { flex-direction: column; align-items: flex-start; gap: 0; padding: 6px 8px; } .slot__swap { padding: 4px 0 0; } }
+@media (max-width: 720px) { .st__main { padding: 20px; } .ang__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; } }
 .vb { position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 20px; padding: 10px 32px; background: var(--ochre); color: var(--bg); font-size: 13px; line-height: 1.4; }
 .vb a { color: var(--bg); font-weight: 500; border-bottom: 1px solid currentColor; }
 .view-only .up, .view-only #ch-new,
@@ -447,8 +452,8 @@ const fileNameOf = (c) => 'capitulo-' + c.number + '.md';
 const chapOf = (id) => story.chapters.find((c) => c.id === id);
 const charOf = (id) => story.characters.find((c) => c.id === id);
 const firstChapterOf = (pid) => story.chapters.find((c) => c.character_ids.includes(pid)) || null;
-const photoOf = (p, angle) => p.photos.filter((f) => f.angle === angle).pop() || null;
-const photoCount = (p) => SLOTS.filter(([a]) => photoOf(p, a)).length;
+const photosOf = (p, angle) => p.photos.filter((f) => f.angle === angle);
+const photoCount = (p) => SLOTS.filter(([a]) => photosOf(p, a).length).length;
 const svgIcon = (d, size, stroke) => {
   const ns = 'http://www.w3.org/2000/svg';
   const s = document.createElementNS(ns, 'svg');
@@ -540,7 +545,7 @@ function chapMain(c) {
   const out = [head, textBlock, h('div', { class: 'st__hr' }),
     h('div', null,
       h('h3', null, 'Quem aparece neste capítulo'),
-      h('p', { class: 'tip' }, 'Na primeira vez que alguém aparece, mande três fotos com boa luz: o rosto de frente, o rosto de lado e uma de corpo inteiro, que mostra o porte e o estilo da pessoa. As roupas de cada cena são desenhadas a partir delas, então não precisa mandar outras depois.')),
+      h('p', { class: 'tip' }, 'Na primeira vez que alguém aparece, mande fotos com boa luz de três tipos: o rosto de frente, o rosto de lado e o corpo inteiro, que mostra o porte e o estilo da pessoa. Pode mandar mais de uma de cada. As roupas de cada cena são desenhadas a partir delas, então não precisa mandar outras depois.')),
     ...(people.length ? people.map((p) => personCard(p, c)) : [h('p', { class: 'empty', style: 'padding:18px;border:1px dashed var(--line-strong);border-radius:14px' }, VIEW_MODE ? 'Ninguém marcado neste capítulo.' : 'Ninguém neste capítulo ainda. Escolha abaixo quem aparece nele.')])];
   if (!VIEW_MODE) out.push(addArea(c));
   return out;
@@ -554,7 +559,7 @@ function personCard(p, c) {
   const top = h('div', { class: 'pc__top' },
     h('span', { class: 'pc__av', 'aria-hidden': 'true' }, (p.name.trim()[0] || '?').toUpperCase()),
     h('span', { class: 'pc__name' }, h('b', null, p.name), h('span', null, isFirst ? 'Aparece pela primeira vez aqui' : 'Já apareceu no capítulo ' + first.number)),
-    h('span', { class: 'pc__count ' + (complete ? 'pc__count--ok' : 'pc__count--wait') }, complete && !isFirst ? 'Fotos do cap. ' + first.number : n + ' de 3 fotos'),
+    h('span', { class: 'pc__count ' + (complete ? 'pc__count--ok' : 'pc__count--wait') }, complete && !isFirst ? 'Fotos do cap. ' + first.number : n + ' de 3 tipos de foto'),
     VIEW_MODE ? null : h('button', { type: 'button', class: 'mini mini--rm', onclick: () => linkChar(c, p, false), 'aria-label': 'Tirar ' + p.name + ' deste capítulo' }, 'tirar do capítulo'));
   if (complete && !isFirst) {
     return h('article', { class: 'pc' }, top,
@@ -564,26 +569,23 @@ function personCard(p, c) {
 }
 
 function slot(p, angle, label) {
-  const f = photoOf(p, angle);
-  const pick = () => {
-    const inp = h('input', { type: 'file', accept: 'image/*' });
-    inp.addEventListener('change', () => { if (inp.files && inp.files[0]) uploadSlot(p, angle, label, inp.files[0], f); });
-    return inp;
-  };
-  if (f) {
+  const fs = photosOf(p, angle);
+  const head = h('div', { class: 'ang__head' }, h('b', null, label),
+    h('span', null, fs.length ? fs.length + (fs.length === 1 ? ' foto' : ' fotos') : 'ainda não enviada'));
+  const tiles = fs.map((f, i) => {
     const url = photoUrls[f.path];
     return h('div', { class: 'slot slot--full' },
-      url ? h('img', { src: url, alt: label + ' de ' + p.name, loading: 'lazy' }) : h('span', { class: 'slot__busy' }, 'sem prévia'),
-      h('div', { class: 'slot__cap' }, h('span', null, label),
-        VIEW_MODE ? null : h('label', { class: 'slot__swap' }, 'trocar', h('span', { class: 'sr' }, ' ' + label.toLowerCase() + ' de ' + p.name), pick())));
+      url ? h('img', { src: url, alt: label + ' de ' + p.name + ' (' + (i + 1) + ')', loading: 'lazy' }) : h('span', { class: 'slot__busy' }, 'sem prévia'),
+      VIEW_MODE ? null : h('button', { type: 'button', class: 'slot__rm', onclick: () => removePhoto(p, f, label), 'aria-label': 'Remover foto ' + (i + 1) + ' (' + label.toLowerCase() + ') de ' + p.name }, '×'));
+  });
+  if (!VIEW_MODE) {
+    const inp = h('input', { type: 'file', accept: 'image/*', multiple: '' });
+    inp.addEventListener('change', () => { if (inp.files && inp.files.length) uploadMany(p, angle, label, [...inp.files]); });
+    tiles.push(h('label', { class: 'slot slot--empty' },
+      svgIcon(SLOT_ICON[angle], 34, '#A6A39B'), h('b', null, fs.length ? 'Mais fotos' : 'Anexar'), h('small', null, 'uma ou várias'),
+      h('span', { class: 'sr' }, ' ' + label.toLowerCase() + ' de ' + p.name), inp));
   }
-  if (VIEW_MODE) {
-    return h('div', { class: 'slot slot--empty' }, svgIcon(SLOT_ICON[angle], 34, '#A6A39B'), h('b', null, label), h('small', { style: 'color:var(--ink-soft)' }, 'ainda não enviada'));
-  }
-  const el = h('label', { class: 'slot slot--empty' },
-    svgIcon(SLOT_ICON[angle], 34, '#A6A39B'), h('b', null, label), h('small', null, 'Anexar'),
-    h('span', { class: 'sr' }, ' foto de ' + p.name), pick());
-  return el;
+  return h('div', { class: 'ang' }, head, tiles.length ? h('div', { class: 'ang__grid' }, ...tiles) : null);
 }
 
 function addArea(c) {
@@ -658,22 +660,34 @@ async function addNewChar(c, input, btn) {
   await loadStory();
 }
 
-async function uploadSlot(p, angle, label, f, old) {
-  if (!/^image\//.test(f.type)) { stMsg('"' + f.name + '" não é uma imagem.', true); return; }
-  if (f.size > MAX_BYTES) { stMsg('"' + f.name + '" passa de 25 MB.', true); return; }
-  stMsg('Enviando ' + label.toLowerCase() + ' de ' + p.name + '…');
-  const path = story.client_id + '/personagens/' + crypto.randomUUID() + '-' + safeName(f.name);
-  const { error } = await sb.storage.from(BUCKET).upload(path, f, { contentType: f.type, upsert: false });
-  if (error) { stMsg('"' + f.name + '" não foi aceita. Envie em JPG, PNG ou WebP.', true); return; }
-  const { error: e2 } = await sb.rpc('amaralesilva_portal_story_photo_register', { p_character: p.id, p_path: path, p_name: f.name, p_size: f.size, p_mime: f.type, p_angle: angle });
-  if (e2) { await sb.storage.from(BUCKET).remove([path]); stMsg('Não foi possível registrar a foto. Tente de novo.', true); return; }
-  if (old) {
-    /* Troca: a foto anterior sai. Se foi a equipe que enviou, o cliente não
-       pode apagá-la; aí ela fica guardada e a nova passa a valer. */
-    const { error: e3 } = await sb.storage.from(BUCKET).remove([old.path]);
-    if (!e3) await sb.rpc('amaralesilva_portal_story_photo_delete', { p_id: old.id });
+async function uploadMany(p, angle, label, files) {
+  let ok = 0; const bad = [];
+  for (const [i, f] of files.entries()) {
+    if (!/^image\//.test(f.type)) { bad.push('"' + f.name + '" não é uma imagem'); continue; }
+    if (f.size > MAX_BYTES) { bad.push('"' + f.name + '" passa de 25 MB'); continue; }
+    stMsg('Enviando ' + (files.length > 1 ? (i + 1) + ' de ' + files.length + ' · ' : '') + label.toLowerCase() + ' de ' + p.name + '…');
+    const path = story.client_id + '/personagens/' + crypto.randomUUID() + '-' + safeName(f.name);
+    const { error } = await sb.storage.from(BUCKET).upload(path, f, { contentType: f.type, upsert: false });
+    if (error) { bad.push('"' + f.name + '" não foi aceita (envie em JPG, PNG ou WebP)'); continue; }
+    const { error: e2 } = await sb.rpc('amaralesilva_portal_story_photo_register', { p_character: p.id, p_path: path, p_name: f.name, p_size: f.size, p_mime: f.type, p_angle: angle });
+    if (e2) { await sb.storage.from(BUCKET).remove([path]); bad.push('"' + f.name + '" não foi registrada'); continue; }
+    ok++;
   }
-  stMsg('Foto enviada. A equipe foi avisada.');
+  await loadStory();
+  const sent = ok ? (ok === 1 ? '1 foto enviada' : ok + ' fotos enviadas') + '. A equipe foi avisada.' : '';
+  stMsg(bad.length ? [sent, 'Não foram: ' + bad.join('; ') + '. Tente de novo.'].filter(Boolean).join(' ') : sent, bad.length > 0);
+}
+
+async function removePhoto(p, f, label) {
+  if (!confirm('Remover esta foto (' + label.toLowerCase() + ') de ' + p.name + '?')) return;
+  stMsg('Removendo…');
+  /* O Storage não devolve erro quando a regra de acesso barra a remoção: só
+     não remove nada. Por isso a conferência é pela lista do que saiu. */
+  const { data, error } = await sb.storage.from(BUCKET).remove([f.path]);
+  if (error || !data || !data.length) { stMsg('Esta foto foi enviada pela equipe e não pode ser removida por aqui. Fale com a gente.', true); return; }
+  const { error: e2 } = await sb.rpc('amaralesilva_portal_story_photo_delete', { p_id: f.id });
+  if (e2) { stMsg('Não foi possível remover agora. Tente de novo.', true); return; }
+  stMsg('Foto removida.');
   await loadStory();
 }
 
