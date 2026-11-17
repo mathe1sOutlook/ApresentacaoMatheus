@@ -246,14 +246,15 @@ window.BookCharacters={person,pipoca,stone};
 </script>
 <script src="character-atlases.js?v=poses-1"></script>
 <script src="narrative-atlases.js?v=poses-1"></script>
-<script src="scene-poses.js?v=opening-1"></script>
+<script src="scene-poses.js?v=gaze-1"></script>
 <script src="parent-atlases.js?v=faces-scale-1"></script>
 <script src="opening-atlases.js?v=opening-1"></script>
+<script src="gaze-atlases.js?v=gaze-1"></script>
 <script src="environment-atlases.js?v=faces-scale-1"></script>
-<script src="environments.js?v=opening-1"></script>
-<script src="scene-scale.js?v=faces-scale-1"></script>
+<script src="environments.js?v=gaze-1"></script>
+<script src="scene-scale.js?v=gaze-1"></script>
 <script src="animals.js?v=faces-scale-1"></script>
-<script src="guache-characters.js?v=opening-1"></script>
+<script src="guache-characters.js?v=gaze-1"></script>
 <script src="car-scene.js?v=guache-car-1"></script>
 <script>/* Cenários vetoriais com personagens ilustrados em guache. */
 (function(){
@@ -312,7 +313,7 @@ function render(scene,style='soft',pageNumber=0){
  else if(scene==='departure'){
   art=bg();
   art+=`<rect x="658" y="495" width="83" height="112" rx="17" fill="${p.coral}" ${stroke()}/><rect x="684" y="480" width="29" height="21" rx="8" fill="none" ${stroke(5,p.ink)}/>`+line('M681 514V587M718 514V587',p.cream,3,'opacity=".5"')+circle(673,611,6,p.ink)+circle(725,611,6,p.ink);
-  art+=person('carlos',110,246,1.08,'wave')+person('noeli',558,245,1.08,'stand')+person('maria',353,350,.91,'wave');
+  art+=person('carlos',110,245,1.08,'wave')+person('noeli',558,245,1.08,'stand')+person('maria',353,350,.91,'wave');
  }else if(scene==='road'){
   art=bg();
   art+=`<g transform="translate(90 275) scale(1.08)">${window.BookCar.render(p,uid)}</g>`+flower(97,665,.7,p.coral)+flower(836,630,.7,p.cream);
@@ -339,7 +340,7 @@ function render(scene,style='soft',pageNumber=0){
   for(let i=0;i<9;i++){let a=i*Math.PI*2/9;art+=leaf(467,608,.65,i*40,p.coral)}
   art+=ellipse(468,618,76,18,p.dark,'opacity=".18"')+circle(471,520,90,'url(#'+uid+'redglow)')+gem(...sceneScale.props.emergingStone)+sparkles(8)+line('M401 590L386 562M537 583L551 551',p.coral,3);
  }else if(scene==='stars'){
-  if(pageNumber===12){art+=person('maria',230,403,.65,'laugh')+pony(638,422,.88,'stand')+circle(461,400,193,'url(#'+uid+'redglow)')+gem(338,238,1.6)+sparkles(9);}else{art+=person('maria',306,291,1.06,'hold')+pony(586,407,1,'stand')+person('vovo',91,267,.96,'stand')+sparkles(10);}
+  if(pageNumber===12){art+=circle(382,440,90,'url(#'+uid+'redglow)')+person('maria',235,300,.98,'hold')+pony(570,440,.9,'stand')+sparkles(9);}else{art+=person('maria',306,291,1.06,'hold')+pony(586,407,1,'stand')+person('vovo',91,267,.96,'stand')+sparkles(10);}
  }else if(scene==='promise'){
   art+=circle(455,488,214,'url(#'+uid+'redglow)')+person('vovo',195,260,1.07,'hug')+person('maria',375,354,.87,'hold')+pony(599,403,.98,'jump')+sparkles(11);
  }else if(scene==='animals'){
@@ -478,7 +479,7 @@ window.BookPresentations={spread,family,dimensions};
     {id:'dream',number:'05',name:'Sonho de algodão',short:'Nuvens, delicadeza e encanto',description:'Lavanda, rosê e verde-menta, com espaços macios que lembram nuvens. O texto fica em uma área clara e arredondada, acompanhado de personagens delicados e pequenos brilhos. A atmosfera conduz suavemente até o mistério da última página.',colors:['#f4f0fa','#d9d1e7','#cfb0bd','#a8c1a4','#715173']}
   ];
   const CAST=[
-    {id:'carlos',name:'Carlos Eduardo',role:'Papai',short:'Carlos',notes:'Rosto mais jovem e mais fino, cabelo curto, barba predominantemente escura e óculos. As três opções preservam essas características e mostram o personagem de frente, de perfil e em ação.'},
+    {id:'carlos',name:'Carlos Eduardo',role:'Papai',short:'Carlos',notes:'Rosto mais jovem e mais fino, cabelo curto, barba predominantemente escura e óculos. Estatura discretamente maior que a de Noeli, cerca de 5 cm. As três opções preservam essas características e mostram o personagem de frente, de perfil e em ação.'},
     {id:'noeli',name:'Noeli',role:'Mamãe',short:'Noeli',notes:'Cabelo longo castanho com mechas acobreadas, sardas no nariz e nas bochechas, sobrancelhas marcantes e sorriso aberto. As variações mudam o traço, o caimento do cabelo e a proporção.'},
     {id:'maria',name:'Maria Elisa',role:'Nossa aventureira',short:'Maria Elisa',notes:'Cachos escuros, olhos castanhos, pele caramelo e expressão curiosa. A menina continua reconhecível em diferentes proporções e acabamentos.'},
     {id:'vovo',name:'Vovó Coruja',role:'Vovó',short:'Vovó',notes:'Rosto cheio, cabelo curto grisalho e uma presença afetuosa. “Coruja” é o apelido carinhoso; todas as propostas mantêm a avó humana.'},
@@ -498,7 +499,7 @@ window.BookPresentations={spread,family,dimensions};
     const options={x:name==='pipoca'?10:30,y:name==='pipoca'?64:3,scale:1,pose,view:['front','profile','action'].includes(pose)?pose:'front',style:state.model};
     if(variant)options.variant=variant;
     const figure=name==='pipoca'?window.BookCharacters.pipoca(options):window.BookCharacters.person(name,options);
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 0 340 390" role="img" aria-label="${esc(CAST.find(c=>c.id===name)?.name||name)} — ${esc(choiceName(variant||selection()[name]))}"><ellipse cx="130" cy="359" rx="88" ry="13" fill="#dce0cf"/>${figure}</svg>`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -12 340 402" role="img" aria-label="${esc(CAST.find(c=>c.id===name)?.name||name)} — ${esc(choiceName(variant||selection()[name]))}"><ellipse cx="130" cy="359" rx="88" ry="13" fill="#dce0cf"/>${figure}</svg>`;
   }
   function pageHTML(style,pageIndex){
     const p=DATA[pageIndex],cover=p.type==='cover';
