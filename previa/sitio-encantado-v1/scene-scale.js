@@ -15,6 +15,7 @@
   ];
   window.BookSceneScale = {
     adultHeight: 350,
+    stature: { carlos: 175 / 170, noeli: 1 },
     animals,
     parade,
     depth: item => item.y + (item.kind === 'maria' ? 350 : animals[item.kind].foot) * item.scale,

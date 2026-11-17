@@ -35,7 +35,7 @@ for (const choice of variants.choices) {
   for (const model of ['soft', 'paper', 'botanical', 'comic', 'dream']) {
     for (const page of getData(html)) {
       const markup = pages.render(model, page);
-      const expectedArt = page.pageNumber === 2 ? 'familia-no-carro-v2' : page.pageNumber === 3 ? 'narrativa-embrace' : page.pageNumber === 20 ? 'maria-descanso' : page.pageNumber >= 18 ? 'narrativa-bedtime' : page.pageNumber <= 1 ? choice.id : 'narrativa-maria';
+      const expectedArt = page.pageNumber === 2 ? 'familia-no-carro-v2' : page.pageNumber === 3 ? 'narrativa-embrace' : [11, 12, 13, 17].includes(page.pageNumber) ? 'olhares-maria' : page.pageNumber === 20 ? 'maria-descanso' : page.pageNumber >= 18 ? 'narrativa-bedtime' : page.pageNumber <= 1 ? choice.id : 'narrativa-maria';
       assert(markup.includes('assets/' + expectedArt + '.png'), `${choice.id}/${model}/${page.id}`);
       assert(markup.includes(`data-camera="${context.window.BookEnvironments.camera(page.pageNumber).name}"`));
       if (page.pageNumber <= 17) assert(markup.includes(`data-environment="page-${page.pageNumber}"`), 'Cada acontecimento deve usar seu ambiente');
@@ -93,9 +93,9 @@ for (const atlas of [context.window.BookCharacterCarAtlas, context.window.BookCh
 variants.setSelection('carlos', 'guache-ludico');
 variants.setSelection('noeli', 'guache-suave');
 const mixedCar = context.window.BookCar.render({ coral: '#d88867', dark: '#405544' }, 'mixed-car-');
-assert(mixedCar.includes('data-character="carlos" data-variant="guache-ludico"'));
-assert(mixedCar.includes('data-character="noeli" data-variant="guache-suave"'));
-assert(mixedCar.includes('data-character="maria" data-variant="guache"'));
+for (const [name, variant] of [['carlos', 'guache-ludico'], ['noeli', 'guache-suave'], ['maria', 'guache']]) {
+  assert(new RegExp('data-character="' + name + '"[^>]*data-variant="' + variant + '"').test(mixedCar));
+}
 assert(chars.person('maria', { pose: 'sleep' }).includes('assets/maria-descanso.png'));
 for (const atlas of [...Object.values(context.window.BookNarrativeAtlases), context.window.BookEmbraceAtlas, context.window.BookBedtimeAtlas]) {
   assert(fs.existsSync(root + atlas.file));
@@ -116,9 +116,9 @@ for (const grandma of variants.choices) for (const girl of variants.choices) {
   assert(!/NaN|undefined/.test(pair));
 }
 const surprise = context.window.BookScenes.render('sneeze', 'comic', 6);
-assert.equal((surprise.match(/data-pose="startled"/g) || []).length, 2);
+assert(surprise.includes('data-pose="startled"') && surprise.includes('data-pose="box-startled"'));
 const riddle = context.window.BookScenes.render('riddle', 'comic', 15);
-assert(riddle.includes('data-pose="read"') && riddle.includes('data-pose="think"'));
+assert(riddle.includes('data-pose="read-scroll"') && riddle.includes('data-pose="think"'));
 assert(html.includes('sitio-personagens-guache-v1'));
 assert(!html.includes('sitio-personagens-v2'));
 assert(html.includes('sel=window.BookVariants.getSelections()'));
@@ -129,7 +129,7 @@ for (let page = 0; page <= 20; page++) {
   assert.equal(width / height, 1.25, 'A câmera deve preencher a ilustração sem faixas vazias');
   assert(x >= 0 && y >= 0 && x + width <= 900 && y + height <= 720);
 }
-for (const atlas of [...context.window.BookEnvironmentAtlases, context.window.BookAnimalAtlas, ...Object.values(context.window.BookOpeningAtlases)]) {
+for (const atlas of [...context.window.BookEnvironmentAtlases, context.window.BookAnimalAtlas, ...Object.values(context.window.BookOpeningAtlases), ...Object.values(context.window.BookGazeAtlases), ...Object.values(context.window.BookGazeEnvironments)]) {
   assert(fs.existsSync(root + atlas.file));
   for (const [x, y, width, height] of atlas.frames) assert(x >= 0 && y >= 0 && width > 0 && height > 0 && x + width <= atlas.width && y + height <= atlas.height);
 }
@@ -158,4 +158,12 @@ assert(opening.includes(context.window.BookOpeningAtlases.noeli.file));
 assert(opening.includes('data-pose="departure-listen"'), 'Noeli deve usar a pose de atenção à filha na abertura');
 assert(!opening.includes('assets/cenarios-a-v2.png'), 'Abertura deve usar a nova casa em escala corrigida');
 
+for (const choice of variants.choices) {
+  const getDimension = (name, attr) => Number(chars.person(name, {variant: choice.id, view: 'front', y: 100, scale: 1.2}).match(new RegExp(attr + '="([^"]+)"'))[1]);
+  const carlosHeight = getDimension('carlos', 'data-world-height');
+  const noeliHeight = getDimension('noeli', 'data-world-height');
+  assert(Math.abs(carlosHeight / noeliHeight - 175 / 170) < 1e-9, 'Carlos deve ser apenas cerca de 5 cm mais alto na referência de estatura');
+  assert.equal(getDimension('carlos', 'data-ground-y'), getDimension('noeli', 'data-ground-y'), 'Diferença de altura deve preservar o apoio dos pés');
+}
+for (const atlas of Object.values(context.window.BookGazeAtlases)) assert.equal(atlas.frames.length, atlas.poses.length * 3);
 console.log(`OK: ${scripts} scripts, ${rendered} páginas renderizadas; texto, seleção, recortes e assets verificados.`);
