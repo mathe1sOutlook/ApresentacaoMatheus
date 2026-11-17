@@ -247,10 +247,12 @@ window.BookCharacters={person,pipoca,stone};
 <script src="character-atlases.js?v=poses-1"></script>
 <script src="narrative-atlases.js?v=poses-1"></script>
 <script src="scene-poses.js?v=poses-1"></script>
-<script src="environment-atlases.js?v=scenery-1"></script>
+<script src="parent-atlases.js?v=faces-scale-1"></script>
+<script src="environment-atlases.js?v=faces-scale-1"></script>
 <script src="environments.js?v=scenery-1"></script>
-<script src="animals.js?v=scenery-1"></script>
-<script src="guache-characters.js?v=scenery-1"></script>
+<script src="scene-scale.js?v=faces-scale-1"></script>
+<script src="animals.js?v=faces-scale-1"></script>
+<script src="guache-characters.js?v=faces-scale-1"></script>
 <script src="car-scene.js?v=guache-car-1"></script>
 <script>/* Cenários vetoriais com personagens ilustrados em guache. */
 (function(){
@@ -265,7 +267,7 @@ const palettes = {
 let serial=0;
 function render(scene,style='soft',pageNumber=0){
  const p=palettes[style]||palettes.soft, uid='sc'+(++serial)+'-', night=['bedroom','mystery'].includes(scene);
- const c=window.BookCharacters;
+ const c=window.BookCharacters, sceneScale=window.BookSceneScale;
  if(!c) throw new Error('BookCharacters must load before BookScenes.render');
  const out=style==='comic'?4:style==='botanical'?1.7:style==='paper'?0:0.8;
  const stroke=(w=out,col=p.ink)=>w?`stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"`:'';
@@ -293,11 +295,11 @@ function render(scene,style='soft',pageNumber=0){
  function bg(){return window.BookEnvironments.background(pageNumber,uid);}
  function sparkles(seed=0){let b='';for(let i=0;i<12;i++){let x=220+((i*91+seed*43)%520),y=130+((i*71+seed*33)%450);b+=i%3===0?star(x,y,7+(i%3)*2,p.sun,i*17):sparkle(x,y,.25+(i%4)*.12,i%2?p.cream:p.sun)}return b;}
  function moon(x,y,s=1){return group(x,y,s,path('M25 -50C-38 -57 -70 4 -35 45C-8 76 38 62 57 28C7 51 -29 -1 25 -50Z','#F9E6AB'));}
- function room(last=false){let b=`<rect width="900" height="720" fill="${night?'#DECFDA':p.cream}"/>`+path('M0 560H900V720H0Z','#AE9492')+line('M0 599H900M0 661H900M123 560L83 720M350 560L333 720M601 560L617 720M819 560L862 720','#917D86',1.5,'opacity=".5"');b+=`<rect x="495" y="58" width="330" height="406" rx="152" fill="#BAA3B2"/><rect x="512" y="76" width="295" height="368" rx="141" fill="url(#${uid}night)"/>`+moon(708,182,.56);for(let i=0;i<21;i++){let x=538+(i*67)%249,y=111+(i*53)%285;b+=i%4?circle(x,y,1.5,'#F9E7C7'):star(x,y,4.5,'#F9E7C7')}b+=path('M513 330Q607 291 680 329Q759 295 807 317V444H513Z','#54796F')+house(628,318,.3,true)+line('M661 80V447M513 276H807','#EDE0D6',9)+`<rect x="480" y="436" width="355" height="22" rx="11" fill="#C5AEAA"/>`;b+=path('M492 61C525 66 543 74 566 88Q535 197 532 312L486 335Q467 203 492 61Z',p.green,stroke())+path('M820 63Q783 75 762 89Q802 234 790 313L833 332Q851 187 820 63Z',p.green,stroke())+path('M485 320Q510 305 532 312L532 326Q507 322 487 335Z',p.sun)+path('M791 311Q814 307 834 322L832 336Q814 323 791 326Z',p.sun)+line('M501 83Q490 192 504 301M807 87Q827 180 815 302',p.cream,2,'opacity=".35"');
+ function room(last=false){const bedside=sceneScale.props.bedsideStone;let b=`<rect width="900" height="720" fill="${night?'#DECFDA':p.cream}"/>`+path('M0 560H900V720H0Z','#AE9492')+line('M0 599H900M0 661H900M123 560L83 720M350 560L333 720M601 560L617 720M819 560L862 720','#917D86',1.5,'opacity=".5"');b+=`<rect x="495" y="58" width="330" height="406" rx="152" fill="#BAA3B2"/><rect x="512" y="76" width="295" height="368" rx="141" fill="url(#${uid}night)"/>`+moon(708,182,.56);for(let i=0;i<21;i++){let x=538+(i*67)%249,y=111+(i*53)%285;b+=i%4?circle(x,y,1.5,'#F9E7C7'):star(x,y,4.5,'#F9E7C7')}b+=path('M513 330Q607 291 680 329Q759 295 807 317V444H513Z','#54796F')+house(628,318,.3,true)+line('M661 80V447M513 276H807','#EDE0D6',9)+`<rect x="480" y="436" width="355" height="22" rx="11" fill="#C5AEAA"/>`;b+=path('M492 61C525 66 543 74 566 88Q535 197 532 312L486 335Q467 203 492 61Z',p.green,stroke())+path('M820 63Q783 75 762 89Q802 234 790 313L833 332Q851 187 820 63Z',p.green,stroke())+path('M485 320Q510 305 532 312L532 326Q507 322 487 335Z',p.sun)+path('M791 311Q814 307 834 322L832 336Q814 323 791 326Z',p.sun)+line('M501 83Q490 192 504 301M807 87Q827 180 815 302',p.cream,2,'opacity=".35"');
  b+=`<rect x="75" y="315" width="391" height="301" rx="49" fill="#B57C73" ${stroke()}/><rect x="91" y="333" width="359" height="251" rx="36" fill="#CF9C89"/><path d="M91 358H450M91 394H450" stroke="#B57C73" stroke-width="2" opacity=".6"/><rect x="105" y="397" width="425" height="216" rx="44" fill="#FCEDD8"/><rect x="143" y="410" width="180" height="84" rx="40" fill="#FCF6E9" transform="rotate(-7 233 452)"/>`;
  b+=person('maria',203,337,.81,pageNumber===20?'sleep':'stand');
  b+=path('M103 494Q282 467 530 499V623Q304 654 107 619Z',p.lavender,stroke())+path('M107 495Q308 472 530 500L526 533Q295 509 108 531Z','#D8CAE8');for(let i=0;i<17;i++)b+=star(135+(i*67)%370,550+(i%3)*23,5+(i%2),'#EEE1EF',i*14);b+=`<rect x="93" y="608" width="453" height="24" rx="10" fill="#A5706C" ${stroke()}/><rect x="109" y="628" width="24" height="44" rx="5" fill="#A5706C"/><rect x="501" y="628" width="24" height="44" rx="5" fill="#A5706C"/>`;
- b+=`<ellipse cx="660" cy="630" rx="85" ry="18" fill="#8C7582" opacity=".17"/><path d="M613 574L603 654M710 574L723 654" stroke="#916C65" stroke-width="13" stroke-linecap="round"/><rect x="585" y="559" width="156" height="21" rx="9" fill="#B48775" ${stroke()}/>`+(last?circle(679,493,113,'url(#'+uid+'redglow)')+gem(621,430,.72,true):gem(632,483,.45,false));
+ b+=`<ellipse cx="660" cy="630" rx="85" ry="18" fill="#8C7582" opacity=".17"/><path d="M613 574L603 654M710 574L723 654" stroke="#916C65" stroke-width="13" stroke-linecap="round"/><rect x="585" y="559" width="156" height="21" rx="9" fill="#B48775" ${stroke()}/>`+(last?circle(665,522,75,'url(#'+uid+'redglow)'):'')+gem(bedside.x,bedside.y,bedside.scale,last);
  b+=cloud(604,last?348:411,last?.74:.83,'#F5E5F2')+pony(635,last?231:281,last?.49:.55,pageNumber===19?'stand':'sleep');
  if(pageNumber===19)b+=circle(774,296,16,'none',`stroke="${p.pink}" stroke-width="3" opacity=".8"`)+circle(809,253,12,'none',`stroke="${p.sun}" stroke-width="3" opacity=".8"`)+circle(818,211,8,'none',`stroke="${p.leaf}" stroke-width="3" opacity=".8"`);
  b+=`<rect x="103" y="113" width="149" height="131" rx="15" fill="#D5AF91"/><rect x="114" y="124" width="127" height="109" rx="9" fill="#EDE1D1"/>`+flower(170,225,.72,p.coral)+sparkle(207,150,.7,p.sun)+ellipse(286,683,205,24,'#D6BAB7');
@@ -324,30 +326,26 @@ function render(scene,style='soft',pageNumber=0){
  }else if(scene==='butterfly'){
   art+=person('vovo',623,320,.95,'stand',true)+person('maria',249,326,.96,'wonder')+line('M514 385C390 345 592 299 489 247C414 210 372 261 438 280C524 304 601 225 566 190',p.coral,2,'stroke-dasharray="5 11" opacity=".7"')+butterfly(510,310,.88)+leaf(546,549,1.45,12,p.sun)+sparkle(509,475,.7)+sparkle(546,407,.5)+flower(185,626,.7,p.coral);
  }else if(scene==='box'||scene==='sneeze'){
-  art+=person('maria',165,334,.91,scene==='sneeze'?'wonder':'hold')+person('vovo',603,255,1.04,scene==='sneeze'?'wonder':'stand',true)+leaf(482,618,1.66,-53,p.sun)+box(460,553,1.18,false,scene==='sneeze'?-7:0)+butterfly(513,415,.66);
+  art+=person('maria',165,334,.91,scene==='sneeze'?'wonder':'hold')+person('vovo',603,255,1.04,scene==='sneeze'?'wonder':'stand',true)+leaf(482,618,1.66,-53,p.sun)+box(...sceneScale.props.closedChest,false,scene==='sneeze'?-7:0)+butterfly(513,415,.66);
   if(scene==='sneeze')art+=cloud(371,388,.88,'#F0D8CE')+cloud(475,440,.5,'#F8E5D4')+line('M361 513L329 501M370 492L344 469M555 551L590 538M550 525L579 500',p.coral,4)+sparkles(4);else art+=sparkle(391,504,.5)+sparkle(512,532,.4);
  }else if(scene==='unicorn'){
-  art+=person('maria',139,346,.89,'laugh')+person('vovo',664,260,.99,'wonder',true)+cloud(342,240,1.65,p.pink)+cloud(382,341,1.25,'#F5D4D4')+box(476,570,1.16,true)+pony(355,165,1.09,'tumble')+sparkles(3)+line('M346 203L327 185M603 221L625 209M364 437L346 452',p.coral,3.5);
+  art+=person('maria',139,346,.89,'laugh')+person('vovo',664,260,.99,'wonder',true)+cloud(342,240,1.65,p.pink)+cloud(382,341,1.25,'#F5D4D4')+box(...sceneScale.props.openChest,true)+pony(355,165,1.09,'tumble')+sparkles(3)+line('M346 203L327 185M603 221L625 209M364 437L346 452',p.coral,3.5);
  }else if(scene==='laughter'){
   art+=person('vovo',93,271,.99,'laugh');
   art+=(pageNumber===9?person('maria',480,340,.95,'sit',true)+pony(210,395,.96,'stand'):person('maria',275,335,.98,'laugh')+pony(500,400,.95,'bow'))+sparkles(7);
  }else if(scene==='stone'){
   art+=person('maria',154,324,.92,'wonder')+pony(555,400,.88,'stand');
-  for(let i=0;i<9;i++){let a=i*Math.PI*2/9;art+=leaf(467,608,1.2,i*40,p.coral)}
-  art+=ellipse(468,618,129,30,p.dark,'opacity=".18"')+circle(471,452,144,'url(#'+uid+'redglow)')+gem(390,368,1.03)+sparkles(8)+line('M401 590L386 562M537 583L551 551',p.coral,3);
+  for(let i=0;i<9;i++){let a=i*Math.PI*2/9;art+=leaf(467,608,.65,i*40,p.coral)}
+  art+=ellipse(468,618,76,18,p.dark,'opacity=".18"')+circle(471,520,90,'url(#'+uid+'redglow)')+gem(...sceneScale.props.emergingStone)+sparkles(8)+line('M401 590L386 562M537 583L551 551',p.coral,3);
  }else if(scene==='stars'){
   if(pageNumber===12){art+=person('maria',230,403,.65,'laugh')+pony(638,422,.88,'stand')+circle(461,400,193,'url(#'+uid+'redglow)')+gem(338,238,1.6)+sparkles(9);}else{art+=person('maria',306,291,1.06,'hold')+pony(586,407,1,'stand')+person('vovo',91,267,.96,'stand')+sparkles(10);}
  }else if(scene==='promise'){
   art+=circle(455,488,214,'url(#'+uid+'redglow)')+person('vovo',195,260,1.07,'hug')+person('maria',375,354,.87,'hold')+pony(599,403,.98,'jump')+sparkles(11);
  }else if(scene==='animals'){
-  const parade=[
-   {depth:370+84*1.15,art:cow(250,370,1.15)},
-   {depth:340+84*.85,art:cow(465,340,.85)},
-   {depth:555+80*1.03,art:pig(300,555,1.03)},
-   {depth:500+80*.87,art:pig(480,500,.87)},
-   {depth:435+80*.65,art:pig(600,435,.65)},
-   {depth:340+350*.95,art:person('maria',20,340,.95,'laugh')}
-  ];
+  const parade=sceneScale.parade.map(item=>({
+   depth:sceneScale.depth(item),
+   art:item.kind==='maria'?person('maria',item.x,item.y,item.scale,'laugh'):window.BookAnimals.render(item.kind,item)
+  }));
   art+=`<g data-depth-order="ground-plane">${parade.sort((a,b)=>a.depth-b.depth).map(item=>item.art).join('')}</g>`+note(240,290,.7,-15)+note(355,289,.5,19);
   art+=circle(78,584,29,p.sun,stroke())+path('M57 567Q82 572 87 608M64 606Q76 579 101 578','none',stroke(3,p.coral))+path('M327 604L354 643L382 604Z',p.coral,stroke())+ellipse(354,605,28,9,p.sun,stroke())+line('M354 592V604',p.ink,4)+line('M321 628Q301 637 317 652M384 624Q407 635 390 651',p.ink,2);
  }else if(scene==='riddle'){
@@ -479,8 +477,8 @@ window.BookPresentations={spread,family,dimensions};
     {id:'dream',number:'05',name:'Sonho de algodão',short:'Nuvens, delicadeza e encanto',description:'Lavanda, rosê e verde-menta, com espaços macios que lembram nuvens. O texto fica em uma área clara e arredondada, acompanhado de personagens delicados e pequenos brilhos. A atmosfera conduz suavemente até o mistério da última página.',colors:['#f4f0fa','#d9d1e7','#cfb0bd','#a8c1a4','#715173']}
   ];
   const CAST=[
-    {id:'carlos',name:'Carlos Eduardo',role:'Papai',short:'Carlos',notes:'Rosto mais fino, cabelo curto, barba com fios grisalhos e óculos. As três opções preservam essas características e mostram o personagem de frente, de perfil e em ação.'},
-    {id:'noeli',name:'Noeli',role:'Mamãe',short:'Noeli',notes:'Cabelo longo castanho com mechas acobreadas, sobrancelhas marcantes e sorriso aberto. As variações mudam o traço, o caimento do cabelo e a proporção.'},
+    {id:'carlos',name:'Carlos Eduardo',role:'Papai',short:'Carlos',notes:'Rosto mais jovem e mais fino, cabelo curto, barba predominantemente escura e óculos. As três opções preservam essas características e mostram o personagem de frente, de perfil e em ação.'},
+    {id:'noeli',name:'Noeli',role:'Mamãe',short:'Noeli',notes:'Cabelo longo castanho com mechas acobreadas, sardas no nariz e nas bochechas, sobrancelhas marcantes e sorriso aberto. As variações mudam o traço, o caimento do cabelo e a proporção.'},
     {id:'maria',name:'Maria Elisa',role:'Nossa aventureira',short:'Maria Elisa',notes:'Cachos escuros, olhos castanhos, pele caramelo e expressão curiosa. A menina continua reconhecível em diferentes proporções e acabamentos.'},
     {id:'vovo',name:'Vovó Coruja',role:'Vovó',short:'Vovó',notes:'Rosto cheio, cabelo curto grisalho e uma presença afetuosa. “Coruja” é o apelido carinhoso; todas as propostas mantêm a avó humana.'},
     {id:'pipoca',name:'Pipoca',role:'Guardião dos segredos',short:'Pipoca',notes:'Inspirado no unicórnio de pelúcia rosê, com crina, chifre e cascos cor-de-rosa. As alternativas exploram jeitos diferentes de desenhar sua fofura.'}

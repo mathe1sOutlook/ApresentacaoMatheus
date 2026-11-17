@@ -1,7 +1,7 @@
 /* Dezoito ambientes por ordem de página e nove animais em três quartos. */
 window.BookEnvironmentAtlases = [
   {
-    "file": "assets/cenarios-a.png",
+    "file": "assets/cenarios-a-v2.png",
     "width": 1536,
     "height": 1024,
     "frames": [

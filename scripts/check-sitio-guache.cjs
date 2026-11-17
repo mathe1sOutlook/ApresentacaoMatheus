@@ -35,7 +35,7 @@ for (const choice of variants.choices) {
   for (const model of ['soft', 'paper', 'botanical', 'comic', 'dream']) {
     for (const page of getData(html)) {
       const markup = pages.render(model, page);
-      const expectedArt = page.pageNumber === 2 ? 'familia-no-carro' : page.pageNumber === 3 ? 'narrativa-embrace' : page.pageNumber === 20 ? 'maria-descanso' : page.pageNumber >= 18 ? 'narrativa-bedtime' : page.pageNumber <= 1 ? choice.id : 'narrativa-maria';
+      const expectedArt = page.pageNumber === 2 ? 'familia-no-carro-v2' : page.pageNumber === 3 ? 'narrativa-embrace' : page.pageNumber === 20 ? 'maria-descanso' : page.pageNumber >= 18 ? 'narrativa-bedtime' : page.pageNumber <= 1 ? choice.id : 'narrativa-maria';
       assert(markup.includes('assets/' + expectedArt + '.png'), `${choice.id}/${model}/${page.id}`);
       assert(markup.includes(`data-camera="${context.window.BookEnvironments.camera(page.pageNumber).name}"`));
       if (page.pageNumber <= 17) assert(markup.includes(`data-environment="page-${page.pageNumber}"`), 'Cada acontecimento deve usar seu ambiente');
@@ -74,7 +74,7 @@ for (const choice of variants.choices) {
 variants.setSelection('maria', 'guache-suave');
 variants.setSelection('carlos', 'guache-ludico');
 assert(chars.person('maria', { view: 'profile' }).includes('data-view="profile"'));
-assert(chars.person('carlos', { view: 'action' }).includes('assets/guache-ludico.png'));
+assert(chars.person('carlos', { view: 'action' }).includes('assets/carlos-jovem.png'));
 assert(chars.person('maria', { view: 'front' }).includes('clip-path="url(#guache-frame-'));
 variants.reset();
 assert(Object.values(variants.getSelections()).every(value => value === 'guache'));
@@ -133,4 +133,21 @@ for (const atlas of [...context.window.BookEnvironmentAtlases, context.window.Bo
   assert(fs.existsSync(root + atlas.file));
   for (const [x, y, width, height] of atlas.frames) assert(x >= 0 && y >= 0 && width > 0 && height > 0 && x + width <= atlas.width && y + height <= atlas.height);
 }
+
+for (const atlas of Object.values(context.window.BookParentAtlases)) {
+  assert(fs.existsSync(root + atlas.file));
+  assert.equal(atlas.frames.length, 9);
+  for (const [x,y,w,h] of atlas.frames) assert(x >= 0 && y >= 0 && w > 0 && h > 0 && x+w <= atlas.width && y+h <= atlas.height);
+}
+const scale = context.window.BookSceneScale;
+const nearCow = scale.parade.find(item => item.kind === 'cow');
+const girl = scale.parade.find(item => item.kind === 'maria');
+assert(scale.animals.cow.height * nearCow.scale >= scale.adultHeight * girl.scale, 'Vaca próxima não pode parecer miniatura ao lado da menina');
+assert(scale.animals.pig.height >= scale.adultHeight * .4);
+assert(scale.animals.pig.height < scale.animals.cow.height);
+assert(scale.props.closedChest[2] * 99 < scale.adultHeight / 3);
+assert(scale.props.bedsideStone.scale <= .38, 'Pedra no criado-mudo deve manter a escala da pedra nas mãos');
+
+assert.equal(scale.props.emergingStone[2], scale.props.bedsideStone.scale, 'Pedra deve manter sua escala nas cenas comuns');
+
 console.log(`OK: ${scripts} scripts, ${rendered} páginas renderizadas; texto, seleção, recortes e assets verificados.`);
