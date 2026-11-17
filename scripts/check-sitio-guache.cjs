@@ -37,6 +37,14 @@ for (const choice of variants.choices) {
       const markup = pages.render(model, page);
       const expectedArt = page.pageNumber === 2 ? 'familia-no-carro' : page.pageNumber === 3 ? 'narrativa-embrace' : page.pageNumber === 20 ? 'maria-descanso' : page.pageNumber >= 18 ? 'narrativa-bedtime' : page.pageNumber <= 1 ? choice.id : 'narrativa-maria';
       assert(markup.includes('assets/' + expectedArt + '.png'), `${choice.id}/${model}/${page.id}`);
+      assert(markup.includes(`data-camera="${context.window.BookEnvironments.camera(page.pageNumber).name}"`));
+      if (page.pageNumber <= 17) assert(markup.includes(`data-environment="page-${page.pageNumber}"`), 'Cada acontecimento deve usar seu ambiente');
+      if (page.pageNumber === 14) {
+        assert.equal((markup.match(/data-animal-view="three-quarter"/g) || []).length, 5);
+        assert(markup.includes('data-animal-pose="messenger"'));
+        assert(markup.includes('assets/animais-perspectiva.png'));
+        assert(markup.includes('data-depth-order="ground-plane"'));
+      }
       for (const [name, pose] of Object.entries(context.window.BookScenePoses.pages[page.pageNumber] || {})) {
         if (pose === 'embrace') {
           assert(markup.includes('data-pose="embrace"'));
@@ -114,4 +122,15 @@ assert(riddle.includes('data-pose="read"') && riddle.includes('data-pose="think"
 assert(html.includes('sitio-personagens-guache-v1'));
 assert(!html.includes('sitio-personagens-v2'));
 assert(html.includes('sel=window.BookVariants.getSelections()'));
+assert.equal(new Set(context.window.BookEnvironments.settings).size, 18);
+assert.equal(new Set(Array.from({ length: 21 }, (_, i) => context.window.BookEnvironments.camera(i).name)).size, 21);
+for (let page = 0; page <= 20; page++) {
+  const [x, y, width, height] = context.window.BookEnvironments.camera(page).viewBox;
+  assert.equal(width / height, 1.25, 'A câmera deve preencher a ilustração sem faixas vazias');
+  assert(x >= 0 && y >= 0 && x + width <= 900 && y + height <= 720);
+}
+for (const atlas of [...context.window.BookEnvironmentAtlases, context.window.BookAnimalAtlas]) {
+  assert(fs.existsSync(root + atlas.file));
+  for (const [x, y, width, height] of atlas.frames) assert(x >= 0 && y >= 0 && width > 0 && height > 0 && x + width <= atlas.width && y + height <= atlas.height);
+}
 console.log(`OK: ${scripts} scripts, ${rendered} páginas renderizadas; texto, seleção, recortes e assets verificados.`);

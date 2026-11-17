@@ -76,6 +76,6 @@
       img.onload = resolve;
       img.onerror = () => reject(new Error('Não foi possível carregar uma ilustração'));
       img.src = url;
-    })))
+    })).concat([window.BookEnvironments.ready, window.BookAnimals.ready]))
   };
 })();
