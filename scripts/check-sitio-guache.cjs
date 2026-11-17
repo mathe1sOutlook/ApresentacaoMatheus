@@ -129,7 +129,7 @@ for (let page = 0; page <= 20; page++) {
   assert.equal(width / height, 1.25, 'A câmera deve preencher a ilustração sem faixas vazias');
   assert(x >= 0 && y >= 0 && x + width <= 900 && y + height <= 720);
 }
-for (const atlas of [...context.window.BookEnvironmentAtlases, context.window.BookAnimalAtlas]) {
+for (const atlas of [...context.window.BookEnvironmentAtlases, context.window.BookAnimalAtlas, ...Object.values(context.window.BookOpeningAtlases)]) {
   assert(fs.existsSync(root + atlas.file));
   for (const [x, y, width, height] of atlas.frames) assert(x >= 0 && y >= 0 && width > 0 && height > 0 && x + width <= atlas.width && y + height <= atlas.height);
 }
@@ -149,5 +149,13 @@ assert(scale.props.closedChest[2] * 99 < scale.adultHeight / 3);
 assert(scale.props.bedsideStone.scale <= .38, 'Pedra no criado-mudo deve manter a escala da pedra nas mãos');
 
 assert.equal(scale.props.emergingStone[2], scale.props.bedsideStone.scale, 'Pedra deve manter sua escala nas cenas comuns');
+
+assert.equal(context.window.BookOpeningAtlases.noeli.frames.length, 3);
+assert.equal(context.window.BookOpeningAtlases.environment.frames.length, 1);
+const opening = context.window.BookScenes.render('departure', 'comic', 1);
+assert(opening.includes(context.window.BookOpeningAtlases.environment.file));
+assert(opening.includes(context.window.BookOpeningAtlases.noeli.file));
+assert(opening.includes('data-pose="departure-listen"'), 'Noeli deve usar a pose de atenção à filha na abertura');
+assert(!opening.includes('assets/cenarios-a-v2.png'), 'Abertura deve usar a nova casa em escala corrigida');
 
 console.log(`OK: ${scripts} scripts, ${rendered} páginas renderizadas; texto, seleção, recortes e assets verificados.`);

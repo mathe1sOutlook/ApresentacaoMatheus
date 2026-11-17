@@ -4,7 +4,7 @@
   const root = new URL('./', document.currentScript.src);
   const cameras = [
     ['vista-geral', 0, 0, 900, 720],
-    ['saida-na-varanda', 60, 96, 780, 624],
+    ['saida-na-varanda', 0, 0, 900, 720],
     ['estrada-em-profundidade', 0, 0, 900, 720],
     ['abraco-perto-da-varanda', 200, 190, 650, 520],
     ['olhar-na-altura-da-borboleta', 180, 144, 720, 576],
@@ -31,14 +31,14 @@
     return { name, viewBox };
   };
   function background(page, uid) {
-    const atlas = window.BookEnvironmentAtlases[Math.floor(page / 6)];
-    const frame = atlas.frames[page % 6];
+    const atlas = page === 1 ? window.BookOpeningAtlases.environment : window.BookEnvironmentAtlases[Math.floor(page / 6)];
+    const frame = atlas.frames[page === 1 ? 0 : page % 6];
     const clip = uid + 'environment-frame';
     return `<g data-environment="page-${page}" data-setting="${settings[page]}"><svg width="900" height="720" viewBox="${frame.join(' ')}" preserveAspectRatio="xMidYMid slice"><defs><clipPath id="${clip}"><rect x="${frame[0]}" y="${frame[1]}" width="${frame[2]}" height="${frame[3]}"/></clipPath></defs><image clip-path="url(#${clip})" href="${new URL(atlas.file, root).href}" width="${atlas.width}" height="${atlas.height}"/></svg></g>`;
   }
   window.BookEnvironments = {
     background, camera, settings,
-    ready: Promise.all(window.BookEnvironmentAtlases.map(atlas => new Promise((resolve, reject) => {
+    ready: Promise.all([...window.BookEnvironmentAtlases, window.BookOpeningAtlases.environment].map(atlas => new Promise((resolve, reject) => {
       const image = new Image();
       image.onload = resolve;
       image.onerror = () => reject(new Error('Não foi possível carregar um cenário'));

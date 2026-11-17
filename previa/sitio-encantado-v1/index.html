@@ -246,13 +246,14 @@ window.BookCharacters={person,pipoca,stone};
 </script>
 <script src="character-atlases.js?v=poses-1"></script>
 <script src="narrative-atlases.js?v=poses-1"></script>
-<script src="scene-poses.js?v=poses-1"></script>
+<script src="scene-poses.js?v=opening-1"></script>
 <script src="parent-atlases.js?v=faces-scale-1"></script>
+<script src="opening-atlases.js?v=opening-1"></script>
 <script src="environment-atlases.js?v=faces-scale-1"></script>
-<script src="environments.js?v=scenery-1"></script>
+<script src="environments.js?v=opening-1"></script>
 <script src="scene-scale.js?v=faces-scale-1"></script>
 <script src="animals.js?v=faces-scale-1"></script>
-<script src="guache-characters.js?v=faces-scale-1"></script>
+<script src="guache-characters.js?v=opening-1"></script>
 <script src="car-scene.js?v=guache-car-1"></script>
 <script>/* Cenários vetoriais com personagens ilustrados em guache. */
 (function(){
@@ -276,7 +277,7 @@ function render(scene,style='soft',pageNumber=0){
  const path=(d,f,extra='')=>`<path d="${d}" fill="${f}" ${extra}/>`;
  const group=(x,y,s,body,rot=0)=>`<g transform="translate(${x} ${y}) scale(${s}) rotate(${rot})">${body}</g>`;
  const line=(d,col=p.ink,w=2,extra='')=>path(d,'none',stroke(w,col)+' '+extra);
- const person=(name,x,y,s=1,pose='stand',flip=false)=>(night?'':ellipse(x+100*s,y+350*s,55*s,10*s,p.dark,'opacity=".14"'))+c.person(name,{x,y,scale:s,pose,style,narrativePose:window.BookScenePoses.forPage(name,pageNumber),flip:scene==='cover'?false:scene==='road'?false:(flip||x>450),view:scene==='cover'||pageNumber===0?'front':scene==='road'?'profile':scene==='welcome'?'action':pose==='stand'?'profile':'action'});
+ const person=(name,x,y,s=1,pose='stand',flip=false)=>(night?'':ellipse(x+100*s,y+350*s,55*s,10*s,p.dark,'opacity=".14"'))+c.person(name,{x,y,scale:s,pose,style,narrativePose:window.BookScenePoses.forPage(name,pageNumber),flip:scene==='departure'&&name==='noeli'?false:scene==='cover'?false:scene==='road'?false:(flip||x>450),view:scene==='cover'||pageNumber===0?'front':scene==='road'?'profile':scene==='welcome'?'action':pose==='stand'?'profile':'action'});
  const pony=(x,y,s=1,pose='stand',flip=false)=>(night?'':ellipse(x+120*s,['hop','tumble'].includes(window.BookScenePoses.forPage('pipoca',pageNumber))?655:y+270*s,45*s,9*s,p.dark,'opacity=".12"'))+c.pipoca({x,y,scale:s,pose,style,narrativePose:window.BookScenePoses.forPage('pipoca',pageNumber),flip:scene==='cover'||pageNumber===0?false:(flip||x>450),view:scene==='cover'||pageNumber===0?'front':['stand','sleep'].includes(pose)?'profile':'action'});
  const gem=(x,y,s=1,heart=false)=>c.stone({x,y,scale:s,lit:pageNumber>=17?1:0,heart,style});
  function star(x,y,r=8,col=p.sun,rot=0){let q=[];for(let i=0;i<10;i++){let a=-Math.PI/2+i*Math.PI/5, rr=i%2?r*.43:r;q.push(`${Math.cos(a)*rr},${Math.sin(a)*rr}`)}return group(x,y,1,`<polygon points="${q.join(' ')}" fill="${col}" ${style==='comic'?stroke(1.2):''}/>`,rot)}
