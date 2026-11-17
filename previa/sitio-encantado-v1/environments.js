@@ -15,7 +15,7 @@
     ['conversa-na-grama', 40, 80, 800, 640],
     ['descoberta-entre-as-raizes', 110, 168, 690, 552],
     ['pedra-nas-maos', 45, 60, 825, 660],
-    ['conversa-sobre-as-estrelas', 100, 80, 800, 640],
+    ['conversa-sobre-as-estrelas', 180, 240, 600, 480],
     ['luz-no-caminho', 100, 80, 800, 640],
     ['terreiro-em-tres-quartos', 0, 0, 900, 720],
     ['roda-do-enigma', 70, 80, 800, 640],
@@ -31,14 +31,19 @@
     return { name, viewBox };
   };
   function background(page, uid) {
-    const atlas = window.BookGazeEnvironments[page] || (page === 1 ? window.BookOpeningAtlases.environment : window.BookEnvironmentAtlases[Math.floor(page / 6)]);
-    const frame = atlas.frames[page === 1 || window.BookGazeEnvironments[page] ? 0 : page % 6];
+    const atlas = (page === 2 ? window.BookRoadAtlas : undefined) || window.BookGazeEnvironments[page] || (page === 1 ? window.BookOpeningAtlases.environment : window.BookEnvironmentAtlases[Math.floor(page / 6)]);
+    let frame = atlas.frames[page === 1 || page === 2 || window.BookGazeEnvironments[page] ? 0 : page % 6];
+    // Na promessa, o chão livre à direita substitui as samambaias sob os pés da avó.
+    if (page === 13) {
+      const [x, y, width, height] = frame;
+      frame = [x + width / 3, y + height / 3, width * 2 / 3, height * 2 / 3];
+    }
     const clip = uid + 'environment-frame';
     return `<g data-environment="page-${page}" data-setting="${settings[page]}"><svg width="900" height="720" viewBox="${frame.join(' ')}" preserveAspectRatio="xMidYMid slice"><defs><clipPath id="${clip}"><rect x="${frame[0]}" y="${frame[1]}" width="${frame[2]}" height="${frame[3]}"/></clipPath></defs><image clip-path="url(#${clip})" href="${new URL(atlas.file, root).href}" width="${atlas.width}" height="${atlas.height}"/></svg></g>`;
   }
   window.BookEnvironments = {
     background, camera, settings,
-    ready: Promise.all([...window.BookEnvironmentAtlases, window.BookOpeningAtlases.environment, ...Object.values(window.BookGazeEnvironments)].map(atlas => new Promise((resolve, reject) => {
+    ready: Promise.all([...window.BookEnvironmentAtlases, window.BookOpeningAtlases.environment, ...Object.values(window.BookGazeEnvironments), window.BookRoadAtlas].map(atlas => new Promise((resolve, reject) => {
       const image = new Image();
       image.onload = resolve;
       image.onerror = () => reject(new Error('Não foi possível carregar um cenário'));

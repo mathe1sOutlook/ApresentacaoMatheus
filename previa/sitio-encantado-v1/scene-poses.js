@@ -13,8 +13,8 @@
     9: { maria: 'laugh', vovo: 'listen-down', pipoca: 'explain' },
     10: { maria: 'kneel', pipoca: 'tap' },
     11: { maria: 'cradle-look', vovo: 'listen-down', pipoca: 'explain' },
-    12: { maria: 'cradle-look', pipoca: 'point-stars' },
-    13: { maria: 'cradle-look', vovo: 'offer-hand', pipoca: 'hop' },
+    12: { maria: 'stone-question', pipoca: 'explain' },
+    13: { maria: 'adventure-hand', vovo: 'offer-hand', pipoca: 'hop' },
     14: { maria: 'reach' },
     15: { maria: 'think', vovo: 'listen-down', pipoca: 'read-scroll' },
     16: { maria: 'reach', vovo: 'laugh', pipoca: 'hop' },
@@ -24,7 +24,7 @@
     20: { maria: 'sleep', pipoca: 'sleep' }
   };
   const heights = {
-    maria: { 'laugh-up': 225, 'cradle-look': 350, reach: 350, kneel: 225, startled: 350, laugh: 225, cradle: 350, think: 250 },
+    maria: { 'stone-question': 225, 'adventure-hand': 350, 'laugh-up': 225, 'cradle-look': 350, reach: 350, kneel: 225, startled: 350, laugh: 225, cradle: 350, think: 250 },
     vovo: { 'listen-down': 350, 'box-startled': 350, 'offer-hand': 350, point: 350, crouch: 240, startled: 350, laugh: 330, explain: 350, ponder: 350 },
     pipoca: { 'point-stars': 270, 'read-scroll': 270, front: 270, profile: 270, hop: 270, tumble: 270, bow: 220, read: 270, sleep: 165, explain: 270, tap: 235, yawn: 270 }
   };

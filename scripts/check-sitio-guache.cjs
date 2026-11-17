@@ -35,7 +35,7 @@ for (const choice of variants.choices) {
   for (const model of ['soft', 'paper', 'botanical', 'comic', 'dream']) {
     for (const page of getData(html)) {
       const markup = pages.render(model, page);
-      const expectedArt = page.pageNumber === 2 ? 'familia-no-carro-v2' : page.pageNumber === 3 ? 'narrativa-embrace' : [11, 12, 13, 17].includes(page.pageNumber) ? 'olhares-maria' : page.pageNumber === 20 ? 'maria-descanso' : page.pageNumber >= 18 ? 'narrativa-bedtime' : page.pageNumber <= 1 ? choice.id : 'narrativa-maria';
+      const expectedArt = page.pageNumber === 2 ? 'familia-carro-perspectiva' : page.pageNumber === 3 ? 'narrativa-embrace' : [12, 13].includes(page.pageNumber) ? 'maria-acoes-pedra' : [11, 17].includes(page.pageNumber) ? 'olhares-maria' : page.pageNumber === 20 ? 'maria-descanso' : page.pageNumber >= 18 ? 'narrativa-bedtime' : page.pageNumber <= 1 ? choice.id : 'narrativa-maria';
       assert(markup.includes('assets/' + expectedArt + '.png'), `${choice.id}/${model}/${page.id}`);
       assert(markup.includes(`data-camera="${context.window.BookEnvironments.camera(page.pageNumber).name}"`));
       if (page.pageNumber <= 17) assert(markup.includes(`data-environment="page-${page.pageNumber}"`), 'Cada acontecimento deve usar seu ambiente');
@@ -55,6 +55,9 @@ for (const choice of variants.choices) {
         assert.equal(found[1], pose, `${page.id}/${name} deve acompanhar a ação do texto`);
       }
       if (page.scene === 'road') {
+        assert(markup.includes('data-car-view="front-three-quarter"'));
+        assert(markup.includes('data-road-direction="lower-left"'));
+        assert(markup.includes('assets/carro-perspectiva.png') && markup.includes('assets/estrada-perspectiva.png'));
         assert(markup.includes('data-part="steering-wheel"'), 'Volante deve estar visível na cena do carro');
         assert(markup.includes('data-part="dashboard"'));
         assert(markup.includes('data-seat="child"'));
@@ -129,7 +132,7 @@ for (let page = 0; page <= 20; page++) {
   assert.equal(width / height, 1.25, 'A câmera deve preencher a ilustração sem faixas vazias');
   assert(x >= 0 && y >= 0 && x + width <= 900 && y + height <= 720);
 }
-for (const atlas of [...context.window.BookEnvironmentAtlases, context.window.BookAnimalAtlas, ...Object.values(context.window.BookOpeningAtlases), ...Object.values(context.window.BookGazeAtlases), ...Object.values(context.window.BookGazeEnvironments)]) {
+for (const atlas of [...context.window.BookEnvironmentAtlases, context.window.BookAnimalAtlas, ...Object.values(context.window.BookOpeningAtlases), ...Object.values(context.window.BookGazeAtlases), ...Object.values(context.window.BookGazeEnvironments), ...Object.values(context.window.BookActionAtlases), context.window.BookCarBodyAtlas, context.window.BookRoadAtlas]) {
   assert(fs.existsSync(root + atlas.file));
   for (const [x, y, width, height] of atlas.frames) assert(x >= 0 && y >= 0 && width > 0 && height > 0 && x + width <= atlas.width && y + height <= atlas.height);
 }
@@ -166,4 +169,11 @@ for (const choice of variants.choices) {
   assert.equal(getDimension('carlos', 'data-ground-y'), getDimension('noeli', 'data-ground-y'), 'Diferença de altura deve preservar o apoio dos pés');
 }
 for (const atlas of Object.values(context.window.BookGazeAtlases)) assert.equal(atlas.frames.length, atlas.poses.length * 3);
+for (const atlas of Object.values(context.window.BookActionAtlases)) assert.equal(atlas.frames.length, atlas.poses.length * 3);
+assert.equal(new Set([11, 12, 13].map(page => context.window.BookScenePoses.pages[page].maria)).size, 3, 'As três cenas da pedra devem ter ações diferentes para Maria Elisa');
+for (const [scene, page] of [['unicorn', 7], ['promise', 13]]) {
+  const markup = context.window.BookScenes.render(scene, 'comic', page);
+  const ground = name => Number(markup.match(new RegExp('data-character="' + name + '"[^>]*data-ground-y="([^"]+)"'))[1]);
+  assert(Math.abs(ground('vovo') - ground('maria')) <= 1, 'Avó e menina devem apoiar os pés no mesmo chão nessa cena');
+}
 console.log(`OK: ${scripts} scripts, ${rendered} páginas renderizadas; texto, seleção, recortes e assets verificados.`);
