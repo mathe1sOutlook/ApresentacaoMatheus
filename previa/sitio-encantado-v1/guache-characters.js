@@ -65,6 +65,16 @@
     const width = crop[2] / crop[3] * 385;
     return `<g transform="translate(${options.x || 0} ${options.y || 0}) scale(${options.scale || 1})" data-pose="embrace" data-maria-variant="${selection.maria}" data-vovo-variant="${selection.vovo}"><svg width="${width}" height="385" viewBox="${crop.join(' ')}"><defs><clipPath id="${clip}"><rect x="${crop[0]}" y="${crop[1]}" width="${crop[2]}" height="${crop[3]}"/></clipPath></defs><image clip-path="url(#${clip})" href="${new URL(atlas.file, root).href}" width="${atlas.width}" height="${atlas.height}"/></svg></g>`;
   };
+  /** O gesto das mãos é desenhado em conjunto para manter o contato visível entre os corpos. */
+  window.BookCharacters.handhold = (options = {}) => {
+    const atlas = window.BookHandholdAtlas;
+    const crop = atlas.frames[choices.findIndex(c => c.id === selection.vovo) * 3 + choices.findIndex(c => c.id === selection.maria)];
+    const clip = 'guache-frame-' + (++serial);
+    const height = 375;
+    const width = crop[2] / crop[3] * height;
+    const x = options.x || 0, y = options.y || 0, scale = options.scale || 1;
+    return `<g transform="translate(${x} ${y}) scale(${scale})" data-pose="handhold" data-contact="joined-hands-between-bodies" data-ground-y="${y + height * scale}" data-maria-variant="${selection.maria}" data-vovo-variant="${selection.vovo}"><ellipse cx="${width / 2}" cy="${height}" rx="${width * .44}" ry="10" fill="#405544" opacity=".12"/><svg width="${width}" height="${height}" viewBox="${crop.join(' ')}"><defs><clipPath id="${clip}"><rect x="${crop[0]}" y="${crop[1]}" width="${crop[2]}" height="${crop[3]}"/></clipPath></defs><image clip-path="url(#${clip})" href="${new URL(atlas.file, root).href}" width="${atlas.width}" height="${atlas.height}"/></svg></g>`;
+  };
   window.BookVariants = {
     choices,
     setSelection(name, id) {
@@ -78,7 +88,7 @@
       return { ...selection };
     },
     /** Pré-carrega as artes para troca de estilo e impressão sem imagens pendentes. */
-    ready: Promise.all([...choices.map(({ id }) => assetURL(id)), ...[window.BookCharacterSleepAtlas, window.BookCharacterCarAtlas, window.BookBedtimeAtlas, window.BookEmbraceAtlas, ...Object.values(window.BookNarrativeAtlases), ...Object.values(window.BookParentAtlases), window.BookOpeningAtlases.noeli, ...Object.values(window.BookGazeAtlases), ...Object.values(window.BookActionAtlases), window.BookCarBodyAtlas].map(atlas => new URL(atlas.file, root).href)].map(url => new Promise((resolve, reject) => {
+    ready: Promise.all([...choices.map(({ id }) => assetURL(id)), ...[window.BookCharacterSleepAtlas, window.BookCharacterCarAtlas, window.BookBedtimeAtlas, window.BookEmbraceAtlas, ...Object.values(window.BookNarrativeAtlases), ...Object.values(window.BookParentAtlases), window.BookOpeningAtlases.noeli, ...Object.values(window.BookGazeAtlases), ...Object.values(window.BookActionAtlases), window.BookCarBodyAtlas, window.BookHandholdAtlas].map(atlas => new URL(atlas.file, root).href)].map(url => new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = resolve;
       img.onerror = () => reject(new Error('Não foi possível carregar uma ilustração'));

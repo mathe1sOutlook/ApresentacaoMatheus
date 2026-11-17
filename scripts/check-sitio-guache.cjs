@@ -35,7 +35,7 @@ for (const choice of variants.choices) {
   for (const model of ['soft', 'paper', 'botanical', 'comic', 'dream']) {
     for (const page of getData(html)) {
       const markup = pages.render(model, page);
-      const expectedArt = page.pageNumber === 2 ? 'familia-carro-perspectiva' : page.pageNumber === 3 ? 'narrativa-embrace' : [12, 13].includes(page.pageNumber) ? 'maria-acoes-pedra' : [11, 17].includes(page.pageNumber) ? 'olhares-maria' : page.pageNumber === 20 ? 'maria-descanso' : page.pageNumber >= 18 ? 'narrativa-bedtime' : page.pageNumber <= 1 ? choice.id : 'narrativa-maria';
+      const expectedArt = page.pageNumber === 2 ? 'familia-carro-perspectiva' : page.pageNumber === 3 ? 'narrativa-embrace' : page.pageNumber === 13 ? 'maos-unidas' : page.pageNumber === 12 ? 'maria-acoes-pedra' : [11, 17].includes(page.pageNumber) ? 'olhares-maria' : page.pageNumber === 20 ? 'maria-descanso' : page.pageNumber >= 18 ? 'narrativa-bedtime' : page.pageNumber <= 1 ? choice.id : 'narrativa-maria';
       assert(markup.includes('assets/' + expectedArt + '.png'), `${choice.id}/${model}/${page.id}`);
       assert(markup.includes(`data-camera="${context.window.BookEnvironments.camera(page.pageNumber).name}"`));
       if (page.pageNumber <= 17) assert(markup.includes(`data-environment="page-${page.pageNumber}"`), 'Cada acontecimento deve usar seu ambiente');
@@ -46,8 +46,8 @@ for (const choice of variants.choices) {
         assert(markup.includes('data-depth-order="ground-plane"'));
       }
       for (const [name, pose] of Object.entries(context.window.BookScenePoses.pages[page.pageNumber] || {})) {
-        if (pose === 'embrace') {
-          assert(markup.includes('data-pose="embrace"'));
+        if (['embrace', 'handhold'].includes(pose)) {
+          assert(markup.includes('data-pose="' + pose + '"'));
           continue;
         }
         const found = markup.match(new RegExp('data-character="' + name + '"[^>]*data-pose="([^"]+)"'));
@@ -132,7 +132,7 @@ for (let page = 0; page <= 20; page++) {
   assert.equal(width / height, 1.25, 'A câmera deve preencher a ilustração sem faixas vazias');
   assert(x >= 0 && y >= 0 && x + width <= 900 && y + height <= 720);
 }
-for (const atlas of [...context.window.BookEnvironmentAtlases, context.window.BookAnimalAtlas, ...Object.values(context.window.BookOpeningAtlases), ...Object.values(context.window.BookGazeAtlases), ...Object.values(context.window.BookGazeEnvironments), ...Object.values(context.window.BookActionAtlases), context.window.BookCarBodyAtlas, context.window.BookRoadAtlas]) {
+for (const atlas of [...context.window.BookEnvironmentAtlases, context.window.BookAnimalAtlas, ...Object.values(context.window.BookOpeningAtlases), ...Object.values(context.window.BookGazeAtlases), ...Object.values(context.window.BookGazeEnvironments), ...Object.values(context.window.BookActionAtlases), context.window.BookCarBodyAtlas, context.window.BookRoadAtlas, context.window.BookHandholdAtlas]) {
   assert(fs.existsSync(root + atlas.file));
   for (const [x, y, width, height] of atlas.frames) assert(x >= 0 && y >= 0 && width > 0 && height > 0 && x + width <= atlas.width && y + height <= atlas.height);
 }
@@ -171,9 +171,20 @@ for (const choice of variants.choices) {
 for (const atlas of Object.values(context.window.BookGazeAtlases)) assert.equal(atlas.frames.length, atlas.poses.length * 3);
 for (const atlas of Object.values(context.window.BookActionAtlases)) assert.equal(atlas.frames.length, atlas.poses.length * 3);
 assert.equal(new Set([11, 12, 13].map(page => context.window.BookScenePoses.pages[page].maria)).size, 3, 'As três cenas da pedra devem ter ações diferentes para Maria Elisa');
-for (const [scene, page] of [['unicorn', 7], ['promise', 13]]) {
+for (const [scene, page] of [['unicorn', 7]]) {
   const markup = context.window.BookScenes.render(scene, 'comic', page);
   const ground = name => Number(markup.match(new RegExp('data-character="' + name + '"[^>]*data-ground-y="([^"]+)"'))[1]);
   assert(Math.abs(ground('vovo') - ground('maria')) <= 1, 'Avó e menina devem apoiar os pés no mesmo chão nessa cena');
+}
+assert.equal(context.window.BookHandholdAtlas.frames.length, 9);
+for (const grandma of variants.choices) for (const girl of variants.choices) {
+  variants.setSelection('vovo', grandma.id);
+  variants.setSelection('maria', girl.id);
+  const pair = chars.handhold({ x: 150, y: 283.5 });
+  assert(pair.includes('data-maria-variant="' + girl.id + '"'));
+  assert(pair.includes('data-vovo-variant="' + grandma.id + '"'));
+  assert(pair.includes('data-contact="joined-hands-between-bodies"'));
+  assert(pair.includes('data-ground-y="658.5"'));
+  assert(!/NaN|undefined/.test(pair));
 }
 console.log(`OK: ${scripts} scripts, ${rendered} páginas renderizadas; texto, seleção, recortes e assets verificados.`);
