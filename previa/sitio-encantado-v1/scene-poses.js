@@ -14,7 +14,7 @@
     10: { maria: 'kneel', pipoca: 'tap' },
     11: { maria: 'cradle-look', vovo: 'listen-down', pipoca: 'explain' },
     12: { maria: 'stone-question', pipoca: 'explain' },
-    13: { maria: 'adventure-hand', vovo: 'offer-hand', pipoca: 'hop' },
+    13: { maria: 'handhold', vovo: 'handhold', pipoca: 'hop' },
     14: { maria: 'reach' },
     15: { maria: 'think', vovo: 'listen-down', pipoca: 'read-scroll' },
     16: { maria: 'reach', vovo: 'laugh', pipoca: 'hop' },

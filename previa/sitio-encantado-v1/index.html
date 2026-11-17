@@ -246,16 +246,17 @@ window.BookCharacters={person,pipoca,stone};
 </script>
 <script src="character-atlases.js?v=poses-1"></script>
 <script src="narrative-atlases.js?v=poses-1"></script>
-<script src="scene-poses.js?v=action-1"></script>
+<script src="scene-poses.js?v=gesture-1"></script>
 <script src="parent-atlases.js?v=faces-scale-1"></script>
 <script src="opening-atlases.js?v=opening-1"></script>
 <script src="gaze-atlases.js?v=gaze-1"></script>
 <script src="action-atlases.js?v=action-1"></script>
+<script src="handhold-atlas.js?v=gesture-1"></script>
 <script src="environment-atlases.js?v=faces-scale-1"></script>
 <script src="environments.js?v=action-1"></script>
 <script src="scene-scale.js?v=gaze-1"></script>
 <script src="animals.js?v=faces-scale-1"></script>
-<script src="guache-characters.js?v=action-1"></script>
+<script src="guache-characters.js?v=gesture-1"></script>
 <script src="car-scene.js?v=perspective-1"></script>
 <script>/* Cenários vetoriais com personagens ilustrados em guache. */
 (function(){
@@ -343,7 +344,7 @@ function render(scene,style='soft',pageNumber=0){
  }else if(scene==='stars'){
   if(pageNumber===12){art+=circle(397,581,75,'url(#'+uid+'redglow)')+person('maria',235,300,.98,'hold')+pony(550,440,.9,'stand')+sparkles(9);}else{art+=person('maria',306,291,1.06,'hold')+pony(586,407,1,'stand')+person('vovo',91,267,.96,'stand')+sparkles(10);}
  }else if(scene==='promise'){
-  art+=circle(455,488,214,'url(#'+uid+'redglow)')+person('vovo',195,284,1.07,'hug')+person('maria',375,354,.87,'hold')+pony(599,403,.98,'jump')+sparkles(11);
+  art+=circle(455,488,214,'url(#'+uid+'redglow)')+c.handhold({x:150,y:283.5,scale:1})+pony(599,403,.98,'jump')+sparkles(11);
  }else if(scene==='animals'){
   const parade=sceneScale.parade.map(item=>({
    depth:sceneScale.depth(item),
