@@ -3,7 +3,7 @@
   'use strict';
   const pages = {
     0: { maria: 'front', vovo: 'front', pipoca: 'front' },
-    1: { maria: 'action' },
+    1: { maria: 'action', noeli: 'departure-listen' },
     3: { maria: 'embrace', vovo: 'embrace' },
     4: { maria: 'reach', vovo: 'point' },
     5: { maria: 'kneel', vovo: 'crouch' },

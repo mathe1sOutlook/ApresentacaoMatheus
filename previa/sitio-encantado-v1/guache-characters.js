@@ -24,13 +24,14 @@
     const bedtime = name === 'maria' && ['bed-ask', 'bed-wave'].includes(storyPose);
     const carColumn = ['noeli', 'maria', 'carlos'].indexOf(name);
     const inCar = carColumn >= 0 && ['seated', 'driving'].includes(options.pose);
+    const departure = name === 'noeli' && storyPose === 'departure-listen';
     const parentAtlas = window.BookParentAtlases[name];
     const storyAtlas = window.BookNarrativeAtlases[name];
     const narrative = !inCar && !sleeping && !bedtime && storyAtlas?.poses.includes(storyPose);
-    const atlas = inCar ? window.BookCharacterCarAtlas : sleeping ? window.BookCharacterSleepAtlas : bedtime ? window.BookBedtimeAtlas : narrative ? storyAtlas : parentAtlas || atlases[variant];
+    const atlas = departure ? window.BookOpeningAtlases.noeli : inCar ? window.BookCharacterCarAtlas : sleeping ? window.BookCharacterSleepAtlas : bedtime ? window.BookBedtimeAtlas : narrative ? storyAtlas : parentAtlas || atlases[variant];
     const row = { front: 0, profile: 1, action: 2 }[view] ?? 2;
     const styleIndex = choices.findIndex(choice => choice.id === variant);
-    const frame = inCar ? styleIndex * 3 + carColumn : sleeping ? styleIndex : bedtime ? (storyPose === 'bed-wave' ? 3 : 0) + styleIndex : narrative ? styleIndex * storyAtlas.poses.length + storyAtlas.poses.indexOf(storyPose) : parentAtlas ? styleIndex * 3 + row : row * 5 + cast.indexOf(name);
+    const frame = departure ? styleIndex : inCar ? styleIndex * 3 + carColumn : sleeping ? styleIndex : bedtime ? (storyPose === 'bed-wave' ? 3 : 0) + styleIndex : narrative ? styleIndex * storyAtlas.poses.length + storyAtlas.poses.indexOf(storyPose) : parentAtlas ? styleIndex * 3 + row : row * 5 + cast.indexOf(name);
     const crop = atlas.frames[frame];
     const width = name === 'pipoca' ? 240 : 200;
     const height = inCar ? 245 : sleeping || bedtime ? 200 : narrative ? window.BookScenePoses.height(name, storyPose) : name === 'pipoca' ? 270 : 350;
@@ -46,7 +47,7 @@
     }
     if (options.flip) sprite = `<g transform="translate(${width} 0) scale(-1 1)">${sprite}</g>`;
     if (options.pose === 'tumble' && !narrative) sprite = `<g transform="rotate(180 ${width / 2} ${height / 2})">${sprite}</g>`;
-    return `<g transform="translate(${x} ${y}) scale(${scale})" data-character="${name}" data-variant="${variant}" data-view="${view}" data-pose="${inCar ? options.pose : sleeping ? 'sleep' : narrative || bedtime ? storyPose : view}">${sprite}</g>`;
+    return `<g transform="translate(${x} ${y}) scale(${scale})" data-character="${name}" data-variant="${variant}" data-view="${view}" data-pose="${inCar ? options.pose : sleeping ? 'sleep' : departure || narrative || bedtime ? storyPose : view}">${sprite}</g>`;
   }
 
   window.BookCharacters.person = figure;
@@ -72,7 +73,7 @@
       return { ...selection };
     },
     /** Pré-carrega as artes para troca de estilo e impressão sem imagens pendentes. */
-    ready: Promise.all([...choices.map(({ id }) => assetURL(id)), ...[window.BookCharacterSleepAtlas, window.BookCharacterCarAtlas, window.BookBedtimeAtlas, window.BookEmbraceAtlas, ...Object.values(window.BookNarrativeAtlases), ...Object.values(window.BookParentAtlases)].map(atlas => new URL(atlas.file, root).href)].map(url => new Promise((resolve, reject) => {
+    ready: Promise.all([...choices.map(({ id }) => assetURL(id)), ...[window.BookCharacterSleepAtlas, window.BookCharacterCarAtlas, window.BookBedtimeAtlas, window.BookEmbraceAtlas, ...Object.values(window.BookNarrativeAtlases), ...Object.values(window.BookParentAtlases), window.BookOpeningAtlases.noeli].map(atlas => new URL(atlas.file, root).href)].map(url => new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = resolve;
       img.onerror = () => reject(new Error('Não foi possível carregar uma ilustração'));
