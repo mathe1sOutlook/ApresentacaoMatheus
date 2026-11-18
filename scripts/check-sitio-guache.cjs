@@ -7,7 +7,11 @@ const root = 'previa/sitio-encantado-v1/';
 const html = fs.readFileSync(root + 'index.html', 'utf8');
 const getRawData = source => source.match(/<script id="story-data" type="application\/json">([\s\S]*?)<\/script>/)[1];
 const getData = source => JSON.parse(getRawData(source));
-assert.equal(createHash('sha256').update(getRawData(html)).digest('hex'), '3ce699510f8bbc5205c0c167ffd12d2c3be9da2b4fa5db30d7c522434985e6c2', 'Texto e paginação devem permanecer intactos');
+assert.equal(createHash('sha256').update(getRawData(html)).digest('hex'), '5c2a60d3ddcc5e1a4829f38dd4b0a280de03840b3c78f448ebe64137c6af78a2', 'Texto aprovado com papai e paginação devem permanecer intactos');
+const previousText = getData(html);
+previousText[1].paragraphs[2] = previousText[1].paragraphs[2].replace('o papai e a mamãe', 'o papai Carlos Eduardo e a mamãe');
+previousText[1].wordCount += 2;
+assert.equal(createHash('sha256').update(JSON.stringify(previousText)).digest('hex'), '3ce699510f8bbc5205c0c167ffd12d2c3be9da2b4fa5db30d7c522434985e6c2', 'A troca do nome e a contagem de palavras são as únicas mudanças no texto do capítulo');
 let scripts = 0;
 const context = vm.createContext({
   window: {}, URL, console,
@@ -35,7 +39,7 @@ for (const choice of variants.choices) {
   for (const model of ['soft', 'paper', 'botanical', 'comic', 'dream']) {
     for (const page of getData(html)) {
       const markup = pages.render(model, page);
-      const expectedArt = page.pageNumber === 2 ? 'familia-carro-perspectiva' : page.pageNumber === 3 ? 'narrativa-embrace' : page.pageNumber === 13 ? 'maos-unidas' : page.pageNumber === 12 ? 'maria-acoes-pedra' : [11, 17].includes(page.pageNumber) ? 'olhares-maria' : page.pageNumber === 20 ? 'maria-descanso' : page.pageNumber >= 18 ? 'narrativa-bedtime' : page.pageNumber <= 1 ? choice.id : 'narrativa-maria';
+      const expectedArt = page.pageNumber === 2 ? 'familia-carro-perspectiva' : page.pageNumber === 3 ? 'abraco-vovo-oculos' : page.pageNumber === 13 ? 'maos-unidas-oculos' : page.pageNumber === 12 ? 'maria-acoes-pedra' : [11, 17].includes(page.pageNumber) ? 'olhares-maria' : page.pageNumber === 20 ? 'maria-descanso' : page.pageNumber >= 18 ? 'narrativa-bedtime' : page.pageNumber <= 1 ? choice.id : 'narrativa-maria';
       assert(markup.includes('assets/' + expectedArt + '.png'), `${choice.id}/${model}/${page.id}`);
       assert(markup.includes(`data-camera="${context.window.BookEnvironments.camera(page.pageNumber).name}"`));
       if (page.pageNumber <= 17) assert(markup.includes(`data-environment="page-${page.pageNumber}"`), 'Cada acontecimento deve usar seu ambiente');
@@ -56,8 +60,9 @@ for (const choice of variants.choices) {
       }
       if (page.scene === 'road') {
         assert(markup.includes('data-car-view="front-three-quarter"'));
-        assert(markup.includes('data-road-direction="lower-left"'));
-        assert(markup.includes('assets/carro-perspectiva.png') && markup.includes('assets/estrada-perspectiva.png'));
+        assert(markup.includes('data-road-direction="lower-right"'));
+        assert(markup.includes('data-visible-side="passenger"') && markup.includes('data-behind="passenger"'));
+        assert(markup.includes('assets/voyage-branco.png') && markup.includes('assets/estrada-perspectiva.png'));
         assert(markup.includes('data-part="steering-wheel"'), 'Volante deve estar visível na cena do carro');
         assert(markup.includes('data-part="dashboard"'));
         assert(markup.includes('data-seat="child"'));
@@ -191,5 +196,18 @@ assert.equal(context.window.BookCarlosCarAtlas.frames.length, 3);
 for (const choice of variants.choices) {
   assert(chars.person('carlos', { pose: 'driving', variant: choice.id }).includes('assets/familia-carlos-jovem-v3.png'));
   for (const name of ['noeli', 'maria']) assert(chars.person(name, { pose: 'seated', variant: choice.id }).includes('assets/familia-carro-perspectiva.png'));
+}
+assert(!getRawData(html).includes('Carlos'));
+assert(getData(html)[1].paragraphs.some(text => text.includes('o papai e a mamãe Noeli')));
+assert(!html.includes('house(628,318,.3,true)'), 'Janela do quarto não deve mostrar casa vizinha');
+for (const choice of variants.choices) {
+  assert(chars.person('vovo', { view: 'front', variant: choice.id }).includes('assets/vovo-selecao-oculos.png'));
+  assert(chars.person('vovo', { narrativePose: 'crouch', variant: choice.id }).includes('assets/narrativa-vovo-oculos.png'));
+  assert(chars.person('vovo', { narrativePose: 'listen-down', variant: choice.id }).includes('assets/olhares-vovo-oculos.png'));
+}
+for (const model of Object.values(context.window.BookPages.layouts)) {
+  const item = model['1'].items.find(item => item.text.includes('o papai e a mamãe'));
+  assert(item && item.lines.join(' ') === item.text, 'Texto diagramado deve acompanhar a alteração para papai');
+  assert(model['1'].items.every(item => !item.text.includes('Carlos')));
 }
 console.log(`OK: ${scripts} scripts, ${rendered} páginas renderizadas; texto, seleção, recortes e assets verificados.`);

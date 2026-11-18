@@ -39,7 +39,8 @@
       frame = [x + width / 3, y + height / 3, width * 2 / 3, height * 2 / 3];
     }
     const clip = uid + 'environment-frame';
-    return `<g data-environment="page-${page}" data-setting="${settings[page]}"><svg width="900" height="720" viewBox="${frame.join(' ')}" preserveAspectRatio="xMidYMid slice"><defs><clipPath id="${clip}"><rect x="${frame[0]}" y="${frame[1]}" width="${frame[2]}" height="${frame[3]}"/></clipPath></defs><image clip-path="url(#${clip})" href="${new URL(atlas.file, root).href}" width="${atlas.width}" height="${atlas.height}"/></svg></g>`;
+    const art = `<g data-environment="page-${page}" data-setting="${settings[page]}"><svg width="900" height="720" viewBox="${frame.join(' ')}" preserveAspectRatio="xMidYMid slice"><defs><clipPath id="${clip}"><rect x="${frame[0]}" y="${frame[1]}" width="${frame[2]}" height="${frame[3]}"/></clipPath></defs><image clip-path="url(#${clip})" href="${new URL(atlas.file, root).href}" width="${atlas.width}" height="${atlas.height}"/></svg></g>`;
+    return page === 2 ? `<g transform="translate(900 0) scale(-1 1)" data-road-flow="lower-right">${art}</g>` : art;
   }
   window.BookEnvironments = {
     background, camera, settings,
