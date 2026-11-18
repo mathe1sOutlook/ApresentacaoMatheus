@@ -24,6 +24,7 @@
     const bedtime = name === 'maria' && ['bed-ask', 'bed-wave'].includes(storyPose);
     const carColumn = ['noeli', 'maria', 'carlos'].indexOf(name);
     const inCar = carColumn >= 0 && ['seated', 'driving'].includes(options.pose);
+    const carlosDriving = inCar && name === 'carlos';
     const departure = name === 'noeli' && storyPose === 'departure-listen';
     const actionAtlas = window.BookActionAtlases[name];
     const directedAtlas = actionAtlas?.poses.includes(storyPose) ? actionAtlas : window.BookGazeAtlases[name];
@@ -31,10 +32,10 @@
     const parentAtlas = window.BookParentAtlases[name];
     const storyAtlas = window.BookNarrativeAtlases[name];
     const narrative = !inCar && !sleeping && !bedtime && storyAtlas?.poses.includes(storyPose);
-    const atlas = directed ? directedAtlas : departure ? window.BookOpeningAtlases.noeli : inCar ? window.BookCharacterCarAtlas : sleeping ? window.BookCharacterSleepAtlas : bedtime ? window.BookBedtimeAtlas : narrative ? storyAtlas : parentAtlas || atlases[variant];
+    const atlas = carlosDriving ? window.BookCarlosCarAtlas : directed ? directedAtlas : departure ? window.BookOpeningAtlases.noeli : inCar ? window.BookCharacterCarAtlas : sleeping ? window.BookCharacterSleepAtlas : bedtime ? window.BookBedtimeAtlas : narrative ? storyAtlas : parentAtlas || atlases[variant];
     const row = { front: 0, profile: 1, action: 2 }[view] ?? 2;
     const styleIndex = choices.findIndex(choice => choice.id === variant);
-    const frame = directed ? styleIndex * directedAtlas.poses.length + directedAtlas.poses.indexOf(storyPose) : departure ? styleIndex : inCar ? styleIndex * 3 + carColumn : sleeping ? styleIndex : bedtime ? (storyPose === 'bed-wave' ? 3 : 0) + styleIndex : narrative ? styleIndex * storyAtlas.poses.length + storyAtlas.poses.indexOf(storyPose) : parentAtlas ? styleIndex * 3 + row : row * 5 + cast.indexOf(name);
+    const frame = carlosDriving ? styleIndex : directed ? styleIndex * directedAtlas.poses.length + directedAtlas.poses.indexOf(storyPose) : departure ? styleIndex : inCar ? styleIndex * 3 + carColumn : sleeping ? styleIndex : bedtime ? (storyPose === 'bed-wave' ? 3 : 0) + styleIndex : narrative ? styleIndex * storyAtlas.poses.length + storyAtlas.poses.indexOf(storyPose) : parentAtlas ? styleIndex * 3 + row : row * 5 + cast.indexOf(name);
     const crop = atlas.frames[frame];
     const width = name === 'pipoca' ? 240 : 200;
     const baseHeight = inCar ? 245 : sleeping || bedtime ? 200 : narrative || directed ? window.BookScenePoses.height(name, storyPose) : name === 'pipoca' ? 270 : 350;
@@ -88,7 +89,7 @@
       return { ...selection };
     },
     /** Pré-carrega as artes para troca de estilo e impressão sem imagens pendentes. */
-    ready: Promise.all([...choices.map(({ id }) => assetURL(id)), ...[window.BookCharacterSleepAtlas, window.BookCharacterCarAtlas, window.BookBedtimeAtlas, window.BookEmbraceAtlas, ...Object.values(window.BookNarrativeAtlases), ...Object.values(window.BookParentAtlases), window.BookOpeningAtlases.noeli, ...Object.values(window.BookGazeAtlases), ...Object.values(window.BookActionAtlases), window.BookCarBodyAtlas, window.BookHandholdAtlas].map(atlas => new URL(atlas.file, root).href)].map(url => new Promise((resolve, reject) => {
+    ready: Promise.all([...choices.map(({ id }) => assetURL(id)), ...[window.BookCharacterSleepAtlas, window.BookCharacterCarAtlas, window.BookBedtimeAtlas, window.BookEmbraceAtlas, ...Object.values(window.BookNarrativeAtlases), ...Object.values(window.BookParentAtlases), window.BookOpeningAtlases.noeli, ...Object.values(window.BookGazeAtlases), ...Object.values(window.BookActionAtlases), window.BookCarBodyAtlas, window.BookHandholdAtlas, window.BookCarlosCarAtlas].map(atlas => new URL(atlas.file, root).href)].map(url => new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = resolve;
       img.onerror = () => reject(new Error('Não foi possível carregar uma ilustração'));

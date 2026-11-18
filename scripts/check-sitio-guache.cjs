@@ -77,7 +77,7 @@ for (const choice of variants.choices) {
 variants.setSelection('maria', 'guache-suave');
 variants.setSelection('carlos', 'guache-ludico');
 assert(chars.person('maria', { view: 'profile' }).includes('data-view="profile"'));
-assert(chars.person('carlos', { view: 'action' }).includes('assets/carlos-jovem.png'));
+assert(chars.person('carlos', { view: 'action' }).includes('assets/carlos-mais-jovem-v3.png'));
 assert(chars.person('maria', { view: 'front' }).includes('clip-path="url(#guache-frame-'));
 variants.reset();
 assert(Object.values(variants.getSelections()).every(value => value === 'guache'));
@@ -132,7 +132,7 @@ for (let page = 0; page <= 20; page++) {
   assert.equal(width / height, 1.25, 'A câmera deve preencher a ilustração sem faixas vazias');
   assert(x >= 0 && y >= 0 && x + width <= 900 && y + height <= 720);
 }
-for (const atlas of [...context.window.BookEnvironmentAtlases, context.window.BookAnimalAtlas, ...Object.values(context.window.BookOpeningAtlases), ...Object.values(context.window.BookGazeAtlases), ...Object.values(context.window.BookGazeEnvironments), ...Object.values(context.window.BookActionAtlases), context.window.BookCarBodyAtlas, context.window.BookRoadAtlas, context.window.BookHandholdAtlas]) {
+for (const atlas of [...context.window.BookEnvironmentAtlases, context.window.BookAnimalAtlas, ...Object.values(context.window.BookOpeningAtlases), ...Object.values(context.window.BookGazeAtlases), ...Object.values(context.window.BookGazeEnvironments), ...Object.values(context.window.BookActionAtlases), context.window.BookCarBodyAtlas, context.window.BookRoadAtlas, context.window.BookHandholdAtlas, context.window.BookCarlosCarAtlas]) {
   assert(fs.existsSync(root + atlas.file));
   for (const [x, y, width, height] of atlas.frames) assert(x >= 0 && y >= 0 && width > 0 && height > 0 && x + width <= atlas.width && y + height <= atlas.height);
 }
@@ -186,5 +186,10 @@ for (const grandma of variants.choices) for (const girl of variants.choices) {
   assert(pair.includes('data-contact="joined-hands-between-bodies"'));
   assert(pair.includes('data-ground-y="658.5"'));
   assert(!/NaN|undefined/.test(pair));
+}
+assert.equal(context.window.BookCarlosCarAtlas.frames.length, 3);
+for (const choice of variants.choices) {
+  assert(chars.person('carlos', { pose: 'driving', variant: choice.id }).includes('assets/familia-carlos-jovem-v3.png'));
+  for (const name of ['noeli', 'maria']) assert(chars.person(name, { pose: 'seated', variant: choice.id }).includes('assets/familia-carro-perspectiva.png'));
 }
 console.log(`OK: ${scripts} scripts, ${rendered} páginas renderizadas; texto, seleção, recortes e assets verificados.`);
