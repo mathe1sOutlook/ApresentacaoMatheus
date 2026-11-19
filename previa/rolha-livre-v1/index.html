@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#14090d" />
+    <meta name="description" content="Rolha Livre: as próximas confrarias, calendário 2027, temas, galeria e presenças." />
+    <meta property="og:title" content="Rolha Livre · Confraria 2027" />
+    <meta property="og:description" content="Uma quinta por mês, bons vinhos e histórias que merecem ser lembradas." />
+    <meta property="og:image" content="/previa/rolha-livre-v1/img/touriga-nacional-04.webp" />
+    <link rel="icon" href="/previa/rolha-livre-v1/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/previa/rolha-livre-v1/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/previa/rolha-livre-v1/icons/apple-touch-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Rolha Livre" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="preload" as="image" href="/previa/rolha-livre-v1/img/touriga-nacional-04.webp" />
+    <title>Rolha Livre · Confraria 2027</title>
+    <script>
+      // aplica o tema antes da primeira pintura (evita piscar o tema padrão)
+      (function () {
+        var ok = ['essencial', 'editorial', 'clube'], t = new URLSearchParams(location.search).get('tema');
+        try { if (ok.indexOf(t) < 0) t = localStorage.getItem('rl_theme'); } catch (e) {}
+        document.documentElement.dataset.theme = ok.indexOf(t) < 0 ? 'editorial' : t;
+      })();
+    </script>
+    <script type="module" crossorigin src="/previa/rolha-livre-v1/assets/index-jniyylyj.js"></script>
+    <link rel="stylesheet" crossorigin href="/previa/rolha-livre-v1/assets/index-Cc2M_jtS.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
