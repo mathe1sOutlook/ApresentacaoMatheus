@@ -1065,7 +1065,7 @@ const sb = window.supabase
 const state = {
   session: null,
   members: [], me: null,
-  clients: [], clientUsers: [], previews: [], previewComments: [], clientFiles: [], handoff: [], storyChars: [], storyPhotos: [], storyChapters: [], storyChoices: [], storyLinks: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
+  clients: [], clientUsers: [], clientEmails: [], previews: [], previewComments: [], clientFiles: [], handoff: [], storyChars: [], storyPhotos: [], storyChapters: [], storyChoices: [], storyLinks: [], projects: [], notes: [], meetings: [], payments: [], checkouts: [], tasks: [], leads: [],
 };
 const now0 = new Date();
 const ui = {
@@ -1303,6 +1303,10 @@ async function fetchAll() {
   state.meetings = meetings.data; state.payments = payments.data; state.checkouts = checkouts.data; state.tasks = tasks.data;
   state.members = members.data; state.leads = leads.data; state.clientUsers = clientUsers.data; state.previews = previews.data; state.previewComments = previewComments.data; state.clientFiles = clientFiles.data; state.handoff = handoff.data;
   state.storyChars = storyChars.data; state.storyPhotos = storyPhotos.data; state.storyChapters = storyChapters.data; state.storyChoices = storyChoices.data; state.storyLinks = storyLinks.data;
+  /* Histórico dos e-mails aos clientes (Edge Function client-email). Fora do
+     Promise.all de propósito: se a tabela faltar, o resto do painel segue. */
+  const ce = await sb.from(TB('client_emails')).select('id,project_id,kind,ref_id,to_email,subject,status,error,sent_by,created_at').order('created_at', { ascending: false });
+  state.clientEmails = ce.error ? [] : ce.data;
 }
 
 /* ═══ Releitura automática ═════════════════════════════════════════
@@ -1887,6 +1891,7 @@ VIEWS.previas = function () {
       <td class="actions">
         <a class="btn-mini" href="/cliente/previa/?id=${v.id}" target="_blank" rel="noopener">Abrir</a>
         ${v.status === 'rascunho' ? `<button type="button" class="btn-mini" data-action="publishPreview" data-id="${v.id}">Publicar</button>` : ''}
+        ${v.status === 'publicada' || v.status === 'ajustes' ? `<button type="button" class="btn-mini" data-action="emailClient" data-kind="atualizacao" data-project="${v.project_id}" data-ref="${v.id}">Avisar cliente</button>` : ''}
         <button type="button" class="btn-mini btn-mini--danger" data-action="deletePreview" data-id="${v.id}">Excluir</button>
       </td>
     </tr>`;
@@ -2066,6 +2071,7 @@ VIEWS.projeto = function (route) {
       <td><span class="chip chip--${st}">${st}</span></td>
       <td class="actions">
         ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="startInfinitePay" data-id="${x.id}">Cobrar · Pix/cartão</button>` : ''}
+        ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="emailClient" data-kind="cobranca" data-project="${x.project_id}" data-ref="${x.id}">E-mail de cobrança</button>` : ''}
         ${st !== 'pago' && !hasActiveInfinitePay(x.id) ? `<button type="button" class="btn-mini" data-action="markPaid" data-id="${x.id}">Marcar pago</button>` : ''}
         <button type="button" class="btn-mini" data-action="editPayment" data-id="${x.id}">Editar</button>
       </td>
@@ -2082,6 +2088,16 @@ VIEWS.projeto = function (route) {
         ${m.minutes ? `<span class="rowlist__sub" style="color:var(--ink)">Proposto: ${esc(m.minutes)}</span>` : ''}
       </span>
       <button type="button" class="btn-mini" data-action="editMeeting" data-id="${m.id}">Editar</button>
+    </li>`).join('');
+
+  /* e-mails ao cliente */
+  const mails = state.clientEmails.filter((e) => e.project_id === p.id);
+  const mailItems = mails.map((e) => `<li>
+      <span class="rowlist__when">${fmtDT(e.created_at)}</span>
+      <span class="rowlist__main">
+        <span class="rowlist__title">${esc(EMAIL_KIND_LABEL[e.kind] || e.kind)}${e.status === 'falhou' ? ' <span class="chip chip--atrasado">falhou</span>' : ''}</span>
+        <span class="rowlist__sub">Para ${esc(e.to_email)} · por ${esc(firstName(memberName(e.sent_by)))}${e.error ? ' · ' + esc(e.error) : ''}</span>
+      </span>
     </li>`).join('');
 
   /* devolutivas & combinados */
@@ -2192,6 +2208,14 @@ VIEWS.projeto = function (route) {
       </div>
 
       <div class="card" style="margin-top:24px">
+        <div class="card__head"><span class="label label--ochre">E-mails ao cliente</span>
+          ${p.proposal_url ? `<span style="display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" class="btn-mini" data-action="emailClient" data-kind="proposta" data-project="${p.id}">Enviar proposta</button>
+            <button type="button" class="btn-mini" data-action="emailClient" data-kind="acompanhamento" data-project="${p.id}">Lembrar da proposta</button></span>` : ''}</div>
+        ${mails.length ? `<ul class="rowlist">${mailItems}</ul>` : `<p class="empty">${p.proposal_url ? 'Nenhum e-mail enviado por aqui ainda.' : 'Cadastre a URL da proposta para enviá-la por e-mail.'} Avisos de prévia e de cobrança saem de Prévias e das parcelas.</p>`}
+      </div>
+
+      <div class="card" style="margin-top:24px">
         <div class="card__head"><span class="label label--ochre">Tarefas do projeto</span>
           <button type="button" class="btn-mini" data-action="newTask" data-project="${p.id}">+ Tarefa</button></div>
         ${ptasks.length ? taskItems : '<p class="empty">Nenhuma tarefa vinculada.</p>'}
@@ -2287,6 +2311,7 @@ VIEWS.financeiro = function () {
       <td><span class="chip chip--${st}">${st}</span></td>
       <td class="actions">
         ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="startInfinitePay" data-id="${x.id}">Cobrar · Pix/cartão</button>` : ''}
+        ${st !== 'pago' ? `<button type="button" class="btn-mini" data-action="emailClient" data-kind="cobranca" data-project="${x.project_id}" data-ref="${x.id}">E-mail de cobrança</button>` : ''}
         ${st !== 'pago' && !hasActiveInfinitePay(x.id) ? `<button type="button" class="btn-mini" data-action="markPaid" data-id="${x.id}">Marcar pago</button>` : ''}
         <button type="button" class="btn-mini" data-action="editPayment" data-id="${x.id}">Editar</button>
       </td>
@@ -2989,6 +3014,67 @@ async function inviteAccess(email, clientId, name) {
   const j = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(r.status === 403 ? 'sem permissão' : (j.error || 'falha ao liberar o acesso'));
 }
+/* ═══ E-mails aos clientes (Edge Function client-email, Resend) ═════
+   O modal pede à função o e-mail montado, mostra exatamente o que vai sair e
+   só então envia. Destinatários: o que a função devolve (acessos ativos do
+   cliente e o e-mail do cadastro); a função recusa qualquer outro. */
+const EMAIL_KIND_LABEL = { atualizacao: 'Aviso de nova prévia', proposta: 'Proposta', acompanhamento: 'Lembrete da proposta', cobranca: 'Cobrança de parcela' };
+async function clientEmailCall(payload) {
+  const { data: { session } } = await sb.auth.getSession();
+  const r = await fetch(SUPABASE_URL + '/functions/v1/client-email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: SUPABASE_KEY, Authorization: 'Bearer ' + (session ? session.access_token : '') },
+    body: JSON.stringify(payload),
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(r.status === 403 ? 'sem permissão' : (j.error || 'falha no envio (' + r.status + ')'));
+  return j;
+}
+async function emailModal(kind, projectId, refId) {
+  const base = { kind, project_id: projectId, ref_id: refId };
+  let pv;
+  try { pv = await clientEmailCall({ action: 'preview', ...base }); }
+  catch (e) { toast('Não deu para montar o e-mail: ' + e.message); return; }
+  if (!pv.recipients || !pv.recipients.length) { toast('O cliente não tem e-mail no cadastro nem acesso à área.'); return; }
+  const isCob = kind === 'cobranca';
+  openModal(EMAIL_KIND_LABEL[kind] || 'E-mail ao cliente', `
+    <form>
+      <div class="form-grid">
+        ${fld('em-to', 'Para', sel('em-to', 'to', pv.recipients.map((r) => [r.email, r.label]), pv.to), true)}
+        ${isCob ? fld('em-how', 'Como pagar', txa('em-how', 'how_to_pay', '', 'Ex.: Pix para a chave … · ou boleto em anexo'), true, 'Opcional se a parcela já tem link de cobrança (Pix/cartão) válido: ele entra no e-mail sozinho.') : ''}
+      </div>
+      <p class="field__hint" id="em-subject" style="margin:4px 0 10px"></p>
+      <iframe id="em-frame" title="Prévia do e-mail" sandbox="" style="width:100%;height:440px;border:1px solid var(--line);border-radius:10px;background:#E7E3DA"></iframe>
+      <p class="field__hint" id="em-note" style="margin-top:10px"></p>
+      <div class="form-foot"><button type="submit" class="btn-solid">Enviar</button></div>
+    </form>`, async (d) => {
+    try {
+      const r = await clientEmailCall({ action: 'send', ...base, to: d.to, how_to_pay: d.how_to_pay || '' });
+      await mutate(async () => {}, 'E-mail enviado para ' + r.to + '.');
+      return true;
+    } catch (e) { toast('Não enviado: ' + e.message); return false; }
+  });
+  const paint = (r) => {
+    const sub = document.getElementById('em-subject'); const fr = document.getElementById('em-frame'); const note = document.getElementById('em-note');
+    if (!sub || !fr) return;
+    sub.textContent = r.subject ? 'Assunto: ' + r.subject : '';
+    fr.srcdoc = r.html || '';
+    note.textContent = r.configured ? '' : 'O envio ainda não está configurado (faltam RESEND_API_KEY e EMAIL_FROM na função). Dá para ver o e-mail, mas não enviar.';
+  };
+  paint(pv);
+  let timer = null;
+  const again = () => {
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      const to = document.getElementById('em-to'); const how = document.getElementById('em-how');
+      try { paint(await clientEmailCall({ action: 'preview', ...base, to: to ? to.value : '', how_to_pay: how ? how.value : '' })); }
+      catch (e) { const n = document.getElementById('em-note'); if (n) n.textContent = e.message; }
+    }, 400);
+  };
+  document.getElementById('em-to')?.addEventListener('change', again);
+  document.getElementById('em-how')?.addEventListener('input', again);
+}
+
 const accessEmailOf = (clientId) => {
   const u = state.clientUsers.find((x) => x.client_id === clientId && x.active);
   return u ? u.email : '';
@@ -3235,6 +3321,7 @@ const ACTIONS = {
     mutate(() => dbDelete('leads', l.id), 'Lead excluído.');
   },
   newPreview: () => { closeDrawer(); previewModal(); },
+  emailClient: (el) => emailModal(el.dataset.kind, el.dataset.project, el.dataset.ref || null),
   publishPreview: (el) => {
     const v = state.previews.find((x) => x.id === el.dataset.id);
     if (!v) return;
