@@ -478,6 +478,11 @@ aprovação, arquivos nos dois sentidos e a passagem para as contas do cliente.
   - **Banco:** o cliente não lê `amaralesilva_previews` nem os comentários direto;
     tudo passa por funções `amaralesilva_portal_*` que conferem o dono do
     projeto. `previa/demo-v1/` é uma pasta de demonstração para testar o fluxo.
+  - **SPA na pasta** (ex. `previa/rolha-livre-v1/`, o Vite + React da Rolha
+    Livre): o build precisa sair com base `/previa/<slug>/` (lá, `npm run
+    build:previa`) e a pasta ganha um rewrite próprio no `vercel.json`
+    (`/previa/<slug>/(.*)` → `index.html`) para as rotas internas abrirem
+    direto. O rewrite só atua depois do middleware, então a barreira vale igual.
   - **Site externo** (site com servidor, ex. o Next.js da Pedralum): em vez da
     pasta, a versão guarda `upstream_url` (um deploy `*.vercel.app` do projeto
     do cliente) e `bypass_env` (o **nome** de uma variável `PREVIA_BYPASS_*` do

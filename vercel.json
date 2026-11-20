@@ -67,6 +67,10 @@
     {
       "source": "/en",
       "destination": "/en/index.html"
+    },
+    {
+      "source": "/previa/rolha-livre-v1/(.*)",
+      "destination": "/previa/rolha-livre-v1/index.html"
     }
   ],
   "redirects": [
