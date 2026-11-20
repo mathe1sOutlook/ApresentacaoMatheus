@@ -107,7 +107,10 @@ async function build(m: Member, body: Record<string, unknown>, members: Member[]
   const rec = wanted ? recipients.find((r) => r.email === wanted) : recipients[0];
   if (wanted && !rec) throw new Refuse("destinatário não é do cliente deste projeto");
   if (!rec) return { built: null, recipients: pub };
-  const first = firstName(rec.name);
+  /* Acesso cadastrado com o nome da empresa ("Pedralumen") não vira "Olá, Pedralumen". */
+  const plain = (x: string | null | undefined) => lc(x).normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const isCompany = [cli.name, cli.company].some((n) => n && plain(n) === plain(rec.name));
+  const first = isCompany ? "" : firstName(rec.name);
 
   const me: T.Signer = { name: m.name, role: ROLE[m.name] || "CASA MARTECH" };
   const all = members.map((x) => lc(x.email));
