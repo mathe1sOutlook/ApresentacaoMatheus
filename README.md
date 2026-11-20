@@ -589,6 +589,35 @@ aprovação, arquivos nos dois sentidos e a passagem para as contas do cliente.
 - **Passo manual**: acrescentar `https://www.casamartech.com.br/entrar` (e os
   dois endereços da Vercel) às **Redirect URLs** do Supabase, ao lado dos do
   `/admin`. Sem isso o link do e-mail de senha não volta para a tela.
+- **E-mails aos clientes** (Resend): quatro avisos, todos transacionais, que
+  a equipe dispara do painel. **Avisar cliente** (em Prévias, versão publicada),
+  **Enviar proposta** e **Lembrar da proposta** (no projeto, quadro *E-mails ao
+  cliente*, que também guarda o histórico) e **E-mail de cobrança** (em cada
+  parcela em aberto). O modal mostra o e-mail exatamente como vai sair antes de
+  enviar. Quem monta e envia é a Edge Function `client-email`
+  (`supabase/functions/client-email`, modelos em `templates.ts`), com o Bearer
+  de um membro; o desenho veio do canvas *E-mails aos clientes*.
+  - **Para quem:** só o e-mail do cadastro do cliente ou um acesso ativo dele;
+    a função recusa outro endereço. O aviso de prévia exige acesso à área e o
+    projeto a partir de "proposta enviada" (senão o cliente não veria a prévia).
+  - **Cobrança:** usa o link InfinitePay válido da parcela, se houver; sem ele,
+    o campo *Como pagar* é obrigatório. O e-mail mostra o valor da parcela.
+  - **Lembrar da proposta:** sai como "Re:" da proposta e leva o link *Parar
+    lembretes* e os cabeçalhos `List-Unsubscribe`/`List-Unsubscribe-Post`. O
+    link abre uma página com botão (robô que abre link não descadastra); o
+    clique grava em `amaralesilva_email_optouts` e a função passa a recusar novo
+    lembrete àquela pessoa naquele projeto. Prévia e cobrança não são afetadas.
+  - **Banco:** `amaralesilva_client_emails` (histórico, um registro por envio,
+    inclusive os que o Resend recusou) e `amaralesilva_email_optouts`; a equipe
+    só lê, quem grava é a função. DDL em `admin/client-emails-schema.sql`.
+  - **Configurar (uma vez):** no Resend, verificar o domínio `casamartech.com.br`
+    (ou um subdomínio de envio) e publicar no Registro.br os registros SPF, DKIM
+    e DMARC que ele indicar, com o DMARC começando em `p=none`. Depois gravar
+    como segredos da função `client-email` (Supabase, *Edge Functions, Secrets*)
+    `RESEND_API_KEY` e `EMAIL_FROM` (ex.: `CASA MARTECH <avisos@casamartech.com.br>`,
+    um endereço do domínio verificado). Sem os dois, o modal mostra o e-mail e
+    avisa que o envio não está configurado. As respostas vão para quem enviou
+    (proposta e cobrança, para os dois sócios), pelo `Reply-To`.
 
 ## Pendências
 

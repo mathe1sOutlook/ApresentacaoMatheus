@@ -12,3 +12,8 @@ verify_jwt = false
 # (membro da equipe). A função autentica cada caso por conta própria.
 [functions.portal-auth]
 verify_jwt = false
+
+# E-mails aos clientes (Resend): o envio exige Bearer de membro da equipe,
+# conferido pela própria função; o link "Parar lembretes" é aberto sem login.
+[functions.client-email]
+verify_jwt = false
